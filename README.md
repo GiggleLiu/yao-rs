@@ -1,7 +1,7 @@
 # yao-rs
 
 [![CI](https://github.com/GiggleLiu/yao-rs/actions/workflows/ci.yml/badge.svg)](https://github.com/GiggleLiu/yao-rs/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/GiggleLiu/yao-rs/branch/main/graph/badge.svg)](https://codecov.io/gh/GiggleLiu/yao-rs)
+[![codecov](https://codecov.io/gh/GiggleLiu/yao-rs/graph/badge.svg?token=UwHXVMpsP3)](https://codecov.io/gh/GiggleLiu/yao-rs)
 [![Docs](https://github.com/GiggleLiu/yao-rs/actions/workflows/docs.yml/badge.svg)](https://giggleliu.github.io/yao-rs/)
 
 A Rust port of [Yao.jl](https://github.com/QuantumBFS/Yao.jl) focused on quantum circuit description and tensor network export.
