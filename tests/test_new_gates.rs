@@ -1,5 +1,6 @@
 use approx::assert_abs_diff_eq;
 use num_complex::Complex64;
+use std::f64::consts::{FRAC_PI_2, PI};
 use yao_rs::gate::Gate;
 
 /// Helper: check two complex numbers are approximately equal.
@@ -138,7 +139,62 @@ fn test_iswap_is_unitary() {
 }
 
 // ============================================================
-// Test 9: num_sites for new gates (Task 2)
+// Test 7: FSim(pi/2, pi/6) matrix values
+// ============================================================
+
+#[test]
+fn test_fsim_matrix_values() {
+    let theta = FRAC_PI_2;
+    let phi = PI / 6.0;
+    let m = Gate::FSim(theta, phi).matrix(2);
+    assert_eq!(m.dim(), (4, 4));
+
+    let zero = Complex64::new(0.0, 0.0);
+    let one = Complex64::new(1.0, 0.0);
+
+    // cos(pi/2) = 0, sin(pi/2) = 1
+    let cos_theta = Complex64::new(0.0, 0.0);
+    let neg_i_sin_theta = Complex64::new(0.0, -1.0); // -i * sin(pi/2) = -i
+    let e_neg_i_phi = Complex64::from_polar(1.0, -phi); // e^{-i*pi/6}
+
+    assert_complex_eq(m[[0, 0]], one, "FSim[0,0]");
+    assert_complex_eq(m[[0, 1]], zero, "FSim[0,1]");
+    assert_complex_eq(m[[0, 2]], zero, "FSim[0,2]");
+    assert_complex_eq(m[[0, 3]], zero, "FSim[0,3]");
+
+    assert_complex_eq(m[[1, 0]], zero, "FSim[1,0]");
+    assert_complex_eq(m[[1, 1]], cos_theta, "FSim[1,1]");
+    assert_complex_eq(m[[1, 2]], neg_i_sin_theta, "FSim[1,2]");
+    assert_complex_eq(m[[1, 3]], zero, "FSim[1,3]");
+
+    assert_complex_eq(m[[2, 0]], zero, "FSim[2,0]");
+    assert_complex_eq(m[[2, 1]], neg_i_sin_theta, "FSim[2,1]");
+    assert_complex_eq(m[[2, 2]], cos_theta, "FSim[2,2]");
+    assert_complex_eq(m[[2, 3]], zero, "FSim[2,3]");
+
+    assert_complex_eq(m[[3, 0]], zero, "FSim[3,0]");
+    assert_complex_eq(m[[3, 1]], zero, "FSim[3,1]");
+    assert_complex_eq(m[[3, 2]], zero, "FSim[3,2]");
+    assert_complex_eq(m[[3, 3]], e_neg_i_phi, "FSim[3,3]");
+}
+
+// ============================================================
+// Test 8: FSim is unitary (arbitrary theta, phi)
+// ============================================================
+
+#[test]
+fn test_fsim_is_unitary() {
+    // Test with arbitrary values
+    let m = Gate::FSim(1.23, 0.78).matrix(2);
+    assert_unitary(&m, 4);
+
+    // Test with different values
+    let m2 = Gate::FSim(PI / 3.0, PI / 5.0).matrix(2);
+    assert_unitary(&m2, 4);
+}
+
+// ============================================================
+// Test 9: num_sites for new gates
 // ============================================================
 
 #[test]
@@ -147,10 +203,11 @@ fn test_num_sites_new_gates() {
     assert_eq!(Gate::SqrtY.num_sites(2), 1);
     assert_eq!(Gate::SqrtW.num_sites(2), 1);
     assert_eq!(Gate::ISWAP.num_sites(2), 2);
+    assert_eq!(Gate::FSim(1.0, 2.0).num_sites(2), 2);
 }
 
 // ============================================================
-// Test 10: is_diagonal for new gates (all false, Task 2)
+// Test 10: is_diagonal for new gates (all false)
 // ============================================================
 
 #[test]
@@ -159,4 +216,5 @@ fn test_is_diagonal_new_gates() {
     assert!(!Gate::SqrtY.is_diagonal());
     assert!(!Gate::SqrtW.is_diagonal());
     assert!(!Gate::ISWAP.is_diagonal());
+    assert!(!Gate::FSim(1.0, 2.0).is_diagonal());
 }

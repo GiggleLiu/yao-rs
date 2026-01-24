@@ -25,6 +25,8 @@ pub enum Gate {
     SqrtW,
     /// iSWAP gate: two-qubit
     ISWAP,
+    /// FSim gate: two-qubit, parameterized by (theta, phi)
+    FSim(f64, f64),
     Custom {
         matrix: Array2<Complex64>,
         is_diagonal: bool,
@@ -50,7 +52,7 @@ impl Gate {
     /// Returns the number of sites (qubits) the gate acts on.
     pub fn num_sites(&self, d: usize) -> usize {
         match self {
-            Gate::SWAP | Gate::ISWAP => 2,
+            Gate::SWAP | Gate::ISWAP | Gate::FSim(_, _) => 2,
             Gate::Custom { matrix, .. } => {
                 let dim = matrix.nrows();
                 assert_eq!(matrix.nrows(), matrix.ncols(),
@@ -184,6 +186,23 @@ impl Gate {
                 m[[1, 2]] = i;
                 m[[2, 1]] = i;
                 m[[3, 3]] = one;
+                m
+            }
+            Gate::FSim(theta, phi) => {
+                // [[1, 0, 0, 0],
+                //  [0, cos(θ), -i*sin(θ), 0],
+                //  [0, -i*sin(θ), cos(θ), 0],
+                //  [0, 0, 0, e^(-iφ)]]
+                let cos_theta = Complex64::new(theta.cos(), 0.0);
+                let neg_i_sin_theta = Complex64::new(0.0, -theta.sin());
+                let e_neg_i_phi = Complex64::from_polar(1.0, -phi);
+                let mut m = Array2::zeros((4, 4));
+                m[[0, 0]] = one;
+                m[[1, 1]] = cos_theta;
+                m[[1, 2]] = neg_i_sin_theta;
+                m[[2, 1]] = neg_i_sin_theta;
+                m[[2, 2]] = cos_theta;
+                m[[3, 3]] = e_neg_i_phi;
                 m
             }
             Gate::Custom { .. } => unreachable!(),
