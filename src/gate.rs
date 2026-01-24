@@ -34,6 +34,30 @@ pub enum Gate {
     },
 }
 
+impl std::fmt::Display for Gate {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Gate::X => write!(f, "X"),
+            Gate::Y => write!(f, "Y"),
+            Gate::Z => write!(f, "Z"),
+            Gate::H => write!(f, "H"),
+            Gate::S => write!(f, "S"),
+            Gate::T => write!(f, "T"),
+            Gate::SWAP => write!(f, "SWAP"),
+            Gate::SqrtX => write!(f, "SqrtX"),
+            Gate::SqrtY => write!(f, "SqrtY"),
+            Gate::SqrtW => write!(f, "SqrtW"),
+            Gate::ISWAP => write!(f, "ISWAP"),
+            Gate::Phase(theta) => write!(f, "Phase({:.4})", theta),
+            Gate::Rx(theta) => write!(f, "Rx({:.4})", theta),
+            Gate::Ry(theta) => write!(f, "Ry({:.4})", theta),
+            Gate::Rz(theta) => write!(f, "Rz({:.4})", theta),
+            Gate::FSim(theta, phi) => write!(f, "FSim({:.4}, {:.4})", theta, phi),
+            Gate::Custom { label, .. } => write!(f, "{}", label),
+        }
+    }
+}
+
 impl Gate {
     /// Returns the matrix representation of the gate for local dimension `d`.
     ///

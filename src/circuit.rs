@@ -204,6 +204,28 @@ impl Circuit {
     }
 }
 
+impl fmt::Display for Circuit {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let n = self.num_sites();
+        writeln!(f, "nqubits: {}", n)?;
+        for pg in &self.gates {
+            if pg.control_locs.is_empty() {
+                writeln!(f, "  {} @ q[{}]", pg.gate, format_locs(&pg.target_locs))?;
+            } else {
+                writeln!(f, "  C(q[{}]) {} @ q[{}]",
+                    format_locs(&pg.control_locs),
+                    pg.gate,
+                    format_locs(&pg.target_locs))?;
+            }
+        }
+        Ok(())
+    }
+}
+
+fn format_locs(locs: &[usize]) -> String {
+    locs.iter().map(|l| l.to_string()).collect::<Vec<_>>().join(", ")
+}
+
 /// Place a gate on target locations (no controls).
 ///
 /// Equivalent to Yao.jl's `put(n, locs => gate)`.
