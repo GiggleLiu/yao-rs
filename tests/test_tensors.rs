@@ -166,7 +166,7 @@ fn test_swap_gate() {
 fn test_custom_diagonal_qutrit() {
     // Custom diagonal gate on a qutrit (d=3)
     // Shape: (3,) with legs [Diag(0)]
-    let diag_vals = vec![c(1.0, 0.0), c(0.0, 1.0), c(-1.0, 0.0)];
+    let diag_vals = [c(1.0, 0.0), c(0.0, 1.0), c(-1.0, 0.0)];
     let mut mat = Array2::zeros((3, 3));
     for i in 0..3 {
         mat[[i, i]] = diag_vals[i];

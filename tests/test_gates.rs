@@ -524,3 +524,65 @@ fn test_t_squared_is_s() {
         }
     }
 }
+
+// === Phase gate tests ===
+
+#[test]
+fn test_phase_gate_matrix() {
+    let theta = PI / 3.0;
+    let m = Gate::Phase(theta).matrix(2);
+    let one = Complex64::new(1.0, 0.0);
+    let zero = Complex64::new(0.0, 0.0);
+    let phase = Complex64::from_polar(1.0, theta);
+    assert_complex_approx(m[[0, 0]], one, "Phase[0,0]");
+    assert_complex_approx(m[[0, 1]], zero, "Phase[0,1]");
+    assert_complex_approx(m[[1, 0]], zero, "Phase[1,0]");
+    assert_complex_approx(m[[1, 1]], phase, "Phase[1,1]");
+}
+
+#[test]
+fn test_phase_is_diagonal() {
+    assert!(Gate::Phase(1.0).is_diagonal());
+}
+
+#[test]
+fn test_phase_pi_is_z() {
+    // Phase(π) = diag(1, e^(iπ)) = diag(1, -1) = Z
+    let phase_pi = Gate::Phase(PI).matrix(2);
+    let z = Gate::Z.matrix(2);
+    for i in 0..2 {
+        for j in 0..2 {
+            assert_complex_approx(phase_pi[[i, j]], z[[i, j]], &format!("Phase(π)[{},{}]", i, j));
+        }
+    }
+}
+
+#[test]
+fn test_phase_pi_over_2_is_s() {
+    // Phase(π/2) = diag(1, i) = S
+    let phase = Gate::Phase(PI / 2.0).matrix(2);
+    let s = Gate::S.matrix(2);
+    for i in 0..2 {
+        for j in 0..2 {
+            assert_complex_approx(phase[[i, j]], s[[i, j]], &format!("Phase(π/2)[{},{}]", i, j));
+        }
+    }
+}
+
+#[test]
+fn test_phase_pi_over_4_is_t() {
+    // Phase(π/4) = diag(1, e^(iπ/4)) = T
+    let phase = Gate::Phase(FRAC_PI_4).matrix(2);
+    let t = Gate::T.matrix(2);
+    for i in 0..2 {
+        for j in 0..2 {
+            assert_complex_approx(phase[[i, j]], t[[i, j]], &format!("Phase(π/4)[{},{}]", i, j));
+        }
+    }
+}
+
+#[test]
+#[should_panic(expected = "Named gates only support d=2")]
+fn test_phase_gate_wrong_dimension() {
+    Gate::Phase(1.0).matrix(3);
+}

@@ -12,6 +12,8 @@ pub enum Gate {
     S,
     T,
     SWAP,
+    /// Phase gate: diag(1, e^(iθ)). Equivalent to Yao.jl's `shift(θ)`.
+    Phase(f64),
     Rx(f64),
     Ry(f64),
     Rz(f64),
@@ -61,7 +63,7 @@ impl Gate {
     /// Returns whether the gate is diagonal.
     pub fn is_diagonal(&self) -> bool {
         match self {
-            Gate::Z | Gate::S | Gate::T | Gate::Rz(_) => true,
+            Gate::Z | Gate::S | Gate::T | Gate::Phase(_) | Gate::Rz(_) => true,
             Gate::Custom { is_diagonal, .. } => *is_diagonal,
             _ => false,
         }
@@ -106,6 +108,10 @@ impl Gate {
                 m[[2, 1]] = one; // |10> -> |01>
                 m[[3, 3]] = one; // |11> -> |11>
                 m
+            }
+            Gate::Phase(theta) => {
+                let phase = Complex64::from_polar(1.0, *theta);
+                Array2::from_shape_vec((2, 2), vec![one, zero, zero, phase]).unwrap()
             }
             Gate::Rx(theta) => {
                 let cos = Complex64::new((theta / 2.0).cos(), 0.0);
