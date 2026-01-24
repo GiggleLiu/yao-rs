@@ -1,49 +1,68 @@
-.PHONY: test test-verbose clippy fmt check doc doc-serve doc-open clean example-qft
+.DEFAULT_GOAL := help
+.PHONY: help build build-release check fmt fmt-check clippy test check-all clean doc doc-serve doc-open rustdoc example-qft
 
-# Run all tests
-test:
-	cargo test
+CARGO ?= cargo
+DOC_PORT ?= 3001
+DOC_HOST ?= 127.0.0.1
 
-# Run tests with verbose output
-test-verbose:
-	cargo test -- --nocapture
+help:
+	@printf "Rust targets:\n"
+	@printf "  build         Build the project\n"
+	@printf "  build-release Build release binary\n"
+	@printf "  check         Run cargo check\n"
+	@printf "  fmt           Format code\n"
+	@printf "  fmt-check     Check formatting\n"
+	@printf "  clippy        Run clippy (deny warnings)\n"
+	@printf "  test          Run the test suite\n"
+	@printf "  check-all     Run fmt-check, clippy, and test\n"
+	@printf "  clean         Clean build artifacts\n"
+	@printf "\nDocumentation:\n"
+	@printf "  doc           Build mdBook documentation\n"
+	@printf "  doc-serve     Serve mdBook at http://%s:%s\n" "$(DOC_HOST)" "$(DOC_PORT)"
+	@printf "  doc-open      Build and open mdBook in browser\n"
+	@printf "  rustdoc       Build Rust API docs\n"
+	@printf "\nExamples:\n"
+	@printf "  example-qft   Run the QFT example\n"
 
-# Run clippy lints
-clippy:
-	cargo clippy -- -D warnings
+build:
+	$(CARGO) build
 
-# Format code
+build-release:
+	$(CARGO) build --release
+
+check:
+	$(CARGO) check
+
 fmt:
-	cargo fmt
+	$(CARGO) fmt
 
-# Check formatting without modifying
 fmt-check:
-	cargo fmt -- --check
+	$(CARGO) fmt -- --check
 
-# Full check: format, clippy, tests
-check: fmt-check clippy test
+clippy:
+	$(CARGO) clippy --all-targets --all-features -- -D warnings
 
-# Build mdBook documentation
+test:
+	$(CARGO) test --all-features
+
+check-all: fmt-check clippy test
+	@echo "All checks passed."
+
 doc:
 	mdbook build docs
 
-# Serve mdBook documentation locally
 doc-serve:
-	mdbook serve docs
+	mdbook serve docs -p $(DOC_PORT) -n $(DOC_HOST)
 
-# Open mdBook documentation in browser
 doc-open: doc
 	open docs/book/index.html 2>/dev/null || xdg-open docs/book/index.html
 
-# Build Rust API docs
 rustdoc:
-	cargo doc --no-deps
+	$(CARGO) doc --no-deps --all-features --open
 
-# Run the QFT example
 example-qft:
-	cargo run --example qft
+	$(CARGO) run --example qft
 
-# Clean build artifacts
 clean:
-	cargo clean
+	$(CARGO) clean
 	rm -rf docs/book
