@@ -1,0 +1,12 @@
+{
+  "num_qubits": 3,
+  "gates": [
+    { "gate": "H", "targets": [0] },
+    { "gate": "Phase", "params": [1.5707963267948966], "targets": [1], "controls": [0], "control_configs": [true] },
+    { "gate": "Phase", "params": [0.7853981633974483], "targets": [2], "controls": [0], "control_configs": [true] },
+    { "gate": "H", "targets": [1] },
+    { "gate": "Phase", "params": [1.5707963267948966], "targets": [2], "controls": [1], "control_configs": [true] },
+    { "gate": "H", "targets": [2] },
+    { "gate": "SWAP", "targets": [0, 2] }
+  ]
+}
