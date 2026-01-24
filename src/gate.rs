@@ -17,6 +17,14 @@ pub enum Gate {
     Rx(f64),
     Ry(f64),
     Rz(f64),
+    /// √X gate: SqrtX² = X
+    SqrtX,
+    /// √Y gate: SqrtY² = Y
+    SqrtY,
+    /// √W gate: rot((X+Y)/√2, π/2), non-Clifford
+    SqrtW,
+    /// iSWAP gate: two-qubit
+    ISWAP,
     Custom {
         matrix: Array2<Complex64>,
         is_diagonal: bool,
@@ -42,7 +50,7 @@ impl Gate {
     /// Returns the number of sites (qubits) the gate acts on.
     pub fn num_sites(&self, d: usize) -> usize {
         match self {
-            Gate::SWAP => 2,
+            Gate::SWAP | Gate::ISWAP => 2,
             Gate::Custom { matrix, .. } => {
                 let dim = matrix.nrows();
                 assert_eq!(matrix.nrows(), matrix.ncols(),
@@ -129,6 +137,54 @@ impl Gate {
                 let phase_neg = Complex64::from_polar(1.0, -theta / 2.0);
                 let phase_pos = Complex64::from_polar(1.0, theta / 2.0);
                 Array2::from_shape_vec((2, 2), vec![phase_neg, zero, zero, phase_pos]).unwrap()
+            }
+            Gate::SqrtX => {
+                // (1+i)/2 * [[1, -i], [-i, 1]]
+                let f = Complex64::new(0.5, 0.5); // (1+i)/2
+                Array2::from_shape_vec((2, 2), vec![
+                    f * one,
+                    f * neg_i,
+                    f * neg_i,
+                    f * one,
+                ]).unwrap()
+            }
+            Gate::SqrtY => {
+                // (1+i)/2 * [[1, -1], [1, 1]]
+                let f = Complex64::new(0.5, 0.5); // (1+i)/2
+                Array2::from_shape_vec((2, 2), vec![
+                    f * one,
+                    f * neg_one,
+                    f * one,
+                    f * one,
+                ]).unwrap()
+            }
+            Gate::SqrtW => {
+                // cos(π/4)*I - i*sin(π/4)*G where G = (X+Y)/√2
+                // G = [[0, (1-i)/√2], [(1+i)/√2, 0]]
+                // cos(π/4) = sin(π/4) = 1/√2
+                let cos_val = Complex64::new(FRAC_1_SQRT_2, 0.0);
+                let neg_i_sin = Complex64::new(0.0, -FRAC_1_SQRT_2); // -i * sin(π/4)
+                // G[0,1] = (1-i)/√2, G[1,0] = (1+i)/√2
+                let g01 = Complex64::new(FRAC_1_SQRT_2, -FRAC_1_SQRT_2);
+                let g10 = Complex64::new(FRAC_1_SQRT_2, FRAC_1_SQRT_2);
+                // M = cos_val * I - i*sin_val * G
+                // M[0,0] = cos_val, M[1,1] = cos_val
+                // M[0,1] = neg_i_sin * G[0,1], M[1,0] = neg_i_sin * G[1,0]
+                Array2::from_shape_vec((2, 2), vec![
+                    cos_val,
+                    neg_i_sin * g01,
+                    neg_i_sin * g10,
+                    cos_val,
+                ]).unwrap()
+            }
+            Gate::ISWAP => {
+                // 4x4 matrix: diag(1, 0, 0, 1) with m[1,2]=i, m[2,1]=i
+                let mut m = Array2::zeros((4, 4));
+                m[[0, 0]] = one;
+                m[[1, 2]] = i;
+                m[[2, 1]] = i;
+                m[[3, 3]] = one;
+                m
             }
             Gate::Custom { .. } => unreachable!(),
         }
