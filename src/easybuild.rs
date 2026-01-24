@@ -633,3 +633,60 @@ pub fn rand_google53(depth: usize, nbits: usize, rng: &mut impl Rng) -> Circuit 
 
     Circuit::new(vec![2; n], gates).unwrap()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use num_complex::Complex64;
+    use ndarray::Array2;
+
+    #[test]
+    fn test_mat_mul_identity() {
+        let one = Complex64::new(1.0, 0.0);
+        let zero = Complex64::new(0.0, 0.0);
+        let id = Array2::from_shape_vec((2, 2), vec![one, zero, zero, one]).unwrap();
+        let a = Array2::from_shape_vec((2, 2), vec![
+            Complex64::new(1.0, 2.0), Complex64::new(3.0, 4.0),
+            Complex64::new(5.0, 6.0), Complex64::new(7.0, 8.0),
+        ]).unwrap();
+
+        let result = mat_mul(&a, &id, 2);
+        for i in 0..2 {
+            for j in 0..2 {
+                assert!((result[[i, j]] - a[[i, j]]).norm() < 1e-10);
+            }
+        }
+    }
+
+    #[test]
+    fn test_mat_mul_known_product() {
+        // [[1, 2], [3, 4]] * [[5, 6], [7, 8]] = [[19, 22], [43, 50]]
+        let a = Array2::from_shape_vec((2, 2), vec![
+            Complex64::new(1.0, 0.0), Complex64::new(2.0, 0.0),
+            Complex64::new(3.0, 0.0), Complex64::new(4.0, 0.0),
+        ]).unwrap();
+        let b = Array2::from_shape_vec((2, 2), vec![
+            Complex64::new(5.0, 0.0), Complex64::new(6.0, 0.0),
+            Complex64::new(7.0, 0.0), Complex64::new(8.0, 0.0),
+        ]).unwrap();
+        let result = mat_mul(&a, &b, 2);
+        assert!((result[[0, 0]] - Complex64::new(19.0, 0.0)).norm() < 1e-10);
+        assert!((result[[0, 1]] - Complex64::new(22.0, 0.0)).norm() < 1e-10);
+        assert!((result[[1, 0]] - Complex64::new(43.0, 0.0)).norm() < 1e-10);
+        assert!((result[[1, 1]] - Complex64::new(50.0, 0.0)).norm() < 1e-10);
+    }
+
+    #[test]
+    fn test_mat_mul_complex() {
+        // Pauli Y = [[0, -i], [i, 0]], Y^2 = I
+        let i = Complex64::new(0.0, 1.0);
+        let one = Complex64::new(1.0, 0.0);
+        let zero = Complex64::new(0.0, 0.0);
+        let y = Array2::from_shape_vec((2, 2), vec![zero, -i, i, zero]).unwrap();
+        let result = mat_mul(&y, &y, 2);
+        assert!((result[[0, 0]] - one).norm() < 1e-10);
+        assert!((result[[0, 1]] - zero).norm() < 1e-10);
+        assert!((result[[1, 0]] - zero).norm() < 1e-10);
+        assert!((result[[1, 1]] - one).norm() < 1e-10);
+    }
+}

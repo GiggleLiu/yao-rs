@@ -1,6 +1,6 @@
 use approx::assert_abs_diff_eq;
 use num_complex::Complex64;
-use std::f64::consts::{FRAC_PI_2, PI};
+use std::f64::consts::{FRAC_1_SQRT_2, FRAC_PI_2, PI};
 use yao_rs::gate::Gate;
 
 /// Helper: check two complex numbers are approximately equal.
@@ -217,4 +217,85 @@ fn test_is_diagonal_new_gates() {
     assert!(!Gate::SqrtW.is_diagonal());
     assert!(!Gate::ISWAP.is_diagonal());
     assert!(!Gate::FSim(1.0, 2.0).is_diagonal());
+}
+
+// ============================================================
+// Test 11: SqrtY exact matrix values
+// ============================================================
+
+#[test]
+fn test_sqrty_matrix_values() {
+    let m = Gate::SqrtY.matrix(2);
+    assert_eq!(m.dim(), (2, 2));
+
+    // Expected: (1+i)/2 * [[1, -1], [1, 1]]
+    let f = Complex64::new(0.5, 0.5); // (1+i)/2
+    let one = Complex64::new(1.0, 0.0);
+    let neg_one = Complex64::new(-1.0, 0.0);
+
+    assert_complex_eq(m[[0, 0]], f * one, "SqrtY[0,0]");
+    assert_complex_eq(m[[0, 1]], f * neg_one, "SqrtY[0,1]");
+    assert_complex_eq(m[[1, 0]], f * one, "SqrtY[1,0]");
+    assert_complex_eq(m[[1, 1]], f * one, "SqrtY[1,1]");
+}
+
+// ============================================================
+// Test 12: SqrtW exact matrix values
+// ============================================================
+
+#[test]
+fn test_sqrtw_matrix_values() {
+    let m = Gate::SqrtW.matrix(2);
+    assert_eq!(m.dim(), (2, 2));
+
+    // SqrtW = cos(π/4)*I - i*sin(π/4)*G where G = (X+Y)/√2
+    // G = [[0, (1-i)/√2], [(1+i)/√2, 0]]
+    // cos(π/4) = sin(π/4) = 1/√2
+    // neg_i_sin = -i/√2
+    //
+    // M[0,0] = 1/√2
+    // M[0,1] = (-i/√2) * (1-i)/√2 = (-i + i²)/(√2·√2) = (-1-i)/2 = (-0.5, -0.5)
+    // M[1,0] = (-i/√2) * (1+i)/√2 = (-i - i²)/(√2·√2) = (1-i)/2 = (0.5, -0.5)
+    // M[1,1] = 1/√2
+    let diag = Complex64::new(FRAC_1_SQRT_2, 0.0);
+    let m01 = Complex64::new(-0.5, -0.5);
+    let m10 = Complex64::new(0.5, -0.5);
+
+    assert_complex_eq(m[[0, 0]], diag, "SqrtW[0,0]");
+    assert_complex_eq(m[[0, 1]], m01, "SqrtW[0,1]");
+    assert_complex_eq(m[[1, 0]], m10, "SqrtW[1,0]");
+    assert_complex_eq(m[[1, 1]], diag, "SqrtW[1,1]");
+}
+
+// ============================================================
+// Test 13: SqrtW^2 squares to W = rot((X+Y)/√2, π)
+// ============================================================
+
+#[test]
+fn test_sqrtw_squared_properties() {
+    let sqrtw = Gate::SqrtW.matrix(2);
+    let w = sqrtw.dot(&sqrtw);
+
+    // W^2 = rot((X+Y)/√2, π) which is -i*(X+Y)/√2
+    // Since W is a π rotation around (X+Y)/√2 axis:
+    // W = cos(π/2)*I - i*sin(π/2)*G = -i*G
+    // W[0,0] = 0, W[1,1] = 0
+    // W[0,1] = -i*(1-i)/√2 = (-i+i²)/√2 = (-1-i)/√2
+    // W[1,0] = -i*(1+i)/√2 = (-i-i²)/√2 = (1-i)/√2
+    let zero = Complex64::new(0.0, 0.0);
+    assert_complex_eq(w[[0, 0]], zero, "W[0,0]");
+    assert_complex_eq(w[[1, 1]], zero, "W[1,1]");
+
+    // W should be unitary
+    assert_unitary(&w, 2);
+}
+
+// ============================================================
+// Test 14: SqrtX/SqrtY unitarity
+// ============================================================
+
+#[test]
+fn test_sqrtx_sqrty_are_unitary() {
+    assert_unitary(&Gate::SqrtX.matrix(2), 2);
+    assert_unitary(&Gate::SqrtY.matrix(2), 2);
 }
