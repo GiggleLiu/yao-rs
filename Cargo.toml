@@ -1,0 +1,12 @@
+[package]
+name = "yao-rs"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+num-complex = "0.4"
+ndarray = "0.16"
+omeco = "0.1"
+
+[dev-dependencies]
+approx = "0.5"
