@@ -1,10 +1,15 @@
 use ndarray::Array2;
 use num_complex::Complex64;
 
+use approx::assert_abs_diff_eq;
+use rand::SeedableRng;
+use rand::rngs::StdRng;
+
 use yao_rs::apply::apply;
 use yao_rs::easybuild::{
     general_u2, general_u4, hadamard_test_circuit, pair_ring, pair_square,
-    phase_estimation_circuit, qft_circuit, swap_test_circuit, variational_circuit,
+    phase_estimation_circuit, qft_circuit, rand_google53, rand_supremacy2d,
+    swap_test_circuit, variational_circuit,
 };
 use yao_rs::gate::Gate;
 use yao_rs::state::State;
@@ -235,4 +240,37 @@ fn test_phase_estimation_circuit() {
         "Output should be normalized, got norm = {}",
         result.norm()
     );
+}
+
+// =============================================================================
+// Random Circuit Builder Tests
+// =============================================================================
+
+#[test]
+fn test_rand_supremacy2d_structure() {
+    let mut rng = StdRng::seed_from_u64(42);
+    let circuit = rand_supremacy2d(3, 3, 5, &mut rng);
+    assert_eq!(circuit.num_sites(), 9);
+    let state = State::zero_state(&vec![2; 9]);
+    let result = apply(&circuit, &state);
+    assert_abs_diff_eq!(result.norm(), 1.0, epsilon = 1e-10);
+}
+
+#[test]
+fn test_rand_google53_structure() {
+    let mut rng = StdRng::seed_from_u64(42);
+    let circuit = rand_google53(4, 10, &mut rng);
+    assert_eq!(circuit.num_sites(), 10);
+    let state = State::zero_state(&vec![2; 10]);
+    let result = apply(&circuit, &state);
+    assert_abs_diff_eq!(result.norm(), 1.0, epsilon = 1e-10);
+}
+
+#[test]
+fn test_rand_supremacy2d_deterministic_with_seed() {
+    let mut rng1 = StdRng::seed_from_u64(123);
+    let mut rng2 = StdRng::seed_from_u64(123);
+    let c1 = rand_supremacy2d(2, 2, 3, &mut rng1);
+    let c2 = rand_supremacy2d(2, 2, 3, &mut rng2);
+    assert_eq!(c1.gates.len(), c2.gates.len());
 }

@@ -2,6 +2,7 @@ use std::f64::consts::PI;
 
 use ndarray::Array2;
 use num_complex::Complex64;
+use rand::Rng;
 
 use crate::circuit::{Circuit, PositionedGate, control, put};
 use crate::gate::Gate;
@@ -302,4 +303,334 @@ fn mat_mul(a: &Array2<Complex64>, b: &Array2<Complex64>, dim: usize) -> Array2<C
         }
     }
     result
+}
+
+// =============================================================================
+// Random Circuit Builders
+// =============================================================================
+
+/// Generate entanglement patterns for the supremacy circuit on an nx x ny grid.
+///
+/// Returns 4 patterns of CZ pairs:
+/// - Horizontal even columns
+/// - Horizontal odd columns
+/// - Vertical even rows
+/// - Vertical odd rows
+fn pair_supremacy(nx: usize, ny: usize) -> Vec<Vec<(usize, usize)>> {
+    let mut patterns: Vec<Vec<(usize, usize)>> = Vec::new();
+
+    // Pattern 0: Horizontal, even columns (col % 2 == 0)
+    let mut p = Vec::new();
+    for row in 0..ny {
+        for col in (0..nx - 1).step_by(2) {
+            let idx1 = row * nx + col;
+            let idx2 = row * nx + col + 1;
+            p.push((idx1, idx2));
+        }
+    }
+    patterns.push(p);
+
+    // Pattern 1: Horizontal, odd columns (col % 2 == 1)
+    let mut p = Vec::new();
+    for row in 0..ny {
+        for col in (1..nx - 1).step_by(2) {
+            let idx1 = row * nx + col;
+            let idx2 = row * nx + col + 1;
+            p.push((idx1, idx2));
+        }
+    }
+    patterns.push(p);
+
+    // Pattern 2: Vertical, even rows (row % 2 == 0)
+    let mut p = Vec::new();
+    for row in (0..ny - 1).step_by(2) {
+        for col in 0..nx {
+            let idx1 = row * nx + col;
+            let idx2 = (row + 1) * nx + col;
+            p.push((idx1, idx2));
+        }
+    }
+    patterns.push(p);
+
+    // Pattern 3: Vertical, odd rows (row % 2 == 1)
+    let mut p = Vec::new();
+    for row in (1..ny - 1).step_by(2) {
+        for col in 0..nx {
+            let idx1 = row * nx + col;
+            let idx2 = (row + 1) * nx + col;
+            p.push((idx1, idx2));
+        }
+    }
+    patterns.push(p);
+
+    patterns
+}
+
+/// Build a random supremacy circuit on an nx x ny qubit grid with given depth.
+///
+/// Structure:
+/// 1. Initial layer: H on all qubits
+/// 2. For each of depth-2 middle layers:
+///    - CZ entangler on cycling pattern from pair_supremacy
+///    - Random single-qubit gate from {T, SqrtX, SqrtY} on non-entangled qubits
+///    - T must be applied first before other gates on a qubit; don't repeat the same gate
+/// 3. Final layer: H on all qubits (if depth > 1)
+pub fn rand_supremacy2d(nx: usize, ny: usize, depth: usize, rng: &mut impl Rng) -> Circuit {
+    let n = nx * ny;
+    let mut gates: Vec<PositionedGate> = Vec::new();
+    let patterns = pair_supremacy(nx, ny);
+    let num_patterns = patterns.len();
+
+    // Track last gate applied to each qubit (0=none, 1=T, 2=SqrtX, 3=SqrtY)
+    let mut last_gate: Vec<u8> = vec![0; n];
+
+    // Layer 0: H on all qubits
+    for q in 0..n {
+        gates.push(put(vec![q], Gate::H));
+    }
+
+    // Middle layers
+    if depth > 2 {
+        for layer in 0..(depth - 2) {
+            let pattern_idx = layer % num_patterns;
+            let pattern = &patterns[pattern_idx];
+
+            // Track which qubits are entangled in this layer
+            let mut entangled = vec![false; n];
+            for &(q1, q2) in pattern.iter() {
+                entangled[q1] = true;
+                entangled[q2] = true;
+                // CZ = control(vec![i], vec![j], Gate::Z)
+                gates.push(control(vec![q1], vec![q2], Gate::Z));
+            }
+
+            // Apply random single-qubit gates on non-entangled qubits
+            for q in 0..n {
+                if !entangled[q] {
+                    let gate = pick_supremacy_gate(&mut last_gate[q], rng);
+                    gates.push(put(vec![q], gate));
+                }
+            }
+        }
+    }
+
+    // Final layer: H on all qubits (if depth > 1)
+    if depth > 1 {
+        for q in 0..n {
+            gates.push(put(vec![q], Gate::H));
+        }
+    }
+
+    Circuit::new(vec![2; n], gates).unwrap()
+}
+
+/// Pick a random single-qubit gate for the supremacy circuit.
+/// Rules: T must be applied first. Don't repeat the same gate.
+/// Options: T=1, SqrtX=2, SqrtY=3
+fn pick_supremacy_gate(last: &mut u8, rng: &mut impl Rng) -> Gate {
+    if *last == 0 {
+        // First gate must be T
+        *last = 1;
+        Gate::T
+    } else {
+        // Pick from {T, SqrtX, SqrtY} but not the same as last
+        let choices: Vec<u8> = vec![1, 2, 3].into_iter().filter(|&x| x != *last).collect();
+        let idx = rng.gen_range(0..choices.len());
+        let chosen = choices[idx];
+        *last = chosen;
+        match chosen {
+            1 => Gate::T,
+            2 => Gate::SqrtX,
+            _ => Gate::SqrtY,
+        }
+    }
+}
+
+/// Lattice53 represents the Sycamore-style 53-qubit topology.
+/// 5x12 grid with specific holes, column-major filling.
+struct Lattice53 {
+    /// Maps grid position (row, col) to qubit index, or None if hole
+    grid: Vec<Vec<Option<usize>>>,
+    /// Number of qubits actually used
+    nbits: usize,
+    /// Number of rows
+    nrows: usize,
+    /// Number of cols
+    ncols: usize,
+}
+
+impl Lattice53 {
+    /// Create a new Lattice53 with up to nbits qubits.
+    /// 5x12 grid, column-major filling with holes:
+    /// - row 4 (0-indexed) at odd columns (1-indexed: 1,3,5,7,9,11 => 0-indexed: 0,2,4,6,8,10)
+    /// - position [0, 6] (row=0, col=6)
+    fn new(nbits: usize) -> Self {
+        let nrows = 5;
+        let ncols = 12;
+        let mut grid = vec![vec![None; ncols]; nrows];
+
+        // Determine which positions are holes
+        let mut is_hole = vec![vec![false; ncols]; nrows];
+
+        // row 4 at even columns (0-indexed columns: 0, 2, 4, 6, 8, 10)
+        for col in (0..ncols).step_by(2) {
+            is_hole[4][col] = true;
+        }
+        // position [0, 6]
+        is_hole[0][6] = true;
+
+        // Fill column-major up to nbits
+        let mut count = 0;
+        for col in 0..ncols {
+            for row in 0..nrows {
+                if count >= nbits {
+                    break;
+                }
+                if !is_hole[row][col] {
+                    grid[row][col] = Some(count);
+                    count += 1;
+                }
+            }
+            if count >= nbits {
+                break;
+            }
+        }
+
+        Lattice53 {
+            grid,
+            nbits: count.min(nbits),
+            nrows,
+            ncols,
+        }
+    }
+
+    /// Get qubit pairs for a given pattern character.
+    /// Patterns A-H connect specific pairs based on direction and offset.
+    fn pattern(&self, chr: char) -> Vec<(usize, usize)> {
+        let mut pairs = Vec::new();
+        match chr {
+            // A: vertical connections at even columns
+            'A' => {
+                for col in (0..self.ncols).step_by(2) {
+                    for row in (0..self.nrows - 1).step_by(2) {
+                        self.add_pair(&mut pairs, row, col, row + 1, col);
+                    }
+                }
+            }
+            // B: vertical connections at odd columns
+            'B' => {
+                for col in (1..self.ncols).step_by(2) {
+                    for row in (0..self.nrows - 1).step_by(2) {
+                        self.add_pair(&mut pairs, row, col, row + 1, col);
+                    }
+                }
+            }
+            // C: horizontal connections at even rows
+            'C' => {
+                for row in (0..self.nrows).step_by(2) {
+                    for col in (0..self.ncols - 1).step_by(2) {
+                        self.add_pair(&mut pairs, row, col, row, col + 1);
+                    }
+                }
+            }
+            // D: horizontal connections at odd rows
+            'D' => {
+                for row in (1..self.nrows).step_by(2) {
+                    for col in (0..self.ncols - 1).step_by(2) {
+                        self.add_pair(&mut pairs, row, col, row, col + 1);
+                    }
+                }
+            }
+            // E: vertical connections at even columns, offset by 1
+            'E' => {
+                for col in (0..self.ncols).step_by(2) {
+                    for row in (1..self.nrows - 1).step_by(2) {
+                        self.add_pair(&mut pairs, row, col, row + 1, col);
+                    }
+                }
+            }
+            // F: vertical connections at odd columns, offset by 1
+            'F' => {
+                for col in (1..self.ncols).step_by(2) {
+                    for row in (1..self.nrows - 1).step_by(2) {
+                        self.add_pair(&mut pairs, row, col, row + 1, col);
+                    }
+                }
+            }
+            // G: horizontal connections at even rows, offset by 1
+            'G' => {
+                for row in (0..self.nrows).step_by(2) {
+                    for col in (1..self.ncols - 1).step_by(2) {
+                        self.add_pair(&mut pairs, row, col, row, col + 1);
+                    }
+                }
+            }
+            // H: horizontal connections at odd rows, offset by 1
+            'H' => {
+                for row in (1..self.nrows).step_by(2) {
+                    for col in (1..self.ncols - 1).step_by(2) {
+                        self.add_pair(&mut pairs, row, col, row, col + 1);
+                    }
+                }
+            }
+            _ => {}
+        }
+        pairs
+    }
+
+    /// Helper to add a qubit pair if both positions have valid qubits.
+    fn add_pair(
+        &self,
+        pairs: &mut Vec<(usize, usize)>,
+        r1: usize,
+        c1: usize,
+        r2: usize,
+        c2: usize,
+    ) {
+        if r1 < self.nrows && c1 < self.ncols && r2 < self.nrows && c2 < self.ncols {
+            if let (Some(q1), Some(q2)) = (self.grid[r1][c1], self.grid[r2][c2]) {
+                if q1 < self.nbits && q2 < self.nbits {
+                    pairs.push((q1, q2));
+                }
+            }
+        }
+    }
+}
+
+/// Build a random Google-53 (Sycamore-style) circuit.
+///
+/// For each layer in 0..depth:
+/// - Random single-qubit gate from {SqrtX, SqrtY, SqrtW} on each qubit
+/// - FSim(pi/2, pi/6) entanglers on pattern pairs
+///
+/// Pattern cycles through: ['A', 'B', 'C', 'D', 'C', 'D', 'A', 'B']
+pub fn rand_google53(depth: usize, nbits: usize, rng: &mut impl Rng) -> Circuit {
+    let lattice = Lattice53::new(nbits);
+    let n = lattice.nbits;
+    let mut gates: Vec<PositionedGate> = Vec::new();
+
+    let pattern_cycle = ['A', 'B', 'C', 'D', 'C', 'D', 'A', 'B'];
+    let single_gates = [Gate::SqrtX, Gate::SqrtY, Gate::SqrtW];
+
+    for layer in 0..depth {
+        // Random single-qubit gates on each qubit
+        for q in 0..n {
+            let idx = rng.gen_range(0..single_gates.len());
+            gates.push(put(vec![q], single_gates[idx].clone()));
+        }
+
+        // FSim entanglers on pattern pairs
+        let pattern_char = pattern_cycle[layer % pattern_cycle.len()];
+        let pairs = lattice.pattern(pattern_char);
+        for (q1, q2) in pairs {
+            gates.push(PositionedGate::new(
+                Gate::FSim(PI / 2.0, PI / 6.0),
+                vec![q1, q2],
+                vec![],
+                vec![],
+            ));
+        }
+    }
+
+    Circuit::new(vec![2; n], gates).unwrap()
 }
