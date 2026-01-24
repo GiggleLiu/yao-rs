@@ -1,4 +1,5 @@
 #import "circuit.typ": render-circuit
+#set page(width: auto, height: auto, margin: 5pt)
 
 // Custom gate styling
 #let my-style(gate-name) = {

@@ -26,7 +26,9 @@
     let style = gate-style(gate-name)
     let fill = style.at("fill", default: none)
     // For parametric gates, default label includes the angle
-    let display-label = if params != none and style.at("label", default: none) == none {
+    let display-label = if gate-name == "Phase" and params != none and style.at("label", default: none) == none {
+      $phi.alt (#str(round2(params.at(0))))$
+    } else if params != none and style.at("label", default: none) == none {
       param-label(label, params)
     } else {
       style.at("label", default: label)
