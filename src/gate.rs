@@ -17,10 +17,45 @@ pub enum Gate {
     Rx(f64),
     Ry(f64),
     Rz(f64),
+    /// √X gate: SqrtX² = X
+    SqrtX,
+    /// √Y gate: SqrtY² = Y
+    SqrtY,
+    /// √W gate: rot((X+Y)/√2, π/2), non-Clifford
+    SqrtW,
+    /// iSWAP gate: two-qubit
+    ISWAP,
+    /// FSim gate: two-qubit, parameterized by (theta, phi)
+    FSim(f64, f64),
     Custom {
         matrix: Array2<Complex64>,
         is_diagonal: bool,
+        label: String,
     },
+}
+
+impl std::fmt::Display for Gate {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Gate::X => write!(f, "X"),
+            Gate::Y => write!(f, "Y"),
+            Gate::Z => write!(f, "Z"),
+            Gate::H => write!(f, "H"),
+            Gate::S => write!(f, "S"),
+            Gate::T => write!(f, "T"),
+            Gate::SWAP => write!(f, "SWAP"),
+            Gate::SqrtX => write!(f, "SqrtX"),
+            Gate::SqrtY => write!(f, "SqrtY"),
+            Gate::SqrtW => write!(f, "SqrtW"),
+            Gate::ISWAP => write!(f, "ISWAP"),
+            Gate::Phase(theta) => write!(f, "Phase({:.4})", theta),
+            Gate::Rx(theta) => write!(f, "Rx({:.4})", theta),
+            Gate::Ry(theta) => write!(f, "Ry({:.4})", theta),
+            Gate::Rz(theta) => write!(f, "Rz({:.4})", theta),
+            Gate::FSim(theta, phi) => write!(f, "FSim({:.4}, {:.4})", theta, phi),
+            Gate::Custom { label, .. } => write!(f, "{}", label),
+        }
+    }
 }
 
 impl Gate {
@@ -41,7 +76,7 @@ impl Gate {
     /// Returns the number of sites (qubits) the gate acts on.
     pub fn num_sites(&self, d: usize) -> usize {
         match self {
-            Gate::SWAP => 2,
+            Gate::SWAP | Gate::ISWAP | Gate::FSim(_, _) => 2,
             Gate::Custom { matrix, .. } => {
                 let dim = matrix.nrows();
                 assert_eq!(matrix.nrows(), matrix.ncols(),
@@ -128,6 +163,71 @@ impl Gate {
                 let phase_neg = Complex64::from_polar(1.0, -theta / 2.0);
                 let phase_pos = Complex64::from_polar(1.0, theta / 2.0);
                 Array2::from_shape_vec((2, 2), vec![phase_neg, zero, zero, phase_pos]).unwrap()
+            }
+            Gate::SqrtX => {
+                // (1+i)/2 * [[1, -i], [-i, 1]]
+                let f = Complex64::new(0.5, 0.5); // (1+i)/2
+                Array2::from_shape_vec((2, 2), vec![
+                    f * one,
+                    f * neg_i,
+                    f * neg_i,
+                    f * one,
+                ]).unwrap()
+            }
+            Gate::SqrtY => {
+                // (1+i)/2 * [[1, -1], [1, 1]]
+                let f = Complex64::new(0.5, 0.5); // (1+i)/2
+                Array2::from_shape_vec((2, 2), vec![
+                    f * one,
+                    f * neg_one,
+                    f * one,
+                    f * one,
+                ]).unwrap()
+            }
+            Gate::SqrtW => {
+                // cos(π/4)*I - i*sin(π/4)*G where G = (X+Y)/√2
+                // G = [[0, (1-i)/√2], [(1+i)/√2, 0]]
+                // cos(π/4) = sin(π/4) = 1/√2
+                let cos_val = Complex64::new(FRAC_1_SQRT_2, 0.0);
+                let neg_i_sin = Complex64::new(0.0, -FRAC_1_SQRT_2); // -i * sin(π/4)
+                // G[0,1] = (1-i)/√2, G[1,0] = (1+i)/√2
+                let g01 = Complex64::new(FRAC_1_SQRT_2, -FRAC_1_SQRT_2);
+                let g10 = Complex64::new(FRAC_1_SQRT_2, FRAC_1_SQRT_2);
+                // M = cos_val * I - i*sin_val * G
+                // M[0,0] = cos_val, M[1,1] = cos_val
+                // M[0,1] = neg_i_sin * G[0,1], M[1,0] = neg_i_sin * G[1,0]
+                Array2::from_shape_vec((2, 2), vec![
+                    cos_val,
+                    neg_i_sin * g01,
+                    neg_i_sin * g10,
+                    cos_val,
+                ]).unwrap()
+            }
+            Gate::ISWAP => {
+                // 4x4 matrix: diag(1, 0, 0, 1) with m[1,2]=i, m[2,1]=i
+                let mut m = Array2::zeros((4, 4));
+                m[[0, 0]] = one;
+                m[[1, 2]] = i;
+                m[[2, 1]] = i;
+                m[[3, 3]] = one;
+                m
+            }
+            Gate::FSim(theta, phi) => {
+                // [[1, 0, 0, 0],
+                //  [0, cos(θ), -i*sin(θ), 0],
+                //  [0, -i*sin(θ), cos(θ), 0],
+                //  [0, 0, 0, e^(-iφ)]]
+                let cos_theta = Complex64::new(theta.cos(), 0.0);
+                let neg_i_sin_theta = Complex64::new(0.0, -theta.sin());
+                let e_neg_i_phi = Complex64::from_polar(1.0, -phi);
+                let mut m = Array2::zeros((4, 4));
+                m[[0, 0]] = one;
+                m[[1, 1]] = cos_theta;
+                m[[1, 2]] = neg_i_sin_theta;
+                m[[2, 1]] = neg_i_sin_theta;
+                m[[2, 2]] = cos_theta;
+                m[[3, 3]] = e_neg_i_phi;
+                m
             }
             Gate::Custom { .. } => unreachable!(),
         }

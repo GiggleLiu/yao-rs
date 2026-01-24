@@ -212,6 +212,7 @@ fn test_custom_gate_matrix_passthrough() {
     let gate = Gate::Custom {
         matrix: custom_matrix.clone(),
         is_diagonal: true,
+        label: "custom_diagonal_2x2".to_string(),
     };
 
     let result = gate.matrix(2);
@@ -236,6 +237,7 @@ fn test_custom_gate_larger_matrix() {
     let gate = Gate::Custom {
         matrix: custom_matrix.clone(),
         is_diagonal: false,
+        label: "custom_4x4_identity".to_string(),
     };
 
     let result = gate.matrix(2);
@@ -336,6 +338,7 @@ fn test_num_sites_custom_2x2() {
     let gate = Gate::Custom {
         matrix: m,
         is_diagonal: true,
+        label: "test_2x2".to_string(),
     };
     assert_eq!(gate.num_sites(2), 1);
 }
@@ -351,6 +354,7 @@ fn test_num_sites_custom_4x4_d2() {
     let gate = Gate::Custom {
         matrix: m,
         is_diagonal: true,
+        label: "test_4x4".to_string(),
     };
     assert_eq!(gate.num_sites(2), 2);
 }
@@ -365,6 +369,7 @@ fn test_num_sites_custom_8x8_d2() {
     let gate = Gate::Custom {
         matrix: m,
         is_diagonal: false,
+        label: "test_8x8".to_string(),
     };
     assert_eq!(gate.num_sites(2), 3);
 }
@@ -380,6 +385,7 @@ fn test_num_sites_custom_9x9_d3() {
     let gate = Gate::Custom {
         matrix: m,
         is_diagonal: true,
+        label: "qutrit_9x9".to_string(),
     };
     assert_eq!(gate.num_sites(3), 2);
 }
@@ -416,6 +422,7 @@ fn test_is_diagonal_custom_true() {
     let gate = Gate::Custom {
         matrix: m,
         is_diagonal: true,
+        label: "diagonal_identity".to_string(),
     };
     assert!(gate.is_diagonal());
 }
@@ -428,6 +435,7 @@ fn test_is_diagonal_custom_false() {
     let gate = Gate::Custom {
         matrix: m,
         is_diagonal: false,
+        label: "non_diagonal_identity".to_string(),
     };
     assert!(!gate.is_diagonal());
 }
@@ -585,4 +593,46 @@ fn test_phase_pi_over_4_is_t() {
 #[should_panic(expected = "Named gates only support d=2")]
 fn test_phase_gate_wrong_dimension() {
     Gate::Phase(1.0).matrix(3);
+}
+
+// ============================================================
+// Gate Display tests
+// ============================================================
+
+#[test]
+fn test_gate_display_named() {
+    assert_eq!(format!("{}", Gate::X), "X");
+    assert_eq!(format!("{}", Gate::Y), "Y");
+    assert_eq!(format!("{}", Gate::Z), "Z");
+    assert_eq!(format!("{}", Gate::H), "H");
+    assert_eq!(format!("{}", Gate::S), "S");
+    assert_eq!(format!("{}", Gate::T), "T");
+    assert_eq!(format!("{}", Gate::SWAP), "SWAP");
+    assert_eq!(format!("{}", Gate::SqrtX), "SqrtX");
+    assert_eq!(format!("{}", Gate::SqrtY), "SqrtY");
+    assert_eq!(format!("{}", Gate::SqrtW), "SqrtW");
+    assert_eq!(format!("{}", Gate::ISWAP), "ISWAP");
+}
+
+#[test]
+fn test_gate_display_parametric() {
+    assert_eq!(format!("{}", Gate::Phase(1.5707963267948966)), "Phase(1.5708)");
+    assert_eq!(format!("{}", Gate::Rx(0.0)), "Rx(0.0000)");
+    assert_eq!(format!("{}", Gate::Ry(PI)), "Ry(3.1416)");
+    assert_eq!(format!("{}", Gate::Rz(0.5)), "Rz(0.5000)");
+    assert_eq!(format!("{}", Gate::FSim(1.0, 2.0)), "FSim(1.0000, 2.0000)");
+}
+
+#[test]
+fn test_gate_display_custom() {
+    let m = Array2::from_shape_vec((2, 2), vec![
+        Complex64::new(1.0, 0.0), Complex64::new(0.0, 0.0),
+        Complex64::new(0.0, 0.0), Complex64::new(1.0, 0.0),
+    ]).unwrap();
+    let gate = Gate::Custom {
+        matrix: m,
+        is_diagonal: true,
+        label: "MyGate".to_string(),
+    };
+    assert_eq!(format!("{}", gate), "MyGate");
 }

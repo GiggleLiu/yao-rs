@@ -174,6 +174,7 @@ fn test_size_dict_mixed_dimension_circuit() {
     let qutrit_diag_gate = Gate::Custom {
         matrix: qutrit_gate_matrix,
         is_diagonal: true,
+        label: "qutrit_diagonal_phase".to_string(),
     };
 
     // Non-diagonal custom gate for qutrit
@@ -186,6 +187,7 @@ fn test_size_dict_mixed_dimension_circuit() {
     let qutrit_non_diag_gate = Gate::Custom {
         matrix: qutrit_non_diag_matrix,
         is_diagonal: false,
+        label: "qutrit_permutation".to_string(),
     };
 
     // Circuit: site 0 is qubit (d=2), site 1 is qutrit (d=3)

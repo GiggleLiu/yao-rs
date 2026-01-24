@@ -11,8 +11,8 @@ use yao_rs::gate::Gate;
 fn test_positioned_gate_new() {
     let pg = PositionedGate::new(Gate::X, vec![0], vec![], vec![]);
     assert_eq!(pg.target_locs, vec![0]);
-    assert_eq!(pg.control_locs, vec![]);
-    assert_eq!(pg.control_configs, vec![]);
+    assert_eq!(pg.control_locs, Vec::<usize>::new());
+    assert_eq!(pg.control_configs, Vec::<bool>::new());
 }
 
 #[test]
@@ -80,6 +80,7 @@ fn test_valid_custom_qudit_gate_on_two_qutrits() {
     let gate = Gate::Custom {
         matrix: m,
         is_diagonal: true,
+        label: "qutrit_2site_identity".to_string(),
     };
     let pg = PositionedGate::new(gate, vec![0, 1], vec![], vec![]);
     let circuit = Circuit::new(vec![3, 3], vec![pg]);
@@ -219,6 +220,7 @@ fn test_invalid_matrix_size_mismatch() {
     let gate = Gate::Custom {
         matrix: m,
         is_diagonal: true,
+        label: "size_mismatch_4x4".to_string(),
     };
     let pg = PositionedGate::new(gate, vec![0], vec![], vec![]);
     let result = Circuit::new(vec![2, 2], vec![pg]);
@@ -381,6 +383,7 @@ fn test_valid_custom_single_qutrit_gate() {
     let gate = Gate::Custom {
         matrix: m,
         is_diagonal: true,
+        label: "qutrit_identity".to_string(),
     };
     let pg = PositionedGate::new(gate, vec![0], vec![], vec![]);
     let circuit = Circuit::new(vec![3], vec![pg]);
@@ -401,6 +404,7 @@ fn test_valid_custom_gate_with_qubit_control() {
     let gate = Gate::Custom {
         matrix: m,
         is_diagonal: false,
+        label: "qutrit_controlled".to_string(),
     };
     let pg = PositionedGate::new(gate, vec![1], vec![0], vec![true]);
     let circuit = Circuit::new(vec![2, 3], vec![pg]);
@@ -524,4 +528,70 @@ fn test_qft_circuit_builds() {
     let circuit = Circuit::new(vec![2; n], gates).unwrap();
     assert_eq!(circuit.num_sites(), 4);
     assert_eq!(circuit.gates.len(), 12); // 4 H + 3+2+1 CPhase + 2 SWAP = 12
+}
+
+// ============================================================
+// Circuit Display tests
+// ============================================================
+
+#[test]
+fn test_circuit_display_empty() {
+    let circuit = Circuit::new(vec![2, 2], vec![]).unwrap();
+    let s = format!("{}", circuit);
+    assert_eq!(s, "nqubits: 2\n");
+}
+
+#[test]
+fn test_circuit_display_single_gate() {
+    let gates = vec![put(vec![0], Gate::H)];
+    let circuit = Circuit::new(vec![2, 2], gates).unwrap();
+    let s = format!("{}", circuit);
+    assert_eq!(s, "nqubits: 2\n  H @ q[0]\n");
+}
+
+#[test]
+fn test_circuit_display_controlled_gate() {
+    let gates = vec![control(vec![0], vec![1], Gate::X)];
+    let circuit = Circuit::new(vec![2, 2], gates).unwrap();
+    let s = format!("{}", circuit);
+    assert_eq!(s, "nqubits: 2\n  C(q[0]) X @ q[1]\n");
+}
+
+#[test]
+fn test_circuit_display_multi_control() {
+    let gates = vec![control(vec![0, 1], vec![2], Gate::X)];
+    let circuit = Circuit::new(vec![2, 2, 2], gates).unwrap();
+    let s = format!("{}", circuit);
+    assert_eq!(s, "nqubits: 3\n  C(q[0, 1]) X @ q[2]\n");
+}
+
+#[test]
+fn test_circuit_display_multi_target() {
+    let gates = vec![put(vec![0, 1], Gate::SWAP)];
+    let circuit = Circuit::new(vec![2, 2], gates).unwrap();
+    let s = format!("{}", circuit);
+    assert_eq!(s, "nqubits: 2\n  SWAP @ q[0, 1]\n");
+}
+
+#[test]
+fn test_circuit_display_qft_3qubit() {
+    use std::f64::consts::PI;
+    let n = 3;
+    let mut gates: Vec<PositionedGate> = Vec::new();
+    for i in 0..n {
+        gates.push(put(vec![i], Gate::H));
+        for j in 1..(n - i) {
+            let theta = 2.0 * PI / (1 << (j + 1)) as f64;
+            gates.push(control(vec![i + j], vec![i], Gate::Phase(theta)));
+        }
+    }
+    gates.push(put(vec![0, 2], Gate::SWAP));
+    let circuit = Circuit::new(vec![2; n], gates).unwrap();
+    let s = format!("{}", circuit);
+    assert!(s.starts_with("nqubits: 3\n"));
+    assert!(s.contains("H @ q[0]"));
+    assert!(s.contains("C(q[1]) Phase(1.5708) @ q[0]"));
+    assert!(s.contains("C(q[2]) Phase(0.7854) @ q[0]"));
+    assert!(s.contains("H @ q[1]"));
+    assert!(s.contains("SWAP @ q[0, 2]"));
 }

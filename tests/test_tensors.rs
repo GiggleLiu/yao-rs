@@ -175,6 +175,7 @@ fn test_custom_diagonal_qutrit() {
     let gate = Gate::Custom {
         matrix: mat,
         is_diagonal: true,
+        label: "qutrit_diagonal".to_string(),
     };
     let pg = PositionedGate::new(gate, vec![0], vec![], vec![]);
     let dims = vec![3];
@@ -316,6 +317,7 @@ fn test_custom_non_diagonal_qubit() {
     let gate = Gate::Custom {
         matrix: mat.clone(),
         is_diagonal: false,
+        label: "custom_2x2".to_string(),
     };
     let pg = PositionedGate::new(gate, vec![0], vec![], vec![]);
     let dims = vec![2];
