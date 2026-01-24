@@ -4,7 +4,7 @@ use ndarray::{Array1, ArrayD, IxDyn};
 use num_complex::Complex64;
 
 use yao_rs::apply::apply;
-use yao_rs::circuit::{Circuit, PositionedGate};
+use yao_rs::circuit::{Circuit, PositionedGate, put, control};
 use yao_rs::einsum::{circuit_to_einsum, TensorNetwork};
 use yao_rs::gate::Gate;
 use yao_rs::state::State;
@@ -809,4 +809,85 @@ fn test_integration_3_qubit_ghz_like() {
     let contract_result = naive_contract(&tn, &state);
 
     assert_states_close(&apply_result.data, &contract_result);
+}
+
+// === QFT integration tests ===
+
+fn build_qft_circuit(n: usize) -> Circuit {
+    use std::f64::consts::PI;
+    let mut gates: Vec<PositionedGate> = Vec::new();
+    for i in 0..n {
+        gates.push(put(vec![i], Gate::H));
+        for j in 1..(n - i) {
+            let theta = 2.0 * PI / (1 << (j + 1)) as f64;
+            gates.push(control(vec![i + j], vec![i], Gate::Phase(theta)));
+        }
+    }
+    for i in 0..(n / 2) {
+        gates.push(PositionedGate::new(Gate::SWAP, vec![i, n - 1 - i], vec![], vec![]));
+    }
+    Circuit::new(vec![2; n], gates).unwrap()
+}
+
+#[test]
+fn test_integration_qft_zero_state() {
+    // QFT|0⟩ = uniform superposition: (1/√N) Σ |j⟩
+    let n = 3;
+    let circuit = build_qft_circuit(n);
+    let state = State::zero_state(&vec![2; n]);
+    let result = apply(&circuit, &state);
+    let total_dim = 1 << n;
+    let expected_amp = 1.0 / (total_dim as f64).sqrt();
+    for i in 0..total_dim {
+        assert!((result.data[i].re - expected_amp).abs() < 1e-10);
+        assert!(result.data[i].im.abs() < 1e-10);
+    }
+}
+
+#[test]
+fn test_integration_qft_basis_state() {
+    // QFT|k⟩ = (1/√N) Σ_j e^(2πi jk/N) |j⟩
+    use std::f64::consts::PI;
+    let n = 3;
+    let total_dim: usize = 1 << n;
+    let circuit = build_qft_circuit(n);
+
+    // Test |1⟩ = |001⟩
+    let state = State::product_state(&vec![2; n], &[0, 0, 1]);
+    let result = apply(&circuit, &state);
+    let norm = 1.0 / (total_dim as f64).sqrt();
+    for j in 0..total_dim {
+        let expected = Complex64::from_polar(norm, 2.0 * PI * (j as f64) / (total_dim as f64));
+        assert!((result.data[j] - expected).norm() < 1e-10,
+            "Mismatch at j={}: got {:?}, expected {:?}", j, result.data[j], expected);
+    }
+}
+
+#[test]
+fn test_integration_qft_apply_vs_einsum() {
+    // Verify apply() matches tensor network contraction for QFT
+    let n = 4;
+    let circuit = build_qft_circuit(n);
+    let state = State::product_state(&vec![2; n], &[0, 1, 1, 0]);
+    let apply_result = apply(&circuit, &state);
+    let tn = circuit_to_einsum(&circuit);
+    let contract_result = naive_contract(&tn, &state);
+    assert_states_close(&apply_result.data, &contract_result);
+}
+
+#[test]
+fn test_integration_qft_norm_preservation() {
+    // QFT should preserve norm for any input
+    let n = 4;
+    let circuit = build_qft_circuit(n);
+    for k in 0..(1usize << n) {
+        let mut levels = vec![0usize; n];
+        for bit in 0..n {
+            levels[n - 1 - bit] = (k >> bit) & 1;
+        }
+        let state = State::product_state(&vec![2; n], &levels);
+        let result = apply(&circuit, &state);
+        assert!((result.norm() - 1.0).abs() < 1e-10,
+            "Norm not preserved for input k={}: got {}", k, result.norm());
+    }
 }

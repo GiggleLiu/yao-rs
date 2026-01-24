@@ -1,6 +1,6 @@
 use ndarray::Array2;
 use num_complex::Complex64;
-use yao_rs::circuit::{Circuit, CircuitError, PositionedGate};
+use yao_rs::circuit::{Circuit, CircuitError, PositionedGate, put, control};
 use yao_rs::gate::Gate;
 
 // ============================================================
@@ -451,4 +451,77 @@ fn test_clone_circuit() {
     assert_eq!(circuit2.num_sites(), 2);
     assert_eq!(circuit2.total_dim(), 4);
     assert_eq!(circuit2.gates.len(), 1);
+}
+
+// === put() and control() builder tests ===
+
+#[test]
+fn test_put_single_gate() {
+    let pg = put(vec![0], Gate::H);
+    assert_eq!(pg.target_locs, vec![0]);
+    assert!(pg.control_locs.is_empty());
+    assert!(pg.control_configs.is_empty());
+}
+
+#[test]
+fn test_put_multi_site_gate() {
+    let pg = put(vec![1, 3], Gate::SWAP);
+    assert_eq!(pg.target_locs, vec![1, 3]);
+    assert!(pg.control_locs.is_empty());
+}
+
+#[test]
+fn test_control_cnot() {
+    let pg = control(vec![0], vec![1], Gate::X);
+    assert_eq!(pg.control_locs, vec![0]);
+    assert_eq!(pg.target_locs, vec![1]);
+    assert_eq!(pg.control_configs, vec![true]);
+}
+
+#[test]
+fn test_control_toffoli() {
+    let pg = control(vec![0, 1], vec![2], Gate::X);
+    assert_eq!(pg.control_locs, vec![0, 1]);
+    assert_eq!(pg.target_locs, vec![2]);
+    assert_eq!(pg.control_configs, vec![true, true]);
+}
+
+#[test]
+fn test_put_in_circuit() {
+    let gates = vec![
+        put(vec![0], Gate::H),
+        put(vec![1], Gate::X),
+    ];
+    let circuit = Circuit::new(vec![2, 2], gates).unwrap();
+    assert_eq!(circuit.gates.len(), 2);
+}
+
+#[test]
+fn test_control_in_circuit() {
+    let gates = vec![
+        put(vec![0], Gate::H),
+        control(vec![0], vec![1], Gate::X),
+    ];
+    let circuit = Circuit::new(vec![2, 2], gates).unwrap();
+    assert_eq!(circuit.gates.len(), 2);
+}
+
+#[test]
+fn test_qft_circuit_builds() {
+    use std::f64::consts::PI;
+    let n = 4;
+    let mut gates: Vec<PositionedGate> = Vec::new();
+    for i in 0..n {
+        gates.push(put(vec![i], Gate::H));
+        for j in 1..(n - i) {
+            let theta = 2.0 * PI / (1 << (j + 1)) as f64;
+            gates.push(control(vec![i + j], vec![i], Gate::Phase(theta)));
+        }
+    }
+    for i in 0..(n / 2) {
+        gates.push(PositionedGate::new(Gate::SWAP, vec![i, n - 1 - i], vec![], vec![]));
+    }
+    let circuit = Circuit::new(vec![2; n], gates).unwrap();
+    assert_eq!(circuit.num_sites(), 4);
+    assert_eq!(circuit.gates.len(), 12); // 4 H + 3+2+1 CPhase + 2 SWAP = 12
 }

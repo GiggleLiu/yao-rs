@@ -203,3 +203,37 @@ impl Circuit {
         self.dims.iter().product()
     }
 }
+
+/// Place a gate on target locations (no controls).
+///
+/// Equivalent to Yao.jl's `put(n, locs => gate)`.
+///
+/// # Example
+/// ```
+/// use yao_rs::circuit::put;
+/// use yao_rs::gate::Gate;
+/// let pg = put(vec![0], Gate::H);
+/// assert_eq!(pg.target_locs, vec![0]);
+/// assert!(pg.control_locs.is_empty());
+/// ```
+pub fn put(target_locs: Vec<usize>, gate: Gate) -> PositionedGate {
+    PositionedGate::new(gate, target_locs, vec![], vec![])
+}
+
+/// Place a controlled gate with active-high control (all controls trigger on |1⟩).
+///
+/// Equivalent to Yao.jl's `control(n, ctrl_locs, target_locs => gate)`.
+///
+/// # Example
+/// ```
+/// use yao_rs::circuit::control;
+/// use yao_rs::gate::Gate;
+/// let cnot = control(vec![0], vec![1], Gate::X);
+/// assert_eq!(cnot.control_locs, vec![0]);
+/// assert_eq!(cnot.target_locs, vec![1]);
+/// assert_eq!(cnot.control_configs, vec![true]);
+/// ```
+pub fn control(ctrl_locs: Vec<usize>, target_locs: Vec<usize>, gate: Gate) -> PositionedGate {
+    let configs = vec![true; ctrl_locs.len()];
+    PositionedGate::new(gate, target_locs, ctrl_locs, configs)
+}
