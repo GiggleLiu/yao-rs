@@ -171,6 +171,7 @@ fn test_qutrit_cyclic_permutation() {
             Gate::Custom {
                 matrix: perm_matrix,
                 is_diagonal: false,
+                label: "qutrit_cyclic_perm".to_string(),
             },
             vec![0],
             vec![],

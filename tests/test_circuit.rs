@@ -80,6 +80,7 @@ fn test_valid_custom_qudit_gate_on_two_qutrits() {
     let gate = Gate::Custom {
         matrix: m,
         is_diagonal: true,
+        label: "qutrit_2site_identity".to_string(),
     };
     let pg = PositionedGate::new(gate, vec![0, 1], vec![], vec![]);
     let circuit = Circuit::new(vec![3, 3], vec![pg]);
@@ -219,6 +220,7 @@ fn test_invalid_matrix_size_mismatch() {
     let gate = Gate::Custom {
         matrix: m,
         is_diagonal: true,
+        label: "size_mismatch_4x4".to_string(),
     };
     let pg = PositionedGate::new(gate, vec![0], vec![], vec![]);
     let result = Circuit::new(vec![2, 2], vec![pg]);
@@ -381,6 +383,7 @@ fn test_valid_custom_single_qutrit_gate() {
     let gate = Gate::Custom {
         matrix: m,
         is_diagonal: true,
+        label: "qutrit_identity".to_string(),
     };
     let pg = PositionedGate::new(gate, vec![0], vec![], vec![]);
     let circuit = Circuit::new(vec![3], vec![pg]);
@@ -401,6 +404,7 @@ fn test_valid_custom_gate_with_qubit_control() {
     let gate = Gate::Custom {
         matrix: m,
         is_diagonal: false,
+        label: "qutrit_controlled".to_string(),
     };
     let pg = PositionedGate::new(gate, vec![1], vec![0], vec![true]);
     let circuit = Circuit::new(vec![2, 3], vec![pg]);

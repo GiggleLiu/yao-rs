@@ -20,6 +20,7 @@ pub enum Gate {
     Custom {
         matrix: Array2<Complex64>,
         is_diagonal: bool,
+        label: String,
     },
 }
 

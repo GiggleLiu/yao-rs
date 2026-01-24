@@ -552,6 +552,7 @@ fn test_integration_qutrit_cyclic_permutation() {
             Gate::Custom {
                 matrix: perm_matrix,
                 is_diagonal: false,
+                label: "qutrit_cyclic_perm".to_string(),
             },
             vec![0],
             vec![],
@@ -587,6 +588,7 @@ fn test_integration_qutrit_on_state_2() {
             Gate::Custom {
                 matrix: perm_matrix,
                 is_diagonal: false,
+                label: "qutrit_cyclic_perm".to_string(),
             },
             vec![0],
             vec![],
@@ -628,6 +630,7 @@ fn test_integration_mixed_dimensions() {
                 Gate::Custom {
                     matrix: perm_matrix,
                     is_diagonal: false,
+                    label: "qutrit_perm".to_string(),
                 },
                 vec![1],
                 vec![],
@@ -676,6 +679,7 @@ fn test_integration_mixed_dimensions_with_diagonal() {
                 Gate::Custom {
                     matrix: perm_matrix,
                     is_diagonal: false,
+                    label: "qutrit_perm".to_string(),
                 },
                 vec![1],
                 vec![],
@@ -686,6 +690,7 @@ fn test_integration_mixed_dimensions_with_diagonal() {
                 Gate::Custom {
                     matrix: qutrit_diag_matrix,
                     is_diagonal: true,
+                    label: "qutrit_diagonal_phase".to_string(),
                 },
                 vec![1],
                 vec![],

@@ -212,6 +212,7 @@ fn test_custom_gate_matrix_passthrough() {
     let gate = Gate::Custom {
         matrix: custom_matrix.clone(),
         is_diagonal: true,
+        label: "custom_diagonal_2x2".to_string(),
     };
 
     let result = gate.matrix(2);
@@ -236,6 +237,7 @@ fn test_custom_gate_larger_matrix() {
     let gate = Gate::Custom {
         matrix: custom_matrix.clone(),
         is_diagonal: false,
+        label: "custom_4x4_identity".to_string(),
     };
 
     let result = gate.matrix(2);
@@ -336,6 +338,7 @@ fn test_num_sites_custom_2x2() {
     let gate = Gate::Custom {
         matrix: m,
         is_diagonal: true,
+        label: "test_2x2".to_string(),
     };
     assert_eq!(gate.num_sites(2), 1);
 }
@@ -351,6 +354,7 @@ fn test_num_sites_custom_4x4_d2() {
     let gate = Gate::Custom {
         matrix: m,
         is_diagonal: true,
+        label: "test_4x4".to_string(),
     };
     assert_eq!(gate.num_sites(2), 2);
 }
@@ -365,6 +369,7 @@ fn test_num_sites_custom_8x8_d2() {
     let gate = Gate::Custom {
         matrix: m,
         is_diagonal: false,
+        label: "test_8x8".to_string(),
     };
     assert_eq!(gate.num_sites(2), 3);
 }
@@ -380,6 +385,7 @@ fn test_num_sites_custom_9x9_d3() {
     let gate = Gate::Custom {
         matrix: m,
         is_diagonal: true,
+        label: "qutrit_9x9".to_string(),
     };
     assert_eq!(gate.num_sites(3), 2);
 }
@@ -416,6 +422,7 @@ fn test_is_diagonal_custom_true() {
     let gate = Gate::Custom {
         matrix: m,
         is_diagonal: true,
+        label: "diagonal_identity".to_string(),
     };
     assert!(gate.is_diagonal());
 }
@@ -428,6 +435,7 @@ fn test_is_diagonal_custom_false() {
     let gate = Gate::Custom {
         matrix: m,
         is_diagonal: false,
+        label: "non_diagonal_identity".to_string(),
     };
     assert!(!gate.is_diagonal());
 }
