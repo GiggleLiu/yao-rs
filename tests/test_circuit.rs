@@ -11,8 +11,8 @@ use yao_rs::gate::Gate;
 fn test_positioned_gate_new() {
     let pg = PositionedGate::new(Gate::X, vec![0], vec![], vec![]);
     assert_eq!(pg.target_locs, vec![0]);
-    assert_eq!(pg.control_locs, vec![]);
-    assert_eq!(pg.control_configs, vec![]);
+    assert_eq!(pg.control_locs, Vec::<usize>::new());
+    assert_eq!(pg.control_configs, Vec::<bool>::new());
 }
 
 #[test]
