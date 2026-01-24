@@ -134,11 +134,11 @@ pub fn apply(circuit: &Circuit, state: &State) -> State {
                 // Check that non-involved sites are the same between row and col
                 let mut non_involved_match = true;
                 for site in 0..dims.len() {
-                    if !all_locs.contains(&site) {
-                        if row_multi[site] != col_multi[site] {
-                            non_involved_match = false;
-                            break;
-                        }
+                    if !all_locs.contains(&site)
+                        && row_multi[site] != col_multi[site]
+                    {
+                        non_involved_match = false;
+                        break;
                     }
                 }
 
