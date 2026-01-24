@@ -3,7 +3,7 @@ use num_complex::Complex64;
 use std::f64::consts::{FRAC_PI_4, FRAC_1_SQRT_2};
 
 /// Quantum gate enum supporting named qubit gates and custom gates.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Gate {
     X,
     Y,
@@ -42,6 +42,8 @@ impl Gate {
             Gate::SWAP => 2,
             Gate::Custom { matrix, .. } => {
                 let dim = matrix.nrows();
+                assert_eq!(matrix.nrows(), matrix.ncols(),
+                    "Custom gate matrix must be square, got {}x{}", matrix.nrows(), matrix.ncols());
                 // dim = d^n, solve for n
                 let mut n = 0usize;
                 let mut power = 1usize;
