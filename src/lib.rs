@@ -4,6 +4,7 @@ pub mod tensors;
 pub mod einsum;
 pub mod state;
 pub mod apply;
+pub mod easybuild;
 
 pub use gate::Gate;
 pub use circuit::{Circuit, PositionedGate, put, control};
