@@ -3,7 +3,7 @@
 // Custom gate styling
 #let my-style(gate-name) = {
   if gate-name == "H" { (label: $H$, fill: blue.lighten(80%)) }
-  else if gate-name == "Phase" { (label: $P$, fill: orange.lighten(80%)) }
+  else if gate-name == "Phase" { (fill: orange.lighten(80%)) }
   else if gate-name == "Custom" { (label: "U", fill: purple.lighten(80%)) }
   else { (label: gate-name) }
 }

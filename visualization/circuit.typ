@@ -6,6 +6,13 @@
 /// - data: Parsed JSON object with fields `num_qubits` and `gates`
 /// - gate-style: Function mapping gate name (string) to a dictionary of
 ///   styling options (label, fill, stroke, etc.)
+#let round2(x) = calc.round(x, digits: 2)
+
+#let param-label(name, params) = {
+  let vals = params.map(x => str(round2(x)))
+  name + "(" + vals.join(", ") + ")"
+}
+
 #let render-circuit-impl(data, gate-style: gate-name => (label: gate-name)) = {
   let n = data.num_qubits
   let ops = ()
@@ -17,8 +24,13 @@
     let params = entry.at("params", default: none)
     let label = entry.at("label", default: gate-name)
     let style = gate-style(gate-name)
-    let display-label = style.at("label", default: label)
     let fill = style.at("fill", default: none)
+    // For parametric gates, default label includes the angle
+    let display-label = if params != none and style.at("label", default: none) == none {
+      param-label(label, params)
+    } else {
+      style.at("label", default: label)
+    }
 
     if controls == none or controls.len() == 0 {
       // Uncontrolled gates
@@ -39,13 +51,13 @@
         } else if gate-name == "SqrtX" {
           ops.push(tequila.sx(t))
         } else if gate-name == "Phase" and params != none {
-          ops.push(tequila.p(params.at(0), t))
+          ops.push(tequila.p(round2(params.at(0)), t))
         } else if gate-name == "Rx" and params != none {
-          ops.push(tequila.rx(params.at(0), t))
+          ops.push(tequila.rx(round2(params.at(0)), t))
         } else if gate-name == "Ry" and params != none {
-          ops.push(tequila.ry(params.at(0), t))
+          ops.push(tequila.ry(round2(params.at(0)), t))
         } else if gate-name == "Rz" and params != none {
-          ops.push(tequila.rz(params.at(0), t))
+          ops.push(tequila.rz(round2(params.at(0)), t))
         } else {
           // Generic single-qubit gate
           if fill != none {
