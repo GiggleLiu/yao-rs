@@ -587,12 +587,11 @@ impl Lattice53 {
         r2: usize,
         c2: usize,
     ) {
-        if r1 < self.nrows && c1 < self.ncols && r2 < self.nrows && c2 < self.ncols {
-            if let (Some(q1), Some(q2)) = (self.grid[r1][c1], self.grid[r2][c2]) {
-                if q1 < self.nbits && q2 < self.nbits {
-                    pairs.push((q1, q2));
-                }
-            }
+        if r1 < self.nrows && c1 < self.ncols && r2 < self.nrows && c2 < self.ncols
+            && let (Some(q1), Some(q2)) = (self.grid[r1][c1], self.grid[r2][c2])
+            && q1 < self.nbits && q2 < self.nbits
+        {
+            pairs.push((q1, q2));
         }
     }
 }
