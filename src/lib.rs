@@ -9,6 +9,10 @@ pub mod json;
 pub mod operator;
 #[cfg(feature = "torch")]
 pub mod torch_contractor;
+#[cfg(feature = "typst")]
+pub mod typst;
+#[cfg(feature = "typst")]
+pub use typst::{to_pdf, PdfError};
 
 pub use gate::Gate;
 pub use circuit::{Circuit, PositionedGate, put, control};
