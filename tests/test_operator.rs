@@ -50,3 +50,15 @@ fn test_operator_polynomial_add() {
     let sum = &p1 + &p2;
     assert_eq!(sum.len(), 2);
 }
+
+#[test]
+fn test_operator_polynomial_json_roundtrip() {
+    let p1 = OperatorPolynomial::single(0, Op::Z, 0.5.into());
+    let p2 = OperatorPolynomial::single(1, Op::Z, 0.5.into());
+    let poly = &p1 + &p2;
+
+    let json = serde_json::to_string(&poly).unwrap();
+    let restored: OperatorPolynomial = serde_json::from_str(&json).unwrap();
+
+    assert_eq!(poly.len(), restored.len());
+}
