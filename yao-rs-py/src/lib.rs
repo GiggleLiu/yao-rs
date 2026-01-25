@@ -1,3 +1,7 @@
+// Allow PyO3-generated code patterns in Rust 2024 edition
+#![allow(unsafe_op_in_unsafe_fn)]
+#![allow(non_local_definitions)]
+
 use pyo3::prelude::*;
 
 mod gate;

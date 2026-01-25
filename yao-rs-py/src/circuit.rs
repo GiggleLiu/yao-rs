@@ -92,7 +92,7 @@ impl PyCircuit {
     fn from_json(json: &str) -> PyResult<Self> {
         circuit_from_json(json)
             .map(PyCircuit)
-            .map_err(|e| PyValueError::new_err(e))
+            .map_err(PyValueError::new_err)
     }
 
     /// Load a circuit from a JSON file.
@@ -102,7 +102,7 @@ impl PyCircuit {
             .map_err(|e| PyValueError::new_err(format!("Failed to read file: {}", e)))?;
         circuit_from_json(&json)
             .map(PyCircuit)
-            .map_err(|e| PyValueError::new_err(e))
+            .map_err(PyValueError::new_err)
     }
 
     fn __repr__(&self) -> String {
