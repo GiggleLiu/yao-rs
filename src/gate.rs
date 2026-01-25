@@ -104,6 +104,94 @@ impl Gate {
         }
     }
 
+    /// Return the adjoint (conjugate transpose) of this gate.
+    ///
+    /// For unitary gates, the adjoint is also the inverse: U† U = I.
+    pub fn dagger(&self) -> Self {
+        match self {
+            // Self-adjoint gates (Hermitian): H, X, Y, Z, SWAP
+            Gate::H | Gate::X | Gate::Y | Gate::Z | Gate::SWAP => self.clone(),
+
+            // S† = Rz(-π/2) equivalent, implemented as Phase(-π/2)
+            Gate::S => Gate::Phase(-std::f64::consts::FRAC_PI_2),
+
+            // T† = Rz(-π/4) equivalent, implemented as Phase(-π/4)
+            Gate::T => Gate::Phase(-std::f64::consts::FRAC_PI_4),
+
+            // Rotation gates: negate the angle
+            Gate::Rx(theta) => Gate::Rx(-theta),
+            Gate::Ry(theta) => Gate::Ry(-theta),
+            Gate::Rz(theta) => Gate::Rz(-theta),
+            Gate::Phase(theta) => Gate::Phase(-theta),
+
+            // SqrtX† = SqrtX^(-1) - we compute the conjugate transpose
+            // SqrtX = (1+i)/2 * [[1, -i], [-i, 1]]
+            // SqrtX† has the same structure but with conjugated (1-i)/2 factor
+            // Since SqrtX^2 = X and X is Hermitian, SqrtX† = SqrtX^(-1)
+            // We represent this as a custom gate
+            Gate::SqrtX => {
+                let m = self.qubit_matrix();
+                let dagger_matrix = conjugate_transpose(&m);
+                Gate::Custom {
+                    matrix: dagger_matrix,
+                    is_diagonal: false,
+                    label: "SqrtX†".to_string(),
+                }
+            }
+
+            // SqrtY† similarly
+            Gate::SqrtY => {
+                let m = self.qubit_matrix();
+                let dagger_matrix = conjugate_transpose(&m);
+                Gate::Custom {
+                    matrix: dagger_matrix,
+                    is_diagonal: false,
+                    label: "SqrtY†".to_string(),
+                }
+            }
+
+            // SqrtW†
+            Gate::SqrtW => {
+                let m = self.qubit_matrix();
+                let dagger_matrix = conjugate_transpose(&m);
+                Gate::Custom {
+                    matrix: dagger_matrix,
+                    is_diagonal: false,
+                    label: "SqrtW†".to_string(),
+                }
+            }
+
+            // iSWAP† - conjugate transpose of iSWAP
+            // iSWAP has i on off-diagonal, so iSWAP† has -i
+            Gate::ISWAP => {
+                let m = self.qubit_matrix();
+                let dagger_matrix = conjugate_transpose(&m);
+                Gate::Custom {
+                    matrix: dagger_matrix,
+                    is_diagonal: false,
+                    label: "iSWAP†".to_string(),
+                }
+            }
+
+            // FSim(θ, φ)† = FSim(-θ, -φ)
+            Gate::FSim(theta, phi) => Gate::FSim(-theta, -phi),
+
+            // Custom gate: conjugate transpose the matrix
+            Gate::Custom {
+                matrix,
+                is_diagonal,
+                label,
+            } => {
+                let dagger_matrix = conjugate_transpose(matrix);
+                Gate::Custom {
+                    matrix: dagger_matrix,
+                    is_diagonal: *is_diagonal, // diagonal property preserved under transpose
+                    label: format!("{}†", label),
+                }
+            }
+        }
+    }
+
     /// Internal: compute the 2x2 or 4x4 matrix for named qubit gates.
     fn qubit_matrix(&self) -> Array2<Complex64> {
         let zero = Complex64::new(0.0, 0.0);
@@ -232,4 +320,16 @@ impl Gate {
             Gate::Custom { .. } => unreachable!(),
         }
     }
+}
+
+/// Compute the conjugate transpose (adjoint) of a matrix.
+fn conjugate_transpose(m: &Array2<Complex64>) -> Array2<Complex64> {
+    let (rows, cols) = m.dim();
+    let mut result = Array2::zeros((cols, rows));
+    for i in 0..rows {
+        for j in 0..cols {
+            result[[j, i]] = m[[i, j]].conj();
+        }
+    }
+    result
 }

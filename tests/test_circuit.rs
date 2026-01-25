@@ -595,3 +595,221 @@ fn test_circuit_display_qft_3qubit() {
     assert!(s.contains("H @ q[1]"));
     assert!(s.contains("SWAP @ q[0, 2]"));
 }
+
+// ============================================================
+// Gate::dagger() tests
+// ============================================================
+
+#[test]
+fn test_gate_dagger_hermitian() {
+    // H, X, Y, Z, SWAP are self-adjoint
+    assert_eq!(Gate::H.dagger(), Gate::H);
+    assert_eq!(Gate::X.dagger(), Gate::X);
+    assert_eq!(Gate::Y.dagger(), Gate::Y);
+    assert_eq!(Gate::Z.dagger(), Gate::Z);
+    assert_eq!(Gate::SWAP.dagger(), Gate::SWAP);
+}
+
+#[test]
+fn test_gate_dagger_s_gate() {
+    // S† = Phase(-π/2)
+    let s_dag = Gate::S.dagger();
+    match s_dag {
+        Gate::Phase(theta) => {
+            assert!((theta + std::f64::consts::FRAC_PI_2).abs() < 1e-10);
+        }
+        _ => panic!("Expected Phase gate for S†"),
+    }
+}
+
+#[test]
+fn test_gate_dagger_t_gate() {
+    // T† = Phase(-π/4)
+    let t_dag = Gate::T.dagger();
+    match t_dag {
+        Gate::Phase(theta) => {
+            assert!((theta + std::f64::consts::FRAC_PI_4).abs() < 1e-10);
+        }
+        _ => panic!("Expected Phase gate for T†"),
+    }
+}
+
+#[test]
+fn test_gate_dagger_rotation() {
+    let rx = Gate::Rx(0.5);
+    let rx_dag = rx.dagger();
+    match rx_dag {
+        Gate::Rx(theta) => assert!((theta + 0.5).abs() < 1e-10),
+        _ => panic!("Expected Rx gate"),
+    }
+
+    let ry = Gate::Ry(1.2);
+    let ry_dag = ry.dagger();
+    match ry_dag {
+        Gate::Ry(theta) => assert!((theta + 1.2).abs() < 1e-10),
+        _ => panic!("Expected Ry gate"),
+    }
+
+    let rz = Gate::Rz(-0.7);
+    let rz_dag = rz.dagger();
+    match rz_dag {
+        Gate::Rz(theta) => assert!((theta - 0.7).abs() < 1e-10),
+        _ => panic!("Expected Rz gate"),
+    }
+}
+
+#[test]
+fn test_gate_dagger_phase() {
+    let phase = Gate::Phase(1.0);
+    let phase_dag = phase.dagger();
+    match phase_dag {
+        Gate::Phase(theta) => assert!((theta + 1.0).abs() < 1e-10),
+        _ => panic!("Expected Phase gate"),
+    }
+}
+
+#[test]
+fn test_gate_dagger_fsim() {
+    let fsim = Gate::FSim(0.3, 0.5);
+    let fsim_dag = fsim.dagger();
+    match fsim_dag {
+        Gate::FSim(theta, phi) => {
+            assert!((theta + 0.3).abs() < 1e-10);
+            assert!((phi + 0.5).abs() < 1e-10);
+        }
+        _ => panic!("Expected FSim gate"),
+    }
+}
+
+#[test]
+fn test_gate_dagger_custom() {
+    // Create a simple 2x2 custom gate and check its dagger
+    let one = Complex64::new(1.0, 0.0);
+    let i = Complex64::new(0.0, 1.0);
+    // Matrix: [[1, i], [0, 1]]
+    let m = Array2::from_shape_vec((2, 2), vec![one, i, Complex64::new(0.0, 0.0), one]).unwrap();
+    let gate = Gate::Custom {
+        matrix: m,
+        is_diagonal: false,
+        label: "test".to_string(),
+    };
+    let dag = gate.dagger();
+    match dag {
+        Gate::Custom { matrix, label, .. } => {
+            // Dagger should be: [[1, 0], [-i, 1]]
+            assert!((matrix[[0, 0]] - one).norm() < 1e-10);
+            assert!((matrix[[0, 1]]).norm() < 1e-10);
+            assert!((matrix[[1, 0]] - (-i)).norm() < 1e-10);
+            assert!((matrix[[1, 1]] - one).norm() < 1e-10);
+            assert_eq!(label, "test†");
+        }
+        _ => panic!("Expected Custom gate"),
+    }
+}
+
+#[test]
+fn test_gate_dagger_double_gives_original_rotation() {
+    // (G†)† = G for rotation gates
+    let rx = Gate::Rx(0.5);
+    let rx_double_dag = rx.dagger().dagger();
+    match rx_double_dag {
+        Gate::Rx(theta) => assert!((theta - 0.5).abs() < 1e-10),
+        _ => panic!("Expected Rx gate"),
+    }
+}
+
+// ============================================================
+// Circuit::dagger() tests
+// ============================================================
+
+#[test]
+fn test_circuit_dagger_single_gate() {
+    let circuit = Circuit::new(vec![2], vec![put(vec![0], Gate::H)]).unwrap();
+
+    let dagger = circuit.dagger().unwrap();
+    assert_eq!(dagger.gates.len(), 1);
+    // H is self-adjoint
+    assert_eq!(dagger.gates[0].gate, Gate::H);
+}
+
+#[test]
+fn test_circuit_dagger_reverses_order() {
+    let circuit = Circuit::new(
+        vec![2],
+        vec![put(vec![0], Gate::H), put(vec![0], Gate::S)],
+    )
+    .unwrap();
+
+    let dagger = circuit.dagger().unwrap();
+    assert_eq!(dagger.gates.len(), 2);
+
+    // First gate in dagger should be S†
+    match &dagger.gates[0].gate {
+        Gate::Phase(theta) => {
+            assert!((theta + std::f64::consts::FRAC_PI_2).abs() < 1e-10);
+        }
+        _ => panic!("Expected Phase gate for S†"),
+    }
+
+    // Second gate should be H
+    assert_eq!(dagger.gates[1].gate, Gate::H);
+}
+
+#[test]
+fn test_circuit_dagger_preserves_dims() {
+    let circuit = Circuit::new(vec![2, 3, 2], vec![]).unwrap();
+    let dagger = circuit.dagger().unwrap();
+    assert_eq!(dagger.dims, vec![2, 3, 2]);
+}
+
+#[test]
+fn test_circuit_dagger_preserves_control_locs() {
+    // CNOT circuit
+    let circuit = Circuit::new(vec![2, 2], vec![control(vec![0], vec![1], Gate::X)]).unwrap();
+
+    let dagger = circuit.dagger().unwrap();
+    assert_eq!(dagger.gates.len(), 1);
+    assert_eq!(dagger.gates[0].control_locs, vec![0]);
+    assert_eq!(dagger.gates[0].target_locs, vec![1]);
+    // X is self-adjoint
+    assert_eq!(dagger.gates[0].gate, Gate::X);
+}
+
+#[test]
+fn test_circuit_dagger_rotation_sequence() {
+    // Circuit: Rx(0.5) -> Ry(1.0) -> Rz(0.3)
+    let circuit = Circuit::new(
+        vec![2],
+        vec![
+            put(vec![0], Gate::Rx(0.5)),
+            put(vec![0], Gate::Ry(1.0)),
+            put(vec![0], Gate::Rz(0.3)),
+        ],
+    )
+    .unwrap();
+
+    let dagger = circuit.dagger().unwrap();
+    assert_eq!(dagger.gates.len(), 3);
+
+    // Dagger should be: Rz(-0.3) -> Ry(-1.0) -> Rx(-0.5)
+    match &dagger.gates[0].gate {
+        Gate::Rz(theta) => assert!((theta + 0.3).abs() < 1e-10),
+        _ => panic!("Expected Rz"),
+    }
+    match &dagger.gates[1].gate {
+        Gate::Ry(theta) => assert!((theta + 1.0).abs() < 1e-10),
+        _ => panic!("Expected Ry"),
+    }
+    match &dagger.gates[2].gate {
+        Gate::Rx(theta) => assert!((theta + 0.5).abs() < 1e-10),
+        _ => panic!("Expected Rx"),
+    }
+}
+
+#[test]
+fn test_circuit_dagger_empty() {
+    let circuit = Circuit::new(vec![2, 2], vec![]).unwrap();
+    let dagger = circuit.dagger().unwrap();
+    assert!(dagger.gates.is_empty());
+    assert_eq!(dagger.dims, vec![2, 2]);
+}

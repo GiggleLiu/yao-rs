@@ -202,6 +202,29 @@ impl Circuit {
     pub fn total_dim(&self) -> usize {
         self.dims.iter().product()
     }
+
+    /// Return the adjoint circuit U†.
+    ///
+    /// The dagger of a circuit has:
+    /// - Gates in reverse order
+    /// - Each gate replaced with its adjoint
+    ///
+    /// For a unitary circuit U, U† U = I.
+    pub fn dagger(&self) -> Result<Self, CircuitError> {
+        let dagger_gates: Vec<PositionedGate> = self
+            .gates
+            .iter()
+            .rev()
+            .map(|pg| PositionedGate {
+                gate: pg.gate.dagger(),
+                target_locs: pg.target_locs.clone(),
+                control_locs: pg.control_locs.clone(),
+                control_configs: pg.control_configs.clone(),
+            })
+            .collect();
+
+        Circuit::new(self.dims.clone(), dagger_gates)
+    }
 }
 
 impl fmt::Display for Circuit {
