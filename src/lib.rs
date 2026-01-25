@@ -16,6 +16,6 @@ pub use state::State;
 pub use einsum::{circuit_to_einsum, circuit_to_einsum_with_boundary, TensorNetwork};
 pub use apply::apply;
 pub use json::{circuit_to_json, circuit_from_json};
-pub use operator::{Op, op_matrix};
+pub use operator::{Op, op_matrix, OperatorString};
 #[cfg(feature = "torch")]
 pub use torch_contractor::contract;

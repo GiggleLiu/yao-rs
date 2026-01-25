@@ -15,6 +15,39 @@ pub enum Op {
     Pd,  // |1><0| lowering
 }
 
+/// Product of operators at different sites: Z(0)Z(1)
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub struct OperatorString {
+    /// (site_index, operator) pairs, sorted by site
+    ops: Vec<(usize, Op)>,
+}
+
+impl OperatorString {
+    pub fn new(mut ops: Vec<(usize, Op)>) -> Self {
+        // Sort by site index
+        ops.sort_by_key(|(site, _)| *site);
+        // Remove identity operators
+        ops.retain(|(_, op)| *op != Op::I);
+        Self { ops }
+    }
+
+    pub fn identity() -> Self {
+        Self { ops: vec![] }
+    }
+
+    pub fn len(&self) -> usize {
+        self.ops.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.ops.is_empty()
+    }
+
+    pub fn ops(&self) -> &[(usize, Op)] {
+        &self.ops
+    }
+}
+
 /// Get 2x2 matrix for operator
 pub fn op_matrix(op: &Op) -> Array2<Complex64> {
     let c = |r: f64, i: f64| Complex64::new(r, i);
