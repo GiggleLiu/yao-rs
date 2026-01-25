@@ -7,6 +7,10 @@ edition.workspace = true
 name = "_yao_rs"
 crate-type = ["cdylib"]
 
+[features]
+default = []
+torch = ["yao-rs/torch"]
+
 [dependencies]
 pyo3 = { version = "0.20", features = ["extension-module"] }
 num-complex = "0.4"

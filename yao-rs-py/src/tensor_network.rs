@@ -1,7 +1,12 @@
 use pyo3::prelude::*;
+#[cfg(feature = "torch")]
+use pyo3::types::PyComplex;
 use yao_rs::TensorNetwork;
 use crate::circuit::PyCircuit;
 use crate::operator::PyOperatorPolynomial;
+
+#[cfg(feature = "torch")]
+use yao_rs::torch_contractor;
 
 /// A tensor network wrapper for Python.
 ///
@@ -18,8 +23,72 @@ impl PyTensorNetwork {
         self.0.tensors.len()
     }
 
+    /// Contract the tensor network and return the result as a complex number.
+    ///
+    /// Args:
+    ///     device: Device to run on - "cpu" or "cuda:N" for GPU N (default: "cpu")
+    ///
+    /// Returns:
+    ///     Complex number result of the contraction
+    ///
+    /// Raises:
+    ///     RuntimeError: If torch feature is not enabled or device is invalid
+    #[pyo3(signature = (device = "cpu"))]
+    fn contract<'py>(&self, py: Python<'py>, device: &str) -> PyResult<PyObject> {
+        #[cfg(feature = "torch")]
+        {
+            let dev = parse_device(device)?;
+            let result = torch_contractor::contract(&self.0, dev);
+
+            // Extract real and imaginary parts from the scalar tensor
+            let re = f64::try_from(result.real()).map_err(|e| {
+                pyo3::exceptions::PyRuntimeError::new_err(format!("Failed to extract real part: {}", e))
+            })?;
+            let im = f64::try_from(result.imag()).map_err(|e| {
+                pyo3::exceptions::PyRuntimeError::new_err(format!("Failed to extract imag part: {}", e))
+            })?;
+
+            Ok(PyComplex::from_doubles(py, re, im).into())
+        }
+
+        #[cfg(not(feature = "torch"))]
+        {
+            let _ = (py, device); // silence unused warnings
+            Err(pyo3::exceptions::PyRuntimeError::new_err(
+                "Torch feature is not enabled. Rebuild with: maturin develop --features torch"
+            ))
+        }
+    }
+
     fn __repr__(&self) -> String {
         format!("TensorNetwork(tensors={})", self.num_tensors())
+    }
+}
+
+/// Parse device string to tch::Device
+#[cfg(feature = "torch")]
+fn parse_device(device: &str) -> PyResult<tch::Device> {
+    use tch::Device;
+
+    let device_lower = device.to_lowercase();
+    if device_lower == "cpu" {
+        Ok(Device::Cpu)
+    } else if device_lower.starts_with("cuda") {
+        // Parse "cuda" or "cuda:N"
+        if device_lower == "cuda" {
+            Ok(Device::Cuda(0))
+        } else if let Some(idx_str) = device_lower.strip_prefix("cuda:") {
+            let idx: usize = idx_str.parse().map_err(|_| {
+                pyo3::exceptions::PyValueError::new_err(format!("Invalid CUDA device index: {}", idx_str))
+            })?;
+            Ok(Device::Cuda(idx))
+        } else {
+            Err(pyo3::exceptions::PyValueError::new_err(format!("Invalid device: {}", device)))
+        }
+    } else {
+        Err(pyo3::exceptions::PyValueError::new_err(format!(
+            "Unknown device: {}. Use 'cpu' or 'cuda:N'", device
+        )))
     }
 }
 
