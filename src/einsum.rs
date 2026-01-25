@@ -443,12 +443,11 @@ pub fn circuit_to_expectation(circuit: &Circuit, operator: &OperatorPolynomial) 
     }
 
     // ===== Part 5: Final state boundary tensors ⟨0| on each qubit =====
-    for i in 0..n {
-        let d = circuit.dims[i];
+    for (&d, &label) in circuit.dims.iter().zip(current_labels.iter()).take(n) {
         let mut data = vec![Complex64::new(0.0, 0.0); d];
         data[0] = Complex64::new(1.0, 0.0);
         let tensor = ArrayD::from_shape_vec(IxDyn(&[d]), data).unwrap();
-        all_ixs.push(vec![current_labels[i]]); // output label for this qubit
+        all_ixs.push(vec![label]); // output label for this qubit
         all_tensors.push(tensor);
     }
 
