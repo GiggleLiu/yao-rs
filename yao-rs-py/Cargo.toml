@@ -9,9 +9,10 @@ crate-type = ["cdylib"]
 
 [features]
 default = []
-torch = ["yao-rs/torch"]
+torch = ["yao-rs/torch", "dep:tch"]
 
 [dependencies]
+tch = { version = "0.17", optional = true }
 pyo3 = { version = "0.20", features = ["extension-module"] }
 num-complex = "0.4"
 serde_json = "1"

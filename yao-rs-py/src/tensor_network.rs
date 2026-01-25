@@ -32,13 +32,27 @@ impl PyTensorNetwork {
     ///     Complex number result of the contraction
     ///
     /// Raises:
-    ///     RuntimeError: If torch feature is not enabled or device is invalid
+    ///     ValueError: If the device string is invalid or refers to an unknown device
+    ///     RuntimeError: If the torch feature is not enabled or contraction fails
     #[pyo3(signature = (device = "cpu"))]
     fn contract<'py>(&self, py: Python<'py>, device: &str) -> PyResult<PyObject> {
         #[cfg(feature = "torch")]
         {
             let dev = parse_device(device)?;
-            let result = torch_contractor::contract(&self.0, dev);
+            // Use catch_unwind to convert panics to Python errors
+            let tn = self.0.clone();
+            let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                torch_contractor::contract(&tn, dev)
+            })).map_err(|e| {
+                let msg = if let Some(s) = e.downcast_ref::<&str>() {
+                    s.to_string()
+                } else if let Some(s) = e.downcast_ref::<String>() {
+                    s.clone()
+                } else {
+                    "Unknown panic during contraction".to_string()
+                };
+                pyo3::exceptions::PyRuntimeError::new_err(format!("Contraction failed: {}", msg))
+            })?;
 
             // Extract real and imaginary parts from the scalar tensor
             let re = f64::try_from(result.real()).map_err(|e| {
