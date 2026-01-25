@@ -31,14 +31,29 @@ impl std::fmt::Display for PdfError {
 
 impl std::error::Error for PdfError {}
 
+/// Escape a JSON string for embedding in a Typst string literal.
+fn escape_json_for_typst(json: &str) -> String {
+    let mut escaped = String::with_capacity(json.len() * 2);
+    for c in json.chars() {
+        match c {
+            '\\' => escaped.push_str("\\\\"),
+            '"' => escaped.push_str("\\\""),
+            '\n' => escaped.push_str("\\n"),
+            '\r' => escaped.push_str("\\r"),
+            '\t' => escaped.push_str("\\t"),
+            _ => escaped.push(c),
+        }
+    }
+    escaped
+}
+
 /// Generate a complete Typst document for a circuit.
 fn generate_typst_source(circuit: &Circuit) -> String {
     let json = circuit_to_json(circuit);
-    // Escape the JSON for embedding in Typst
-    let escaped_json = json.replace('\\', "\\\\").replace('"', "\\\"");
+    let escaped_json = escape_json_for_typst(&json);
 
-    // Note: json.decode is deprecated in Typst 0.14, but json() expects a file path.
-    // We use json.decode here since we're embedding the JSON as a string literal.
+    // Note: json.decode is deprecated in Typst 0.14 but json() expects a file path.
+    // We use json.decode since we're embedding JSON as a string literal.
     format!(
         r#"#set page(width: auto, height: auto, margin: 5pt)
 
@@ -64,12 +79,12 @@ fn generate_typst_source(circuit: &Circuit) -> String {
 ///
 /// # Example
 /// ```ignore
-/// use yao_rs::{Circuit, put, Gate};
+/// use yao_rs::{Circuit, put, control, Gate};
 /// use yao_rs::typst::to_pdf;
 ///
 /// let circuit = Circuit::new(vec![2, 2, 2], vec![
-///     put(Gate::H, vec![0]),
-///     put(Gate::X, vec![1]).control(vec![0]),
+///     put(vec![0], Gate::H),
+///     control(vec![0], vec![1], Gate::X),
 /// ]).unwrap();
 ///
 /// let pdf_bytes = to_pdf(&circuit)?;
@@ -89,7 +104,7 @@ pub fn to_pdf(circuit: &Circuit) -> Result<Vec<u8>, PdfError> {
     let compiled = engine.compile::<PagedDocument>();
     let document = compiled.output.map_err(|e| PdfError::Compilation(format!("{}", e)))?;
 
-    // Export to PDF
+    // Export to PDF (use {:?} as EcoVec<SourceDiagnostic> doesn't implement Display)
     typst_pdf::pdf(&document, &Default::default())
         .map_err(|e| PdfError::PdfExport(format!("{:?}", e)))
 }
