@@ -7,7 +7,7 @@ edition = "2024"
 torch = ["tch"]
 
 [dependencies]
-num-complex = "0.4"
+num-complex = { version = "0.4", features = ["serde"] }
 ndarray = "0.16"
 omeco = "0.1"
 rand = "0.8"

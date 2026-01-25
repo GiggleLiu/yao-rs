@@ -1,4 +1,4 @@
-use yao_rs::operator::{Op, op_matrix, OperatorString};
+use yao_rs::operator::{Op, op_matrix, OperatorString, OperatorPolynomial};
 use ndarray::array;
 use num_complex::Complex64;
 
@@ -33,4 +33,20 @@ fn test_operator_string_creation() {
 fn test_operator_string_identity() {
     let identity = OperatorString::identity();
     assert_eq!(identity.len(), 0);
+}
+
+#[test]
+fn test_operator_polynomial_single() {
+    // 0.5 * Z(0)
+    let poly = OperatorPolynomial::single(0, Op::Z, 0.5.into());
+    assert_eq!(poly.len(), 1);
+}
+
+#[test]
+fn test_operator_polynomial_add() {
+    // 0.5 * Z(0) + 0.5 * Z(1)
+    let p1 = OperatorPolynomial::single(0, Op::Z, 0.5.into());
+    let p2 = OperatorPolynomial::single(1, Op::Z, 0.5.into());
+    let sum = &p1 + &p2;
+    assert_eq!(sum.len(), 2);
 }
