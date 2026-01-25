@@ -56,4 +56,5 @@ pub fn circuit_to_expectation(circuit: &PyCircuit, operator: &PyOperatorPolynomi
 
 // Note: contract() requires the torch feature. For now we expose the TN structure
 // and let Python handle optimization/contraction via other means if needed.
-// Optimization uses `omeco::optimize_greedy` internally when available.
+// In the Rust backend, contraction can use `omeco::optimize_greedy` when available,
+// but that optimization is only applied inside contract() and is not exposed here.

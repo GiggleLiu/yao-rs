@@ -95,6 +95,23 @@ impl PyCircuit {
             .map_err(PyValueError::new_err)
     }
 
+    /// Create a circuit from a Python dictionary.
+    ///
+    /// Args:
+    ///     data: A dictionary with 'registers' and 'gates' keys
+    ///
+    /// Returns:
+    ///     A new Circuit
+    #[staticmethod]
+    fn from_dict(data: &pyo3::types::PyDict) -> PyResult<Self> {
+        let json_str = serde_json::to_string(&pythonize::depythonize::<serde_json::Value>(data)
+            .map_err(|e| PyValueError::new_err(format!("Failed to convert dict: {}", e)))?)
+            .map_err(|e| PyValueError::new_err(format!("Failed to serialize: {}", e)))?;
+        circuit_from_json(&json_str)
+            .map(PyCircuit)
+            .map_err(PyValueError::new_err)
+    }
+
     /// Load a circuit from a JSON file.
     #[staticmethod]
     fn from_json_file(path: &str) -> PyResult<Self> {

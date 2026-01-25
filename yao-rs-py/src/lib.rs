@@ -16,7 +16,7 @@ use tensor_network::{PyTensorNetwork, circuit_to_overlap, circuit_to_expectation
 
 #[pyfunction]
 fn version() -> &'static str {
-    "0.1.0"
+    env!("CARGO_PKG_VERSION")
 }
 
 #[pymodule]
