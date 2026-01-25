@@ -71,12 +71,26 @@ impl PyOperatorPolynomial {
         PyOperatorPolynomial(&self.0 + &(-&other.0))
     }
 
-    fn __mul__(&self, scalar: f64) -> Self {
+    /// Multiply by a real scalar.
+    fn scale(&self, scalar: f64) -> Self {
         PyOperatorPolynomial(&self.0 * Complex64::new(scalar, 0.0))
     }
 
+    /// Multiply by a complex scalar.
+    ///
+    /// Args:
+    ///     real: Real part of the scalar
+    ///     imag: Imaginary part of the scalar
+    fn scale_complex(&self, real: f64, imag: f64) -> Self {
+        PyOperatorPolynomial(&self.0 * Complex64::new(real, imag))
+    }
+
+    fn __mul__(&self, scalar: f64) -> Self {
+        self.scale(scalar)
+    }
+
     fn __rmul__(&self, scalar: f64) -> Self {
-        self.__mul__(scalar)
+        self.scale(scalar)
     }
 
     fn len(&self) -> usize {

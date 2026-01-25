@@ -456,21 +456,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "numpy"
-version = "0.20.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bef41cbb417ea83b30525259e30ccef6af39b31c240bda578889494c5392d331"
-dependencies = [
- "libc",
- "ndarray 0.15.6",
- "num-complex",
- "num-integer",
- "num-traits",
- "pyo3",
- "rustc-hash",
-]
-
-[[package]]
 name = "omeco"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -656,6 +641,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "pythonize"
+version = "0.20.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ffd1c3ef39c725d63db5f9bc455461bafd80540cb7824c61afb823501921a850"
+dependencies = [
+ "pyo3",
+ "serde",
+]
+
+[[package]]
 name = "quote"
 version = "1.0.44"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -763,12 +758,6 @@ checksum = "ed2bf2547551a7053d6fdfafda3f938979645c44812fbfcda098faae3f1a362d"
 dependencies = [
  "bitflags",
 ]
-
-[[package]]
-name = "rustc-hash"
-version = "1.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "08d43f7aa6b08d49f382cde6a7982047c3426db949b1424bc4b7ec9ae12c6ce2"
 
 [[package]]
 name = "rustversion"
@@ -1055,10 +1044,9 @@ dependencies = [
 name = "yao-rs-py"
 version = "0.1.0"
 dependencies = [
- "ndarray 0.16.1",
  "num-complex",
- "numpy",
  "pyo3",
+ "pythonize",
  "serde_json",
  "yao-rs",
 ]
