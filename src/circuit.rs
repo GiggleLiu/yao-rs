@@ -225,6 +225,26 @@ impl Circuit {
 
         Circuit::new(self.dims.clone(), dagger_gates)
     }
+
+    /// Compile the circuit to PDF bytes.
+    ///
+    /// This embeds the Typst compiler to render a visual diagram of the circuit.
+    /// On first call, this will download the required Typst packages (~1MB).
+    ///
+    /// # Example
+    /// ```ignore
+    /// let circuit = Circuit::new(vec![2, 2], vec![
+    ///     put(vec![0], Gate::H),
+    ///     control(vec![0], vec![1], Gate::X),
+    /// ]).unwrap();
+    ///
+    /// let pdf = circuit.to_pdf()?;
+    /// std::fs::write("circuit.pdf", pdf)?;
+    /// ```
+    #[cfg(feature = "typst")]
+    pub fn to_pdf(&self) -> Result<Vec<u8>, crate::typst::PdfError> {
+        crate::typst::to_pdf(self)
+    }
 }
 
 impl fmt::Display for Circuit {
