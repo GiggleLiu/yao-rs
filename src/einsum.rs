@@ -105,6 +105,23 @@ pub fn circuit_to_einsum(circuit: &Circuit) -> TensorNetwork {
     }
 }
 
+/// Convert circuit to tensor network for ⟨0|U|0⟩ (overlap with zero state)
+///
+/// This computes the amplitude of the circuit applied to |0...0⟩ and projected
+/// onto ⟨0...0|. All qubits are pinned to |0⟩ in both initial and final states,
+/// resulting in a scalar output.
+///
+/// # Arguments
+/// * `circuit` - The quantum circuit to convert
+///
+/// # Returns
+/// A `TensorNetwork` representing ⟨0|U|0⟩ with empty output indices (scalar result).
+pub fn circuit_to_overlap(circuit: &Circuit) -> TensorNetwork {
+    // Use existing circuit_to_einsum_with_boundary with all qubits pinned to |0⟩
+    let final_state: Vec<usize> = (0..circuit.num_sites()).collect();
+    circuit_to_einsum_with_boundary(circuit, &final_state)
+}
+
 /// Convert a quantum circuit into a tensor network with boundary conditions.
 ///
 /// The initial state is always |0...0⟩. Each qubit gets a rank-1 tensor

@@ -4,7 +4,7 @@ use ndarray::Array2;
 use num_complex::Complex64;
 
 use yao_rs::circuit::{Circuit, PositionedGate};
-use yao_rs::einsum::circuit_to_einsum;
+use yao_rs::einsum::{circuit_to_einsum, circuit_to_overlap};
 use yao_rs::gate::Gate;
 
 /// Helper to create a simple PositionedGate with no controls.
@@ -424,4 +424,21 @@ fn test_diagonal_gate_preserves_labels_across_multiple_uses() {
     assert_eq!(tn.code.iy, vec![0]);
     // size_dict should only have initial label
     assert_eq!(tn.size_dict.len(), 1);
+}
+
+#[test]
+fn test_circuit_to_overlap_simple() {
+    // |0> -> H -> measure <0|
+    // This computes ⟨0|H|0⟩ = 1/√2
+    let circuit = Circuit::new(
+        vec![2],
+        vec![simple_gate(Gate::H, vec![0])],
+    ).unwrap();
+
+    let tn = circuit_to_overlap(&circuit);
+    // Should have: initial |0>, H gate tensor, final <0|
+    // 1 initial boundary tensor + 1 gate tensor + 1 final boundary tensor = 3
+    assert_eq!(tn.tensors.len(), 3);
+    // Output should be empty (scalar result since all qubits pinned)
+    assert!(tn.code.iy.is_empty());
 }
