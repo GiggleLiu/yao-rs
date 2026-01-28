@@ -1424,4 +1424,205 @@ mod tests {
             }
         }
     }
+
+    #[test]
+    fn test_instruct_h_creates_superposition() {
+        // H|0⟩ = |+⟩ = (|0⟩ + |1⟩)/√2
+        let mut state = State::zero_state(&[2]); // |0⟩
+        let h_gate = Gate::H.matrix(2);
+        instruct_single(&mut state, &h_gate, 0);
+
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        assert!(approx_eq(state.data[0], s));
+        assert!(approx_eq(state.data[1], s));
+
+        // H|1⟩ = |-⟩ = (|0⟩ - |1⟩)/√2
+        let mut state = State::product_state(&[2], &[1]); // |1⟩
+        instruct_single(&mut state, &h_gate, 0);
+
+        assert!(approx_eq(state.data[0], s));
+        assert!(approx_eq(state.data[1], -s));
+    }
+
+    #[test]
+    fn test_instruct_h_on_each_qubit() {
+        // 3-qubit system, apply H to qubit 0, 1, 2 separately
+        // Verify each creates proper superposition
+        let h_gate = Gate::H.matrix(2);
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        let zero = Complex64::new(0.0, 0.0);
+
+        // Test H on qubit 0: |000⟩ -> (|000⟩ + |100⟩)/√2
+        let mut state = State::zero_state(&[2, 2, 2]); // |000⟩
+        instruct_single(&mut state, &h_gate, 0);
+        // |000⟩ = index 0, |100⟩ = index 4
+        assert!(approx_eq(state.data[0], s)); // |000⟩
+        assert!(approx_eq(state.data[4], s)); // |100⟩
+        for i in [1, 2, 3, 5, 6, 7] {
+            assert!(approx_eq(state.data[i], zero));
+        }
+
+        // Test H on qubit 1: |000⟩ -> (|000⟩ + |010⟩)/√2
+        let mut state = State::zero_state(&[2, 2, 2]); // |000⟩
+        instruct_single(&mut state, &h_gate, 1);
+        // |000⟩ = index 0, |010⟩ = index 2
+        assert!(approx_eq(state.data[0], s)); // |000⟩
+        assert!(approx_eq(state.data[2], s)); // |010⟩
+        for i in [1, 3, 4, 5, 6, 7] {
+            assert!(approx_eq(state.data[i], zero));
+        }
+
+        // Test H on qubit 2: |000⟩ -> (|000⟩ + |001⟩)/√2
+        let mut state = State::zero_state(&[2, 2, 2]); // |000⟩
+        instruct_single(&mut state, &h_gate, 2);
+        // |000⟩ = index 0, |001⟩ = index 1
+        assert!(approx_eq(state.data[0], s)); // |000⟩
+        assert!(approx_eq(state.data[1], s)); // |001⟩
+        for i in [2, 3, 4, 5, 6, 7] {
+            assert!(approx_eq(state.data[i], zero));
+        }
+    }
+
+    #[test]
+    fn test_instruct_s_gate() {
+        // S = diag(1, i)
+        // S|0⟩ = |0⟩, S|1⟩ = i|1⟩
+        // Use instruct_diagonal
+        let one = Complex64::new(1.0, 0.0);
+        let i = Complex64::new(0.0, 1.0);
+        let zero = Complex64::new(0.0, 0.0);
+        let s_phases = [one, i];
+
+        // S|0⟩ = |0⟩
+        let mut state = State::zero_state(&[2]); // |0⟩
+        instruct_diagonal(&mut state, &s_phases, 0);
+        assert!(approx_eq(state.data[0], one));
+        assert!(approx_eq(state.data[1], zero));
+
+        // S|1⟩ = i|1⟩
+        let mut state = State::product_state(&[2], &[1]); // |1⟩
+        instruct_diagonal(&mut state, &s_phases, 0);
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], i));
+
+        // S on |+⟩ = (|0⟩ + |1⟩)/√2 -> (|0⟩ + i|1⟩)/√2
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        let mut state = State::zero_state(&[2]);
+        state.data[0] = s;
+        state.data[1] = s;
+        instruct_diagonal(&mut state, &s_phases, 0);
+        assert!(approx_eq(state.data[0], s));
+        assert!(approx_eq(state.data[1], s * i));
+    }
+
+    #[test]
+    fn test_instruct_t_gate() {
+        // T = diag(1, e^(iπ/4))
+        // T|0⟩ = |0⟩, T|1⟩ = e^(iπ/4)|1⟩
+        // Use instruct_diagonal
+        let one = Complex64::new(1.0, 0.0);
+        let t_phase = Complex64::from_polar(1.0, FRAC_PI_4);
+        let zero = Complex64::new(0.0, 0.0);
+        let t_phases = [one, t_phase];
+
+        // T|0⟩ = |0⟩
+        let mut state = State::zero_state(&[2]); // |0⟩
+        instruct_diagonal(&mut state, &t_phases, 0);
+        assert!(approx_eq(state.data[0], one));
+        assert!(approx_eq(state.data[1], zero));
+
+        // T|1⟩ = e^(iπ/4)|1⟩
+        let mut state = State::product_state(&[2], &[1]); // |1⟩
+        instruct_diagonal(&mut state, &t_phases, 0);
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], t_phase));
+
+        // T on |+⟩ = (|0⟩ + |1⟩)/√2 -> (|0⟩ + e^(iπ/4)|1⟩)/√2
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        let mut state = State::zero_state(&[2]);
+        state.data[0] = s;
+        state.data[1] = s;
+        instruct_diagonal(&mut state, &t_phases, 0);
+        assert!(approx_eq(state.data[0], s));
+        assert!(approx_eq(state.data[1], s * t_phase));
+
+        // Verify T^2 = S: T|1⟩ then T|1⟩ should give S|1⟩ = i|1⟩
+        let i = Complex64::new(0.0, 1.0);
+        let mut state = State::product_state(&[2], &[1]); // |1⟩
+        instruct_diagonal(&mut state, &t_phases, 0);
+        instruct_diagonal(&mut state, &t_phases, 0);
+        // e^(iπ/4) * e^(iπ/4) = e^(iπ/2) = i
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], i));
+    }
+
+    #[test]
+    fn test_instruct_identity() {
+        // I|ψ⟩ = |ψ⟩ for any state
+        // Test on various states
+        let one = Complex64::new(1.0, 0.0);
+        let zero = Complex64::new(0.0, 0.0);
+
+        // 2x2 identity matrix
+        let identity = Array2::from_shape_vec((2, 2), vec![one, zero, zero, one]).unwrap();
+
+        // Test I|0⟩ = |0⟩
+        let mut state = State::zero_state(&[2]); // |0⟩
+        let state_before = state.clone();
+        instruct_single(&mut state, &identity, 0);
+        assert!(approx_eq(state.data[0], state_before.data[0]));
+        assert!(approx_eq(state.data[1], state_before.data[1]));
+
+        // Test I|1⟩ = |1⟩
+        let mut state = State::product_state(&[2], &[1]); // |1⟩
+        let state_before = state.clone();
+        instruct_single(&mut state, &identity, 0);
+        assert!(approx_eq(state.data[0], state_before.data[0]));
+        assert!(approx_eq(state.data[1], state_before.data[1]));
+
+        // Test I|+⟩ = |+⟩ (superposition state)
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        let mut state = State::zero_state(&[2]);
+        state.data[0] = s;
+        state.data[1] = s;
+        let state_before = state.clone();
+        instruct_single(&mut state, &identity, 0);
+        assert!(approx_eq(state.data[0], state_before.data[0]));
+        assert!(approx_eq(state.data[1], state_before.data[1]));
+
+        // Test I on arbitrary state
+        let amp0 = Complex64::new(0.6, 0.2);
+        let amp1 = Complex64::new(0.3, 0.7);
+        let mut state = State::zero_state(&[2]);
+        state.data[0] = amp0;
+        state.data[1] = amp1;
+        let state_before = state.clone();
+        instruct_single(&mut state, &identity, 0);
+        assert!(approx_eq(state.data[0], state_before.data[0]));
+        assert!(approx_eq(state.data[1], state_before.data[1]));
+
+        // Test I on 2-qubit system (apply to qubit 0)
+        let mut state = State::zero_state(&[2, 2]);
+        state.data[0] = Complex64::new(0.5, 0.0);
+        state.data[1] = Complex64::new(0.5, 0.0);
+        state.data[2] = Complex64::new(0.5, 0.0);
+        state.data[3] = Complex64::new(0.5, 0.0);
+        let state_before = state.clone();
+        instruct_single(&mut state, &identity, 0);
+        for i in 0..4 {
+            assert!(approx_eq(state.data[i], state_before.data[i]));
+        }
+
+        // Test I on 2-qubit system (apply to qubit 1)
+        let mut state = State::zero_state(&[2, 2]);
+        state.data[0] = Complex64::new(0.5, 0.0);
+        state.data[1] = Complex64::new(0.5, 0.0);
+        state.data[2] = Complex64::new(0.5, 0.0);
+        state.data[3] = Complex64::new(0.5, 0.0);
+        let state_before = state.clone();
+        instruct_single(&mut state, &identity, 1);
+        for i in 0..4 {
+            assert!(approx_eq(state.data[i], state_before.data[i]));
+        }
+    }
 }
