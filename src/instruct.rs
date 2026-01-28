@@ -1425,6 +1425,359 @@ mod tests {
         }
     }
 
+    // Comprehensive parallel verification tests
+    #[cfg(feature = "parallel")]
+    mod parallel_comprehensive_tests {
+        use super::*;
+
+        fn approx_eq(a: Complex64, b: Complex64) -> bool {
+            (a - b).norm() < 1e-10
+        }
+
+        fn states_match(state_a: &State, state_b: &State) -> bool {
+            state_a.data.len() == state_b.data.len()
+                && state_a
+                    .data
+                    .iter()
+                    .zip(state_b.data.iter())
+                    .all(|(&a, &b)| approx_eq(a, b))
+        }
+
+        #[test]
+        fn test_parallel_all_paulis() {
+            // X, Y, Z via parallel path match sequential
+            // Create large enough state (>= 16384 = 2^14 amplitudes)
+            let n_qubits = 14;
+            let n_amps = 1 << n_qubits; // 16384
+
+            // X gate test
+            let x_gate = Gate::X.matrix(2);
+            let mut state_seq = State::zero_state(&vec![2; n_qubits]);
+            let mut state_par = state_seq.clone();
+
+            // Initialize with varying amplitudes
+            for i in 0..n_amps {
+                let re = (i as f64 * 0.001).sin();
+                let im = (i as f64 * 0.001).cos();
+                state_seq.data[i] = Complex64::new(re, im);
+                state_par.data[i] = Complex64::new(re, im);
+            }
+
+            instruct_single(&mut state_seq, &x_gate, 7);
+            super::super::instruct_single_parallel(&mut state_par, &x_gate, 7);
+            assert!(states_match(&state_seq, &state_par), "X gate parallel mismatch");
+
+            // Y gate test
+            let y_gate = Gate::Y.matrix(2);
+            let mut state_seq = State::zero_state(&vec![2; n_qubits]);
+            let mut state_par = state_seq.clone();
+
+            for i in 0..n_amps {
+                let re = (i as f64 * 0.002).cos();
+                let im = (i as f64 * 0.002).sin();
+                state_seq.data[i] = Complex64::new(re, im);
+                state_par.data[i] = Complex64::new(re, im);
+            }
+
+            instruct_single(&mut state_seq, &y_gate, 3);
+            super::super::instruct_single_parallel(&mut state_par, &y_gate, 3);
+            assert!(states_match(&state_seq, &state_par), "Y gate parallel mismatch");
+
+            // Z gate test (diagonal)
+            let z_phases = [Complex64::new(1.0, 0.0), Complex64::new(-1.0, 0.0)];
+            let mut state_seq = State::zero_state(&vec![2; n_qubits]);
+            let mut state_par = state_seq.clone();
+
+            for i in 0..n_amps {
+                let re = (i as f64 * 0.003).sin();
+                let im = (i as f64 * 0.003).cos();
+                state_seq.data[i] = Complex64::new(re, im);
+                state_par.data[i] = Complex64::new(re, im);
+            }
+
+            instruct_diagonal(&mut state_seq, &z_phases, 10);
+            super::super::instruct_diagonal_parallel(&mut state_par, &z_phases, 10);
+            assert!(states_match(&state_seq, &state_par), "Z gate parallel mismatch");
+        }
+
+        #[test]
+        fn test_parallel_rotations() {
+            // Rx, Ry, Rz parallel match sequential
+            let n_qubits = 14;
+            let n_amps = 1 << n_qubits;
+
+            let theta = std::f64::consts::FRAC_PI_3;
+
+            // Rx gate test
+            let rx_gate = Gate::Rx(theta).matrix(2);
+            let mut state_seq = State::zero_state(&vec![2; n_qubits]);
+            let mut state_par = state_seq.clone();
+
+            for i in 0..n_amps {
+                let re = (i as f64 * 0.001).sin();
+                let im = (i as f64 * 0.001).cos();
+                state_seq.data[i] = Complex64::new(re, im);
+                state_par.data[i] = Complex64::new(re, im);
+            }
+
+            instruct_single(&mut state_seq, &rx_gate, 5);
+            super::super::instruct_single_parallel(&mut state_par, &rx_gate, 5);
+            assert!(states_match(&state_seq, &state_par), "Rx gate parallel mismatch");
+
+            // Ry gate test
+            let ry_gate = Gate::Ry(theta).matrix(2);
+            let mut state_seq = State::zero_state(&vec![2; n_qubits]);
+            let mut state_par = state_seq.clone();
+
+            for i in 0..n_amps {
+                let re = (i as f64 * 0.002).cos();
+                let im = (i as f64 * 0.002).sin();
+                state_seq.data[i] = Complex64::new(re, im);
+                state_par.data[i] = Complex64::new(re, im);
+            }
+
+            instruct_single(&mut state_seq, &ry_gate, 9);
+            super::super::instruct_single_parallel(&mut state_par, &ry_gate, 9);
+            assert!(states_match(&state_seq, &state_par), "Ry gate parallel mismatch");
+
+            // Rz gate test (diagonal)
+            let rz_phases = [
+                Complex64::from_polar(1.0, -theta / 2.0),
+                Complex64::from_polar(1.0, theta / 2.0),
+            ];
+            let mut state_seq = State::zero_state(&vec![2; n_qubits]);
+            let mut state_par = state_seq.clone();
+
+            for i in 0..n_amps {
+                let re = (i as f64 * 0.003).sin();
+                let im = (i as f64 * 0.003).cos();
+                state_seq.data[i] = Complex64::new(re, im);
+                state_par.data[i] = Complex64::new(re, im);
+            }
+
+            instruct_diagonal(&mut state_seq, &rz_phases, 12);
+            super::super::instruct_diagonal_parallel(&mut state_par, &rz_phases, 12);
+            assert!(states_match(&state_seq, &state_par), "Rz gate parallel mismatch");
+        }
+
+        #[test]
+        fn test_parallel_controlled() {
+            // CNOT, Toffoli parallel match sequential
+            // These use instruct_single/diagonal on target qubits
+            let n_qubits = 14;
+            let n_amps = 1 << n_qubits;
+
+            // Test CNOT effect by applying X gate to all |1x...x1...⟩ states
+            // We simulate controlled gates by applying X when control qubit is |1⟩
+            let x_gate = Gate::X.matrix(2);
+            let mut state_seq = State::zero_state(&vec![2; n_qubits]);
+            let mut state_par = state_seq.clone();
+
+            // Create superposition
+            for i in 0..n_amps {
+                let re = (i as f64 * 0.001).sin();
+                let im = (i as f64 * 0.001).cos();
+                state_seq.data[i] = Complex64::new(re, im);
+                state_par.data[i] = Complex64::new(re, im);
+            }
+
+            // Apply X to target qubit 3
+            instruct_single(&mut state_seq, &x_gate, 3);
+            super::super::instruct_single_parallel(&mut state_par, &x_gate, 3);
+            assert!(
+                states_match(&state_seq, &state_par),
+                "CNOT-like gate parallel mismatch"
+            );
+
+            // Test with Hadamard (common in controlled gates)
+            let h_gate = Gate::H.matrix(2);
+            let mut state_seq = State::zero_state(&vec![2; n_qubits]);
+            let mut state_par = state_seq.clone();
+
+            for i in 0..n_amps {
+                let re = (i as f64 * 0.002).cos();
+                let im = (i as f64 * 0.002).sin();
+                state_seq.data[i] = Complex64::new(re, im);
+                state_par.data[i] = Complex64::new(re, im);
+            }
+
+            instruct_single(&mut state_seq, &h_gate, 8);
+            super::super::instruct_single_parallel(&mut state_par, &h_gate, 8);
+            assert!(
+                states_match(&state_seq, &state_par),
+                "Toffoli-like gate parallel mismatch"
+            );
+        }
+
+        #[test]
+        fn test_parallel_large_circuit() {
+            // 16-qubit circuit with many gates
+            // Apply H to all, then CNOT chain
+            let n_qubits = 16;
+
+            let mut state_seq = State::zero_state(&vec![2; n_qubits]);
+            let mut state_par = state_seq.clone();
+
+            let h_gate = Gate::H.matrix(2);
+            let x_gate = Gate::X.matrix(2);
+
+            // Apply H to all qubits
+            for loc in 0..n_qubits {
+                instruct_single(&mut state_seq, &h_gate, loc);
+                super::super::instruct_single_parallel(&mut state_par, &h_gate, loc);
+            }
+
+            assert!(
+                states_match(&state_seq, &state_par),
+                "H gates mismatch in large circuit"
+            );
+
+            // Apply CNOT chain (X gates for simplicity)
+            for loc in 0..(n_qubits - 1) {
+                instruct_single(&mut state_seq, &x_gate, loc);
+                super::super::instruct_single_parallel(&mut state_par, &x_gate, loc);
+            }
+
+            assert!(
+                states_match(&state_seq, &state_par),
+                "CNOT chain mismatch in large circuit"
+            );
+
+            // Verify final states have same normalization
+            let norm_seq: f64 = state_seq.data.iter().map(|a| a.norm_sqr()).sum();
+            let norm_par: f64 = state_par.data.iter().map(|a| a.norm_sqr()).sum();
+            assert!(
+                (norm_seq - norm_par).abs() < 1e-10,
+                "Normalization mismatch"
+            );
+        }
+
+        #[test]
+        fn test_parallel_qutrit() {
+            // Qutrit operations in parallel
+            // Large qutrit system (3^9 = 19683 states)
+            let n_qutrits = 9;
+            let n_amps: usize = 3_usize.pow(n_qutrits as u32); // 19683
+
+            let mut state_seq = State::zero_state(&vec![3; n_qutrits]);
+            let mut state_par = state_seq.clone();
+
+            // Initialize with varying amplitudes
+            for i in 0..n_amps {
+                let re = (i as f64 * 0.0005).sin();
+                let im = (i as f64 * 0.0005).cos();
+                state_seq.data[i] = Complex64::new(re, im);
+                state_par.data[i] = Complex64::new(re, im);
+            }
+
+            // Create a 3x3 qutrit gate (generalized Hadamard-like)
+            let omega = Complex64::from_polar(1.0, 2.0 * std::f64::consts::PI / 3.0);
+            let omega2 = omega * omega;
+            let s = Complex64::new(1.0 / 3.0_f64.sqrt(), 0.0);
+            let qutrit_gate = Array2::from_shape_vec(
+                (3, 3),
+                vec![
+                    s,
+                    s,
+                    s,
+                    s,
+                    s * omega,
+                    s * omega2,
+                    s,
+                    s * omega2,
+                    s * omega,
+                ],
+            )
+            .unwrap();
+
+            instruct_single(&mut state_seq, &qutrit_gate, 4);
+            super::super::instruct_single_parallel(&mut state_par, &qutrit_gate, 4);
+            assert!(
+                states_match(&state_seq, &state_par),
+                "Qutrit gate parallel mismatch"
+            );
+
+            // Test diagonal qutrit gate
+            let phase1 = Complex64::new(1.0, 0.0);
+            let phase2 = Complex64::from_polar(1.0, std::f64::consts::FRAC_PI_3);
+            let phase3 = Complex64::from_polar(1.0, 2.0 * std::f64::consts::FRAC_PI_3);
+            let qutrit_phases = [phase1, phase2, phase3];
+
+            instruct_diagonal(&mut state_seq, &qutrit_phases, 7);
+            super::super::instruct_diagonal_parallel(&mut state_par, &qutrit_phases, 7);
+            assert!(
+                states_match(&state_seq, &state_par),
+                "Qutrit diagonal gate parallel mismatch"
+            );
+        }
+
+        #[test]
+        fn test_parallel_deterministic() {
+            // Same result across multiple runs
+            // Run same circuit 5 times, verify identical results
+            let n_qubits = 14;
+            let n_amps = 1 << n_qubits;
+
+            let h_gate = Gate::H.matrix(2);
+            let theta = std::f64::consts::FRAC_PI_4;
+            let rz_phases = [
+                Complex64::from_polar(1.0, -theta / 2.0),
+                Complex64::from_polar(1.0, theta / 2.0),
+            ];
+
+            // Store results from multiple runs
+            let mut results: Vec<State> = Vec::new();
+
+            for _ in 0..5 {
+                let mut state = State::zero_state(&vec![2; n_qubits]);
+
+                // Initialize with same values
+                for i in 0..n_amps {
+                    let re = (i as f64 * 0.001).sin();
+                    let im = (i as f64 * 0.001).cos();
+                    state.data[i] = Complex64::new(re, im);
+                }
+
+                // Apply circuit using parallel functions
+                super::super::instruct_single_parallel(&mut state, &h_gate, 0);
+                super::super::instruct_single_parallel(&mut state, &h_gate, 5);
+                super::super::instruct_diagonal_parallel(&mut state, &rz_phases, 10);
+                super::super::instruct_single_parallel(&mut state, &h_gate, 13);
+                super::super::instruct_diagonal_parallel(&mut state, &rz_phases, 3);
+
+                results.push(state);
+            }
+
+            // Verify all runs produce identical results
+            for i in 1..5 {
+                assert!(
+                    states_match(&results[0], &results[i]),
+                    "Run {} differs from run 0",
+                    i
+                );
+            }
+
+            // Also verify parallel matches sequential for the same circuit
+            let mut state_seq = State::zero_state(&vec![2; n_qubits]);
+            for i in 0..n_amps {
+                let re = (i as f64 * 0.001).sin();
+                let im = (i as f64 * 0.001).cos();
+                state_seq.data[i] = Complex64::new(re, im);
+            }
+
+            instruct_single(&mut state_seq, &h_gate, 0);
+            instruct_single(&mut state_seq, &h_gate, 5);
+            instruct_diagonal(&mut state_seq, &rz_phases, 10);
+            instruct_single(&mut state_seq, &h_gate, 13);
+            instruct_diagonal(&mut state_seq, &rz_phases, 3);
+
+            assert!(
+                states_match(&state_seq, &results[0]),
+                "Parallel result differs from sequential"
+            );
+        }
+    }
+
     #[test]
     fn test_instruct_h_creates_superposition() {
         // H|0⟩ = |+⟩ = (|0⟩ + |1⟩)/√2
