@@ -6,6 +6,9 @@
 use ndarray::Array2;
 use num_complex::Complex64;
 
+use crate::index::{insert_index, iter_basis, linear_to_indices, mixed_radix_index};
+use crate::state::State;
+
 /// Apply a 2x2 unitary gate to a pair of amplitudes at indices i and j.
 ///
 /// The gate matrix is [[a, b], [c, d]] and transforms:
@@ -119,6 +122,108 @@ pub fn udrows(state: &mut [Complex64], indices: &[usize], gate: &Array2<Complex6
 /// ```
 pub fn mulrow(state: &mut [Complex64], i: usize, factor: Complex64) {
     state[i] *= factor;
+}
+
+/// Apply a general d×d gate at a single site location.
+///
+/// For each configuration of the other sites (not `loc`), this function
+/// gathers the d amplitude indices corresponding to varying the site at `loc`
+/// from 0 to d-1, then applies the gate using `udrows`.
+///
+/// # Arguments
+/// * `state` - The quantum state to modify
+/// * `gate` - d×d unitary matrix where d = state.dims[loc]
+/// * `loc` - The site index where the gate is applied
+///
+/// # Example
+/// ```
+/// use ndarray::Array2;
+/// use num_complex::Complex64;
+/// use yao_rs::state::State;
+/// use yao_rs::instruct::instruct_single;
+///
+/// // Apply X gate to qubit 0 in a 2-qubit system
+/// let mut state = State::zero_state(&[2, 2]); // |00⟩
+/// let x_gate = Array2::from_shape_vec((2, 2), vec![
+///     Complex64::new(0.0, 0.0), Complex64::new(1.0, 0.0),
+///     Complex64::new(1.0, 0.0), Complex64::new(0.0, 0.0),
+/// ]).unwrap();
+/// instruct_single(&mut state, &x_gate, 0);
+/// // Now state is |10⟩
+/// assert!((state.data[2].norm() - 1.0).abs() < 1e-10);
+/// ```
+pub fn instruct_single(state: &mut State, gate: &Array2<Complex64>, loc: usize) {
+    let d = state.dims[loc];
+    debug_assert_eq!(gate.nrows(), d);
+    debug_assert_eq!(gate.ncols(), d);
+
+    // Build dims for the "other" sites (all sites except loc)
+    let other_dims: Vec<usize> = state
+        .dims
+        .iter()
+        .enumerate()
+        .filter(|&(i, _)| i != loc)
+        .map(|(_, &dim)| dim)
+        .collect();
+
+    // If there are no other sites (single-site system), just apply the gate directly
+    if other_dims.is_empty() {
+        let indices: Vec<usize> = (0..d).collect();
+        udrows(state.data.as_slice_mut().unwrap(), &indices, gate);
+        return;
+    }
+
+    // Iterate over all configurations of the other sites
+    for (_, other_basis) in iter_basis(&other_dims) {
+        // For each value k at site loc, compute the flat index
+        let indices: Vec<usize> = (0..d)
+            .map(|k| {
+                let full_indices = insert_index(&other_basis, loc, k);
+                mixed_radix_index(&full_indices, &state.dims)
+            })
+            .collect();
+
+        // Apply the gate to these d amplitudes
+        udrows(state.data.as_slice_mut().unwrap(), &indices, gate);
+    }
+}
+
+/// Apply a diagonal gate at a single site location.
+///
+/// This is an optimized version for diagonal gates (Z, S, T, Phase, Rz, etc.)
+/// where only the diagonal elements matter. Each amplitude is multiplied by
+/// the appropriate phase based on the value at the target site.
+///
+/// # Arguments
+/// * `state` - The quantum state to modify
+/// * `phases` - Slice of d complex phases where d = state.dims[loc].
+///   phases[k] is applied when the site at `loc` has value k.
+/// * `loc` - The site index where the gate is applied
+///
+/// # Example
+/// ```
+/// use num_complex::Complex64;
+/// use yao_rs::state::State;
+/// use yao_rs::instruct::instruct_diagonal;
+///
+/// // Apply Z gate to qubit 0: Z = diag(1, -1)
+/// let mut state = State::zero_state(&[2, 2]);
+/// // First apply something to get superposition, then Z
+/// let phases = [Complex64::new(1.0, 0.0), Complex64::new(-1.0, 0.0)];
+/// instruct_diagonal(&mut state, &phases, 0);
+/// ```
+pub fn instruct_diagonal(state: &mut State, phases: &[Complex64], loc: usize) {
+    let d = state.dims[loc];
+    debug_assert_eq!(phases.len(), d);
+
+    let total_dim = state.total_dim();
+
+    // For each basis state, get the value at loc and multiply by the corresponding phase
+    for flat_idx in 0..total_dim {
+        let indices = linear_to_indices(flat_idx, &state.dims);
+        let val_at_loc = indices[loc];
+        state.data[flat_idx] *= phases[val_at_loc];
+    }
 }
 
 #[cfg(test)]
@@ -449,5 +554,167 @@ mod tests {
         let norm_after: f64 = state.iter().map(|c| c.norm_sqr()).sum();
 
         assert!((norm_before - norm_after).abs() < 1e-10);
+    }
+
+    // Tests for instruct_single and instruct_diagonal
+    use crate::state::State;
+
+    #[test]
+    fn test_instruct_single_h_gate() {
+        // Apply H gate to qubit 0 in a 2-qubit system |00⟩
+        // H|0⟩ = (|0⟩ + |1⟩) / √2
+        // Result: (|00⟩ + |10⟩) / √2
+        let mut state = State::zero_state(&[2, 2]);
+
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        let h_gate = Array2::from_shape_vec(
+            (2, 2),
+            vec![s, s, s, -s],
+        )
+        .unwrap();
+
+        instruct_single(&mut state, &h_gate, 0);
+
+        // |00⟩ = index 0, |01⟩ = index 1, |10⟩ = index 2, |11⟩ = index 3
+        assert!(approx_eq(state.data[0], s)); // |00⟩
+        assert!(approx_eq(state.data[1], Complex64::new(0.0, 0.0))); // |01⟩
+        assert!(approx_eq(state.data[2], s)); // |10⟩
+        assert!(approx_eq(state.data[3], Complex64::new(0.0, 0.0))); // |11⟩
+    }
+
+    #[test]
+    fn test_instruct_single_x_gate() {
+        // Apply X gate to qubit 1 in a 2-qubit system |00⟩
+        // X on qubit 1: |00⟩ -> |01⟩
+        let mut state = State::zero_state(&[2, 2]);
+
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+        let x_gate = Array2::from_shape_vec(
+            (2, 2),
+            vec![zero, one, one, zero],
+        )
+        .unwrap();
+
+        instruct_single(&mut state, &x_gate, 1);
+
+        // |00⟩ = index 0, |01⟩ = index 1, |10⟩ = index 2, |11⟩ = index 3
+        assert!(approx_eq(state.data[0], zero)); // |00⟩
+        assert!(approx_eq(state.data[1], one));  // |01⟩
+        assert!(approx_eq(state.data[2], zero)); // |10⟩
+        assert!(approx_eq(state.data[3], zero)); // |11⟩
+    }
+
+    #[test]
+    fn test_instruct_single_qutrit() {
+        // Apply X-like (cyclic shift) gate on a qutrit (d=3)
+        // |0⟩ -> |1⟩ -> |2⟩ -> |0⟩
+        let mut state = State::zero_state(&[3]); // Single qutrit |0⟩
+
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+
+        // Cyclic permutation: X|k⟩ = |k+1 mod 3⟩
+        // Matrix representation: [[0,0,1], [1,0,0], [0,1,0]]
+        let x_qutrit = Array2::from_shape_vec(
+            (3, 3),
+            vec![
+                zero, zero, one,
+                one, zero, zero,
+                zero, one, zero,
+            ],
+        )
+        .unwrap();
+
+        instruct_single(&mut state, &x_qutrit, 0);
+
+        // |0⟩ -> |1⟩
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], one));
+        assert!(approx_eq(state.data[2], zero));
+    }
+
+    #[test]
+    fn test_instruct_diagonal_z_gate() {
+        // Apply Z gate: Z = diag(1, -1)
+        // Start with |+⟩ = (|0⟩ + |1⟩) / √2
+        // Z|+⟩ = (|0⟩ - |1⟩) / √2 = |-⟩
+        let mut state = State::zero_state(&[2]);
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+
+        // Manually set to |+⟩ state
+        state.data[0] = s;
+        state.data[1] = s;
+
+        let z_phases = [Complex64::new(1.0, 0.0), Complex64::new(-1.0, 0.0)];
+        instruct_diagonal(&mut state, &z_phases, 0);
+
+        assert!(approx_eq(state.data[0], s));
+        assert!(approx_eq(state.data[1], -s));
+    }
+
+    #[test]
+    fn test_instruct_diagonal_phase() {
+        // Apply Phase(π/4) gate: P(θ) = diag(1, e^(iθ))
+        // On |+⟩ state
+        let mut state = State::zero_state(&[2]);
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+
+        // Manually set to |+⟩ state
+        state.data[0] = s;
+        state.data[1] = s;
+
+        let phase = Complex64::from_polar(1.0, FRAC_PI_4);
+        let p_phases = [Complex64::new(1.0, 0.0), phase];
+        instruct_diagonal(&mut state, &p_phases, 0);
+
+        assert!(approx_eq(state.data[0], s));
+        assert!(approx_eq(state.data[1], s * phase));
+    }
+
+    #[test]
+    fn test_instruct_single_preserves_normalization() {
+        // Verify that applying a unitary preserves the norm
+        let mut state = State::zero_state(&[2, 2]);
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+
+        // Start with some superposition
+        state.data[0] = s;
+        state.data[2] = s;
+
+        let norm_before = state.norm();
+
+        let h_gate = Array2::from_shape_vec(
+            (2, 2),
+            vec![s, s, s, -s],
+        )
+        .unwrap();
+
+        instruct_single(&mut state, &h_gate, 1);
+
+        let norm_after = state.norm();
+
+        assert!((norm_before - norm_after).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_instruct_diagonal_on_multi_qubit() {
+        // Apply Z to qubit 0 in a 2-qubit system
+        // Start with |+0⟩ = (|00⟩ + |10⟩) / √2
+        // Z on qubit 0: |00⟩ -> |00⟩, |10⟩ -> -|10⟩
+        // Result: (|00⟩ - |10⟩) / √2
+        let mut state = State::zero_state(&[2, 2]);
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+
+        state.data[0] = s;  // |00⟩
+        state.data[2] = s;  // |10⟩
+
+        let z_phases = [Complex64::new(1.0, 0.0), Complex64::new(-1.0, 0.0)];
+        instruct_diagonal(&mut state, &z_phases, 0);
+
+        assert!(approx_eq(state.data[0], s));           // |00⟩ unchanged
+        assert!(approx_eq(state.data[1], Complex64::new(0.0, 0.0))); // |01⟩ still zero
+        assert!(approx_eq(state.data[2], -s));          // |10⟩ flipped sign
+        assert!(approx_eq(state.data[3], Complex64::new(0.0, 0.0))); // |11⟩ still zero
     }
 }
