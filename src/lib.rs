@@ -11,5 +11,5 @@ pub use gate::Gate;
 pub use circuit::{Circuit, PositionedGate, put, control};
 pub use state::State;
 pub use einsum::{circuit_to_einsum, TensorNetwork};
-pub use apply::apply;
+pub use apply::{apply, apply_inplace};
 pub use index::{mixed_radix_index, linear_to_indices, iter_basis, iter_basis_fixed, insert_index};
