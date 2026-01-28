@@ -1172,6 +1172,117 @@ mod tests {
         assert!(approx_eq(state.data[3], s));    // |11⟩
     }
 
+    // Tests for Pauli gate instructions
+    use crate::gate::Gate;
+
+    #[test]
+    fn test_instruct_pauli_x() {
+        // X|0⟩ = |1⟩ on 2-qubit system
+        // Test on qubit 0
+        let mut state = State::zero_state(&[2, 2]); // |00⟩
+        let x_gate = Gate::X.matrix(2);
+        instruct_single(&mut state, &x_gate, 0);
+        // Result: |10⟩ = index 2
+        assert!(approx_eq(state.data[0], Complex64::new(0.0, 0.0)));
+        assert!(approx_eq(state.data[1], Complex64::new(0.0, 0.0)));
+        assert!(approx_eq(state.data[2], Complex64::new(1.0, 0.0)));
+        assert!(approx_eq(state.data[3], Complex64::new(0.0, 0.0)));
+
+        // Test on qubit 1
+        let mut state = State::zero_state(&[2, 2]); // |00⟩
+        instruct_single(&mut state, &x_gate, 1);
+        // Result: |01⟩ = index 1
+        assert!(approx_eq(state.data[0], Complex64::new(0.0, 0.0)));
+        assert!(approx_eq(state.data[1], Complex64::new(1.0, 0.0)));
+        assert!(approx_eq(state.data[2], Complex64::new(0.0, 0.0)));
+        assert!(approx_eq(state.data[3], Complex64::new(0.0, 0.0)));
+
+        // X|1⟩ = |0⟩
+        let mut state = State::product_state(&[2, 2], &[1, 0]); // |10⟩
+        instruct_single(&mut state, &x_gate, 0);
+        // Result: |00⟩ = index 0
+        assert!(approx_eq(state.data[0], Complex64::new(1.0, 0.0)));
+        assert!(approx_eq(state.data[1], Complex64::new(0.0, 0.0)));
+        assert!(approx_eq(state.data[2], Complex64::new(0.0, 0.0)));
+        assert!(approx_eq(state.data[3], Complex64::new(0.0, 0.0)));
+    }
+
+    #[test]
+    fn test_instruct_pauli_y() {
+        // Y|0⟩ = i|1⟩
+        let mut state = State::zero_state(&[2]); // |0⟩
+        let y_gate = Gate::Y.matrix(2);
+        instruct_single(&mut state, &y_gate, 0);
+        // Result: i|1⟩
+        assert!(approx_eq(state.data[0], Complex64::new(0.0, 0.0)));
+        assert!(approx_eq(state.data[1], Complex64::new(0.0, 1.0)));
+
+        // Y|1⟩ = -i|0⟩
+        let mut state = State::product_state(&[2], &[1]); // |1⟩
+        instruct_single(&mut state, &y_gate, 0);
+        // Result: -i|0⟩
+        assert!(approx_eq(state.data[0], Complex64::new(0.0, -1.0)));
+        assert!(approx_eq(state.data[1], Complex64::new(0.0, 0.0)));
+    }
+
+    #[test]
+    fn test_instruct_pauli_z() {
+        // Z|0⟩ = |0⟩, Z|1⟩ = -|1⟩
+        // Use instruct_diagonal since Z is diagonal: Z = diag(1, -1)
+        let z_phases = [Complex64::new(1.0, 0.0), Complex64::new(-1.0, 0.0)];
+
+        // Test on |0⟩ state
+        let mut state = State::zero_state(&[2]); // |0⟩
+        instruct_diagonal(&mut state, &z_phases, 0);
+        // Result: |0⟩ (unchanged)
+        assert!(approx_eq(state.data[0], Complex64::new(1.0, 0.0)));
+        assert!(approx_eq(state.data[1], Complex64::new(0.0, 0.0)));
+
+        // Test on |1⟩ state
+        let mut state = State::product_state(&[2], &[1]); // |1⟩
+        instruct_diagonal(&mut state, &z_phases, 0);
+        // Result: -|1⟩
+        assert!(approx_eq(state.data[0], Complex64::new(0.0, 0.0)));
+        assert!(approx_eq(state.data[1], Complex64::new(-1.0, 0.0)));
+
+        // Test Z on qubit 0 in 2-qubit system with |10⟩
+        let mut state = State::product_state(&[2, 2], &[1, 0]); // |10⟩
+        instruct_diagonal(&mut state, &z_phases, 0);
+        // qubit 0 is in |1⟩, so multiply by -1
+        // Result: -|10⟩
+        assert!(approx_eq(state.data[0], Complex64::new(0.0, 0.0)));
+        assert!(approx_eq(state.data[1], Complex64::new(0.0, 0.0)));
+        assert!(approx_eq(state.data[2], Complex64::new(-1.0, 0.0)));
+        assert!(approx_eq(state.data[3], Complex64::new(0.0, 0.0)));
+    }
+
+    #[test]
+    fn test_instruct_pauli_on_superposition() {
+        // Create |+⟩ = (|0⟩ + |1⟩)/√2
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        let mut state = State::zero_state(&[2]);
+        state.data[0] = s;
+        state.data[1] = s;
+
+        // Apply X: X|+⟩ = X(|0⟩ + |1⟩)/√2 = (|1⟩ + |0⟩)/√2 = |+⟩
+        let x_gate = Gate::X.matrix(2);
+        instruct_single(&mut state, &x_gate, 0);
+        // Result: |+⟩ (same state, amplitudes swapped but still equal)
+        assert!(approx_eq(state.data[0], s));
+        assert!(approx_eq(state.data[1], s));
+
+        // Reset to |+⟩
+        state.data[0] = s;
+        state.data[1] = s;
+
+        // Apply Z: Z|+⟩ = Z(|0⟩ + |1⟩)/√2 = (|0⟩ - |1⟩)/√2 = |-⟩
+        let z_phases = [Complex64::new(1.0, 0.0), Complex64::new(-1.0, 0.0)];
+        instruct_diagonal(&mut state, &z_phases, 0);
+        // Result: |-⟩ = (|0⟩ - |1⟩)/√2
+        assert!(approx_eq(state.data[0], s));
+        assert!(approx_eq(state.data[1], -s));
+    }
+
     // Tests for parallel variants
     #[cfg(feature = "parallel")]
     mod parallel_tests {
