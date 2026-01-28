@@ -3146,4 +3146,602 @@ mod tests {
             }
         }
     }
+
+    // ========== Diagonal Optimization Verification Tests ==========
+    // These tests verify that instruct_diagonal produces the same results
+    // as instruct_single for diagonal gates
+
+    #[test]
+    fn test_diagonal_z_matches_general() {
+        // Apply Z gate via instruct_diagonal vs instruct_single
+        // Z = diag(1, -1)
+        let one = Complex64::new(1.0, 0.0);
+        let neg_one = Complex64::new(-1.0, 0.0);
+        let zero = Complex64::new(0.0, 0.0);
+
+        // Z gate as full matrix for instruct_single
+        let z_matrix = Array2::from_shape_vec(
+            (2, 2),
+            vec![one, zero, zero, neg_one],
+        )
+        .unwrap();
+
+        // Z gate as diagonal phases for instruct_diagonal
+        let z_phases = [one, neg_one];
+
+        // Test on various states
+        for initial_vals in [[0], [1]] {
+            // Create two identical states
+            let mut state_general = State::product_state(&[2], &initial_vals);
+            let mut state_diagonal = state_general.clone();
+
+            // Apply via different paths
+            instruct_single(&mut state_general, &z_matrix, 0);
+            instruct_diagonal(&mut state_diagonal, &z_phases, 0);
+
+            // Verify results match
+            for i in 0..2 {
+                assert!(
+                    approx_eq(state_general.data[i], state_diagonal.data[i]),
+                    "Z gate mismatch at index {} for initial {:?}",
+                    i,
+                    initial_vals
+                );
+            }
+        }
+
+        // Test on superposition state |+⟩
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        let mut state_general = State::zero_state(&[2]);
+        state_general.data[0] = s;
+        state_general.data[1] = s;
+        let mut state_diagonal = state_general.clone();
+
+        instruct_single(&mut state_general, &z_matrix, 0);
+        instruct_diagonal(&mut state_diagonal, &z_phases, 0);
+
+        for i in 0..2 {
+            assert!(approx_eq(state_general.data[i], state_diagonal.data[i]));
+        }
+
+        // Test on multi-qubit system
+        let mut state_general = State::zero_state(&[2, 2, 2]);
+        let mut state_diagonal = State::zero_state(&[2, 2, 2]);
+        // Create superposition
+        for i in 0..8 {
+            let amp = Complex64::new((i as f64 * 0.1).sin(), (i as f64 * 0.1).cos());
+            state_general.data[i] = amp;
+            state_diagonal.data[i] = amp;
+        }
+
+        // Apply Z to middle qubit
+        instruct_single(&mut state_general, &z_matrix, 1);
+        instruct_diagonal(&mut state_diagonal, &z_phases, 1);
+
+        for i in 0..8 {
+            assert!(
+                approx_eq(state_general.data[i], state_diagonal.data[i]),
+                "Z gate mismatch at index {} in 3-qubit system",
+                i
+            );
+        }
+    }
+
+    #[test]
+    fn test_diagonal_s_matches_general() {
+        // S gate via diagonal vs general path
+        // S = diag(1, i)
+        let one = Complex64::new(1.0, 0.0);
+        let i = Complex64::new(0.0, 1.0);
+        let zero = Complex64::new(0.0, 0.0);
+
+        // S gate as full matrix
+        let s_matrix = Array2::from_shape_vec(
+            (2, 2),
+            vec![one, zero, zero, i],
+        )
+        .unwrap();
+
+        // S gate as diagonal phases
+        let s_phases = [one, i];
+
+        // Test on basis states
+        for initial_vals in [[0], [1]] {
+            let mut state_general = State::product_state(&[2], &initial_vals);
+            let mut state_diagonal = state_general.clone();
+
+            instruct_single(&mut state_general, &s_matrix, 0);
+            instruct_diagonal(&mut state_diagonal, &s_phases, 0);
+
+            for idx in 0..2 {
+                assert!(
+                    approx_eq(state_general.data[idx], state_diagonal.data[idx]),
+                    "S gate mismatch at index {} for initial {:?}",
+                    idx,
+                    initial_vals
+                );
+            }
+        }
+
+        // Test on superposition
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        let mut state_general = State::zero_state(&[2]);
+        state_general.data[0] = s;
+        state_general.data[1] = s;
+        let mut state_diagonal = state_general.clone();
+
+        instruct_single(&mut state_general, &s_matrix, 0);
+        instruct_diagonal(&mut state_diagonal, &s_phases, 0);
+
+        for idx in 0..2 {
+            assert!(approx_eq(state_general.data[idx], state_diagonal.data[idx]));
+        }
+
+        // Test on 2-qubit system, apply to each qubit
+        for loc in 0..2 {
+            let mut state_general = State::zero_state(&[2, 2]);
+            let mut state_diagonal = State::zero_state(&[2, 2]);
+            // Create superposition
+            let half = Complex64::new(0.5, 0.0);
+            for idx in 0..4 {
+                state_general.data[idx] = half;
+                state_diagonal.data[idx] = half;
+            }
+
+            instruct_single(&mut state_general, &s_matrix, loc);
+            instruct_diagonal(&mut state_diagonal, &s_phases, loc);
+
+            for idx in 0..4 {
+                assert!(
+                    approx_eq(state_general.data[idx], state_diagonal.data[idx]),
+                    "S gate mismatch at index {} for loc {}",
+                    idx,
+                    loc
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn test_diagonal_t_matches_general() {
+        // T gate via diagonal vs general path
+        // T = diag(1, e^(iπ/4))
+        let one = Complex64::new(1.0, 0.0);
+        let t_phase = Complex64::from_polar(1.0, FRAC_PI_4);
+        let zero = Complex64::new(0.0, 0.0);
+
+        // T gate as full matrix
+        let t_matrix = Array2::from_shape_vec(
+            (2, 2),
+            vec![one, zero, zero, t_phase],
+        )
+        .unwrap();
+
+        // T gate as diagonal phases
+        let t_phases = [one, t_phase];
+
+        // Test on basis states
+        for initial_vals in [[0], [1]] {
+            let mut state_general = State::product_state(&[2], &initial_vals);
+            let mut state_diagonal = state_general.clone();
+
+            instruct_single(&mut state_general, &t_matrix, 0);
+            instruct_diagonal(&mut state_diagonal, &t_phases, 0);
+
+            for idx in 0..2 {
+                assert!(
+                    approx_eq(state_general.data[idx], state_diagonal.data[idx]),
+                    "T gate mismatch at index {} for initial {:?}",
+                    idx,
+                    initial_vals
+                );
+            }
+        }
+
+        // Test on superposition
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        let mut state_general = State::zero_state(&[2]);
+        state_general.data[0] = s;
+        state_general.data[1] = s;
+        let mut state_diagonal = state_general.clone();
+
+        instruct_single(&mut state_general, &t_matrix, 0);
+        instruct_diagonal(&mut state_diagonal, &t_phases, 0);
+
+        for idx in 0..2 {
+            assert!(approx_eq(state_general.data[idx], state_diagonal.data[idx]));
+        }
+
+        // Verify T^2 = S by applying twice via both methods
+        let mut state_general = State::product_state(&[2], &[1]);
+        let mut state_diagonal = state_general.clone();
+
+        instruct_single(&mut state_general, &t_matrix, 0);
+        instruct_single(&mut state_general, &t_matrix, 0);
+        instruct_diagonal(&mut state_diagonal, &t_phases, 0);
+        instruct_diagonal(&mut state_diagonal, &t_phases, 0);
+
+        for idx in 0..2 {
+            assert!(approx_eq(state_general.data[idx], state_diagonal.data[idx]));
+        }
+    }
+
+    #[test]
+    fn test_diagonal_phase_matches_general() {
+        // Phase(θ) gate via diagonal vs general path
+        // Phase(θ) = diag(1, e^(iθ))
+        // Test multiple angles
+        let one = Complex64::new(1.0, 0.0);
+        let zero = Complex64::new(0.0, 0.0);
+
+        let test_angles = [
+            0.0,
+            FRAC_PI_4,
+            std::f64::consts::FRAC_PI_2,
+            PI,
+            3.0 * std::f64::consts::FRAC_PI_2,
+            2.0 * PI,
+            0.123,   // arbitrary angle
+            -0.456,  // negative angle
+        ];
+
+        for theta in test_angles {
+            let phase = Complex64::from_polar(1.0, theta);
+
+            // Phase gate as full matrix
+            let phase_matrix = Array2::from_shape_vec(
+                (2, 2),
+                vec![one, zero, zero, phase],
+            )
+            .unwrap();
+
+            // Phase gate as diagonal phases
+            let phase_phases = [one, phase];
+
+            // Test on superposition state
+            let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+            let mut state_general = State::zero_state(&[2]);
+            state_general.data[0] = s;
+            state_general.data[1] = s;
+            let mut state_diagonal = state_general.clone();
+
+            instruct_single(&mut state_general, &phase_matrix, 0);
+            instruct_diagonal(&mut state_diagonal, &phase_phases, 0);
+
+            for idx in 0..2 {
+                assert!(
+                    approx_eq(state_general.data[idx], state_diagonal.data[idx]),
+                    "Phase({}) gate mismatch at index {}",
+                    theta,
+                    idx
+                );
+            }
+
+            // Test on 3-qubit system
+            let mut state_general = State::zero_state(&[2, 2, 2]);
+            let mut state_diagonal = State::zero_state(&[2, 2, 2]);
+            for i in 0..8 {
+                let amp = Complex64::new((i as f64 * 0.2).cos(), (i as f64 * 0.3).sin());
+                state_general.data[i] = amp;
+                state_diagonal.data[i] = amp;
+            }
+
+            // Apply to middle qubit
+            instruct_single(&mut state_general, &phase_matrix, 1);
+            instruct_diagonal(&mut state_diagonal, &phase_phases, 1);
+
+            for i in 0..8 {
+                assert!(
+                    approx_eq(state_general.data[i], state_diagonal.data[i]),
+                    "Phase({}) gate mismatch at index {} in 3-qubit system",
+                    theta,
+                    i
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn test_diagonal_rz_matches_general() {
+        // Rz(θ) gate via diagonal vs general path
+        // Rz(θ) = diag(e^(-iθ/2), e^(iθ/2))
+        let zero = Complex64::new(0.0, 0.0);
+
+        let test_angles = [
+            0.0,
+            FRAC_PI_4,
+            std::f64::consts::FRAC_PI_2,
+            PI,
+            3.0 * std::f64::consts::FRAC_PI_2,
+            2.0 * PI,
+            0.789,   // arbitrary angle
+            -1.234,  // negative angle
+        ];
+
+        for theta in test_angles {
+            let phase_neg = Complex64::from_polar(1.0, -theta / 2.0);
+            let phase_pos = Complex64::from_polar(1.0, theta / 2.0);
+
+            // Rz gate as full matrix
+            let rz_matrix = Array2::from_shape_vec(
+                (2, 2),
+                vec![phase_neg, zero, zero, phase_pos],
+            )
+            .unwrap();
+
+            // Rz gate as diagonal phases
+            let rz_phases = [phase_neg, phase_pos];
+
+            // Test on basis states
+            for initial_vals in [[0], [1]] {
+                let mut state_general = State::product_state(&[2], &initial_vals);
+                let mut state_diagonal = state_general.clone();
+
+                instruct_single(&mut state_general, &rz_matrix, 0);
+                instruct_diagonal(&mut state_diagonal, &rz_phases, 0);
+
+                for idx in 0..2 {
+                    assert!(
+                        approx_eq(state_general.data[idx], state_diagonal.data[idx]),
+                        "Rz({}) gate mismatch at index {} for initial {:?}",
+                        theta,
+                        idx,
+                        initial_vals
+                    );
+                }
+            }
+
+            // Test on superposition
+            let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+            let mut state_general = State::zero_state(&[2]);
+            state_general.data[0] = s;
+            state_general.data[1] = s;
+            let mut state_diagonal = state_general.clone();
+
+            instruct_single(&mut state_general, &rz_matrix, 0);
+            instruct_diagonal(&mut state_diagonal, &rz_phases, 0);
+
+            for idx in 0..2 {
+                assert!(
+                    approx_eq(state_general.data[idx], state_diagonal.data[idx]),
+                    "Rz({}) gate mismatch at index {} on superposition",
+                    theta,
+                    idx
+                );
+            }
+
+            // Verify normalization is preserved
+            let norm: f64 = state_diagonal.data.iter().map(|c| c.norm_sqr()).sum();
+            assert!((norm - 1.0).abs() < 1e-10);
+        }
+    }
+
+    #[test]
+    fn test_diagonal_custom_gate() {
+        // Custom diagonal gate with arbitrary phases
+        // Test that instruct_diagonal matches instruct_single for arbitrary diagonal matrices
+        let zero = Complex64::new(0.0, 0.0);
+
+        // Custom phases: diag(e^(i*0.5), e^(i*1.2))
+        let phase0 = Complex64::from_polar(1.0, 0.5);
+        let phase1 = Complex64::from_polar(1.0, 1.2);
+
+        // Custom diagonal gate as full matrix
+        let custom_matrix = Array2::from_shape_vec(
+            (2, 2),
+            vec![phase0, zero, zero, phase1],
+        )
+        .unwrap();
+
+        // Custom diagonal gate as phases
+        let custom_phases = [phase0, phase1];
+
+        // Test on superposition
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        let mut state_general = State::zero_state(&[2]);
+        state_general.data[0] = s;
+        state_general.data[1] = s;
+        let mut state_diagonal = state_general.clone();
+
+        instruct_single(&mut state_general, &custom_matrix, 0);
+        instruct_diagonal(&mut state_diagonal, &custom_phases, 0);
+
+        for idx in 0..2 {
+            assert!(approx_eq(state_general.data[idx], state_diagonal.data[idx]));
+        }
+
+        // Test with complex initial amplitudes
+        let amp0 = Complex64::new(0.6, 0.2);
+        let amp1 = Complex64::new(0.3, 0.7);
+        let mut state_general = State::zero_state(&[2]);
+        state_general.data[0] = amp0;
+        state_general.data[1] = amp1;
+        let mut state_diagonal = state_general.clone();
+
+        instruct_single(&mut state_general, &custom_matrix, 0);
+        instruct_diagonal(&mut state_diagonal, &custom_phases, 0);
+
+        for idx in 0..2 {
+            assert!(approx_eq(state_general.data[idx], state_diagonal.data[idx]));
+        }
+
+        // Test different custom phases: diag(e^(i*π/3), e^(i*2π/3))
+        let phase0 = Complex64::from_polar(1.0, std::f64::consts::PI / 3.0);
+        let phase1 = Complex64::from_polar(1.0, 2.0 * std::f64::consts::PI / 3.0);
+
+        let custom_matrix = Array2::from_shape_vec(
+            (2, 2),
+            vec![phase0, zero, zero, phase1],
+        )
+        .unwrap();
+
+        let custom_phases = [phase0, phase1];
+
+        // Test on 4-qubit system
+        let mut state_general = State::zero_state(&[2, 2, 2, 2]);
+        let mut state_diagonal = State::zero_state(&[2, 2, 2, 2]);
+        for i in 0..16 {
+            let amp = Complex64::new((i as f64 * 0.1).sin(), (i as f64 * 0.15).cos());
+            state_general.data[i] = amp;
+            state_diagonal.data[i] = amp;
+        }
+
+        // Apply to qubit 2
+        instruct_single(&mut state_general, &custom_matrix, 2);
+        instruct_diagonal(&mut state_diagonal, &custom_phases, 2);
+
+        for i in 0..16 {
+            assert!(
+                approx_eq(state_general.data[i], state_diagonal.data[i]),
+                "Custom diagonal gate mismatch at index {}",
+                i
+            );
+        }
+    }
+
+    #[test]
+    fn test_diagonal_qutrit() {
+        // Diagonal gate on qutrit (d=3)
+        // Verify diagonal path works for d>2
+        let zero = Complex64::new(0.0, 0.0);
+
+        // Z_3 gate: diag(1, ω, ω²) where ω = e^(2πi/3)
+        let omega = Complex64::from_polar(1.0, 2.0 * std::f64::consts::PI / 3.0);
+        let omega_sq = omega * omega;
+        let one = Complex64::new(1.0, 0.0);
+
+        // Z_3 as full matrix
+        let z3_matrix = Array2::from_shape_vec(
+            (3, 3),
+            vec![
+                one, zero, zero,
+                zero, omega, zero,
+                zero, zero, omega_sq,
+            ],
+        )
+        .unwrap();
+
+        // Z_3 as diagonal phases
+        let z3_phases = [one, omega, omega_sq];
+
+        // Test on basis states
+        for initial_val in 0..3 {
+            let mut state_general = State::product_state(&[3], &[initial_val]);
+            let mut state_diagonal = state_general.clone();
+
+            instruct_single(&mut state_general, &z3_matrix, 0);
+            instruct_diagonal(&mut state_diagonal, &z3_phases, 0);
+
+            for idx in 0..3 {
+                assert!(
+                    approx_eq(state_general.data[idx], state_diagonal.data[idx]),
+                    "Z_3 gate mismatch at index {} for initial |{}>",
+                    idx,
+                    initial_val
+                );
+            }
+        }
+
+        // Test on superposition (|0⟩ + |1⟩ + |2⟩)/√3
+        let scale = Complex64::new(1.0 / 3.0_f64.sqrt(), 0.0);
+        let mut state_general = State::zero_state(&[3]);
+        state_general.data[0] = scale;
+        state_general.data[1] = scale;
+        state_general.data[2] = scale;
+        let mut state_diagonal = state_general.clone();
+
+        instruct_single(&mut state_general, &z3_matrix, 0);
+        instruct_diagonal(&mut state_diagonal, &z3_phases, 0);
+
+        for idx in 0..3 {
+            assert!(approx_eq(state_general.data[idx], state_diagonal.data[idx]));
+        }
+
+        // Test on mixed qubit-qutrit system: dims = [2, 3]
+        let mut state_general = State::zero_state(&[2, 3]);
+        let mut state_diagonal = State::zero_state(&[2, 3]);
+        for i in 0..6 {
+            let amp = Complex64::new((i as f64 * 0.2).cos(), (i as f64 * 0.3).sin());
+            state_general.data[i] = amp;
+            state_diagonal.data[i] = amp;
+        }
+
+        // Apply Z_3 to qutrit (site 1)
+        instruct_single(&mut state_general, &z3_matrix, 1);
+        instruct_diagonal(&mut state_diagonal, &z3_phases, 1);
+
+        for i in 0..6 {
+            assert!(
+                approx_eq(state_general.data[i], state_diagonal.data[i]),
+                "Z_3 on qutrit mismatch at index {} in qubit-qutrit system",
+                i
+            );
+        }
+
+        // Also test Z on the qubit in the same system
+        let z_matrix = Array2::from_shape_vec(
+            (2, 2),
+            vec![one, zero, zero, Complex64::new(-1.0, 0.0)],
+        )
+        .unwrap();
+        let z_phases = [one, Complex64::new(-1.0, 0.0)];
+
+        let mut state_general = State::zero_state(&[2, 3]);
+        let mut state_diagonal = State::zero_state(&[2, 3]);
+        for i in 0..6 {
+            let amp = Complex64::new((i as f64 * 0.25).sin(), (i as f64 * 0.35).cos());
+            state_general.data[i] = amp;
+            state_diagonal.data[i] = amp;
+        }
+
+        // Apply Z to qubit (site 0)
+        instruct_single(&mut state_general, &z_matrix, 0);
+        instruct_diagonal(&mut state_diagonal, &z_phases, 0);
+
+        for i in 0..6 {
+            assert!(
+                approx_eq(state_general.data[i], state_diagonal.data[i]),
+                "Z on qubit mismatch at index {} in qubit-qutrit system",
+                i
+            );
+        }
+
+        // Test custom diagonal on ququart (d=4)
+        let d4_phases = [
+            Complex64::from_polar(1.0, 0.1),
+            Complex64::from_polar(1.0, 0.5),
+            Complex64::from_polar(1.0, 1.0),
+            Complex64::from_polar(1.0, 1.5),
+        ];
+
+        let d4_matrix = Array2::from_shape_vec(
+            (4, 4),
+            vec![
+                d4_phases[0], zero, zero, zero,
+                zero, d4_phases[1], zero, zero,
+                zero, zero, d4_phases[2], zero,
+                zero, zero, zero, d4_phases[3],
+            ],
+        )
+        .unwrap();
+
+        let mut state_general = State::zero_state(&[4]);
+        let mut state_diagonal = State::zero_state(&[4]);
+        let amp = Complex64::new(0.5, 0.0);
+        for i in 0..4 {
+            state_general.data[i] = amp;
+            state_diagonal.data[i] = amp;
+        }
+
+        instruct_single(&mut state_general, &d4_matrix, 0);
+        instruct_diagonal(&mut state_diagonal, &d4_phases, 0);
+
+        for i in 0..4 {
+            assert!(
+                approx_eq(state_general.data[i], state_diagonal.data[i]),
+                "Ququart diagonal gate mismatch at index {}",
+                i
+            );
+        }
+    }
 }
