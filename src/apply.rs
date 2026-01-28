@@ -7,6 +7,13 @@ use ndarray::Array1;
 use crate::circuit::Circuit;
 use crate::gate::Gate;
 use crate::instruct::{instruct_controlled, instruct_diagonal, instruct_single};
+#[cfg(feature = "parallel")]
+use crate::instruct::{instruct_diagonal_parallel, instruct_single_parallel};
+
+/// Threshold for switching to parallel execution (2^14 = 16384 amplitudes).
+/// Below this threshold, the overhead of Rayon is not worth it.
+#[cfg(feature = "parallel")]
+const PARALLEL_THRESHOLD: usize = 16384;
 use crate::state::State;
 
 /// Decompose a flat index into a multi-index given dimensions (row-major order).
@@ -122,8 +129,15 @@ fn extract_diagonal_phases(matrix: &Array2<Complex64>) -> Vec<Complex64> {
 /// This function modifies the state directly without allocating new matrices.
 /// For each gate in the circuit, it dispatches to the appropriate instruct
 /// function based on whether the gate is diagonal and whether it has controls.
+///
+/// When the `parallel` feature is enabled and the state has >= 16384 amplitudes,
+/// parallel variants of `instruct_diagonal` and `instruct_single` are used
+/// for improved performance on large states.
 pub fn apply_inplace(circuit: &Circuit, state: &mut State) {
     let dims = &circuit.dims;
+
+    #[cfg(feature = "parallel")]
+    let use_parallel = state.data.len() >= PARALLEL_THRESHOLD;
 
     for pg in &circuit.gates {
         // Get the gate's local matrix on target sites
@@ -135,13 +149,35 @@ pub fn apply_inplace(circuit: &Circuit, state: &mut State) {
             if is_diagonal(&pg.gate) {
                 let phases = extract_diagonal_phases(&gate_matrix);
                 for &loc in &pg.target_locs {
-                    instruct_diagonal(state, &phases, loc);
+                    #[cfg(feature = "parallel")]
+                    {
+                        if use_parallel {
+                            instruct_diagonal_parallel(state, &phases, loc);
+                        } else {
+                            instruct_diagonal(state, &phases, loc);
+                        }
+                    }
+                    #[cfg(not(feature = "parallel"))]
+                    {
+                        instruct_diagonal(state, &phases, loc);
+                    }
                 }
             } else {
                 // For multi-qubit gates (like SWAP), we need to handle them differently
                 if pg.target_locs.len() == 1 {
                     for &loc in &pg.target_locs {
-                        instruct_single(state, &gate_matrix, loc);
+                        #[cfg(feature = "parallel")]
+                        {
+                            if use_parallel {
+                                instruct_single_parallel(state, &gate_matrix, loc);
+                            } else {
+                                instruct_single(state, &gate_matrix, loc);
+                            }
+                        }
+                        #[cfg(not(feature = "parallel"))]
+                        {
+                            instruct_single(state, &gate_matrix, loc);
+                        }
                     }
                 } else {
                     // Multi-target gate without controls: use instruct_controlled with empty controls

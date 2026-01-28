@@ -382,6 +382,109 @@ pub fn instruct_diagonal(state: &mut State, phases: &[Complex64], loc: usize) {
     }
 }
 
+/// Parallel version of `instruct_diagonal` using Rayon.
+///
+/// Each amplitude can be processed independently, making this embarrassingly parallel.
+/// The phase applied to each amplitude depends only on the value at the target site.
+#[cfg(feature = "parallel")]
+pub fn instruct_diagonal_parallel(state: &mut State, phases: &[Complex64], loc: usize) {
+    use rayon::prelude::*;
+
+    let d = state.dims[loc];
+    debug_assert_eq!(phases.len(), d);
+
+    let dims = state.dims.clone();
+
+    state
+        .data
+        .as_slice_mut()
+        .unwrap()
+        .par_iter_mut()
+        .enumerate()
+        .for_each(|(flat_idx, amp)| {
+            let indices = linear_to_indices(flat_idx, &dims);
+            let val_at_loc = indices[loc];
+            *amp *= phases[val_at_loc];
+        });
+}
+
+/// Parallel version of `instruct_single` using Rayon.
+///
+/// Partitions basis states into independent groups that can be processed in parallel.
+/// Each group corresponds to a fixed configuration of "other" sites, and the gate
+/// is applied to the d amplitudes that vary at the target site.
+#[cfg(feature = "parallel")]
+pub fn instruct_single_parallel(state: &mut State, gate: &Array2<Complex64>, loc: usize) {
+    use rayon::prelude::*;
+    use std::sync::atomic::{AtomicPtr, Ordering};
+
+    let d = state.dims[loc];
+    debug_assert_eq!(gate.nrows(), d);
+    debug_assert_eq!(gate.ncols(), d);
+
+    // Build dims for the "other" sites (all sites except loc)
+    let other_dims: Vec<usize> = state
+        .dims
+        .iter()
+        .enumerate()
+        .filter(|&(i, _)| i != loc)
+        .map(|(_, &dim)| dim)
+        .collect();
+
+    // If there are no other sites (single-site system), just apply the gate directly
+    if other_dims.is_empty() {
+        let indices: Vec<usize> = (0..d).collect();
+        udrows(state.data.as_slice_mut().unwrap(), &indices, gate);
+        return;
+    }
+
+    // Collect all the "other" basis configurations
+    let other_bases: Vec<Vec<usize>> = iter_basis(&other_dims).map(|(_, basis)| basis).collect();
+
+    let dims = state.dims.clone();
+
+    // Process groups in parallel using atomic pointer wrapper for Send + Sync
+    let state_ptr = AtomicPtr::new(state.data.as_mut_ptr());
+    let state_len = state.data.len();
+
+    // Safety: We partition the state space into disjoint groups.
+    // Each group consists of d indices that differ only at `loc`.
+    // Different `other_basis` configurations yield completely disjoint index sets.
+    other_bases.par_iter().for_each(|other_basis| {
+        let ptr = state_ptr.load(Ordering::Relaxed);
+
+        // For each value k at site loc, compute the flat index
+        let indices: Vec<usize> = (0..d)
+            .map(|k| {
+                let full_indices = insert_index(other_basis, loc, k);
+                mixed_radix_index(&full_indices, &dims)
+            })
+            .collect();
+
+        // Collect old amplitudes (safe because indices are disjoint across iterations)
+        let old_amps: Vec<Complex64> = indices
+            .iter()
+            .map(|&idx| {
+                debug_assert!(idx < state_len);
+                // Safety: idx is within bounds and each idx is accessed by only one thread
+                unsafe { *ptr.add(idx) }
+            })
+            .collect();
+
+        // Compute new amplitudes and write back
+        for (i, &out_idx) in indices.iter().enumerate() {
+            let mut new_amp = Complex64::new(0.0, 0.0);
+            for (j, &old_amp) in old_amps.iter().enumerate() {
+                new_amp += gate[[i, j]] * old_amp;
+            }
+            // Safety: out_idx is within bounds and each out_idx is written by only one thread
+            unsafe {
+                *ptr.add(out_idx) = new_amp;
+            }
+        }
+    });
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1067,5 +1170,147 @@ mod tests {
         assert!(approx_eq(state.data[1], zero)); // |01⟩
         assert!(approx_eq(state.data[2], zero)); // |10⟩ -> |11⟩
         assert!(approx_eq(state.data[3], s));    // |11⟩
+    }
+
+    // Tests for parallel variants
+    #[cfg(feature = "parallel")]
+    mod parallel_tests {
+        use super::*;
+
+        fn approx_eq(a: Complex64, b: Complex64) -> bool {
+            (a - b).norm() < 1e-10
+        }
+
+        #[test]
+        fn test_instruct_diagonal_parallel_matches_sequential() {
+            // Test that parallel diagonal gives same results as sequential
+            let mut state_seq = State::zero_state(&[2, 2, 2, 2]); // 16 amplitudes
+            let mut state_par = state_seq.clone();
+
+            // Create superposition state
+            let amp = Complex64::new(0.25, 0.0);
+            for i in 0..16 {
+                state_seq.data[i] = amp;
+                state_par.data[i] = amp;
+            }
+
+            let z_phases = [Complex64::new(1.0, 0.0), Complex64::new(-1.0, 0.0)];
+
+            instruct_diagonal(&mut state_seq, &z_phases, 1);
+            super::super::instruct_diagonal_parallel(&mut state_par, &z_phases, 1);
+
+            for i in 0..16 {
+                assert!(approx_eq(state_seq.data[i], state_par.data[i]));
+            }
+        }
+
+        #[test]
+        fn test_instruct_diagonal_parallel_large_state() {
+            // Test with a larger state (5 qubits = 32 amplitudes)
+            let mut state_seq = State::zero_state(&[2, 2, 2, 2, 2]);
+            let mut state_par = state_seq.clone();
+
+            // Create random-ish amplitudes
+            for i in 0..32 {
+                let re = (i as f64 * 0.1).sin();
+                let im = (i as f64 * 0.1).cos();
+                state_seq.data[i] = Complex64::new(re, im);
+                state_par.data[i] = Complex64::new(re, im);
+            }
+
+            // Apply phase gate
+            let phase = Complex64::from_polar(1.0, std::f64::consts::FRAC_PI_4);
+            let phases = [Complex64::new(1.0, 0.0), phase];
+
+            instruct_diagonal(&mut state_seq, &phases, 2);
+            super::super::instruct_diagonal_parallel(&mut state_par, &phases, 2);
+
+            for i in 0..32 {
+                assert!(approx_eq(state_seq.data[i], state_par.data[i]));
+            }
+        }
+
+        #[test]
+        fn test_instruct_single_parallel_matches_sequential() {
+            // Test that parallel single gate gives same results as sequential
+            let mut state_seq = State::zero_state(&[2, 2, 2, 2]); // 16 amplitudes
+            let mut state_par = state_seq.clone();
+
+            // Create superposition state
+            let amp = Complex64::new(0.25, 0.0);
+            for i in 0..16 {
+                state_seq.data[i] = amp;
+                state_par.data[i] = amp;
+            }
+
+            let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+            let h_gate = Array2::from_shape_vec(
+                (2, 2),
+                vec![s, s, s, -s],
+            )
+            .unwrap();
+
+            instruct_single(&mut state_seq, &h_gate, 1);
+            super::super::instruct_single_parallel(&mut state_par, &h_gate, 1);
+
+            for i in 0..16 {
+                assert!(approx_eq(state_seq.data[i], state_par.data[i]));
+            }
+        }
+
+        #[test]
+        fn test_instruct_single_parallel_large_state() {
+            // Test with a larger state (5 qubits = 32 amplitudes)
+            let mut state_seq = State::zero_state(&[2, 2, 2, 2, 2]);
+            let mut state_par = state_seq.clone();
+
+            // Create random-ish amplitudes
+            for i in 0..32 {
+                let re = (i as f64 * 0.1).sin();
+                let im = (i as f64 * 0.1).cos();
+                state_seq.data[i] = Complex64::new(re, im);
+                state_par.data[i] = Complex64::new(re, im);
+            }
+
+            // Apply X gate
+            let zero = Complex64::new(0.0, 0.0);
+            let one = Complex64::new(1.0, 0.0);
+            let x_gate = Array2::from_shape_vec(
+                (2, 2),
+                vec![zero, one, one, zero],
+            )
+            .unwrap();
+
+            instruct_single(&mut state_seq, &x_gate, 2);
+            super::super::instruct_single_parallel(&mut state_par, &x_gate, 2);
+
+            for i in 0..32 {
+                assert!(approx_eq(state_seq.data[i], state_par.data[i]));
+            }
+        }
+
+        #[test]
+        fn test_instruct_single_parallel_multiple_gates() {
+            // Apply multiple gates and verify results match
+            let mut state_seq = State::zero_state(&[2, 2, 2, 2]);
+            let mut state_par = state_seq.clone();
+
+            let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+            let h_gate = Array2::from_shape_vec(
+                (2, 2),
+                vec![s, s, s, -s],
+            )
+            .unwrap();
+
+            // Apply H to all qubits
+            for loc in 0..4 {
+                instruct_single(&mut state_seq, &h_gate, loc);
+                super::super::instruct_single_parallel(&mut state_par, &h_gate, loc);
+            }
+
+            for i in 0..16 {
+                assert!(approx_eq(state_seq.data[i], state_par.data[i]));
+            }
+        }
     }
 }
