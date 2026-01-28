@@ -2152,4 +2152,333 @@ mod tests {
 
         assert!((norm_before - norm_after).abs() < 1e-10);
     }
+
+    // Comprehensive controlled gate tests
+
+    #[test]
+    fn test_instruct_cnot_all_basis_states() {
+        // CNOT on |00⟩, |01⟩, |10⟩, |11⟩
+        // Control=0, Target=1: flips target when control is |1⟩
+        // |00⟩ -> |00⟩, |01⟩ -> |01⟩, |10⟩ -> |11⟩, |11⟩ -> |10⟩
+
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+        let x_gate = Gate::X.matrix(2);
+
+        // Test |00⟩ -> |00⟩ (control is 0, no flip)
+        let mut state = State::product_state(&[2, 2], &[0, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0], &[1], &[1]);
+        assert!(approx_eq(state.data[0], one));  // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], zero)); // |10⟩
+        assert!(approx_eq(state.data[3], zero)); // |11⟩
+
+        // Test |01⟩ -> |01⟩ (control is 0, no flip)
+        let mut state = State::product_state(&[2, 2], &[0, 1]);
+        instruct_controlled(&mut state, &x_gate, &[0], &[1], &[1]);
+        assert!(approx_eq(state.data[0], zero)); // |00⟩
+        assert!(approx_eq(state.data[1], one));  // |01⟩
+        assert!(approx_eq(state.data[2], zero)); // |10⟩
+        assert!(approx_eq(state.data[3], zero)); // |11⟩
+
+        // Test |10⟩ -> |11⟩ (control is 1, flip target)
+        let mut state = State::product_state(&[2, 2], &[1, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0], &[1], &[1]);
+        assert!(approx_eq(state.data[0], zero)); // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], zero)); // |10⟩
+        assert!(approx_eq(state.data[3], one));  // |11⟩
+
+        // Test |11⟩ -> |10⟩ (control is 1, flip target)
+        let mut state = State::product_state(&[2, 2], &[1, 1]);
+        instruct_controlled(&mut state, &x_gate, &[0], &[1], &[1]);
+        assert!(approx_eq(state.data[0], zero)); // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], one));  // |10⟩
+        assert!(approx_eq(state.data[3], zero)); // |11⟩
+    }
+
+    #[test]
+    fn test_instruct_cnot_reversed() {
+        // Control on qubit 1, target on qubit 0
+        // |00⟩ -> |00⟩, |01⟩ -> |11⟩, |10⟩ -> |10⟩, |11⟩ -> |01⟩
+
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+        let x_gate = Gate::X.matrix(2);
+
+        // Test |00⟩ -> |00⟩ (control qubit 1 is 0, no flip)
+        let mut state = State::product_state(&[2, 2], &[0, 0]);
+        instruct_controlled(&mut state, &x_gate, &[1], &[1], &[0]);
+        assert!(approx_eq(state.data[0], one));  // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], zero)); // |10⟩
+        assert!(approx_eq(state.data[3], zero)); // |11⟩
+
+        // Test |01⟩ -> |11⟩ (control qubit 1 is 1, flip qubit 0)
+        let mut state = State::product_state(&[2, 2], &[0, 1]);
+        instruct_controlled(&mut state, &x_gate, &[1], &[1], &[0]);
+        assert!(approx_eq(state.data[0], zero)); // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], zero)); // |10⟩
+        assert!(approx_eq(state.data[3], one));  // |11⟩
+
+        // Test |10⟩ -> |10⟩ (control qubit 1 is 0, no flip)
+        let mut state = State::product_state(&[2, 2], &[1, 0]);
+        instruct_controlled(&mut state, &x_gate, &[1], &[1], &[0]);
+        assert!(approx_eq(state.data[0], zero)); // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], one));  // |10⟩
+        assert!(approx_eq(state.data[3], zero)); // |11⟩
+
+        // Test |11⟩ -> |01⟩ (control qubit 1 is 1, flip qubit 0)
+        let mut state = State::product_state(&[2, 2], &[1, 1]);
+        instruct_controlled(&mut state, &x_gate, &[1], &[1], &[0]);
+        assert!(approx_eq(state.data[0], zero)); // |00⟩
+        assert!(approx_eq(state.data[1], one));  // |01⟩
+        assert!(approx_eq(state.data[2], zero)); // |10⟩
+        assert!(approx_eq(state.data[3], zero)); // |11⟩
+    }
+
+    #[test]
+    fn test_instruct_cz_gate() {
+        // CZ = controlled-Z
+        // CZ|00⟩ = |00⟩, CZ|01⟩ = |01⟩, CZ|10⟩ = |10⟩, CZ|11⟩ = -|11⟩
+
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+        let neg_one = Complex64::new(-1.0, 0.0);
+        let z_gate = Gate::Z.matrix(2);
+
+        // Test |00⟩ -> |00⟩
+        let mut state = State::product_state(&[2, 2], &[0, 0]);
+        instruct_controlled(&mut state, &z_gate, &[0], &[1], &[1]);
+        assert!(approx_eq(state.data[0], one));  // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], zero)); // |10⟩
+        assert!(approx_eq(state.data[3], zero)); // |11⟩
+
+        // Test |01⟩ -> |01⟩
+        let mut state = State::product_state(&[2, 2], &[0, 1]);
+        instruct_controlled(&mut state, &z_gate, &[0], &[1], &[1]);
+        assert!(approx_eq(state.data[0], zero)); // |00⟩
+        assert!(approx_eq(state.data[1], one));  // |01⟩
+        assert!(approx_eq(state.data[2], zero)); // |10⟩
+        assert!(approx_eq(state.data[3], zero)); // |11⟩
+
+        // Test |10⟩ -> |10⟩ (control is 1, but target is 0, so Z|0⟩ = |0⟩)
+        let mut state = State::product_state(&[2, 2], &[1, 0]);
+        instruct_controlled(&mut state, &z_gate, &[0], &[1], &[1]);
+        assert!(approx_eq(state.data[0], zero)); // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], one));  // |10⟩
+        assert!(approx_eq(state.data[3], zero)); // |11⟩
+
+        // Test |11⟩ -> -|11⟩ (control is 1, target is 1, so Z|1⟩ = -|1⟩)
+        let mut state = State::product_state(&[2, 2], &[1, 1]);
+        instruct_controlled(&mut state, &z_gate, &[0], &[1], &[1]);
+        assert!(approx_eq(state.data[0], zero));    // |00⟩
+        assert!(approx_eq(state.data[1], zero));    // |01⟩
+        assert!(approx_eq(state.data[2], zero));    // |10⟩
+        assert!(approx_eq(state.data[3], neg_one)); // |11⟩
+
+        // Test CZ on superposition: (|00⟩ + |01⟩ + |10⟩ + |11⟩)/2
+        // Result: (|00⟩ + |01⟩ + |10⟩ - |11⟩)/2
+        let mut state = State::zero_state(&[2, 2]);
+        let half = Complex64::new(0.5, 0.0);
+        state.data[0] = half;
+        state.data[1] = half;
+        state.data[2] = half;
+        state.data[3] = half;
+        instruct_controlled(&mut state, &z_gate, &[0], &[1], &[1]);
+        assert!(approx_eq(state.data[0], half));   // |00⟩
+        assert!(approx_eq(state.data[1], half));   // |01⟩
+        assert!(approx_eq(state.data[2], half));   // |10⟩
+        assert!(approx_eq(state.data[3], -half));  // |11⟩ gets -1 phase
+    }
+
+    #[test]
+    fn test_instruct_cy_gate() {
+        // CY = controlled-Y
+        // Y|0⟩ = i|1⟩, Y|1⟩ = -i|0⟩
+
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+        let i = Complex64::new(0.0, 1.0);
+        let neg_i = Complex64::new(0.0, -1.0);
+        let y_gate = Gate::Y.matrix(2);
+
+        // Test |00⟩ -> |00⟩ (control is 0, no action)
+        let mut state = State::product_state(&[2, 2], &[0, 0]);
+        instruct_controlled(&mut state, &y_gate, &[0], &[1], &[1]);
+        assert!(approx_eq(state.data[0], one));  // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], zero)); // |10⟩
+        assert!(approx_eq(state.data[3], zero)); // |11⟩
+
+        // Test |10⟩ -> i|11⟩ (control is 1, Y|0⟩ = i|1⟩)
+        let mut state = State::product_state(&[2, 2], &[1, 0]);
+        instruct_controlled(&mut state, &y_gate, &[0], &[1], &[1]);
+        assert!(approx_eq(state.data[0], zero)); // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], zero)); // |10⟩
+        assert!(approx_eq(state.data[3], i));    // |11⟩
+
+        // Test |11⟩ -> -i|10⟩ (control is 1, Y|1⟩ = -i|0⟩)
+        let mut state = State::product_state(&[2, 2], &[1, 1]);
+        instruct_controlled(&mut state, &y_gate, &[0], &[1], &[1]);
+        assert!(approx_eq(state.data[0], zero));  // |00⟩
+        assert!(approx_eq(state.data[1], zero));  // |01⟩
+        assert!(approx_eq(state.data[2], neg_i)); // |10⟩
+        assert!(approx_eq(state.data[3], zero));  // |11⟩
+    }
+
+    #[test]
+    fn test_instruct_controlled_h() {
+        // CH = controlled-Hadamard
+        // H|0⟩ = (|0⟩ + |1⟩)/√2, H|1⟩ = (|0⟩ - |1⟩)/√2
+
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        let h_gate = Gate::H.matrix(2);
+
+        // Test |00⟩ -> |00⟩ (control is 0, no action)
+        let mut state = State::product_state(&[2, 2], &[0, 0]);
+        instruct_controlled(&mut state, &h_gate, &[0], &[1], &[1]);
+        assert!(approx_eq(state.data[0], one));  // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], zero)); // |10⟩
+        assert!(approx_eq(state.data[3], zero)); // |11⟩
+
+        // Test |10⟩ -> (|10⟩ + |11⟩)/√2 (control is 1, H|0⟩ = (|0⟩ + |1⟩)/√2)
+        let mut state = State::product_state(&[2, 2], &[1, 0]);
+        instruct_controlled(&mut state, &h_gate, &[0], &[1], &[1]);
+        assert!(approx_eq(state.data[0], zero)); // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], s));    // |10⟩
+        assert!(approx_eq(state.data[3], s));    // |11⟩
+
+        // Test |11⟩ -> (|10⟩ - |11⟩)/√2 (control is 1, H|1⟩ = (|0⟩ - |1⟩)/√2)
+        let mut state = State::product_state(&[2, 2], &[1, 1]);
+        instruct_controlled(&mut state, &h_gate, &[0], &[1], &[1]);
+        assert!(approx_eq(state.data[0], zero)); // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], s));    // |10⟩
+        assert!(approx_eq(state.data[3], -s));   // |11⟩
+    }
+
+    #[test]
+    fn test_instruct_controlled_phase() {
+        // Controlled-Phase(θ) for various angles
+        // Phase(θ)|0⟩ = |0⟩, Phase(θ)|1⟩ = e^(iθ)|1⟩
+
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+
+        // Test Phase(π/4) = T gate
+        let theta = FRAC_PI_4;
+        let phase = Complex64::from_polar(1.0, theta);
+        let phase_gate = Gate::Phase(theta).matrix(2);
+
+        // Test |10⟩ -> |10⟩ (target qubit is 0, Phase|0⟩ = |0⟩)
+        let mut state = State::product_state(&[2, 2], &[1, 0]);
+        instruct_controlled(&mut state, &phase_gate, &[0], &[1], &[1]);
+        assert!(approx_eq(state.data[0], zero)); // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], one));  // |10⟩
+        assert!(approx_eq(state.data[3], zero)); // |11⟩
+
+        // Test |11⟩ -> e^(iπ/4)|11⟩ (target qubit is 1, Phase|1⟩ = e^(iθ)|1⟩)
+        let mut state = State::product_state(&[2, 2], &[1, 1]);
+        instruct_controlled(&mut state, &phase_gate, &[0], &[1], &[1]);
+        assert!(approx_eq(state.data[0], zero));  // |00⟩
+        assert!(approx_eq(state.data[1], zero));  // |01⟩
+        assert!(approx_eq(state.data[2], zero));  // |10⟩
+        assert!(approx_eq(state.data[3], phase)); // |11⟩
+
+        // Test Phase(π/2) = S gate
+        let theta = std::f64::consts::FRAC_PI_2;
+        let phase = Complex64::from_polar(1.0, theta);
+        let phase_gate = Gate::Phase(theta).matrix(2);
+
+        let mut state = State::product_state(&[2, 2], &[1, 1]);
+        instruct_controlled(&mut state, &phase_gate, &[0], &[1], &[1]);
+        assert!(approx_eq(state.data[3], phase)); // |11⟩ -> e^(iπ/2)|11⟩ = i|11⟩
+
+        // Test Phase(π) = Z gate
+        let theta = std::f64::consts::PI;
+        let phase = Complex64::from_polar(1.0, theta);
+        let phase_gate = Gate::Phase(theta).matrix(2);
+
+        let mut state = State::product_state(&[2, 2], &[1, 1]);
+        instruct_controlled(&mut state, &phase_gate, &[0], &[1], &[1]);
+        assert!(approx_eq(state.data[3], phase)); // |11⟩ -> e^(iπ)|11⟩ = -|11⟩
+
+        // Test Phase(2π) = identity
+        let theta = 2.0 * std::f64::consts::PI;
+        let phase_gate = Gate::Phase(theta).matrix(2);
+
+        let mut state = State::product_state(&[2, 2], &[1, 1]);
+        instruct_controlled(&mut state, &phase_gate, &[0], &[1], &[1]);
+        assert!(approx_eq(state.data[3], one)); // |11⟩ -> e^(i2π)|11⟩ = |11⟩
+    }
+
+    #[test]
+    fn test_instruct_controlled_on_superposition() {
+        // Control in superposition |+⟩ creates entanglement
+        // |+⟩|0⟩ = (|0⟩ + |1⟩)/√2 ⊗ |0⟩ = (|00⟩ + |10⟩)/√2
+        // CNOT: (|00⟩ + |11⟩)/√2 (Bell state |Φ+⟩)
+
+        let zero = Complex64::new(0.0, 0.0);
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        let x_gate = Gate::X.matrix(2);
+
+        // Create |+⟩|0⟩ = (|00⟩ + |10⟩)/√2
+        let mut state = State::zero_state(&[2, 2]);
+        state.data[0] = s; // |00⟩
+        state.data[2] = s; // |10⟩
+
+        // Apply CNOT with control=0, target=1
+        instruct_controlled(&mut state, &x_gate, &[0], &[1], &[1]);
+
+        // Result: Bell state (|00⟩ + |11⟩)/√2
+        assert!(approx_eq(state.data[0], s));    // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], zero)); // |10⟩ -> |11⟩
+        assert!(approx_eq(state.data[3], s));    // |11⟩
+
+        // Verify norm is preserved
+        let norm: f64 = state.data.iter().map(|c| c.norm_sqr()).sum();
+        assert!((norm - 1.0).abs() < 1e-10);
+
+        // Test with different superposition: |−⟩|0⟩ = (|00⟩ - |10⟩)/√2
+        let mut state = State::zero_state(&[2, 2]);
+        state.data[0] = s;  // |00⟩
+        state.data[2] = -s; // |10⟩
+
+        // Apply CNOT with control=0, target=1
+        instruct_controlled(&mut state, &x_gate, &[0], &[1], &[1]);
+
+        // Result: Bell state (|00⟩ - |11⟩)/√2 = |Φ-⟩
+        assert!(approx_eq(state.data[0], s));    // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], zero)); // |10⟩ -> |11⟩
+        assert!(approx_eq(state.data[3], -s));   // |11⟩ with minus sign
+
+        // Test |0⟩|+⟩ = (|00⟩ + |01⟩)/√2, CNOT should leave it unchanged
+        // (because control qubit 0 is |0⟩)
+        let mut state = State::zero_state(&[2, 2]);
+        state.data[0] = s; // |00⟩
+        state.data[1] = s; // |01⟩
+
+        // Apply CNOT with control=0, target=1
+        instruct_controlled(&mut state, &x_gate, &[0], &[1], &[1]);
+
+        // Result: unchanged (|00⟩ + |01⟩)/√2
+        assert!(approx_eq(state.data[0], s));    // |00⟩
+        assert!(approx_eq(state.data[1], s));    // |01⟩
+        assert!(approx_eq(state.data[2], zero)); // |10⟩
+        assert!(approx_eq(state.data[3], zero)); // |11⟩
+    }
 }
