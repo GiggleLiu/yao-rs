@@ -1625,4 +1625,313 @@ mod tests {
             assert!(approx_eq(state.data[i], state_before.data[i]));
         }
     }
+
+    // Tests for parametric rotation gates
+    use std::f64::consts::PI;
+
+    #[test]
+    fn test_instruct_rx_various_angles() {
+        // Rx(θ) = [[cos(θ/2), -i*sin(θ/2)], [-i*sin(θ/2), cos(θ/2)]]
+        let one = Complex64::new(1.0, 0.0);
+        let zero = Complex64::new(0.0, 0.0);
+        let neg_i = Complex64::new(0.0, -1.0);
+
+        // Rx(0) = I
+        let rx_0 = Gate::Rx(0.0).matrix(2);
+        let mut state = State::zero_state(&[2]);
+        instruct_single(&mut state, &rx_0, 0);
+        assert!(approx_eq(state.data[0], one));
+        assert!(approx_eq(state.data[1], zero));
+
+        let mut state = State::product_state(&[2], &[1]);
+        instruct_single(&mut state, &rx_0, 0);
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], one));
+
+        // Rx(π) ≈ -iX (up to global phase)
+        // Rx(π)|0⟩ = -i|1⟩
+        let rx_pi = Gate::Rx(PI).matrix(2);
+        let mut state = State::zero_state(&[2]);
+        instruct_single(&mut state, &rx_pi, 0);
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], neg_i));
+
+        // Rx(π)|1⟩ = -i|0⟩
+        let mut state = State::product_state(&[2], &[1]);
+        instruct_single(&mut state, &rx_pi, 0);
+        assert!(approx_eq(state.data[0], neg_i));
+        assert!(approx_eq(state.data[1], zero));
+
+        // Rx(π/2) creates superposition
+        // Rx(π/2)|0⟩ = (|0⟩ - i|1⟩)/√2
+        let rx_pi_2 = Gate::Rx(PI / 2.0).matrix(2);
+        let mut state = State::zero_state(&[2]);
+        instruct_single(&mut state, &rx_pi_2, 0);
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        let neg_i_s = Complex64::new(0.0, -FRAC_1_SQRT_2);
+        assert!(approx_eq(state.data[0], s));
+        assert!(approx_eq(state.data[1], neg_i_s));
+
+        // Verify normalization
+        let norm: f64 = state.data.iter().map(|c| c.norm_sqr()).sum();
+        assert!((norm - 1.0).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_instruct_ry_various_angles() {
+        // Ry(θ) = [[cos(θ/2), -sin(θ/2)], [sin(θ/2), cos(θ/2)]]
+        let one = Complex64::new(1.0, 0.0);
+        let zero = Complex64::new(0.0, 0.0);
+        let neg_one = Complex64::new(-1.0, 0.0);
+
+        // Ry(0) = I
+        let ry_0 = Gate::Ry(0.0).matrix(2);
+        let mut state = State::zero_state(&[2]);
+        instruct_single(&mut state, &ry_0, 0);
+        assert!(approx_eq(state.data[0], one));
+        assert!(approx_eq(state.data[1], zero));
+
+        let mut state = State::product_state(&[2], &[1]);
+        instruct_single(&mut state, &ry_0, 0);
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], one));
+
+        // Ry(π) maps |0⟩ -> |1⟩, |1⟩ -> -|0⟩
+        // cos(π/2) = 0, sin(π/2) = 1
+        // Ry(π)|0⟩ = |1⟩
+        let ry_pi = Gate::Ry(PI).matrix(2);
+        let mut state = State::zero_state(&[2]);
+        instruct_single(&mut state, &ry_pi, 0);
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], one));
+
+        // Ry(π)|1⟩ = -|0⟩
+        let mut state = State::product_state(&[2], &[1]);
+        instruct_single(&mut state, &ry_pi, 0);
+        assert!(approx_eq(state.data[0], neg_one));
+        assert!(approx_eq(state.data[1], zero));
+
+        // Ry(π/2) creates superposition
+        // Ry(π/2)|0⟩ = (|0⟩ + |1⟩)/√2
+        let ry_pi_2 = Gate::Ry(PI / 2.0).matrix(2);
+        let mut state = State::zero_state(&[2]);
+        instruct_single(&mut state, &ry_pi_2, 0);
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        assert!(approx_eq(state.data[0], s));
+        assert!(approx_eq(state.data[1], s));
+
+        // Ry(π/2)|1⟩ = (-|0⟩ + |1⟩)/√2
+        let mut state = State::product_state(&[2], &[1]);
+        instruct_single(&mut state, &ry_pi_2, 0);
+        let neg_s = Complex64::new(-FRAC_1_SQRT_2, 0.0);
+        assert!(approx_eq(state.data[0], neg_s));
+        assert!(approx_eq(state.data[1], s));
+
+        // Verify normalization
+        let norm: f64 = state.data.iter().map(|c| c.norm_sqr()).sum();
+        assert!((norm - 1.0).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_instruct_rz_various_angles() {
+        // Rz(θ) = diag(e^(-iθ/2), e^(iθ/2))
+        // Use instruct_diagonal since Rz is diagonal
+        let one = Complex64::new(1.0, 0.0);
+        let zero = Complex64::new(0.0, 0.0);
+
+        // Rz(0) = I
+        let rz_0 = Gate::Rz(0.0).matrix(2);
+        let rz_phases_0 = [rz_0[[0, 0]], rz_0[[1, 1]]];
+        let mut state = State::zero_state(&[2]);
+        instruct_diagonal(&mut state, &rz_phases_0, 0);
+        assert!(approx_eq(state.data[0], one));
+        assert!(approx_eq(state.data[1], zero));
+
+        let mut state = State::product_state(&[2], &[1]);
+        instruct_diagonal(&mut state, &rz_phases_0, 0);
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], one));
+
+        // Rz(π) = diag(e^(-iπ/2), e^(iπ/2)) = diag(-i, i)
+        // Rz(π)|0⟩ = -i|0⟩
+        let rz_pi = Gate::Rz(PI).matrix(2);
+        let rz_phases_pi = [rz_pi[[0, 0]], rz_pi[[1, 1]]];
+        let neg_i = Complex64::new(0.0, -1.0);
+        let i = Complex64::new(0.0, 1.0);
+        assert!(approx_eq(rz_phases_pi[0], neg_i));
+        assert!(approx_eq(rz_phases_pi[1], i));
+
+        let mut state = State::zero_state(&[2]);
+        instruct_diagonal(&mut state, &rz_phases_pi, 0);
+        assert!(approx_eq(state.data[0], neg_i));
+        assert!(approx_eq(state.data[1], zero));
+
+        // Rz(π)|1⟩ = i|1⟩
+        let mut state = State::product_state(&[2], &[1]);
+        instruct_diagonal(&mut state, &rz_phases_pi, 0);
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], i));
+
+        // Rz(π/2) = diag(e^(-iπ/4), e^(iπ/4))
+        let rz_pi_2 = Gate::Rz(PI / 2.0).matrix(2);
+        let rz_phases_pi_2 = [rz_pi_2[[0, 0]], rz_pi_2[[1, 1]]];
+        let exp_neg_pi_4 = Complex64::from_polar(1.0, -FRAC_PI_4);
+        let exp_pi_4 = Complex64::from_polar(1.0, FRAC_PI_4);
+        assert!(approx_eq(rz_phases_pi_2[0], exp_neg_pi_4));
+        assert!(approx_eq(rz_phases_pi_2[1], exp_pi_4));
+
+        // Test on |+⟩ state
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        let mut state = State::zero_state(&[2]);
+        state.data[0] = s;
+        state.data[1] = s;
+        instruct_diagonal(&mut state, &rz_phases_pi_2, 0);
+        assert!(approx_eq(state.data[0], s * exp_neg_pi_4));
+        assert!(approx_eq(state.data[1], s * exp_pi_4));
+
+        // Verify normalization
+        let norm: f64 = state.data.iter().map(|c| c.norm_sqr()).sum();
+        assert!((norm - 1.0).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_instruct_phase_various_angles() {
+        // Phase(θ) = diag(1, e^(iθ))
+        // Use instruct_diagonal
+        let one = Complex64::new(1.0, 0.0);
+        let zero = Complex64::new(0.0, 0.0);
+        let i = Complex64::new(0.0, 1.0);
+        let neg_one = Complex64::new(-1.0, 0.0);
+
+        // Phase(π/4) = T gate: diag(1, e^(iπ/4))
+        let phase_pi_4 = Gate::Phase(FRAC_PI_4).matrix(2);
+        let t_phases = [phase_pi_4[[0, 0]], phase_pi_4[[1, 1]]];
+        let exp_pi_4 = Complex64::from_polar(1.0, FRAC_PI_4);
+        assert!(approx_eq(t_phases[0], one));
+        assert!(approx_eq(t_phases[1], exp_pi_4));
+
+        // Phase(π/4)|0⟩ = |0⟩
+        let mut state = State::zero_state(&[2]);
+        instruct_diagonal(&mut state, &t_phases, 0);
+        assert!(approx_eq(state.data[0], one));
+        assert!(approx_eq(state.data[1], zero));
+
+        // Phase(π/4)|1⟩ = e^(iπ/4)|1⟩
+        let mut state = State::product_state(&[2], &[1]);
+        instruct_diagonal(&mut state, &t_phases, 0);
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], exp_pi_4));
+
+        // Phase(π/2) = S gate: diag(1, i)
+        let phase_pi_2 = Gate::Phase(PI / 2.0).matrix(2);
+        let s_phases = [phase_pi_2[[0, 0]], phase_pi_2[[1, 1]]];
+        assert!(approx_eq(s_phases[0], one));
+        assert!(approx_eq(s_phases[1], i));
+
+        // Phase(π/2)|1⟩ = i|1⟩
+        let mut state = State::product_state(&[2], &[1]);
+        instruct_diagonal(&mut state, &s_phases, 0);
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], i));
+
+        // Phase(π) = Z gate: diag(1, -1)
+        let phase_pi = Gate::Phase(PI).matrix(2);
+        let z_phases = [phase_pi[[0, 0]], phase_pi[[1, 1]]];
+        assert!(approx_eq(z_phases[0], one));
+        assert!(approx_eq(z_phases[1], neg_one));
+
+        // Phase(π)|1⟩ = -|1⟩
+        let mut state = State::product_state(&[2], &[1]);
+        instruct_diagonal(&mut state, &z_phases, 0);
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], neg_one));
+
+        // Test on |+⟩ state with S gate
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        let mut state = State::zero_state(&[2]);
+        state.data[0] = s;
+        state.data[1] = s;
+        instruct_diagonal(&mut state, &s_phases, 0);
+        assert!(approx_eq(state.data[0], s));
+        assert!(approx_eq(state.data[1], s * i));
+
+        // Verify normalization
+        let norm: f64 = state.data.iter().map(|c| c.norm_sqr()).sum();
+        assert!((norm - 1.0).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_instruct_rotation_on_superposition() {
+        // Create |+⟩ = (|0⟩ + |1⟩)/√2, apply rotations, verify results
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        let neg_i = Complex64::new(0.0, -1.0);
+        let i = Complex64::new(0.0, 1.0);
+
+        // Apply Rx(π) to |+⟩
+        // Rx(π)|+⟩ = -iX|+⟩ = -i|+⟩ (since X|+⟩ = |+⟩)
+        let rx_pi = Gate::Rx(PI).matrix(2);
+        let mut state = State::zero_state(&[2]);
+        state.data[0] = s;
+        state.data[1] = s;
+        instruct_single(&mut state, &rx_pi, 0);
+        // Rx(π) = [[0, -i], [-i, 0]]
+        // Rx(π)|+⟩ = -i(|0⟩ + |1⟩)/√2 = -i|+⟩
+        assert!(approx_eq(state.data[0], s * neg_i));
+        assert!(approx_eq(state.data[1], s * neg_i));
+
+        // Apply Ry(π) to |+⟩
+        // Ry(π)|+⟩ = Y|+⟩ (without global phase) = (|1⟩ - |0⟩)/√2 = |-⟩ (but flipped)
+        let ry_pi = Gate::Ry(PI).matrix(2);
+        let mut state = State::zero_state(&[2]);
+        state.data[0] = s;
+        state.data[1] = s;
+        instruct_single(&mut state, &ry_pi, 0);
+        // Ry(π) = [[0, -1], [1, 0]]
+        // Ry(π)(|0⟩+|1⟩)/√2 = (-|1⟩+|0⟩)/√2
+        let neg_s = Complex64::new(-FRAC_1_SQRT_2, 0.0);
+        assert!(approx_eq(state.data[0], neg_s));
+        assert!(approx_eq(state.data[1], s));
+
+        // Apply Rz(π) to |+⟩
+        // Rz(π)|+⟩ = (e^(-iπ/2)|0⟩ + e^(iπ/2)|1⟩)/√2 = (-i|0⟩ + i|1⟩)/√2
+        let rz_pi = Gate::Rz(PI).matrix(2);
+        let rz_phases_pi = [rz_pi[[0, 0]], rz_pi[[1, 1]]];
+        let mut state = State::zero_state(&[2]);
+        state.data[0] = s;
+        state.data[1] = s;
+        instruct_diagonal(&mut state, &rz_phases_pi, 0);
+        assert!(approx_eq(state.data[0], s * neg_i));
+        assert!(approx_eq(state.data[1], s * i));
+
+        // Verify all states are normalized
+        for angle in [0.0, PI / 4.0, PI / 2.0, PI, 3.0 * PI / 2.0] {
+            // Test Rx
+            let rx = Gate::Rx(angle).matrix(2);
+            let mut state = State::zero_state(&[2]);
+            state.data[0] = s;
+            state.data[1] = s;
+            instruct_single(&mut state, &rx, 0);
+            let norm: f64 = state.data.iter().map(|c| c.norm_sqr()).sum();
+            assert!((norm - 1.0).abs() < 1e-10);
+
+            // Test Ry
+            let ry = Gate::Ry(angle).matrix(2);
+            let mut state = State::zero_state(&[2]);
+            state.data[0] = s;
+            state.data[1] = s;
+            instruct_single(&mut state, &ry, 0);
+            let norm: f64 = state.data.iter().map(|c| c.norm_sqr()).sum();
+            assert!((norm - 1.0).abs() < 1e-10);
+
+            // Test Rz
+            let rz = Gate::Rz(angle).matrix(2);
+            let rz_phases = [rz[[0, 0]], rz[[1, 1]]];
+            let mut state = State::zero_state(&[2]);
+            state.data[0] = s;
+            state.data[1] = s;
+            instruct_diagonal(&mut state, &rz_phases, 0);
+            let norm: f64 = state.data.iter().map(|c| c.norm_sqr()).sum();
+            assert!((norm - 1.0).abs() < 1e-10);
+        }
+    }
 }
