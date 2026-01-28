@@ -12,6 +12,8 @@ version.workspace = true
 edition.workspace = true
 
 [features]
+default = []
+parallel = ["rayon"]
 torch = ["tch"]
 typst = ["dep:typst-as-lib", "dep:typst-pdf", "dep:typst"]
 
@@ -20,6 +22,7 @@ num-complex = { version = "0.4", features = ["serde"] }
 ndarray = "0.16"
 omeco = "0.1"
 rand = "0.8"
+rayon = { version = "1.10", optional = true }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tch = { version = "0.18", optional = true }
@@ -29,6 +32,11 @@ typst-pdf = { version = "0.14", optional = true }
 
 [dev-dependencies]
 approx = "0.5"
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[[bench]]
+name = "apply"
+harness = false
 
 [[example]]
 name = "circuit_pdf"
