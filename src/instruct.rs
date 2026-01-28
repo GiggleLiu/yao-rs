@@ -2766,4 +2766,384 @@ mod tests {
         assert!(approx_eq(state.data[6], s));    // |110⟩ unchanged
         assert!(approx_eq(state.data[7], zero)); // |111⟩ unchanged
     }
+
+    // ========== Qudit (d>2) Tests ==========
+
+    #[test]
+    fn test_instruct_qutrit_x_gate() {
+        // X on d=3: cyclic permutation |0⟩→|1⟩→|2⟩→|0⟩
+        // Build 3x3 permutation matrix
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+
+        // X_3 = [[0,0,1], [1,0,0], [0,1,0]]
+        // X|k⟩ = |k+1 mod 3⟩
+        let x_qutrit = Array2::from_shape_vec(
+            (3, 3),
+            vec![
+                zero, zero, one,
+                one, zero, zero,
+                zero, one, zero,
+            ],
+        )
+        .unwrap();
+
+        // Test |0⟩ -> |1⟩
+        let mut state = State::zero_state(&[3]);
+        instruct_single(&mut state, &x_qutrit, 0);
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], one));
+        assert!(approx_eq(state.data[2], zero));
+
+        // Test |1⟩ -> |2⟩
+        let mut state = State::product_state(&[3], &[1]);
+        instruct_single(&mut state, &x_qutrit, 0);
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], zero));
+        assert!(approx_eq(state.data[2], one));
+
+        // Test |2⟩ -> |0⟩
+        let mut state = State::product_state(&[3], &[2]);
+        instruct_single(&mut state, &x_qutrit, 0);
+        assert!(approx_eq(state.data[0], one));
+        assert!(approx_eq(state.data[1], zero));
+        assert!(approx_eq(state.data[2], zero));
+
+        // Test triple application returns to original: X³|0⟩ = |0⟩
+        let mut state = State::zero_state(&[3]);
+        instruct_single(&mut state, &x_qutrit, 0);
+        instruct_single(&mut state, &x_qutrit, 0);
+        instruct_single(&mut state, &x_qutrit, 0);
+        assert!(approx_eq(state.data[0], one));
+        assert!(approx_eq(state.data[1], zero));
+        assert!(approx_eq(state.data[2], zero));
+    }
+
+    #[test]
+    fn test_instruct_qutrit_z_gate() {
+        // Z on d=3: diag(1, ω, ω²) where ω = e^(2πi/3)
+        // Use instruct_diagonal
+        let omega = Complex64::from_polar(1.0, 2.0 * std::f64::consts::PI / 3.0);
+        let omega_sq = omega * omega;
+        let one = Complex64::new(1.0, 0.0);
+
+        let z_phases = [one, omega, omega_sq];
+
+        // Test on |0⟩: Z|0⟩ = |0⟩
+        let mut state = State::zero_state(&[3]);
+        instruct_diagonal(&mut state, &z_phases, 0);
+        assert!(approx_eq(state.data[0], one));
+        assert!(approx_eq(state.data[1], Complex64::new(0.0, 0.0)));
+        assert!(approx_eq(state.data[2], Complex64::new(0.0, 0.0)));
+
+        // Test on |1⟩: Z|1⟩ = ω|1⟩
+        let mut state = State::product_state(&[3], &[1]);
+        instruct_diagonal(&mut state, &z_phases, 0);
+        assert!(approx_eq(state.data[0], Complex64::new(0.0, 0.0)));
+        assert!(approx_eq(state.data[1], omega));
+        assert!(approx_eq(state.data[2], Complex64::new(0.0, 0.0)));
+
+        // Test on |2⟩: Z|2⟩ = ω²|2⟩
+        let mut state = State::product_state(&[3], &[2]);
+        instruct_diagonal(&mut state, &z_phases, 0);
+        assert!(approx_eq(state.data[0], Complex64::new(0.0, 0.0)));
+        assert!(approx_eq(state.data[1], Complex64::new(0.0, 0.0)));
+        assert!(approx_eq(state.data[2], omega_sq));
+
+        // Verify Z³ = I (applying Z three times returns to original)
+        let mut state = State::product_state(&[3], &[1]);
+        instruct_diagonal(&mut state, &z_phases, 0);
+        instruct_diagonal(&mut state, &z_phases, 0);
+        instruct_diagonal(&mut state, &z_phases, 0);
+        // ω³ = 1
+        assert!(approx_eq(state.data[1], one));
+    }
+
+    #[test]
+    fn test_instruct_qutrit_hadamard() {
+        // Generalized Hadamard for d=3
+        // H[j,k] = ω^(jk) / √3 where ω = e^(2πi/3)
+        let omega = Complex64::from_polar(1.0, 2.0 * std::f64::consts::PI / 3.0);
+        let scale = Complex64::new(1.0 / 3.0_f64.sqrt(), 0.0);
+        let one = Complex64::new(1.0, 0.0);
+
+        // H_3 matrix: H[j,k] = ω^(jk) / √3
+        // Row j, col k: ω^(j*k)
+        // j=0: [1, 1, 1] / √3
+        // j=1: [1, ω, ω²] / √3
+        // j=2: [1, ω², ω^4=ω] / √3
+        let h_qutrit = Array2::from_shape_vec(
+            (3, 3),
+            vec![
+                scale * one, scale * one, scale * one,
+                scale * one, scale * omega, scale * omega * omega,
+                scale * one, scale * omega * omega, scale * omega,
+            ],
+        )
+        .unwrap();
+
+        // Apply H to |0⟩: result should be (|0⟩ + |1⟩ + |2⟩) / √3
+        let mut state = State::zero_state(&[3]);
+        instruct_single(&mut state, &h_qutrit, 0);
+
+        // All amplitudes should be 1/√3
+        assert!(approx_eq(state.data[0], scale));
+        assert!(approx_eq(state.data[1], scale));
+        assert!(approx_eq(state.data[2], scale));
+
+        // Verify normalization preserved
+        let norm: f64 = state.data.iter().map(|c| c.norm_sqr()).sum();
+        assert!((norm - 1.0).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_instruct_mixed_qubit_qutrit() {
+        // System with dims = [2, 3, 2]
+        // Apply gates to each site separately
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+
+        // Total dimension: 2 * 3 * 2 = 12
+
+        // X gate for qubit (d=2)
+        let x_qubit = Array2::from_shape_vec(
+            (2, 2),
+            vec![zero, one, one, zero],
+        )
+        .unwrap();
+
+        // X gate for qutrit (d=3)
+        let x_qutrit = Array2::from_shape_vec(
+            (3, 3),
+            vec![
+                zero, zero, one,
+                one, zero, zero,
+                zero, one, zero,
+            ],
+        )
+        .unwrap();
+
+        // Start with |0,0,0⟩ (all systems in ground state)
+        // Apply X to site 0 (qubit): |0,0,0⟩ -> |1,0,0⟩
+        let mut state = State::zero_state(&[2, 3, 2]);
+        instruct_single(&mut state, &x_qubit, 0);
+        // |1,0,0⟩ index = 1*6 + 0*2 + 0 = 6
+        assert!(approx_eq(state.data[6], one));
+        for i in 0..12 {
+            if i != 6 {
+                assert!(approx_eq(state.data[i], zero));
+            }
+        }
+
+        // Start with |0,0,0⟩, apply X to site 1 (qutrit): |0,0,0⟩ -> |0,1,0⟩
+        let mut state = State::zero_state(&[2, 3, 2]);
+        instruct_single(&mut state, &x_qutrit, 1);
+        // |0,1,0⟩ index = 0*6 + 1*2 + 0 = 2
+        assert!(approx_eq(state.data[2], one));
+        for i in 0..12 {
+            if i != 2 {
+                assert!(approx_eq(state.data[i], zero));
+            }
+        }
+
+        // Start with |0,0,0⟩, apply X to site 2 (qubit): |0,0,0⟩ -> |0,0,1⟩
+        let mut state = State::zero_state(&[2, 3, 2]);
+        instruct_single(&mut state, &x_qubit, 2);
+        // |0,0,1⟩ index = 0*6 + 0*2 + 1 = 1
+        assert!(approx_eq(state.data[1], one));
+        for i in 0..12 {
+            if i != 1 {
+                assert!(approx_eq(state.data[i], zero));
+            }
+        }
+
+        // Chain of operations: |0,0,0⟩ -> |1,1,1⟩
+        let mut state = State::zero_state(&[2, 3, 2]);
+        instruct_single(&mut state, &x_qubit, 0);  // -> |1,0,0⟩
+        instruct_single(&mut state, &x_qutrit, 1); // -> |1,1,0⟩
+        instruct_single(&mut state, &x_qubit, 2);  // -> |1,1,1⟩
+        // |1,1,1⟩ index = 1*6 + 1*2 + 1 = 9
+        assert!(approx_eq(state.data[9], one));
+        for i in 0..12 {
+            if i != 9 {
+                assert!(approx_eq(state.data[i], zero));
+            }
+        }
+    }
+
+    #[test]
+    fn test_instruct_controlled_qutrit_by_qubit() {
+        // Qubit controls qutrit gate
+        // dims = [2, 3], ctrl on qubit (site 0), target on qutrit (site 1)
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+
+        // X gate for qutrit (d=3)
+        let x_qutrit = Array2::from_shape_vec(
+            (3, 3),
+            vec![
+                zero, zero, one,
+                one, zero, zero,
+                zero, one, zero,
+            ],
+        )
+        .unwrap();
+
+        // |1,0⟩ -> |1,1⟩ (control active)
+        // dims=[2,3]: |1,0⟩ = 1*3 + 0 = 3
+        let mut state = State::product_state(&[2, 3], &[1, 0]);
+        instruct_controlled(&mut state, &x_qutrit, &[0], &[1], &[1]);
+        // |1,1⟩ = 1*3 + 1 = 4
+        assert!(approx_eq(state.data[3], zero));
+        assert!(approx_eq(state.data[4], one));
+
+        // |1,1⟩ -> |1,2⟩ (control active)
+        let mut state = State::product_state(&[2, 3], &[1, 1]);
+        instruct_controlled(&mut state, &x_qutrit, &[0], &[1], &[1]);
+        // |1,2⟩ = 1*3 + 2 = 5
+        assert!(approx_eq(state.data[4], zero));
+        assert!(approx_eq(state.data[5], one));
+
+        // |0,0⟩ -> |0,0⟩ (control not active)
+        let mut state = State::product_state(&[2, 3], &[0, 0]);
+        instruct_controlled(&mut state, &x_qutrit, &[0], &[1], &[1]);
+        // |0,0⟩ = 0
+        assert!(approx_eq(state.data[0], one));
+
+        // |0,1⟩ -> |0,1⟩ (control not active)
+        let mut state = State::product_state(&[2, 3], &[0, 1]);
+        instruct_controlled(&mut state, &x_qutrit, &[0], &[1], &[1]);
+        // |0,1⟩ = 1
+        assert!(approx_eq(state.data[1], one));
+    }
+
+    #[test]
+    fn test_instruct_qutrit_controls_qubit() {
+        // Qutrit (value=2) controls qubit gate
+        // dims = [3, 2], ctrl on qutrit (site 0), target on qubit (site 1)
+        // ctrl_configs = [2] means gate activates when qutrit is in |2⟩
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+
+        let x_qubit = Array2::from_shape_vec(
+            (2, 2),
+            vec![zero, one, one, zero],
+        )
+        .unwrap();
+
+        // |2,0⟩ -> |2,1⟩ (control=2 is active)
+        // dims=[3,2]: |2,0⟩ = 2*2 + 0 = 4
+        let mut state = State::product_state(&[3, 2], &[2, 0]);
+        instruct_controlled(&mut state, &x_qubit, &[0], &[2], &[1]);
+        // |2,1⟩ = 2*2 + 1 = 5
+        assert!(approx_eq(state.data[4], zero));
+        assert!(approx_eq(state.data[5], one));
+
+        // |2,1⟩ -> |2,0⟩ (control=2 is active)
+        let mut state = State::product_state(&[3, 2], &[2, 1]);
+        instruct_controlled(&mut state, &x_qubit, &[0], &[2], &[1]);
+        assert!(approx_eq(state.data[4], one));
+        assert!(approx_eq(state.data[5], zero));
+
+        // |0,0⟩ -> |0,0⟩ (control=0, not active)
+        let mut state = State::product_state(&[3, 2], &[0, 0]);
+        instruct_controlled(&mut state, &x_qubit, &[0], &[2], &[1]);
+        assert!(approx_eq(state.data[0], one));
+
+        // |1,0⟩ -> |1,0⟩ (control=1, not active)
+        let mut state = State::product_state(&[3, 2], &[1, 0]);
+        instruct_controlled(&mut state, &x_qubit, &[0], &[2], &[1]);
+        // |1,0⟩ = 1*2 + 0 = 2
+        assert!(approx_eq(state.data[2], one));
+
+        // Test with control value 1
+        // |1,0⟩ -> |1,1⟩ when ctrl_configs = [1]
+        let mut state = State::product_state(&[3, 2], &[1, 0]);
+        instruct_controlled(&mut state, &x_qubit, &[0], &[1], &[1]);
+        // |1,1⟩ = 1*2 + 1 = 3
+        assert!(approx_eq(state.data[2], zero));
+        assert!(approx_eq(state.data[3], one));
+    }
+
+    #[test]
+    fn test_instruct_ququart() {
+        // d=4 system test
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+
+        // X gate for ququart (d=4): cyclic permutation
+        // |0⟩→|1⟩→|2⟩→|3⟩→|0⟩
+        let x_ququart = Array2::from_shape_vec(
+            (4, 4),
+            vec![
+                zero, zero, zero, one,
+                one, zero, zero, zero,
+                zero, one, zero, zero,
+                zero, zero, one, zero,
+            ],
+        )
+        .unwrap();
+
+        // Test |0⟩ -> |1⟩
+        let mut state = State::zero_state(&[4]);
+        instruct_single(&mut state, &x_ququart, 0);
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], one));
+        assert!(approx_eq(state.data[2], zero));
+        assert!(approx_eq(state.data[3], zero));
+
+        // Test |1⟩ -> |2⟩
+        let mut state = State::product_state(&[4], &[1]);
+        instruct_single(&mut state, &x_ququart, 0);
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], zero));
+        assert!(approx_eq(state.data[2], one));
+        assert!(approx_eq(state.data[3], zero));
+
+        // Test |3⟩ -> |0⟩
+        let mut state = State::product_state(&[4], &[3]);
+        instruct_single(&mut state, &x_ququart, 0);
+        assert!(approx_eq(state.data[0], one));
+        assert!(approx_eq(state.data[1], zero));
+        assert!(approx_eq(state.data[2], zero));
+        assert!(approx_eq(state.data[3], zero));
+
+        // Z gate for ququart: diag(1, i, -1, -i) where each is e^(2πik/4)
+        let z_phases = [
+            Complex64::new(1.0, 0.0),
+            Complex64::new(0.0, 1.0),   // i
+            Complex64::new(-1.0, 0.0),  // -1
+            Complex64::new(0.0, -1.0),  // -i
+        ];
+
+        // Test Z|2⟩ = -1 * |2⟩
+        let mut state = State::product_state(&[4], &[2]);
+        instruct_diagonal(&mut state, &z_phases, 0);
+        assert!(approx_eq(state.data[2], Complex64::new(-1.0, 0.0)));
+
+        // Test Z|3⟩ = -i * |3⟩
+        let mut state = State::product_state(&[4], &[3]);
+        instruct_diagonal(&mut state, &z_phases, 0);
+        assert!(approx_eq(state.data[3], Complex64::new(0.0, -1.0)));
+
+        // Test Z^4 = I
+        let mut state = State::product_state(&[4], &[1]);
+        for _ in 0..4 {
+            instruct_diagonal(&mut state, &z_phases, 0);
+        }
+        // i^4 = 1
+        assert!(approx_eq(state.data[1], one));
+
+        // Test mixed system with ququart and qubit: dims = [4, 2]
+        let mut state = State::zero_state(&[4, 2]);
+        // Apply X to ququart: |0,0⟩ -> |1,0⟩
+        instruct_single(&mut state, &x_ququart, 0);
+        // |1,0⟩ = 1*2 + 0 = 2
+        assert!(approx_eq(state.data[2], one));
+        for i in 0..8 {
+            if i != 2 {
+                assert!(approx_eq(state.data[i], zero));
+            }
+        }
+    }
 }
