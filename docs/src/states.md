@@ -91,4 +91,4 @@ let result = apply(&circuit, &state);
 assert_eq!(result.data[2].re, 1.0);
 ```
 
-The `apply` function builds full matrices and performs state-vector simulation. The result preserves the norm.
+The `apply` function performs O(2^n) state-vector simulation using an instruction-based, in-place backend (it does not construct the full 2^n × 2^n matrix). It returns a new `State` with preserved norm; to update a state in place, use `apply_inplace`.

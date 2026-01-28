@@ -146,7 +146,10 @@ pub fn apply_inplace(circuit: &Circuit, state: &mut State) {
 
         if pg.control_locs.is_empty() {
             // No controls
-            if is_diagonal(&pg.gate) {
+            // Diagonal optimization only applies to single-target gates
+            // Multi-target diagonal gates (e.g., 2-qubit diagonal with d^2 phases)
+            // cannot use this path as it would incorrectly apply phases per-site
+            if is_diagonal(&pg.gate) && pg.target_locs.len() == 1 {
                 let phases = extract_diagonal_phases(&gate_matrix);
                 for &loc in &pg.target_locs {
                     #[cfg(feature = "parallel")]
@@ -162,33 +165,31 @@ pub fn apply_inplace(circuit: &Circuit, state: &mut State) {
                         instruct_diagonal(state, &phases, loc);
                     }
                 }
-            } else {
-                // For multi-qubit gates (like SWAP), we need to handle them differently
-                if pg.target_locs.len() == 1 {
-                    for &loc in &pg.target_locs {
-                        #[cfg(feature = "parallel")]
-                        {
-                            if use_parallel {
-                                instruct_single_parallel(state, &gate_matrix, loc);
-                            } else {
-                                instruct_single(state, &gate_matrix, loc);
-                            }
-                        }
-                        #[cfg(not(feature = "parallel"))]
-                        {
-                            instruct_single(state, &gate_matrix, loc);
-                        }
+            } else if pg.target_locs.len() == 1 {
+                // Single-target non-diagonal gate
+                let loc = pg.target_locs[0];
+                #[cfg(feature = "parallel")]
+                {
+                    if use_parallel {
+                        instruct_single_parallel(state, &gate_matrix, loc);
+                    } else {
+                        instruct_single(state, &gate_matrix, loc);
                     }
-                } else {
-                    // Multi-target gate without controls: use instruct_controlled with empty controls
-                    instruct_controlled(
-                        state,
-                        &gate_matrix,
-                        &[],
-                        &[],
-                        &pg.target_locs,
-                    );
                 }
+                #[cfg(not(feature = "parallel"))]
+                {
+                    instruct_single(state, &gate_matrix, loc);
+                }
+            } else {
+                // Multi-target gate without controls (including multi-target diagonal gates):
+                // use instruct_controlled with empty controls
+                instruct_controlled(
+                    state,
+                    &gate_matrix,
+                    &[],
+                    &[],
+                    &pg.target_locs,
+                );
             }
         } else {
             // Controlled gate

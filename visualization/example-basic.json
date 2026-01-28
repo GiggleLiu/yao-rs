@@ -1,0 +1,10 @@
+{
+  "num_qubits": 4,
+  "gates": [
+    { "gate": "H", "targets": [0] },
+    { "gate": "X", "targets": [1], "controls": [0], "control_configs": [true] },
+    { "gate": "Rx", "params": [1.5707963267948966], "targets": [2] },
+    { "gate": "SWAP", "targets": [2, 3] },
+    { "gate": "FSim", "params": [1.5707963267948966, 0.5235987755982988], "targets": [0, 1] }
+  ]
+}

@@ -202,6 +202,71 @@ impl Circuit {
     pub fn total_dim(&self) -> usize {
         self.dims.iter().product()
     }
+
+    /// Return the adjoint circuit U†.
+    ///
+    /// The dagger of a circuit has:
+    /// - Gates in reverse order
+    /// - Each gate replaced with its adjoint
+    ///
+    /// For a unitary circuit U, U† U = I.
+    pub fn dagger(&self) -> Result<Self, CircuitError> {
+        let dagger_gates: Vec<PositionedGate> = self
+            .gates
+            .iter()
+            .rev()
+            .map(|pg| PositionedGate {
+                gate: pg.gate.dagger(),
+                target_locs: pg.target_locs.clone(),
+                control_locs: pg.control_locs.clone(),
+                control_configs: pg.control_configs.clone(),
+            })
+            .collect();
+
+        Circuit::new(self.dims.clone(), dagger_gates)
+    }
+
+    /// Compile the circuit to PDF bytes.
+    ///
+    /// This embeds the Typst compiler to render a visual diagram of the circuit.
+    /// On first call, this will download the required Typst packages (~1MB).
+    ///
+    /// # Example
+    /// ```ignore
+    /// let circuit = Circuit::new(vec![2, 2], vec![
+    ///     put(vec![0], Gate::H),
+    ///     control(vec![0], vec![1], Gate::X),
+    /// ]).unwrap();
+    ///
+    /// let pdf = circuit.to_pdf()?;
+    /// std::fs::write("circuit.pdf", pdf)?;
+    /// ```
+    #[cfg(feature = "typst")]
+    pub fn to_pdf(&self) -> Result<Vec<u8>, crate::typst::PdfError> {
+        crate::typst::to_pdf(self)
+    }
+}
+
+impl fmt::Display for Circuit {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let n = self.num_sites();
+        writeln!(f, "nqubits: {}", n)?;
+        for pg in &self.gates {
+            if pg.control_locs.is_empty() {
+                writeln!(f, "  {} @ q[{}]", pg.gate, format_locs(&pg.target_locs))?;
+            } else {
+                writeln!(f, "  C(q[{}]) {} @ q[{}]",
+                    format_locs(&pg.control_locs),
+                    pg.gate,
+                    format_locs(&pg.target_locs))?;
+            }
+        }
+        Ok(())
+    }
+}
+
+fn format_locs(locs: &[usize]) -> String {
+    locs.iter().map(|l| l.to_string()).collect::<Vec<_>>().join(", ")
 }
 
 /// Place a gate on target locations (no controls).

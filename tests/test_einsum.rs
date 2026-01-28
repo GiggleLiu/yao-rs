@@ -4,8 +4,9 @@ use ndarray::Array2;
 use num_complex::Complex64;
 
 use yao_rs::circuit::{Circuit, PositionedGate};
-use yao_rs::einsum::circuit_to_einsum;
+use yao_rs::einsum::{circuit_to_einsum, circuit_to_overlap, circuit_to_expectation};
 use yao_rs::gate::Gate;
+use yao_rs::operator::{Op, OperatorPolynomial};
 
 /// Helper to create a simple PositionedGate with no controls.
 fn simple_gate(gate: Gate, target_locs: Vec<usize>) -> PositionedGate {
@@ -174,6 +175,7 @@ fn test_size_dict_mixed_dimension_circuit() {
     let qutrit_diag_gate = Gate::Custom {
         matrix: qutrit_gate_matrix,
         is_diagonal: true,
+        label: "qutrit_diagonal_phase".to_string(),
     };
 
     // Non-diagonal custom gate for qutrit
@@ -186,6 +188,7 @@ fn test_size_dict_mixed_dimension_circuit() {
     let qutrit_non_diag_gate = Gate::Custom {
         matrix: qutrit_non_diag_matrix,
         is_diagonal: false,
+        label: "qutrit_permutation".to_string(),
     };
 
     // Circuit: site 0 is qubit (d=2), site 1 is qutrit (d=3)
@@ -422,4 +425,43 @@ fn test_diagonal_gate_preserves_labels_across_multiple_uses() {
     assert_eq!(tn.code.iy, vec![0]);
     // size_dict should only have initial label
     assert_eq!(tn.size_dict.len(), 1);
+}
+
+#[test]
+fn test_circuit_to_overlap_simple() {
+    // |0> -> H -> measure <0|
+    // This computes ⟨0|H|0⟩ = 1/√2
+    let circuit = Circuit::new(
+        vec![2],
+        vec![simple_gate(Gate::H, vec![0])],
+    ).unwrap();
+
+    let tn = circuit_to_overlap(&circuit);
+    // Should have: initial |0>, H gate tensor, final <0|
+    // 1 initial boundary tensor + 1 gate tensor + 1 final boundary tensor = 3
+    assert_eq!(tn.tensors.len(), 3);
+    // Output should be empty (scalar result since all qubits pinned)
+    assert!(tn.code.iy.is_empty());
+}
+
+#[test]
+fn test_circuit_to_expectation_z() {
+    // ⟨0|U† Z(0) U|0⟩ where U = H
+    // Expected structure: ⟨0|H† Z H|0⟩
+    // H is self-adjoint (H† = H), so this is ⟨0|H Z H|0⟩ = ⟨0|X|0⟩ = 0
+    let circuit = Circuit::new(
+        vec![2],
+        vec![simple_gate(Gate::H, vec![0])],
+    ).unwrap();
+
+    let z_op = OperatorPolynomial::single(0, Op::Z, Complex64::new(1.0, 0.0));
+    let tn = circuit_to_expectation(&circuit, &z_op);
+
+    // Should have tensors for the expectation structure:
+    // |0⟩ boundary + U gates + operator tensor + U† gates + ⟨0| boundary
+    // For 1 qubit with H: |0⟩ + H + Z + H† + ⟨0| = 5 tensors
+    assert!(tn.tensors.len() >= 3, "Expected at least 3 tensors, got {}", tn.tensors.len());
+
+    // Output should be empty (scalar result)
+    assert!(tn.code.iy.is_empty(), "Expected empty output for scalar expectation value");
 }

@@ -1,0 +1,22 @@
+[package]
+name = "yao-rs-py"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+name = "_yao_rs"
+crate-type = ["cdylib"]
+
+[features]
+default = []
+torch = ["yao-rs/torch", "dep:tch"]
+
+[dependencies]
+tch = { version = "0.18", optional = true }
+pyo3 = { version = "0.20", features = ["extension-module"] }
+num-complex = "0.4"
+serde_json = "1"
+pythonize = "0.20"
+
+# Local dependency
+yao-rs = { path = ".." }
