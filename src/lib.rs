@@ -5,6 +5,7 @@ pub mod einsum;
 pub mod state;
 pub mod apply;
 pub mod index;
+pub mod instruct;
 
 pub use gate::Gate;
 pub use circuit::{Circuit, PositionedGate, put, control};
