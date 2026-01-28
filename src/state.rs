@@ -8,6 +8,19 @@ pub struct State {
 }
 
 impl State {
+    /// Creates a state with specified dimensions and data.
+    pub fn new(dims: Vec<usize>, data: Array1<Complex64>) -> Self {
+        let expected_len: usize = dims.iter().product();
+        assert_eq!(
+            data.len(),
+            expected_len,
+            "data length {} doesn't match product of dims {}",
+            data.len(),
+            expected_len
+        );
+        State { dims, data }
+    }
+
     /// Creates |0,0,...,0> state (first basis element = 1, rest = 0)
     pub fn zero_state(dims: &[usize]) -> Self {
         let total: usize = dims.iter().product();
