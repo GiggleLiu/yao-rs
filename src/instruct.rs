@@ -1934,4 +1934,222 @@ mod tests {
             assert!((norm - 1.0).abs() < 1e-10);
         }
     }
+
+    // Tests for SWAP gate
+    #[test]
+    fn test_instruct_swap_basic() {
+        // SWAP|01⟩ = |10⟩
+        // SWAP|10⟩ = |01⟩
+        // Use Gate::SWAP.matrix(2) with instruct_controlled (empty controls, 2 targets)
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+        let swap_gate = Gate::SWAP.matrix(2);
+
+        // Test SWAP|01⟩ = |10⟩
+        // |01⟩ = index 1 (q0=0, q1=1), |10⟩ = index 2 (q0=1, q1=0)
+        let mut state = State::product_state(&[2, 2], &[0, 1]); // |01⟩
+        instruct_controlled(&mut state, &swap_gate, &[], &[], &[0, 1]);
+
+        assert!(approx_eq(state.data[0], zero)); // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], one));  // |10⟩
+        assert!(approx_eq(state.data[3], zero)); // |11⟩
+
+        // Test SWAP|10⟩ = |01⟩
+        let mut state = State::product_state(&[2, 2], &[1, 0]); // |10⟩
+        instruct_controlled(&mut state, &swap_gate, &[], &[], &[0, 1]);
+
+        assert!(approx_eq(state.data[0], zero)); // |00⟩
+        assert!(approx_eq(state.data[1], one));  // |01⟩
+        assert!(approx_eq(state.data[2], zero)); // |10⟩
+        assert!(approx_eq(state.data[3], zero)); // |11⟩
+    }
+
+    #[test]
+    fn test_instruct_swap_symmetric() {
+        // SWAP|00⟩ = |00⟩
+        // SWAP|11⟩ = |11⟩
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+        let swap_gate = Gate::SWAP.matrix(2);
+
+        // Test SWAP|00⟩ = |00⟩
+        let mut state = State::product_state(&[2, 2], &[0, 0]); // |00⟩
+        instruct_controlled(&mut state, &swap_gate, &[], &[], &[0, 1]);
+
+        assert!(approx_eq(state.data[0], one));  // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], zero)); // |10⟩
+        assert!(approx_eq(state.data[3], zero)); // |11⟩
+
+        // Test SWAP|11⟩ = |11⟩
+        let mut state = State::product_state(&[2, 2], &[1, 1]); // |11⟩
+        instruct_controlled(&mut state, &swap_gate, &[], &[], &[0, 1]);
+
+        assert!(approx_eq(state.data[0], zero)); // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], zero)); // |10⟩
+        assert!(approx_eq(state.data[3], one));  // |11⟩
+    }
+
+    #[test]
+    fn test_instruct_swap_on_superposition() {
+        // Create entangled Bell state |Φ+⟩ = (|00⟩ + |11⟩)/√2
+        // SWAP|Φ+⟩ = (|00⟩ + |11⟩)/√2 = |Φ+⟩ (symmetric under SWAP)
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        let zero = Complex64::new(0.0, 0.0);
+        let swap_gate = Gate::SWAP.matrix(2);
+
+        let mut state = State::zero_state(&[2, 2]);
+        state.data[0] = s; // |00⟩
+        state.data[3] = s; // |11⟩
+
+        instruct_controlled(&mut state, &swap_gate, &[], &[], &[0, 1]);
+
+        // SWAP leaves |Φ+⟩ invariant
+        assert!(approx_eq(state.data[0], s));    // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], zero)); // |10⟩
+        assert!(approx_eq(state.data[3], s));    // |11⟩
+
+        // Create |Ψ+⟩ = (|01⟩ + |10⟩)/√2
+        // SWAP|Ψ+⟩ = (|10⟩ + |01⟩)/√2 = |Ψ+⟩ (symmetric under SWAP)
+        let mut state = State::zero_state(&[2, 2]);
+        state.data[0] = zero; // Clear |00⟩ amplitude
+        state.data[1] = s; // |01⟩
+        state.data[2] = s; // |10⟩
+
+        instruct_controlled(&mut state, &swap_gate, &[], &[], &[0, 1]);
+
+        assert!(approx_eq(state.data[0], zero)); // |00⟩
+        assert!(approx_eq(state.data[1], s));    // |01⟩ (was |10⟩)
+        assert!(approx_eq(state.data[2], s));    // |10⟩ (was |01⟩)
+        assert!(approx_eq(state.data[3], zero)); // |11⟩
+
+        // Create asymmetric superposition: (|01⟩ + 2|10⟩)/√5
+        // SWAP should swap the amplitudes
+        let amp1 = Complex64::new(1.0 / 5.0_f64.sqrt(), 0.0);
+        let amp2 = Complex64::new(2.0 / 5.0_f64.sqrt(), 0.0);
+        let mut state = State::zero_state(&[2, 2]);
+        state.data[0] = zero; // Clear |00⟩ amplitude
+        state.data[1] = amp1; // |01⟩
+        state.data[2] = amp2; // |10⟩
+
+        instruct_controlled(&mut state, &swap_gate, &[], &[], &[0, 1]);
+
+        // After SWAP: (2|01⟩ + |10⟩)/√5
+        assert!(approx_eq(state.data[0], zero)); // |00⟩
+        assert!(approx_eq(state.data[1], amp2)); // |01⟩ (was |10⟩ amplitude)
+        assert!(approx_eq(state.data[2], amp1)); // |10⟩ (was |01⟩ amplitude)
+        assert!(approx_eq(state.data[3], zero)); // |11⟩
+    }
+
+    #[test]
+    fn test_instruct_swap_non_adjacent() {
+        // 3-qubit system, SWAP qubits 0 and 2 (not adjacent)
+        // Test SWAP(0,2)|001⟩ = |100⟩
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+        let swap_gate = Gate::SWAP.matrix(2);
+
+        // |001⟩ = index 1 (q0=0, q1=0, q2=1), |100⟩ = index 4 (q0=1, q1=0, q2=0)
+        let mut state = State::product_state(&[2, 2, 2], &[0, 0, 1]); // |001⟩
+        instruct_controlled(&mut state, &swap_gate, &[], &[], &[0, 2]);
+
+        // After SWAP(0,2): |100⟩
+        for i in 0..8 {
+            if i == 4 {
+                assert!(approx_eq(state.data[i], one));
+            } else {
+                assert!(approx_eq(state.data[i], zero));
+            }
+        }
+
+        // Test SWAP(0,2)|100⟩ = |001⟩
+        let mut state = State::product_state(&[2, 2, 2], &[1, 0, 0]); // |100⟩
+        instruct_controlled(&mut state, &swap_gate, &[], &[], &[0, 2]);
+
+        // After SWAP(0,2): |001⟩
+        for i in 0..8 {
+            if i == 1 {
+                assert!(approx_eq(state.data[i], one));
+            } else {
+                assert!(approx_eq(state.data[i], zero));
+            }
+        }
+
+        // Test SWAP(0,2)|101⟩ = |101⟩ (symmetric, both q0 and q2 are |1⟩)
+        let mut state = State::product_state(&[2, 2, 2], &[1, 0, 1]); // |101⟩
+        instruct_controlled(&mut state, &swap_gate, &[], &[], &[0, 2]);
+
+        // |101⟩ = index 5
+        for i in 0..8 {
+            if i == 5 {
+                assert!(approx_eq(state.data[i], one));
+            } else {
+                assert!(approx_eq(state.data[i], zero));
+            }
+        }
+
+        // Test SWAP(0,2)|011⟩ = |110⟩
+        let mut state = State::product_state(&[2, 2, 2], &[0, 1, 1]); // |011⟩
+        instruct_controlled(&mut state, &swap_gate, &[], &[], &[0, 2]);
+
+        // |011⟩ = index 3, |110⟩ = index 6
+        for i in 0..8 {
+            if i == 6 {
+                assert!(approx_eq(state.data[i], one));
+            } else {
+                assert!(approx_eq(state.data[i], zero));
+            }
+        }
+    }
+
+    #[test]
+    fn test_instruct_swap_preserves_norm() {
+        // Verify SWAP is unitary by checking it preserves the norm
+        let swap_gate = Gate::SWAP.matrix(2);
+
+        // Test with random-ish state
+        let mut state = State::zero_state(&[2, 2]);
+        state.data[0] = Complex64::new(0.3, 0.1);
+        state.data[1] = Complex64::new(0.4, 0.2);
+        state.data[2] = Complex64::new(0.5, 0.3);
+        state.data[3] = Complex64::new(0.6, 0.4);
+
+        let norm_before = state.norm();
+        instruct_controlled(&mut state, &swap_gate, &[], &[], &[0, 1]);
+        let norm_after = state.norm();
+
+        assert!((norm_before - norm_after).abs() < 1e-10);
+
+        // Test SWAP is its own inverse: SWAP^2 = I
+        // Apply SWAP twice, should get back original state
+        let mut state = State::zero_state(&[2, 2]);
+        state.data[0] = Complex64::new(0.3, 0.1);
+        state.data[1] = Complex64::new(0.4, 0.2);
+        state.data[2] = Complex64::new(0.5, 0.3);
+        state.data[3] = Complex64::new(0.6, 0.4);
+
+        let original = state.clone();
+
+        instruct_controlled(&mut state, &swap_gate, &[], &[], &[0, 1]);
+        instruct_controlled(&mut state, &swap_gate, &[], &[], &[0, 1]);
+
+        for i in 0..4 {
+            assert!(approx_eq(state.data[i], original.data[i]));
+        }
+
+        // Test norm preservation on 3-qubit system with non-adjacent SWAP
+        let mut state = State::zero_state(&[2, 2, 2]);
+        for i in 0..8 {
+            state.data[i] = Complex64::new((i as f64) * 0.1, (i as f64) * 0.05);
+        }
+
+        let norm_before = state.norm();
+        instruct_controlled(&mut state, &swap_gate, &[], &[], &[0, 2]);
+        let norm_after = state.norm();
+
+        assert!((norm_before - norm_after).abs() < 1e-10);
+    }
 }
