@@ -2481,4 +2481,289 @@ mod tests {
         assert!(approx_eq(state.data[2], zero)); // |10⟩
         assert!(approx_eq(state.data[3], zero)); // |11⟩
     }
+
+    #[test]
+    fn test_instruct_toffoli_all_basis() {
+        // CCX on all 8 basis states of 3 qubits
+        // Only |110⟩ -> |111⟩ and |111⟩ -> |110⟩
+        // ctrl_locs=[0,1], ctrl_configs=[1,1], tgt_locs=[2]
+
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+        let x_gate = Gate::X.matrix(2);
+
+        // Test all 8 basis states
+        // |000⟩ (index 0) -> |000⟩ (controls not both 1)
+        let mut state = State::product_state(&[2, 2, 2], &[0, 0, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0, 1], &[1, 1], &[2]);
+        assert!(approx_eq(state.data[0], one));  // |000⟩ unchanged
+        for i in 1..8 {
+            assert!(approx_eq(state.data[i], zero));
+        }
+
+        // |001⟩ (index 1) -> |001⟩ (controls not both 1)
+        let mut state = State::product_state(&[2, 2, 2], &[0, 0, 1]);
+        instruct_controlled(&mut state, &x_gate, &[0, 1], &[1, 1], &[2]);
+        assert!(approx_eq(state.data[1], one));  // |001⟩ unchanged
+
+        // |010⟩ (index 2) -> |010⟩ (controls not both 1)
+        let mut state = State::product_state(&[2, 2, 2], &[0, 1, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0, 1], &[1, 1], &[2]);
+        assert!(approx_eq(state.data[2], one));  // |010⟩ unchanged
+
+        // |011⟩ (index 3) -> |011⟩ (controls not both 1)
+        let mut state = State::product_state(&[2, 2, 2], &[0, 1, 1]);
+        instruct_controlled(&mut state, &x_gate, &[0, 1], &[1, 1], &[2]);
+        assert!(approx_eq(state.data[3], one));  // |011⟩ unchanged
+
+        // |100⟩ (index 4) -> |100⟩ (controls not both 1)
+        let mut state = State::product_state(&[2, 2, 2], &[1, 0, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0, 1], &[1, 1], &[2]);
+        assert!(approx_eq(state.data[4], one));  // |100⟩ unchanged
+
+        // |101⟩ (index 5) -> |101⟩ (controls not both 1)
+        let mut state = State::product_state(&[2, 2, 2], &[1, 0, 1]);
+        instruct_controlled(&mut state, &x_gate, &[0, 1], &[1, 1], &[2]);
+        assert!(approx_eq(state.data[5], one));  // |101⟩ unchanged
+
+        // |110⟩ (index 6) -> |111⟩ (both controls active, flip target)
+        let mut state = State::product_state(&[2, 2, 2], &[1, 1, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0, 1], &[1, 1], &[2]);
+        assert!(approx_eq(state.data[6], zero)); // |110⟩ -> 0
+        assert!(approx_eq(state.data[7], one));  // |111⟩ -> 1
+
+        // |111⟩ (index 7) -> |110⟩ (both controls active, flip target)
+        let mut state = State::product_state(&[2, 2, 2], &[1, 1, 1]);
+        instruct_controlled(&mut state, &x_gate, &[0, 1], &[1, 1], &[2]);
+        assert!(approx_eq(state.data[6], one));  // |110⟩ -> 1
+        assert!(approx_eq(state.data[7], zero)); // |111⟩ -> 0
+    }
+
+    #[test]
+    fn test_instruct_ccz_gate() {
+        // CCZ = Toffoli with Z instead of X
+        // CCZ|111⟩ = -|111⟩, others unchanged
+
+        let one = Complex64::new(1.0, 0.0);
+        let neg_one = Complex64::new(-1.0, 0.0);
+        let z_gate = Gate::Z.matrix(2);
+
+        // Test |000⟩ -> |000⟩ (controls not both 1)
+        let mut state = State::product_state(&[2, 2, 2], &[0, 0, 0]);
+        instruct_controlled(&mut state, &z_gate, &[0, 1], &[1, 1], &[2]);
+        assert!(approx_eq(state.data[0], one));  // |000⟩ unchanged
+
+        // Test |110⟩ -> |110⟩ (target is |0⟩, Z|0⟩ = |0⟩)
+        let mut state = State::product_state(&[2, 2, 2], &[1, 1, 0]);
+        instruct_controlled(&mut state, &z_gate, &[0, 1], &[1, 1], &[2]);
+        assert!(approx_eq(state.data[6], one));  // |110⟩ unchanged
+
+        // Test |111⟩ -> -|111⟩ (both controls active, Z|1⟩ = -|1⟩)
+        let mut state = State::product_state(&[2, 2, 2], &[1, 1, 1]);
+        instruct_controlled(&mut state, &z_gate, &[0, 1], &[1, 1], &[2]);
+        assert!(approx_eq(state.data[7], neg_one)); // |111⟩ -> -|111⟩
+
+        // Test |011⟩ -> |011⟩ (control 0 is |0⟩, not active)
+        let mut state = State::product_state(&[2, 2, 2], &[0, 1, 1]);
+        instruct_controlled(&mut state, &z_gate, &[0, 1], &[1, 1], &[2]);
+        assert!(approx_eq(state.data[3], one));  // |011⟩ unchanged
+
+        // Test |101⟩ -> |101⟩ (control 1 is |0⟩, not active)
+        let mut state = State::product_state(&[2, 2, 2], &[1, 0, 1]);
+        instruct_controlled(&mut state, &z_gate, &[0, 1], &[1, 1], &[2]);
+        assert!(approx_eq(state.data[5], one));  // |101⟩ unchanged
+
+        // Test CCZ on superposition of |110⟩ and |111⟩
+        // Should flip phase only on |111⟩ component
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        let mut state = State::zero_state(&[2, 2, 2]);
+        state.data[6] = s;  // |110⟩
+        state.data[7] = s;  // |111⟩
+        instruct_controlled(&mut state, &z_gate, &[0, 1], &[1, 1], &[2]);
+        assert!(approx_eq(state.data[6], s));   // |110⟩ unchanged
+        assert!(approx_eq(state.data[7], -s));  // |111⟩ -> -|111⟩
+    }
+
+    #[test]
+    fn test_instruct_three_controls() {
+        // CCCX on 4 qubits
+        // Only |1110⟩ -> |1111⟩ and |1111⟩ -> |1110⟩
+
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+        let x_gate = Gate::X.matrix(2);
+
+        // Test |1110⟩ -> |1111⟩ (all three controls active)
+        // dims=[2,2,2,2]: |1110⟩ = 1*8 + 1*4 + 1*2 + 0*1 = 14
+        let mut state = State::product_state(&[2, 2, 2, 2], &[1, 1, 1, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0, 1, 2], &[1, 1, 1], &[3]);
+        assert!(approx_eq(state.data[14], zero)); // |1110⟩ -> 0
+        assert!(approx_eq(state.data[15], one));  // |1111⟩ -> 1
+
+        // Test |1111⟩ -> |1110⟩ (all three controls active)
+        let mut state = State::product_state(&[2, 2, 2, 2], &[1, 1, 1, 1]);
+        instruct_controlled(&mut state, &x_gate, &[0, 1, 2], &[1, 1, 1], &[3]);
+        assert!(approx_eq(state.data[14], one));  // |1110⟩ -> 1
+        assert!(approx_eq(state.data[15], zero)); // |1111⟩ -> 0
+
+        // Test |1100⟩ -> |1100⟩ (control 2 is |0⟩, not active)
+        // |1100⟩ = 1*8 + 1*4 + 0*2 + 0*1 = 12
+        let mut state = State::product_state(&[2, 2, 2, 2], &[1, 1, 0, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0, 1, 2], &[1, 1, 1], &[3]);
+        assert!(approx_eq(state.data[12], one));  // |1100⟩ unchanged
+
+        // Test |0110⟩ -> |0110⟩ (control 0 is |0⟩, not active)
+        // |0110⟩ = 0*8 + 1*4 + 1*2 + 0*1 = 6
+        let mut state = State::product_state(&[2, 2, 2, 2], &[0, 1, 1, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0, 1, 2], &[1, 1, 1], &[3]);
+        assert!(approx_eq(state.data[6], one));   // |0110⟩ unchanged
+
+        // Test |0000⟩ -> |0000⟩ (no controls active)
+        let mut state = State::product_state(&[2, 2, 2, 2], &[0, 0, 0, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0, 1, 2], &[1, 1, 1], &[3]);
+        assert!(approx_eq(state.data[0], one));   // |0000⟩ unchanged
+    }
+
+    #[test]
+    fn test_instruct_controlled_swap() {
+        // Fredkin gate: controlled-SWAP (CSWAP)
+        // ctrl_locs=[0], ctrl_configs=[1], tgt_locs=[1,2]
+        // When control is |1⟩, swap qubits 1 and 2
+
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+
+        // SWAP gate matrix: [[1,0,0,0], [0,0,1,0], [0,1,0,0], [0,0,0,1]]
+        let swap_gate = Array2::from_shape_vec(
+            (4, 4),
+            vec![
+                one, zero, zero, zero,
+                zero, zero, one, zero,
+                zero, one, zero, zero,
+                zero, zero, zero, one,
+            ],
+        )
+        .unwrap();
+
+        // Test |100⟩ -> |100⟩ (control active but targets are |00⟩)
+        // dims=[2,2,2]: |100⟩ = 1*4 + 0*2 + 0*1 = 4
+        let mut state = State::product_state(&[2, 2, 2], &[1, 0, 0]);
+        instruct_controlled(&mut state, &swap_gate, &[0], &[1], &[1, 2]);
+        assert!(approx_eq(state.data[4], one));  // |100⟩ unchanged (swapping 00 gives 00)
+
+        // Test |110⟩ -> |101⟩ (control active, swap targets)
+        // |110⟩ = 1*4 + 1*2 + 0*1 = 6
+        // |101⟩ = 1*4 + 0*2 + 1*1 = 5
+        let mut state = State::product_state(&[2, 2, 2], &[1, 1, 0]);
+        instruct_controlled(&mut state, &swap_gate, &[0], &[1], &[1, 2]);
+        assert!(approx_eq(state.data[6], zero)); // |110⟩ -> 0
+        assert!(approx_eq(state.data[5], one));  // |101⟩ -> 1
+
+        // Test |101⟩ -> |110⟩ (control active, swap targets)
+        let mut state = State::product_state(&[2, 2, 2], &[1, 0, 1]);
+        instruct_controlled(&mut state, &swap_gate, &[0], &[1], &[1, 2]);
+        assert!(approx_eq(state.data[5], zero)); // |101⟩ -> 0
+        assert!(approx_eq(state.data[6], one));  // |110⟩ -> 1
+
+        // Test |111⟩ -> |111⟩ (control active but targets are |11⟩)
+        // |111⟩ = 1*4 + 1*2 + 1*1 = 7
+        let mut state = State::product_state(&[2, 2, 2], &[1, 1, 1]);
+        instruct_controlled(&mut state, &swap_gate, &[0], &[1], &[1, 2]);
+        assert!(approx_eq(state.data[7], one));  // |111⟩ unchanged (swapping 11 gives 11)
+
+        // Test |010⟩ -> |010⟩ (control is |0⟩, not active)
+        // |010⟩ = 0*4 + 1*2 + 0*1 = 2
+        let mut state = State::product_state(&[2, 2, 2], &[0, 1, 0]);
+        instruct_controlled(&mut state, &swap_gate, &[0], &[1], &[1, 2]);
+        assert!(approx_eq(state.data[2], one));  // |010⟩ unchanged
+
+        // Test |001⟩ -> |001⟩ (control is |0⟩, not active)
+        let mut state = State::product_state(&[2, 2, 2], &[0, 0, 1]);
+        instruct_controlled(&mut state, &swap_gate, &[0], &[1], &[1, 2]);
+        assert!(approx_eq(state.data[1], one));  // |001⟩ unchanged
+    }
+
+    #[test]
+    fn test_instruct_mixed_control_values() {
+        // Control on |0⟩ instead of |1⟩
+        // ctrl_configs = [0]
+        // Should flip target when control is |0⟩
+
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+        let x_gate = Gate::X.matrix(2);
+
+        // Test |00⟩ -> |01⟩ (control is |0⟩, which is the active value)
+        let mut state = State::product_state(&[2, 2], &[0, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0], &[0], &[1]);
+        assert!(approx_eq(state.data[0], zero)); // |00⟩ -> 0
+        assert!(approx_eq(state.data[1], one));  // |01⟩ -> 1
+
+        // Test |01⟩ -> |00⟩ (control is |0⟩, which is the active value)
+        let mut state = State::product_state(&[2, 2], &[0, 1]);
+        instruct_controlled(&mut state, &x_gate, &[0], &[0], &[1]);
+        assert!(approx_eq(state.data[0], one));  // |00⟩ -> 1
+        assert!(approx_eq(state.data[1], zero)); // |01⟩ -> 0
+
+        // Test |10⟩ -> |10⟩ (control is |1⟩, not the active value |0⟩)
+        let mut state = State::product_state(&[2, 2], &[1, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0], &[0], &[1]);
+        assert!(approx_eq(state.data[2], one));  // |10⟩ unchanged
+
+        // Test |11⟩ -> |11⟩ (control is |1⟩, not the active value |0⟩)
+        let mut state = State::product_state(&[2, 2], &[1, 1]);
+        instruct_controlled(&mut state, &x_gate, &[0], &[0], &[1]);
+        assert!(approx_eq(state.data[3], one));  // |11⟩ unchanged
+    }
+
+    #[test]
+    fn test_instruct_multi_control_mixed_values() {
+        // Two controls: first on |0⟩, second on |1⟩
+        // ctrl_configs = [0, 1]
+        // Only activates for |01⟩ control configuration
+
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+        let x_gate = Gate::X.matrix(2);
+
+        // Test |010⟩ -> |011⟩ (controls are |0⟩ and |1⟩, matching [0, 1])
+        // dims=[2,2,2]: |010⟩ = 0*4 + 1*2 + 0*1 = 2
+        let mut state = State::product_state(&[2, 2, 2], &[0, 1, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0, 1], &[0, 1], &[2]);
+        assert!(approx_eq(state.data[2], zero)); // |010⟩ -> 0
+        assert!(approx_eq(state.data[3], one));  // |011⟩ -> 1
+
+        // Test |011⟩ -> |010⟩ (controls are |0⟩ and |1⟩, matching [0, 1])
+        let mut state = State::product_state(&[2, 2, 2], &[0, 1, 1]);
+        instruct_controlled(&mut state, &x_gate, &[0, 1], &[0, 1], &[2]);
+        assert!(approx_eq(state.data[2], one));  // |010⟩ -> 1
+        assert!(approx_eq(state.data[3], zero)); // |011⟩ -> 0
+
+        // Test |000⟩ -> |000⟩ (controls are |0⟩ and |0⟩, not matching [0, 1])
+        let mut state = State::product_state(&[2, 2, 2], &[0, 0, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0, 1], &[0, 1], &[2]);
+        assert!(approx_eq(state.data[0], one));  // |000⟩ unchanged
+
+        // Test |110⟩ -> |110⟩ (controls are |1⟩ and |1⟩, not matching [0, 1])
+        let mut state = State::product_state(&[2, 2, 2], &[1, 1, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0, 1], &[0, 1], &[2]);
+        assert!(approx_eq(state.data[6], one));  // |110⟩ unchanged
+
+        // Test |100⟩ -> |100⟩ (controls are |1⟩ and |0⟩, not matching [0, 1])
+        let mut state = State::product_state(&[2, 2, 2], &[1, 0, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0, 1], &[0, 1], &[2]);
+        assert!(approx_eq(state.data[4], one));  // |100⟩ unchanged
+
+        // Test with superposition: (|010⟩ + |110⟩)/√2
+        // Only |010⟩ component should be affected
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        let mut state = State::zero_state(&[2, 2, 2]);
+        state.data[2] = s;  // |010⟩
+        state.data[6] = s;  // |110⟩
+        instruct_controlled(&mut state, &x_gate, &[0, 1], &[0, 1], &[2]);
+        assert!(approx_eq(state.data[2], zero)); // |010⟩ -> 0
+        assert!(approx_eq(state.data[3], s));    // |011⟩ -> s (from |010⟩)
+        assert!(approx_eq(state.data[6], s));    // |110⟩ unchanged
+        assert!(approx_eq(state.data[7], zero)); // |111⟩ unchanged
+    }
 }
