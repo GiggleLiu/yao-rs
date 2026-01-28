@@ -3744,4 +3744,365 @@ mod tests {
             );
         }
     }
+
+    // ==================== Edge Case and Error Handling Tests ====================
+
+    #[test]
+    fn test_instruct_single_qubit_system() {
+        // n=1 system - single qubit with various gates
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+
+        // X gate on single qubit |0⟩ -> |1⟩
+        let mut state = State::zero_state(&[2]);
+        let x_gate = Gate::X.matrix(2);
+        instruct_single(&mut state, &x_gate, 0);
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], one));
+
+        // H gate on single qubit |0⟩ -> |+⟩
+        let mut state = State::zero_state(&[2]);
+        let h_gate = Gate::H.matrix(2);
+        instruct_single(&mut state, &h_gate, 0);
+        assert!(approx_eq(state.data[0], s));
+        assert!(approx_eq(state.data[1], s));
+
+        // Y gate on single qubit |0⟩ -> i|1⟩
+        let mut state = State::zero_state(&[2]);
+        let y_gate = Gate::Y.matrix(2);
+        instruct_single(&mut state, &y_gate, 0);
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], Complex64::new(0.0, 1.0)));
+
+        // Z gate via diagonal on single qubit |1⟩ -> -|1⟩
+        let mut state = State::product_state(&[2], &[1]);
+        let z_phases = [one, Complex64::new(-1.0, 0.0)];
+        instruct_diagonal(&mut state, &z_phases, 0);
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], Complex64::new(-1.0, 0.0)));
+
+        // S gate on single qubit |1⟩ -> i|1⟩
+        let mut state = State::product_state(&[2], &[1]);
+        let s_gate = Gate::S.matrix(2);
+        instruct_single(&mut state, &s_gate, 0);
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], Complex64::new(0.0, 1.0)));
+
+        // T gate on single qubit |1⟩ -> e^(iπ/4)|1⟩
+        let mut state = State::product_state(&[2], &[1]);
+        let t_gate = Gate::T.matrix(2);
+        instruct_single(&mut state, &t_gate, 0);
+        let t_phase = Complex64::from_polar(1.0, FRAC_PI_4);
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], t_phase));
+    }
+
+    #[test]
+    fn test_instruct_large_system() {
+        // n=10 qubits to verify scaling works
+        // Apply single gate, verify state size is 2^10 = 1024
+        let dims: Vec<usize> = vec![2; 10];
+        let mut state = State::zero_state(&dims);
+
+        // Verify state size is 2^10 = 1024
+        assert_eq!(state.data.len(), 1024);
+        assert_eq!(state.total_dim(), 1024);
+
+        // Apply H gate to qubit 0
+        let h_gate = Gate::H.matrix(2);
+        instruct_single(&mut state, &h_gate, 0);
+
+        // Result: (|0000000000⟩ + |1000000000⟩) / √2
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        let zero = Complex64::new(0.0, 0.0);
+
+        assert!(approx_eq(state.data[0], s)); // |0000000000⟩ = index 0
+        assert!(approx_eq(state.data[512], s)); // |1000000000⟩ = index 512 (2^9)
+
+        // All other amplitudes should be zero
+        for i in 1..512 {
+            assert!(approx_eq(state.data[i], zero), "Expected zero at index {}", i);
+        }
+        for i in 513..1024 {
+            assert!(approx_eq(state.data[i], zero), "Expected zero at index {}", i);
+        }
+
+        // Verify normalization is preserved
+        assert!((state.norm() - 1.0).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_instruct_gate_on_last_qubit() {
+        // Gate on highest index qubit (n-1)
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+
+        // 3-qubit system, apply X to qubit 2 (last qubit)
+        let mut state = State::zero_state(&[2, 2, 2]); // |000⟩
+        let x_gate = Gate::X.matrix(2);
+        instruct_single(&mut state, &x_gate, 2);
+
+        // |000⟩ -> |001⟩ (index 1)
+        assert!(approx_eq(state.data[0], zero));
+        assert!(approx_eq(state.data[1], one));
+        for i in 2..8 {
+            assert!(approx_eq(state.data[i], zero));
+        }
+
+        // 4-qubit system, apply H to qubit 3 (last qubit)
+        let mut state = State::zero_state(&[2, 2, 2, 2]); // |0000⟩
+        let h_gate = Gate::H.matrix(2);
+        instruct_single(&mut state, &h_gate, 3);
+
+        // |0000⟩ -> (|0000⟩ + |0001⟩) / √2
+        assert!(approx_eq(state.data[0], s)); // |0000⟩ = index 0
+        assert!(approx_eq(state.data[1], s)); // |0001⟩ = index 1
+        for i in 2..16 {
+            assert!(approx_eq(state.data[i], zero));
+        }
+
+        // Test CNOT with control on first qubit and target on last qubit
+        // 3-qubit system: control=0, target=2
+        let mut state = State::product_state(&[2, 2, 2], &[1, 0, 0]); // |100⟩
+        instruct_controlled(&mut state, &x_gate, &[0], &[1], &[2]);
+
+        // |100⟩ -> |101⟩ (control is |1⟩, so target flips)
+        assert!(approx_eq(state.data[4], zero)); // |100⟩
+        assert!(approx_eq(state.data[5], one));  // |101⟩
+    }
+
+    #[test]
+    fn test_instruct_non_contiguous_targets() {
+        // Multi-qubit gate on qubits 0 and 2 (skipping 1)
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+
+        // Create SWAP gate matrix (4x4)
+        let swap_gate = Gate::SWAP.matrix(2);
+
+        // 3-qubit system, SWAP qubits 0 and 2 (non-contiguous)
+        // |100⟩ should become |001⟩
+        let mut state = State::product_state(&[2, 2, 2], &[1, 0, 0]); // |100⟩
+
+        // Apply SWAP to qubits 0 and 2 using instruct_controlled with no controls
+        // Note: We need to use the multi-target path of instruct_controlled
+        instruct_controlled(&mut state, &swap_gate, &[], &[], &[0, 2]);
+
+        // |100⟩ (index 4) -> |001⟩ (index 1)
+        assert!(approx_eq(state.data[1], one));  // |001⟩
+        assert!(approx_eq(state.data[4], zero)); // |100⟩
+
+        // Test CNOT-like operation with non-contiguous qubits
+        // 4-qubit system: control=0, target=3 (skip 1 and 2)
+        let x_gate = Gate::X.matrix(2);
+        let mut state = State::product_state(&[2, 2, 2, 2], &[1, 0, 0, 0]); // |1000⟩
+        instruct_controlled(&mut state, &x_gate, &[0], &[1], &[3]);
+
+        // |1000⟩ (index 8) -> |1001⟩ (index 9)
+        assert!(approx_eq(state.data[8], zero)); // |1000⟩
+        assert!(approx_eq(state.data[9], one));  // |1001⟩
+
+        // Test control=1, target=3 (skip 0 and 2)
+        let mut state = State::product_state(&[2, 2, 2, 2], &[0, 1, 0, 0]); // |0100⟩
+        instruct_controlled(&mut state, &x_gate, &[1], &[1], &[3]);
+
+        // |0100⟩ (index 4) -> |0101⟩ (index 5)
+        assert!(approx_eq(state.data[4], zero)); // |0100⟩
+        assert!(approx_eq(state.data[5], one));  // |0101⟩
+    }
+
+    #[test]
+    fn test_instruct_preserves_normalization_comprehensive() {
+        // Test ALL gate types preserve |ψ|² = 1
+        let tolerance = 1e-10;
+
+        // Helper to create random-ish normalized state
+        fn create_test_state(dims: &[usize]) -> State {
+            let mut state = State::zero_state(dims);
+            let n = state.data.len();
+            for i in 0..n {
+                let re = ((i as f64 * 0.7).sin() + 1.0) / 2.0;
+                let im = ((i as f64 * 0.3).cos()) / 2.0;
+                state.data[i] = Complex64::new(re, im);
+            }
+            // Normalize
+            let norm = state.norm();
+            for amp in state.data.iter_mut() {
+                *amp /= norm;
+            }
+            state
+        }
+
+        // X gate
+        let mut state = create_test_state(&[2, 2]);
+        let x_gate = Gate::X.matrix(2);
+        instruct_single(&mut state, &x_gate, 0);
+        assert!((state.norm() - 1.0).abs() < tolerance, "X gate failed normalization");
+
+        // Y gate
+        let mut state = create_test_state(&[2, 2]);
+        let y_gate = Gate::Y.matrix(2);
+        instruct_single(&mut state, &y_gate, 0);
+        assert!((state.norm() - 1.0).abs() < tolerance, "Y gate failed normalization");
+
+        // Z gate (via diagonal)
+        let mut state = create_test_state(&[2, 2]);
+        let z_phases = [Complex64::new(1.0, 0.0), Complex64::new(-1.0, 0.0)];
+        instruct_diagonal(&mut state, &z_phases, 0);
+        assert!((state.norm() - 1.0).abs() < tolerance, "Z gate failed normalization");
+
+        // H gate
+        let mut state = create_test_state(&[2, 2]);
+        let h_gate = Gate::H.matrix(2);
+        instruct_single(&mut state, &h_gate, 0);
+        assert!((state.norm() - 1.0).abs() < tolerance, "H gate failed normalization");
+
+        // S gate
+        let mut state = create_test_state(&[2, 2]);
+        let s_gate = Gate::S.matrix(2);
+        instruct_single(&mut state, &s_gate, 0);
+        assert!((state.norm() - 1.0).abs() < tolerance, "S gate failed normalization");
+
+        // T gate
+        let mut state = create_test_state(&[2, 2]);
+        let t_gate = Gate::T.matrix(2);
+        instruct_single(&mut state, &t_gate, 0);
+        assert!((state.norm() - 1.0).abs() < tolerance, "T gate failed normalization");
+
+        // Rx gate (various angles)
+        for theta in [0.0, 0.5, 1.0, std::f64::consts::PI, 2.0 * std::f64::consts::PI] {
+            let mut state = create_test_state(&[2, 2]);
+            let rx_gate = Gate::Rx(theta).matrix(2);
+            instruct_single(&mut state, &rx_gate, 0);
+            assert!((state.norm() - 1.0).abs() < tolerance, "Rx({}) gate failed normalization", theta);
+        }
+
+        // Ry gate
+        for theta in [0.0, 0.5, 1.0, std::f64::consts::PI] {
+            let mut state = create_test_state(&[2, 2]);
+            let ry_gate = Gate::Ry(theta).matrix(2);
+            instruct_single(&mut state, &ry_gate, 0);
+            assert!((state.norm() - 1.0).abs() < tolerance, "Ry({}) gate failed normalization", theta);
+        }
+
+        // Rz gate
+        for theta in [0.0, 0.5, 1.0, std::f64::consts::PI] {
+            let mut state = create_test_state(&[2, 2]);
+            let rz_gate = Gate::Rz(theta).matrix(2);
+            instruct_single(&mut state, &rz_gate, 0);
+            assert!((state.norm() - 1.0).abs() < tolerance, "Rz({}) gate failed normalization", theta);
+        }
+
+        // Phase gate
+        for theta in [0.0, FRAC_PI_4, std::f64::consts::FRAC_PI_2, std::f64::consts::PI] {
+            let mut state = create_test_state(&[2, 2]);
+            let phase_gate = Gate::Phase(theta).matrix(2);
+            instruct_single(&mut state, &phase_gate, 0);
+            assert!((state.norm() - 1.0).abs() < tolerance, "Phase({}) gate failed normalization", theta);
+        }
+
+        // CNOT (controlled-X)
+        let mut state = create_test_state(&[2, 2]);
+        let x_gate = Gate::X.matrix(2);
+        instruct_controlled(&mut state, &x_gate, &[0], &[1], &[1]);
+        assert!((state.norm() - 1.0).abs() < tolerance, "CNOT gate failed normalization");
+
+        // SWAP gate
+        let mut state = create_test_state(&[2, 2]);
+        let swap_gate = Gate::SWAP.matrix(2);
+        instruct_controlled(&mut state, &swap_gate, &[], &[], &[0, 1]);
+        assert!((state.norm() - 1.0).abs() < tolerance, "SWAP gate failed normalization");
+
+        // Toffoli (CCX)
+        let mut state = create_test_state(&[2, 2, 2]);
+        instruct_controlled(&mut state, &x_gate, &[0, 1], &[1, 1], &[2]);
+        assert!((state.norm() - 1.0).abs() < tolerance, "Toffoli gate failed normalization");
+    }
+
+    #[test]
+    fn test_instruct_multiple_gates_sequence() {
+        // Apply sequence: H, CNOT, Rz, measure final state
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        let zero = Complex64::new(0.0, 0.0);
+
+        // Start with |00⟩
+        let mut state = State::zero_state(&[2, 2]);
+
+        // Step 1: H on qubit 0 -> (|00⟩ + |10⟩) / √2
+        let h_gate = Gate::H.matrix(2);
+        instruct_single(&mut state, &h_gate, 0);
+        assert!(approx_eq(state.data[0], s));
+        assert!(approx_eq(state.data[2], s));
+
+        // Step 2: CNOT with control=0, target=1 -> (|00⟩ + |11⟩) / √2 (Bell state)
+        let x_gate = Gate::X.matrix(2);
+        instruct_controlled(&mut state, &x_gate, &[0], &[1], &[1]);
+        assert!(approx_eq(state.data[0], s));
+        assert!(approx_eq(state.data[1], zero));
+        assert!(approx_eq(state.data[2], zero));
+        assert!(approx_eq(state.data[3], s));
+
+        // Step 3: Rz(π/4) on qubit 1 -> (|00⟩ + e^(iπ/8)|11⟩) / √2
+        // Rz(θ) = diag(e^(-iθ/2), e^(iθ/2))
+        let theta = FRAC_PI_4;
+        let rz_phases = [
+            Complex64::from_polar(1.0, -theta / 2.0),
+            Complex64::from_polar(1.0, theta / 2.0),
+        ];
+        instruct_diagonal(&mut state, &rz_phases, 1);
+
+        // |00⟩: qubit 1 is |0⟩, so multiply by e^(-iπ/8)
+        // |11⟩: qubit 1 is |1⟩, so multiply by e^(iπ/8)
+        let phase_neg = Complex64::from_polar(1.0, -theta / 2.0);
+        let phase_pos = Complex64::from_polar(1.0, theta / 2.0);
+        assert!(approx_eq(state.data[0], s * phase_neg));
+        assert!(approx_eq(state.data[3], s * phase_pos));
+
+        // Verify normalization after all gates
+        assert!((state.norm() - 1.0).abs() < 1e-10);
+
+        // Apply a longer sequence: H on all qubits of a 3-qubit system
+        let mut state = State::zero_state(&[2, 2, 2]);
+        for i in 0..3 {
+            instruct_single(&mut state, &h_gate, i);
+        }
+
+        // Result: equal superposition of all 8 basis states
+        let amp = Complex64::new(1.0 / (8.0_f64).sqrt(), 0.0);
+        for i in 0..8 {
+            assert!(approx_eq(state.data[i], amp),
+                "Expected equal superposition at index {}", i);
+        }
+        assert!((state.norm() - 1.0).abs() < 1e-10);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_instruct_invalid_location() {
+        // Gate on qubit index >= n should panic
+        // Using debug_assert in release mode may not panic, so use an approach that
+        // triggers the panic via bounds checking
+        let mut state = State::zero_state(&[2, 2]); // 2-qubit system
+        let h_gate = Gate::H.matrix(2);
+
+        // Try to apply gate to qubit 5 (out of bounds, max is 1)
+        // This should cause a panic when accessing state.dims[5]
+        instruct_single(&mut state, &h_gate, 5);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_instruct_gate_dimension_mismatch() {
+        // 2x2 gate on qutrit (d=3) should panic
+        // The gate dimension doesn't match the site dimension
+        let mut state = State::zero_state(&[3]); // Single qutrit
+
+        // Create a 2x2 gate
+        let h_gate = Gate::H.matrix(2);
+
+        // This should panic because gate is 2x2 but site dim is 3
+        instruct_single(&mut state, &h_gate, 0);
+    }
 }
