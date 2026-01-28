@@ -188,6 +188,162 @@ pub fn instruct_single(state: &mut State, gate: &Array2<Complex64>, loc: usize) 
     }
 }
 
+/// Apply a controlled gate to target sites when control sites have specified values.
+///
+/// This function applies a gate to the target sites only when all control sites
+/// have their specified configuration values. This is used for controlled gates
+/// like CNOT, Toffoli, and controlled-U operations.
+///
+/// # Arguments
+/// * `state` - The quantum state to modify
+/// * `gate` - The gate matrix to apply. Size must be d^n x d^n where d is the
+///   target site dimension and n is the number of target sites
+/// * `ctrl_locs` - Indices of the control sites
+/// * `ctrl_configs` - Configuration values for each control site (gate applies when matched)
+/// * `tgt_locs` - Indices of the target sites where the gate is applied
+///
+/// # Panics
+/// * If `ctrl_locs` and `ctrl_configs` have different lengths
+/// * If the gate dimension doesn't match the product of target site dimensions
+///
+/// # Example
+/// ```
+/// use ndarray::Array2;
+/// use num_complex::Complex64;
+/// use yao_rs::state::State;
+/// use yao_rs::instruct::instruct_controlled;
+///
+/// // CNOT gate: X on target when control is |1⟩
+/// let mut state = State::product_state(&[2, 2], &[1, 0]); // |10⟩
+/// let x_gate = Array2::from_shape_vec((2, 2), vec![
+///     Complex64::new(0.0, 0.0), Complex64::new(1.0, 0.0),
+///     Complex64::new(1.0, 0.0), Complex64::new(0.0, 0.0),
+/// ]).unwrap();
+/// instruct_controlled(&mut state, &x_gate, &[0], &[1], &[1]);
+/// // Now state is |11⟩
+/// assert!((state.data[3].norm() - 1.0).abs() < 1e-10);
+/// ```
+pub fn instruct_controlled(
+    state: &mut State,
+    gate: &Array2<Complex64>,
+    ctrl_locs: &[usize],
+    ctrl_configs: &[usize],
+    tgt_locs: &[usize],
+) {
+    debug_assert_eq!(
+        ctrl_locs.len(),
+        ctrl_configs.len(),
+        "ctrl_locs and ctrl_configs must have the same length"
+    );
+
+    // Handle edge case: no controls is equivalent to instruct_single (for single target)
+    if ctrl_locs.is_empty() && tgt_locs.len() == 1 {
+        instruct_single(state, gate, tgt_locs[0]);
+        return;
+    }
+    // For multi-target gates without controls, we fall through to the general algorithm
+
+    // Calculate the dimension of the target subspace
+    let tgt_dim: usize = tgt_locs.iter().map(|&loc| state.dims[loc]).product();
+    debug_assert_eq!(gate.nrows(), tgt_dim, "gate rows must match target dimension");
+    debug_assert_eq!(gate.ncols(), tgt_dim, "gate cols must match target dimension");
+
+    // For single-target gates, we need to iterate over states where:
+    // 1. Controls have their specified values
+    // 2. All other sites (except target) vary freely
+    //
+    // For each such configuration, gather the indices where target varies from 0 to d-1
+
+    if tgt_locs.len() == 1 {
+        let tgt_loc = tgt_locs[0];
+        let d = state.dims[tgt_loc];
+
+        // Build dims for "other" sites (excluding target but including controls)
+        // Controls are fixed, others vary freely
+        let other_locs: Vec<usize> = (0..state.dims.len())
+            .filter(|&i| i != tgt_loc)
+            .collect();
+
+        let other_dims: Vec<usize> = other_locs.iter().map(|&i| state.dims[i]).collect();
+
+        // Map ctrl_locs to positions in other_locs
+        let ctrl_positions_in_other: Vec<usize> = ctrl_locs
+            .iter()
+            .map(|&cl| other_locs.iter().position(|&ol| ol == cl).unwrap())
+            .collect();
+
+        // Iterate over all configurations of other sites where controls match
+        for (_, other_basis) in iter_basis(&other_dims) {
+            // Check if controls match
+            let controls_match = ctrl_positions_in_other
+                .iter()
+                .zip(ctrl_configs.iter())
+                .all(|(&pos, &config)| other_basis[pos] == config);
+
+            if !controls_match {
+                continue;
+            }
+
+            // For each value k at the target site, compute the flat index
+            let indices: Vec<usize> = (0..d)
+                .map(|k| {
+                    let full_indices = insert_index(&other_basis, tgt_loc, k);
+                    mixed_radix_index(&full_indices, &state.dims)
+                })
+                .collect();
+
+            // Apply the gate to these d amplitudes
+            udrows(state.data.as_slice_mut().unwrap(), &indices, gate);
+        }
+    } else {
+        // Multi-target case: more complex
+        // Build dimensions for "other" sites (excluding all targets)
+        let other_locs: Vec<usize> = (0..state.dims.len())
+            .filter(|&i| !tgt_locs.contains(&i))
+            .collect();
+
+        let other_dims: Vec<usize> = other_locs.iter().map(|&i| state.dims[i]).collect();
+
+        // Map ctrl_locs to positions in other_locs
+        let ctrl_positions_in_other: Vec<usize> = ctrl_locs
+            .iter()
+            .map(|&cl| other_locs.iter().position(|&ol| ol == cl).unwrap())
+            .collect();
+
+        // Iterate over all configurations of other sites where controls match
+        for (_, other_basis) in iter_basis(&other_dims) {
+            // Check if controls match
+            let controls_match = ctrl_positions_in_other
+                .iter()
+                .zip(ctrl_configs.iter())
+                .all(|(&pos, &config)| other_basis[pos] == config);
+
+            if !controls_match {
+                continue;
+            }
+
+            // Build indices for all target configurations
+            let tgt_dims: Vec<usize> = tgt_locs.iter().map(|&loc| state.dims[loc]).collect();
+            let indices: Vec<usize> = iter_basis(&tgt_dims)
+                .map(|(_, tgt_basis)| {
+                    // Reconstruct full indices: merge other_basis and tgt_basis
+                    let mut full_indices = vec![0; state.dims.len()];
+                    for (i, &loc) in other_locs.iter().enumerate() {
+                        full_indices[loc] = other_basis[i];
+                    }
+                    for (i, &loc) in tgt_locs.iter().enumerate() {
+                        full_indices[loc] = tgt_basis[i];
+                    }
+                    mixed_radix_index(&full_indices, &state.dims)
+                })
+                .collect();
+
+            // Apply the gate to these indices
+            udrows(state.data.as_slice_mut().unwrap(), &indices, gate);
+        }
+    }
+}
+
 /// Apply a diagonal gate at a single site location.
 ///
 /// This is an optimized version for diagonal gates (Z, S, T, Phase, Rz, etc.)
@@ -716,5 +872,200 @@ mod tests {
         assert!(approx_eq(state.data[1], Complex64::new(0.0, 0.0))); // |01⟩ still zero
         assert!(approx_eq(state.data[2], -s));          // |10⟩ flipped sign
         assert!(approx_eq(state.data[3], Complex64::new(0.0, 0.0))); // |11⟩ still zero
+    }
+
+    // Tests for instruct_controlled
+
+    #[test]
+    fn test_instruct_controlled_cnot() {
+        // CNOT: control=0, target=1
+        // |00⟩ -> |00⟩, |01⟩ -> |01⟩, |10⟩ -> |11⟩, |11⟩ -> |10⟩
+
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+        let x_gate = Array2::from_shape_vec(
+            (2, 2),
+            vec![zero, one, one, zero],
+        )
+        .unwrap();
+
+        // Test |10⟩ -> |11⟩
+        let mut state = State::product_state(&[2, 2], &[1, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0], &[1], &[1]);
+
+        assert!(approx_eq(state.data[0], zero)); // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], zero)); // |10⟩
+        assert!(approx_eq(state.data[3], one));  // |11⟩
+
+        // Test |00⟩ -> |00⟩ (control not active)
+        let mut state = State::product_state(&[2, 2], &[0, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0], &[1], &[1]);
+
+        assert!(approx_eq(state.data[0], one));  // |00⟩ unchanged
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], zero)); // |10⟩
+        assert!(approx_eq(state.data[3], zero)); // |11⟩
+
+        // Test |11⟩ -> |10⟩
+        let mut state = State::product_state(&[2, 2], &[1, 1]);
+        instruct_controlled(&mut state, &x_gate, &[0], &[1], &[1]);
+
+        assert!(approx_eq(state.data[0], zero)); // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], one));  // |10⟩
+        assert!(approx_eq(state.data[3], zero)); // |11⟩
+    }
+
+    #[test]
+    fn test_instruct_controlled_toffoli() {
+        // Toffoli (CCX): two controls (sites 0 and 1), target (site 2)
+        // Only flips target when both controls are |1⟩
+
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+        let x_gate = Array2::from_shape_vec(
+            (2, 2),
+            vec![zero, one, one, zero],
+        )
+        .unwrap();
+
+        // Test |110⟩ -> |111⟩ (both controls active)
+        // dims=[2,2,2]: |110⟩ = 1*4 + 1*2 + 0 = 6
+        let mut state = State::product_state(&[2, 2, 2], &[1, 1, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0, 1], &[1, 1], &[2]);
+
+        assert!(approx_eq(state.data[6], zero)); // |110⟩ -> 0
+        assert!(approx_eq(state.data[7], one));  // |111⟩ -> 1
+
+        // Test |100⟩ -> |100⟩ (only one control active)
+        let mut state = State::product_state(&[2, 2, 2], &[1, 0, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0, 1], &[1, 1], &[2]);
+
+        assert!(approx_eq(state.data[4], one));  // |100⟩ unchanged
+        assert!(approx_eq(state.data[5], zero)); // |101⟩
+
+        // Test |010⟩ -> |010⟩ (only one control active)
+        let mut state = State::product_state(&[2, 2, 2], &[0, 1, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0, 1], &[1, 1], &[2]);
+
+        assert!(approx_eq(state.data[2], one));  // |010⟩ unchanged
+        assert!(approx_eq(state.data[3], zero)); // |011⟩
+    }
+
+    #[test]
+    fn test_instruct_controlled_qutrit() {
+        // Control on a qutrit with value = 2
+        // dims=[3, 2]: qutrit (control) and qubit (target)
+
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+        let x_gate = Array2::from_shape_vec(
+            (2, 2),
+            vec![zero, one, one, zero],
+        )
+        .unwrap();
+
+        // Test |20⟩ -> |21⟩ (control value = 2 is active)
+        // dims=[3,2]: |20⟩ = 2*2 + 0 = 4
+        let mut state = State::product_state(&[3, 2], &[2, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0], &[2], &[1]);
+
+        assert!(approx_eq(state.data[4], zero)); // |20⟩
+        assert!(approx_eq(state.data[5], one));  // |21⟩
+
+        // Test |10⟩ -> |10⟩ (control value = 1, not active)
+        let mut state = State::product_state(&[3, 2], &[1, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0], &[2], &[1]);
+
+        assert!(approx_eq(state.data[2], one));  // |10⟩ unchanged
+        assert!(approx_eq(state.data[3], zero)); // |11⟩
+
+        // Test |00⟩ -> |00⟩ (control value = 0, not active)
+        let mut state = State::product_state(&[3, 2], &[0, 0]);
+        instruct_controlled(&mut state, &x_gate, &[0], &[2], &[1]);
+
+        assert!(approx_eq(state.data[0], one));  // |00⟩ unchanged
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+    }
+
+    #[test]
+    fn test_instruct_controlled_no_controls() {
+        // Empty ctrl_locs should behave like instruct_single
+
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+        let x_gate = Array2::from_shape_vec(
+            (2, 2),
+            vec![zero, one, one, zero],
+        )
+        .unwrap();
+
+        // Test with instruct_controlled (no controls)
+        let mut state1 = State::product_state(&[2, 2], &[0, 0]);
+        instruct_controlled(&mut state1, &x_gate, &[], &[], &[1]);
+
+        // Test with instruct_single for comparison
+        let mut state2 = State::product_state(&[2, 2], &[0, 0]);
+        instruct_single(&mut state2, &x_gate, 1);
+
+        // Both should give |01⟩
+        for i in 0..4 {
+            assert!(approx_eq(state1.data[i], state2.data[i]));
+        }
+    }
+
+    #[test]
+    fn test_instruct_controlled_preserves_normalization() {
+        // Controlled unitary should preserve norm
+        let mut state = State::zero_state(&[2, 2]);
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+
+        // Start with superposition (|00⟩ + |10⟩) / √2
+        state.data[0] = s;
+        state.data[2] = s;
+
+        let norm_before = state.norm();
+
+        let h_gate = Array2::from_shape_vec(
+            (2, 2),
+            vec![s, s, s, -s],
+        )
+        .unwrap();
+
+        // Apply controlled-H: only affects |10⟩ and |11⟩
+        instruct_controlled(&mut state, &h_gate, &[0], &[1], &[1]);
+
+        let norm_after = state.norm();
+
+        assert!((norm_before - norm_after).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_instruct_controlled_superposition() {
+        // Test CNOT on a superposition state
+        // Start with (|00⟩ + |10⟩) / √2 = |+0⟩
+        // CNOT: (|00⟩ + |11⟩) / √2 (Bell state)
+
+        let mut state = State::zero_state(&[2, 2]);
+        let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+        state.data[0] = s; // |00⟩
+        state.data[2] = s; // |10⟩
+
+        let zero = Complex64::new(0.0, 0.0);
+        let one = Complex64::new(1.0, 0.0);
+        let x_gate = Array2::from_shape_vec(
+            (2, 2),
+            vec![zero, one, one, zero],
+        )
+        .unwrap();
+
+        instruct_controlled(&mut state, &x_gate, &[0], &[1], &[1]);
+
+        // Result: (|00⟩ + |11⟩) / √2
+        assert!(approx_eq(state.data[0], s));    // |00⟩
+        assert!(approx_eq(state.data[1], zero)); // |01⟩
+        assert!(approx_eq(state.data[2], zero)); // |10⟩ -> |11⟩
+        assert!(approx_eq(state.data[3], s));    // |11⟩
     }
 }
