@@ -197,8 +197,8 @@ fn test_size_dict_mixed_dimension_circuit() {
     let circuit = Circuit::new(
         vec![2, 3],
         vec![
-            PositionedGate::new(qutrit_diag_gate, vec![1], vec![], vec![]),
-            PositionedGate::new(qutrit_non_diag_gate, vec![1], vec![], vec![]),
+            CircuitElement::Gate(PositionedGate::new(qutrit_diag_gate, vec![1], vec![], vec![])),
+            CircuitElement::Gate(PositionedGate::new(qutrit_non_diag_gate, vec![1], vec![], vec![])),
         ],
     ).unwrap();
 

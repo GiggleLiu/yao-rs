@@ -67,7 +67,7 @@ fn test_cnot_10_to_11() {
             vec![1],       // target
             vec![0],       // control
             vec![true],    // trigger on |1>
-        )],
+        ))],
     )
     .unwrap();
 
@@ -94,7 +94,7 @@ fn test_cnot_00_unchanged() {
             vec![1],       // target
             vec![0],       // control
             vec![true],    // trigger on |1>
-        )],
+        ))],
     )
     .unwrap();
 

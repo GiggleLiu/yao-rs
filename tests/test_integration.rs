@@ -448,8 +448,8 @@ fn test_integration_bell_state() {
     let circuit = Circuit::new(
         dims.clone(),
         vec![
-            PositionedGate::new(Gate::H, vec![0], vec![], vec![]),
-            PositionedGate::new(Gate::X, vec![1], vec![0], vec![true]),
+            gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![])),
+            gate(PositionedGate::new(Gate::X, vec![1], vec![0], vec![true])),
         ],
     )
     .unwrap();
@@ -494,8 +494,8 @@ fn test_integration_rz_on_superposition() {
     let circuit = Circuit::new(
         dims.clone(),
         vec![
-            PositionedGate::new(Gate::H, vec![0], vec![], vec![]),
-            PositionedGate::new(Gate::Rz(theta), vec![0], vec![], vec![]),
+            gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![])),
+            gate(PositionedGate::new(Gate::Rz(theta), vec![0], vec![], vec![])),
         ],
     )
     .unwrap();
@@ -515,15 +515,15 @@ fn test_integration_3_qubit_circuit() {
     let circuit = Circuit::new(
         dims.clone(),
         vec![
-            PositionedGate::new(Gate::H, vec![0], vec![], vec![]),
-            PositionedGate::new(Gate::X, vec![1], vec![0], vec![true]),
-            PositionedGate::new(
+            gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![])),
+            gate(PositionedGate::new(Gate::X, vec![1], vec![0], vec![true])),
+            gate(PositionedGate::new(
                 Gate::Ry(std::f64::consts::FRAC_PI_4),
                 vec![2],
                 vec![],
                 vec![],
-            ),
-            PositionedGate::new(Gate::X, vec![1], vec![2], vec![true]),
+            )),
+            gate(PositionedGate::new(Gate::X, vec![1], vec![2], vec![true])),
         ],
     )
     .unwrap();
@@ -630,8 +630,8 @@ fn test_integration_mixed_dimensions() {
     let circuit = Circuit::new(
         dims.clone(),
         vec![
-            PositionedGate::new(Gate::H, vec![0], vec![], vec![]),
-            PositionedGate::new(
+            gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![])),
+            gate(PositionedGate::new(
                 Gate::Custom {
                     matrix: perm_matrix,
                     is_diagonal: false,
@@ -640,8 +640,8 @@ fn test_integration_mixed_dimensions() {
                 vec![1],
                 vec![],
                 vec![],
-            ),
-            PositionedGate::new(Gate::X, vec![2], vec![], vec![]),
+            )),
+            gate(PositionedGate::new(Gate::X, vec![2], vec![], vec![])),
         ],
     )
     .unwrap();
@@ -678,9 +678,9 @@ fn test_integration_mixed_dimensions_with_diagonal() {
         dims.clone(),
         vec![
             // H on qubit 0
-            PositionedGate::new(Gate::H, vec![0], vec![], vec![]),
+            gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![])),
             // Non-diagonal custom gate on qutrit (site 1)
-            PositionedGate::new(
+            gate(PositionedGate::new(
                 Gate::Custom {
                     matrix: perm_matrix,
                     is_diagonal: false,
@@ -689,9 +689,9 @@ fn test_integration_mixed_dimensions_with_diagonal() {
                 vec![1],
                 vec![],
                 vec![],
-            ),
+            )),
             // Diagonal custom gate on qutrit (site 1)
-            PositionedGate::new(
+            gate(PositionedGate::new(
                 Gate::Custom {
                     matrix: qutrit_diag_matrix,
                     is_diagonal: true,
@@ -700,9 +700,9 @@ fn test_integration_mixed_dimensions_with_diagonal() {
                 vec![1],
                 vec![],
                 vec![],
-            ),
+            )),
             // X on qubit 2
-            PositionedGate::new(Gate::X, vec![2], vec![], vec![]),
+            gate(PositionedGate::new(Gate::X, vec![2], vec![], vec![])),
         ],
     )
     .unwrap();
@@ -722,10 +722,10 @@ fn test_integration_multiple_diagonal_gates() {
     let circuit = Circuit::new(
         dims.clone(),
         vec![
-            PositionedGate::new(Gate::H, vec![0], vec![], vec![]),
-            PositionedGate::new(Gate::Z, vec![0], vec![], vec![]),
-            PositionedGate::new(Gate::S, vec![0], vec![], vec![]),
-            PositionedGate::new(Gate::T, vec![0], vec![], vec![]),
+            gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![])),
+            gate(PositionedGate::new(Gate::Z, vec![0], vec![], vec![])),
+            gate(PositionedGate::new(Gate::S, vec![0], vec![], vec![])),
+            gate(PositionedGate::new(Gate::T, vec![0], vec![], vec![])),
         ],
     )
     .unwrap();
@@ -786,8 +786,8 @@ fn test_integration_two_qubit_h_on_both() {
     let circuit = Circuit::new(
         dims.clone(),
         vec![
-            PositionedGate::new(Gate::H, vec![0], vec![], vec![]),
-            PositionedGate::new(Gate::H, vec![1], vec![], vec![]),
+            gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![])),
+            gate(PositionedGate::new(Gate::H, vec![1], vec![], vec![])),
         ],
     )
     .unwrap();
@@ -807,9 +807,9 @@ fn test_integration_3_qubit_ghz_like() {
     let circuit = Circuit::new(
         dims.clone(),
         vec![
-            PositionedGate::new(Gate::H, vec![0], vec![], vec![]),
-            PositionedGate::new(Gate::X, vec![1], vec![0], vec![true]),
-            PositionedGate::new(Gate::X, vec![2], vec![0], vec![true]),
+            gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![])),
+            gate(PositionedGate::new(Gate::X, vec![1], vec![0], vec![true])),
+            gate(PositionedGate::new(Gate::X, vec![2], vec![0], vec![true])),
         ],
     )
     .unwrap();
@@ -825,18 +825,18 @@ fn test_integration_3_qubit_ghz_like() {
 
 fn build_qft_circuit(n: usize) -> Circuit {
     use std::f64::consts::PI;
-    let mut gates: Vec<PositionedGate> = Vec::new();
+    let mut elements: Vec<CircuitElement> = Vec::new();
     for i in 0..n {
-        gates.push(put(vec![i], Gate::H));
+        elements.push(put(vec![i], Gate::H));
         for j in 1..(n - i) {
             let theta = 2.0 * PI / (1 << (j + 1)) as f64;
-            gates.push(control(vec![i + j], vec![i], Gate::Phase(theta)));
+            elements.push(control(vec![i + j], vec![i], Gate::Phase(theta)));
         }
     }
     for i in 0..(n / 2) {
-        gates.push(PositionedGate::new(Gate::SWAP, vec![i, n - 1 - i], vec![], vec![]));
+        elements.push(gate(PositionedGate::new(Gate::SWAP, vec![i, n - 1 - i], vec![], vec![])));
     }
-    Circuit::new(vec![2; n], gates).unwrap()
+    Circuit::new(vec![2; n], elements).unwrap()
 }
 
 #[test]
