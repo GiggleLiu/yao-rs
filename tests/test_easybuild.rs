@@ -272,5 +272,5 @@ fn test_rand_supremacy2d_deterministic_with_seed() {
     let mut rng2 = StdRng::seed_from_u64(123);
     let c1 = rand_supremacy2d(2, 2, 3, &mut rng1);
     let c2 = rand_supremacy2d(2, 2, 3, &mut rng2);
-    assert_eq!(c1.gates.len(), c2.gates.len());
+    assert_eq!(c1.elements.len(), c2.elements.len());
 }

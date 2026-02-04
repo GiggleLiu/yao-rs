@@ -4,7 +4,7 @@ use ndarray::Array2;
 use num_complex::Complex64;
 use rand::Rng;
 
-use crate::circuit::{Circuit, CircuitElement, PositionedGate, control, put};
+use crate::circuit::{Circuit, CircuitElement, control, put};
 use crate::gate::Gate;
 
 // =============================================================================
