@@ -20,35 +20,35 @@
 //! ```
 
 use std::f64::consts::PI;
-use yao_rs::{Gate, Circuit, State, put, control, apply, circuit_to_einsum};
+use yao_rs::{Gate, Circuit, CircuitElement, State, put, control, apply, circuit_to_einsum};
 use yao_rs::circuit::PositionedGate;
 
 /// Build an n-qubit QFT circuit.
 fn qft_circuit(n: usize) -> Circuit {
-    let mut gates: Vec<PositionedGate> = Vec::new();
+    let mut elements: Vec<CircuitElement> = Vec::new();
 
     for i in 0..n {
         // H gate on qubit i
-        gates.push(put(vec![i], Gate::H));
+        elements.push(put(vec![i], Gate::H));
 
         // Controlled phase rotations
         for j in 1..(n - i) {
             let theta = 2.0 * PI / (1 << (j + 1)) as f64;
-            gates.push(control(vec![i + j], vec![i], Gate::Phase(theta)));
+            elements.push(control(vec![i + j], vec![i], Gate::Phase(theta)));
         }
     }
 
     // Reverse qubit order with SWAPs
     for i in 0..(n / 2) {
-        gates.push(PositionedGate::new(
+        elements.push(CircuitElement::Gate(PositionedGate::new(
             Gate::SWAP,
             vec![i, n - 1 - i],
             vec![],
             vec![],
-        ));
+        )));
     }
 
-    Circuit::new(vec![2; n], gates).unwrap()
+    Circuit::new(vec![2; n], elements).unwrap()
 }
 
 fn main() {
@@ -57,7 +57,7 @@ fn main() {
 
     // Build the QFT circuit
     let circuit = qft_circuit(n);
-    println!("Circuit: {} gates on {} qubits", circuit.gates.len(), n);
+    println!("Circuit: {} elements on {} qubits", circuit.elements.len(), n);
 
     // Apply QFT to |0000⟩ — should give uniform superposition
     let state = State::zero_state(&vec![2; n]);
