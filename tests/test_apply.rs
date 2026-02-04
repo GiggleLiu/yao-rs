@@ -176,7 +176,7 @@ fn test_qutrit_cyclic_permutation() {
             vec![0],
             vec![],
             vec![],
-        )],
+        ))],
     )
     .unwrap();
 
