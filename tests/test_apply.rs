@@ -29,7 +29,7 @@ fn test_x_gate_on_zero() {
     let state = State::zero_state(&dims);
     let circuit = Circuit::new(
         dims.clone(),
-        vec![CircuitElement::Gate(PositionedGate::new(Gate::X, vec![0], vec![], vec![])],
+        vec![CircuitElement::Gate(PositionedGate::new(Gate::X, vec![0], vec![], vec![]))],
     )
     .unwrap();
 
@@ -45,7 +45,7 @@ fn test_h_gate_on_zero() {
     let state = State::zero_state(&dims);
     let circuit = Circuit::new(
         dims.clone(),
-        vec![CircuitElement::Gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![])],
+        vec![CircuitElement::Gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![]))],
     )
     .unwrap();
 
@@ -116,8 +116,8 @@ fn test_bell_state() {
     let circuit = Circuit::new(
         dims.clone(),
         vec![
-            CircuitElement::Gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![]),
-            CircuitElement::Gate(PositionedGate::new(Gate::X, vec![1], vec![0], vec![true]),
+            CircuitElement::Gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![])),
+            CircuitElement::Gate(PositionedGate::new(Gate::X, vec![1], vec![0], vec![true])),
         ],
     )
     .unwrap();
@@ -137,9 +137,9 @@ fn test_norm_preservation() {
     let circuit = Circuit::new(
         dims.clone(),
         vec![
-            CircuitElement::Gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![]),
-            CircuitElement::Gate(PositionedGate::new(Gate::X, vec![0], vec![], vec![]),
-            CircuitElement::Gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![]),
+            CircuitElement::Gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![])),
+            CircuitElement::Gate(PositionedGate::new(Gate::X, vec![0], vec![], vec![])),
+            CircuitElement::Gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![])),
         ],
     )
     .unwrap();
@@ -197,7 +197,7 @@ fn test_x_on_second_qubit() {
     let state = State::zero_state(&dims); // |00>
     let circuit = Circuit::new(
         dims.clone(),
-        vec![CircuitElement::Gate(PositionedGate::new(Gate::X, vec![1], vec![], vec![])],
+        vec![CircuitElement::Gate(PositionedGate::new(Gate::X, vec![1], vec![], vec![]))],
     )
     .unwrap();
 
