@@ -4,7 +4,7 @@ use num_complex::Complex64;
 #[cfg(test)]
 use ndarray::Array1;
 
-use crate::circuit::Circuit;
+use crate::circuit::{Circuit, CircuitElement};
 use crate::gate::Gate;
 use crate::instruct::{instruct_controlled, instruct_diagonal, instruct_single};
 #[cfg(feature = "parallel")]
@@ -139,7 +139,12 @@ pub fn apply_inplace(circuit: &Circuit, state: &mut State) {
     #[cfg(feature = "parallel")]
     let use_parallel = state.data.len() >= PARALLEL_THRESHOLD;
 
-    for pg in &circuit.gates {
+    for element in &circuit.elements {
+        let pg = match element {
+            CircuitElement::Gate(pg) => pg,
+            CircuitElement::Annotation(_) => continue, // Skip annotations
+        };
+
         // Get the gate's local matrix on target sites
         let d = dims[pg.target_locs[0]];
         let gate_matrix = pg.gate.matrix(d);
@@ -231,11 +236,18 @@ pub fn apply(circuit: &Circuit, state: &State) -> State {
 /// 3. Multiply by the state vector
 #[cfg(test)]
 pub fn apply_old(circuit: &Circuit, state: &State) -> State {
+    use crate::circuit::CircuitElement;
+
     let dims = &circuit.dims;
     let total_dim = circuit.total_dim();
     let mut current_data = state.data.clone();
 
-    for pg in &circuit.gates {
+    for element in &circuit.elements {
+        let pg = match element {
+            CircuitElement::Gate(pg) => pg,
+            CircuitElement::Annotation(_) => continue, // Skip annotations
+        };
+
         // Get the gate's local matrix on target sites
         let d = dims[pg.target_locs[0]];
         let gate_matrix = pg.gate.matrix(d);
