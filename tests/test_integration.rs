@@ -4,7 +4,12 @@ use ndarray::{Array1, ArrayD, IxDyn};
 use num_complex::Complex64;
 
 use yao_rs::apply::apply;
-use yao_rs::circuit::{Circuit, PositionedGate, put, control};
+use yao_rs::circuit::{Circuit, CircuitElement, PositionedGate, put, control};
+
+// Helper to wrap PositionedGate in CircuitElement::Gate
+fn gate(pg: PositionedGate) -> CircuitElement {
+    CircuitElement::Gate(pg)
+}
 use yao_rs::einsum::{circuit_to_einsum, TensorNetwork};
 use yao_rs::gate::Gate;
 use yao_rs::state::State;
@@ -314,7 +319,7 @@ fn test_integration_x_gate_single_qubit() {
     let state = State::zero_state(&dims);
     let circuit = Circuit::new(
         dims.clone(),
-        vec![PositionedGate::new(Gate::X, vec![0], vec![], vec![])],
+        vec![gate(PositionedGate::new(Gate::X, vec![0], vec![], vec![]))],
     )
     .unwrap();
 
@@ -332,7 +337,7 @@ fn test_integration_h_gate_single_qubit() {
     let state = State::zero_state(&dims);
     let circuit = Circuit::new(
         dims.clone(),
-        vec![PositionedGate::new(Gate::H, vec![0], vec![], vec![])],
+        vec![gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![]))],
     )
     .unwrap();
 
@@ -350,12 +355,12 @@ fn test_integration_cnot_on_00() {
     let state = State::product_state(&dims, &[0, 0]);
     let circuit = Circuit::new(
         dims.clone(),
-        vec![PositionedGate::new(
+        vec![gate(PositionedGate::new(
             Gate::X,
             vec![1],
             vec![0],
             vec![true],
-        )],
+        ))],
     )
     .unwrap();
 
@@ -373,12 +378,12 @@ fn test_integration_cnot_on_01() {
     let state = State::product_state(&dims, &[0, 1]);
     let circuit = Circuit::new(
         dims.clone(),
-        vec![PositionedGate::new(
+        vec![gate(PositionedGate::new(
             Gate::X,
             vec![1],
             vec![0],
             vec![true],
-        )],
+        ))],
     )
     .unwrap();
 
@@ -396,12 +401,12 @@ fn test_integration_cnot_on_10() {
     let state = State::product_state(&dims, &[1, 0]);
     let circuit = Circuit::new(
         dims.clone(),
-        vec![PositionedGate::new(
+        vec![gate(PositionedGate::new(
             Gate::X,
             vec![1],
             vec![0],
             vec![true],
-        )],
+        ))],
     )
     .unwrap();
 
@@ -419,12 +424,12 @@ fn test_integration_cnot_on_11() {
     let state = State::product_state(&dims, &[1, 1]);
     let circuit = Circuit::new(
         dims.clone(),
-        vec![PositionedGate::new(
+        vec![gate(PositionedGate::new(
             Gate::X,
             vec![1],
             vec![0],
             vec![true],
-        )],
+        ))],
     )
     .unwrap();
 
@@ -464,12 +469,12 @@ fn test_integration_rz_diagonal_gate() {
     let theta = std::f64::consts::FRAC_PI_4;
     let circuit = Circuit::new(
         dims.clone(),
-        vec![PositionedGate::new(
+        vec![gate(PositionedGate::new(
             Gate::Rz(theta),
             vec![0],
             vec![],
             vec![],
-        )],
+        ))],
     )
     .unwrap();
 
@@ -548,7 +553,7 @@ fn test_integration_qutrit_cyclic_permutation() {
 
     let circuit = Circuit::new(
         dims.clone(),
-        vec![PositionedGate::new(
+        vec![gate(PositionedGate::new(
             Gate::Custom {
                 matrix: perm_matrix,
                 is_diagonal: false,
@@ -557,7 +562,7 @@ fn test_integration_qutrit_cyclic_permutation() {
             vec![0],
             vec![],
             vec![],
-        )],
+        ))],
     )
     .unwrap();
 
@@ -584,7 +589,7 @@ fn test_integration_qutrit_on_state_2() {
 
     let circuit = Circuit::new(
         dims.clone(),
-        vec![PositionedGate::new(
+        vec![gate(PositionedGate::new(
             Gate::Custom {
                 matrix: perm_matrix,
                 is_diagonal: false,
@@ -593,7 +598,7 @@ fn test_integration_qutrit_on_state_2() {
             vec![0],
             vec![],
             vec![],
-        )],
+        ))],
     )
     .unwrap();
 
@@ -739,7 +744,7 @@ fn test_integration_h_gate_on_one_state() {
     let state = State::product_state(&dims, &[1]);
     let circuit = Circuit::new(
         dims.clone(),
-        vec![PositionedGate::new(Gate::H, vec![0], vec![], vec![])],
+        vec![gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![]))],
     )
     .unwrap();
 
@@ -757,12 +762,12 @@ fn test_integration_ry_gate() {
     let state = State::zero_state(&dims);
     let circuit = Circuit::new(
         dims.clone(),
-        vec![PositionedGate::new(
+        vec![gate(PositionedGate::new(
             Gate::Ry(std::f64::consts::FRAC_PI_3),
             vec![0],
             vec![],
             vec![],
-        )],
+        ))],
     )
     .unwrap();
 
