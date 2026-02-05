@@ -49,7 +49,7 @@
       if targets.len() == 1 {
         let t = targets.at(0)
         if gate-name == "H" {
-          ops.push(tequila.h(t))
+          ops.push(tequila.gate(t, "H"))
         } else if gate-name == "X" {
           ops.push(tequila.x(t))
         } else if gate-name == "Y" {
