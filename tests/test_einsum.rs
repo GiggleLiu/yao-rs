@@ -3,24 +3,24 @@ use std::collections::HashMap;
 use ndarray::Array2;
 use num_complex::Complex64;
 
-use yao_rs::circuit::{Circuit, PositionedGate};
+use yao_rs::circuit::{Circuit, CircuitElement, PositionedGate};
 use yao_rs::einsum::{circuit_to_einsum, circuit_to_overlap, circuit_to_expectation};
 use yao_rs::gate::Gate;
 use yao_rs::operator::{Op, OperatorPolynomial};
 
-/// Helper to create a simple PositionedGate with no controls.
-fn simple_gate(gate: Gate, target_locs: Vec<usize>) -> PositionedGate {
-    PositionedGate::new(gate, target_locs, vec![], vec![])
+/// Helper to create a simple CircuitElement gate with no controls.
+fn simple_gate(gate: Gate, target_locs: Vec<usize>) -> CircuitElement {
+    CircuitElement::Gate(PositionedGate::new(gate, target_locs, vec![], vec![]))
 }
 
-/// Helper to create a controlled gate.
+/// Helper to create a controlled gate as a CircuitElement.
 fn controlled_gate(
     gate: Gate,
     target_locs: Vec<usize>,
     control_locs: Vec<usize>,
     control_configs: Vec<bool>,
-) -> PositionedGate {
-    PositionedGate::new(gate, target_locs, control_locs, control_configs)
+) -> CircuitElement {
+    CircuitElement::Gate(PositionedGate::new(gate, target_locs, control_locs, control_configs))
 }
 
 #[test]
@@ -197,8 +197,8 @@ fn test_size_dict_mixed_dimension_circuit() {
     let circuit = Circuit::new(
         vec![2, 3],
         vec![
-            PositionedGate::new(qutrit_diag_gate, vec![1], vec![], vec![]),
-            PositionedGate::new(qutrit_non_diag_gate, vec![1], vec![], vec![]),
+            CircuitElement::Gate(PositionedGate::new(qutrit_diag_gate, vec![1], vec![], vec![])),
+            CircuitElement::Gate(PositionedGate::new(qutrit_non_diag_gate, vec![1], vec![], vec![])),
         ],
     ).unwrap();
 

@@ -4,7 +4,7 @@ use ndarray::{ArrayD, IxDyn};
 use num_complex::Complex64;
 use omeco::EinCode;
 
-use crate::circuit::Circuit;
+use crate::circuit::{Circuit, CircuitElement};
 use crate::operator::{op_matrix, OperatorPolynomial};
 use crate::tensors::gate_to_tensor;
 
@@ -47,7 +47,12 @@ pub fn circuit_to_einsum(circuit: &Circuit) -> TensorNetwork {
     let mut all_ixs: Vec<Vec<usize>> = Vec::new();
     let mut all_tensors: Vec<ArrayD<Complex64>> = Vec::new();
 
-    for pg in &circuit.gates {
+    for element in &circuit.elements {
+        let pg = match element {
+            CircuitElement::Gate(pg) => pg,
+            CircuitElement::Annotation(_) => continue, // Skip annotations
+        };
+
         // Get the tensor for this gate
         let (tensor, _legs) = gate_to_tensor(pg, &circuit.dims);
 
@@ -170,7 +175,12 @@ pub fn circuit_to_einsum_with_boundary(
     }
 
     // Process gates (same as circuit_to_einsum)
-    for pg in &circuit.gates {
+    for element in &circuit.elements {
+        let pg = match element {
+            CircuitElement::Gate(pg) => pg,
+            CircuitElement::Annotation(_) => continue, // Skip annotations
+        };
+
         let (tensor, _legs) = gate_to_tensor(pg, &circuit.dims);
         let all_locs = pg.all_locs();
         let has_controls = !pg.control_locs.is_empty();
@@ -286,7 +296,12 @@ pub fn circuit_to_expectation(circuit: &Circuit, operator: &OperatorPolynomial) 
     }
 
     // ===== Part 2: U circuit tensors =====
-    for pg in &circuit.gates {
+    for element in &circuit.elements {
+        let pg = match element {
+            CircuitElement::Gate(pg) => pg,
+            CircuitElement::Annotation(_) => continue, // Skip annotations
+        };
+
         let (tensor, _legs) = gate_to_tensor(pg, &circuit.dims);
         let all_locs = pg.all_locs();
         let has_controls = !pg.control_locs.is_empty();
@@ -392,7 +407,15 @@ pub fn circuit_to_expectation(circuit: &Circuit, operator: &OperatorPolynomial) 
 
     // ===== Part 4: U† circuit tensors (conjugate transpose, reverse order) =====
     // For U†, we process gates in reverse order and conjugate the matrices
-    for pg in circuit.gates.iter().rev() {
+    // We need to filter to only gates and reverse
+    let gates_only: Vec<_> = circuit.elements.iter()
+        .filter_map(|e| match e {
+            CircuitElement::Gate(pg) => Some(pg),
+            CircuitElement::Annotation(_) => None,
+        })
+        .collect();
+
+    for pg in gates_only.iter().rev() {
         let (tensor, _legs) = gate_to_tensor(pg, &circuit.dims);
 
         // Conjugate the tensor for U†

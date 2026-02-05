@@ -3,7 +3,7 @@ use num_complex::Complex64;
 use std::f64::consts::FRAC_1_SQRT_2;
 
 use yao_rs::apply::apply;
-use yao_rs::circuit::{Circuit, PositionedGate};
+use yao_rs::circuit::{Circuit, CircuitElement, PositionedGate};
 use yao_rs::gate::Gate;
 use yao_rs::state::State;
 
@@ -29,7 +29,7 @@ fn test_x_gate_on_zero() {
     let state = State::zero_state(&dims);
     let circuit = Circuit::new(
         dims.clone(),
-        vec![PositionedGate::new(Gate::X, vec![0], vec![], vec![])],
+        vec![CircuitElement::Gate(PositionedGate::new(Gate::X, vec![0], vec![], vec![]))],
     )
     .unwrap();
 
@@ -45,7 +45,7 @@ fn test_h_gate_on_zero() {
     let state = State::zero_state(&dims);
     let circuit = Circuit::new(
         dims.clone(),
-        vec![PositionedGate::new(Gate::H, vec![0], vec![], vec![])],
+        vec![CircuitElement::Gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![]))],
     )
     .unwrap();
 
@@ -62,12 +62,12 @@ fn test_cnot_10_to_11() {
     let state = State::product_state(&dims, &[1, 0]); // |10>
     let circuit = Circuit::new(
         dims.clone(),
-        vec![PositionedGate::new(
+        vec![CircuitElement::Gate(PositionedGate::new(
             Gate::X,
             vec![1],       // target
             vec![0],       // control
             vec![true],    // trigger on |1>
-        )],
+        ))],
     )
     .unwrap();
 
@@ -89,12 +89,12 @@ fn test_cnot_00_unchanged() {
     let state = State::zero_state(&dims); // |00>
     let circuit = Circuit::new(
         dims.clone(),
-        vec![PositionedGate::new(
+        vec![CircuitElement::Gate(PositionedGate::new(
             Gate::X,
             vec![1],       // target
             vec![0],       // control
             vec![true],    // trigger on |1>
-        )],
+        ))],
     )
     .unwrap();
 
@@ -116,8 +116,8 @@ fn test_bell_state() {
     let circuit = Circuit::new(
         dims.clone(),
         vec![
-            PositionedGate::new(Gate::H, vec![0], vec![], vec![]),
-            PositionedGate::new(Gate::X, vec![1], vec![0], vec![true]),
+            CircuitElement::Gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![])),
+            CircuitElement::Gate(PositionedGate::new(Gate::X, vec![1], vec![0], vec![true])),
         ],
     )
     .unwrap();
@@ -137,9 +137,9 @@ fn test_norm_preservation() {
     let circuit = Circuit::new(
         dims.clone(),
         vec![
-            PositionedGate::new(Gate::H, vec![0], vec![], vec![]),
-            PositionedGate::new(Gate::X, vec![0], vec![], vec![]),
-            PositionedGate::new(Gate::H, vec![0], vec![], vec![]),
+            CircuitElement::Gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![])),
+            CircuitElement::Gate(PositionedGate::new(Gate::X, vec![0], vec![], vec![])),
+            CircuitElement::Gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![])),
         ],
     )
     .unwrap();
@@ -167,7 +167,7 @@ fn test_qutrit_cyclic_permutation() {
 
     let circuit = Circuit::new(
         dims.clone(),
-        vec![PositionedGate::new(
+        vec![CircuitElement::Gate(PositionedGate::new(
             Gate::Custom {
                 matrix: perm_matrix,
                 is_diagonal: false,
@@ -176,7 +176,7 @@ fn test_qutrit_cyclic_permutation() {
             vec![0],
             vec![],
             vec![],
-        )],
+        ))],
     )
     .unwrap();
 
@@ -197,7 +197,7 @@ fn test_x_on_second_qubit() {
     let state = State::zero_state(&dims); // |00>
     let circuit = Circuit::new(
         dims.clone(),
-        vec![PositionedGate::new(Gate::X, vec![1], vec![], vec![])],
+        vec![CircuitElement::Gate(PositionedGate::new(Gate::X, vec![1], vec![], vec![]))],
     )
     .unwrap();
 

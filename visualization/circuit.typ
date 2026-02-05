@@ -3,7 +3,8 @@
 /// Render a quantum circuit from parsed JSON data.
 ///
 /// Parameters:
-/// - data: Parsed JSON object with fields `num_qubits` and `gates`
+/// - data: Parsed JSON object with fields `num_qubits` and `elements`
+///   where elements is an array of gates and labels
 /// - gate-style: Function mapping gate name (string) to a dictionary of
 ///   styling options (label, fill, stroke, etc.)
 #let round2(x) = calc.round(x, digits: 2)
@@ -17,7 +18,16 @@
   let n = data.num_qubits
   let ops = ()
 
-  for entry in data.gates {
+  for entry in data.elements {
+    // Handle label annotations
+    if entry.type == "label" {
+      // Render floating text on the qubit wire at entry.loc
+      // Using gate with transparent fill/stroke so labels are not rendered as gates
+      ops.push(tequila.gate(entry.loc, entry.text, fill: none, stroke: none))
+      continue
+    }
+
+    // For gate type, extract gate-specific fields
     let gate-name = entry.gate
     let targets = entry.targets
     let controls = entry.at("controls", default: none)
@@ -39,7 +49,7 @@
       if targets.len() == 1 {
         let t = targets.at(0)
         if gate-name == "H" {
-          ops.push(tequila.h(t))
+          ops.push(tequila.gate(t, "H"))
         } else if gate-name == "X" {
           ops.push(tequila.x(t))
         } else if gate-name == "Y" {

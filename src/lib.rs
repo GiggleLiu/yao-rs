@@ -18,7 +18,7 @@ pub mod typst;
 pub use typst::{to_pdf, PdfError};
 
 pub use gate::Gate;
-pub use circuit::{Circuit, PositionedGate, put, control};
+pub use circuit::{Circuit, PositionedGate, CircuitElement, Annotation, PositionedAnnotation, put, control, label};
 pub use state::State;
 pub use einsum::{circuit_to_einsum, circuit_to_einsum_with_boundary, circuit_to_overlap, circuit_to_expectation, TensorNetwork};
 pub use apply::{apply, apply_inplace};

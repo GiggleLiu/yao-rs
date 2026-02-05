@@ -1,6 +1,6 @@
 use ndarray::Array2;
 use num_complex::Complex64;
-use yao_rs::circuit::{Circuit, CircuitError, PositionedGate, put, control};
+use yao_rs::circuit::{Circuit, CircuitElement, CircuitError, PositionedGate, put, control, label, Annotation};
 use yao_rs::gate::Gate;
 
 // ============================================================
@@ -40,7 +40,7 @@ fn test_positioned_gate_all_locs_swap() {
 #[test]
 fn test_valid_single_qubit_gate() {
     let pg = PositionedGate::new(Gate::H, vec![0], vec![], vec![]);
-    let circuit = Circuit::new(vec![2, 2], vec![pg]);
+    let circuit = Circuit::new(vec![2, 2], vec![CircuitElement::Gate(pg)]);
     assert!(circuit.is_ok());
     let c = circuit.unwrap();
     assert_eq!(c.num_sites(), 2);
@@ -51,7 +51,7 @@ fn test_valid_single_qubit_gate() {
 fn test_valid_cnot() {
     // CNOT = controlled-X: control on qubit 0, target on qubit 1
     let pg = PositionedGate::new(Gate::X, vec![1], vec![0], vec![true]);
-    let circuit = Circuit::new(vec![2, 2], vec![pg]);
+    let circuit = Circuit::new(vec![2, 2], vec![CircuitElement::Gate(pg)]);
     assert!(circuit.is_ok());
     let c = circuit.unwrap();
     assert_eq!(c.num_sites(), 2);
@@ -62,7 +62,7 @@ fn test_valid_cnot() {
 fn test_valid_toffoli() {
     // Toffoli = doubly-controlled X: controls on 0,1, target on 2
     let pg = PositionedGate::new(Gate::X, vec![2], vec![0, 1], vec![true, true]);
-    let circuit = Circuit::new(vec![2, 2, 2], vec![pg]);
+    let circuit = Circuit::new(vec![2, 2, 2], vec![CircuitElement::Gate(pg)]);
     assert!(circuit.is_ok());
     let c = circuit.unwrap();
     assert_eq!(c.num_sites(), 3);
@@ -83,7 +83,7 @@ fn test_valid_custom_qudit_gate_on_two_qutrits() {
         label: "qutrit_2site_identity".to_string(),
     };
     let pg = PositionedGate::new(gate, vec![0, 1], vec![], vec![]);
-    let circuit = Circuit::new(vec![3, 3], vec![pg]);
+    let circuit = Circuit::new(vec![3, 3], vec![CircuitElement::Gate(pg)]);
     assert!(circuit.is_ok());
     let c = circuit.unwrap();
     assert_eq!(c.num_sites(), 2);
@@ -96,18 +96,18 @@ fn test_valid_multi_gate_circuit() {
     let pg1 = PositionedGate::new(Gate::H, vec![0], vec![], vec![]);
     let pg2 = PositionedGate::new(Gate::X, vec![1], vec![0], vec![true]);
     let pg3 = PositionedGate::new(Gate::Z, vec![1], vec![], vec![]);
-    let circuit = Circuit::new(vec![2, 2], vec![pg1, pg2, pg3]);
+    let circuit = Circuit::new(vec![2, 2], vec![CircuitElement::Gate(pg1), CircuitElement::Gate(pg2), CircuitElement::Gate(pg3)]);
     assert!(circuit.is_ok());
     let c = circuit.unwrap();
     assert_eq!(c.num_sites(), 2);
     assert_eq!(c.total_dim(), 4);
-    assert_eq!(c.gates.len(), 3);
+    assert_eq!(c.elements.len(), 3);
 }
 
 #[test]
 fn test_valid_swap_gate() {
     let pg = PositionedGate::new(Gate::SWAP, vec![0, 1], vec![], vec![]);
-    let circuit = Circuit::new(vec![2, 2], vec![pg]);
+    let circuit = Circuit::new(vec![2, 2], vec![CircuitElement::Gate(pg)]);
     assert!(circuit.is_ok());
 }
 
@@ -116,7 +116,7 @@ fn test_valid_rotation_gates() {
     let pg1 = PositionedGate::new(Gate::Rx(1.0), vec![0], vec![], vec![]);
     let pg2 = PositionedGate::new(Gate::Ry(2.0), vec![1], vec![], vec![]);
     let pg3 = PositionedGate::new(Gate::Rz(3.0), vec![2], vec![], vec![]);
-    let circuit = Circuit::new(vec![2, 2, 2], vec![pg1, pg2, pg3]);
+    let circuit = Circuit::new(vec![2, 2, 2], vec![CircuitElement::Gate(pg1), CircuitElement::Gate(pg2), CircuitElement::Gate(pg3)]);
     assert!(circuit.is_ok());
 }
 
@@ -133,7 +133,7 @@ fn test_valid_empty_circuit() {
 fn test_valid_controlled_with_false_config() {
     // Control with config = false (control on |0>)
     let pg = PositionedGate::new(Gate::X, vec![1], vec![0], vec![false]);
-    let circuit = Circuit::new(vec![2, 2], vec![pg]);
+    let circuit = Circuit::new(vec![2, 2], vec![CircuitElement::Gate(pg)]);
     assert!(circuit.is_ok());
 }
 
@@ -145,7 +145,7 @@ fn test_valid_controlled_with_false_config() {
 fn test_invalid_qubit_gate_on_qutrit() {
     // Attempt to put a named (X) gate on a qutrit site
     let pg = PositionedGate::new(Gate::X, vec![0], vec![], vec![]);
-    let result = Circuit::new(vec![3, 2], vec![pg]);
+    let result = Circuit::new(vec![3, 2], vec![CircuitElement::Gate(pg)]);
     assert!(result.is_err());
     assert_eq!(
         result.unwrap_err(),
@@ -157,7 +157,7 @@ fn test_invalid_qubit_gate_on_qutrit() {
 fn test_invalid_control_on_qutrit() {
     // Attempt to use a qutrit site as a control
     let pg = PositionedGate::new(Gate::X, vec![1], vec![0], vec![true]);
-    let result = Circuit::new(vec![3, 2], vec![pg]);
+    let result = Circuit::new(vec![3, 2], vec![CircuitElement::Gate(pg)]);
     assert!(result.is_err());
     assert_eq!(
         result.unwrap_err(),
@@ -169,7 +169,7 @@ fn test_invalid_control_on_qutrit() {
 fn test_invalid_overlapping_locs() {
     // Target and control at the same location
     let pg = PositionedGate::new(Gate::X, vec![0], vec![0], vec![true]);
-    let result = Circuit::new(vec![2, 2], vec![pg]);
+    let result = Circuit::new(vec![2, 2], vec![CircuitElement::Gate(pg)]);
     assert!(result.is_err());
     match result.unwrap_err() {
         CircuitError::OverlappingLocs { overlapping } => {
@@ -183,7 +183,7 @@ fn test_invalid_overlapping_locs() {
 fn test_invalid_loc_out_of_range() {
     // Location 5 on a 2-site circuit
     let pg = PositionedGate::new(Gate::X, vec![5], vec![], vec![]);
-    let result = Circuit::new(vec![2, 2], vec![pg]);
+    let result = Circuit::new(vec![2, 2], vec![CircuitElement::Gate(pg)]);
     assert!(result.is_err());
     assert_eq!(
         result.unwrap_err(),
@@ -198,7 +198,7 @@ fn test_invalid_loc_out_of_range() {
 fn test_invalid_control_loc_out_of_range() {
     // Control location out of range
     let pg = PositionedGate::new(Gate::X, vec![0], vec![3], vec![true]);
-    let result = Circuit::new(vec![2, 2], vec![pg]);
+    let result = Circuit::new(vec![2, 2], vec![CircuitElement::Gate(pg)]);
     assert!(result.is_err());
     assert_eq!(
         result.unwrap_err(),
@@ -223,7 +223,7 @@ fn test_invalid_matrix_size_mismatch() {
         label: "size_mismatch_4x4".to_string(),
     };
     let pg = PositionedGate::new(gate, vec![0], vec![], vec![]);
-    let result = Circuit::new(vec![2, 2], vec![pg]);
+    let result = Circuit::new(vec![2, 2], vec![CircuitElement::Gate(pg)]);
     assert!(result.is_err());
     assert_eq!(
         result.unwrap_err(),
@@ -238,7 +238,7 @@ fn test_invalid_matrix_size_mismatch() {
 fn test_invalid_control_config_length_mismatch() {
     // 2 control locs but 1 config
     let pg = PositionedGate::new(Gate::X, vec![2], vec![0, 1], vec![true]);
-    let result = Circuit::new(vec![2, 2, 2], vec![pg]);
+    let result = Circuit::new(vec![2, 2, 2], vec![CircuitElement::Gate(pg)]);
     assert!(result.is_err());
     assert_eq!(
         result.unwrap_err(),
@@ -253,7 +253,7 @@ fn test_invalid_control_config_length_mismatch() {
 fn test_invalid_control_config_too_many() {
     // 1 control loc but 2 configs
     let pg = PositionedGate::new(Gate::X, vec![1], vec![0], vec![true, false]);
-    let result = Circuit::new(vec![2, 2], vec![pg]);
+    let result = Circuit::new(vec![2, 2], vec![CircuitElement::Gate(pg)]);
     assert!(result.is_err());
     assert_eq!(
         result.unwrap_err(),
@@ -386,7 +386,7 @@ fn test_valid_custom_single_qutrit_gate() {
         label: "qutrit_identity".to_string(),
     };
     let pg = PositionedGate::new(gate, vec![0], vec![], vec![]);
-    let circuit = Circuit::new(vec![3], vec![pg]);
+    let circuit = Circuit::new(vec![3], vec![CircuitElement::Gate(pg)]);
     assert!(circuit.is_ok());
     let c = circuit.unwrap();
     assert_eq!(c.num_sites(), 1);
@@ -407,14 +407,14 @@ fn test_valid_custom_gate_with_qubit_control() {
         label: "qutrit_controlled".to_string(),
     };
     let pg = PositionedGate::new(gate, vec![1], vec![0], vec![true]);
-    let circuit = Circuit::new(vec![2, 3], vec![pg]);
+    let circuit = Circuit::new(vec![2, 3], vec![CircuitElement::Gate(pg)]);
     assert!(circuit.is_ok());
 }
 
 #[test]
 fn test_invalid_named_h_gate_on_qutrit() {
     let pg = PositionedGate::new(Gate::H, vec![1], vec![], vec![]);
-    let result = Circuit::new(vec![2, 3], vec![pg]);
+    let result = Circuit::new(vec![2, 3], vec![CircuitElement::Gate(pg)]);
     assert!(result.is_err());
     assert_eq!(
         result.unwrap_err(),
@@ -427,7 +427,7 @@ fn test_second_gate_fails_validation() {
     // First gate is valid, second is invalid
     let pg1 = PositionedGate::new(Gate::H, vec![0], vec![], vec![]);
     let pg2 = PositionedGate::new(Gate::X, vec![5], vec![], vec![]);
-    let result = Circuit::new(vec![2, 2], vec![pg1, pg2]);
+    let result = Circuit::new(vec![2, 2], vec![CircuitElement::Gate(pg1), CircuitElement::Gate(pg2)]);
     assert!(result.is_err());
     assert_eq!(
         result.unwrap_err(),
@@ -450,84 +450,100 @@ fn test_clone_positioned_gate() {
 #[test]
 fn test_clone_circuit() {
     let pg = PositionedGate::new(Gate::H, vec![0], vec![], vec![]);
-    let circuit = Circuit::new(vec![2, 2], vec![pg]).unwrap();
+    let circuit = Circuit::new(vec![2, 2], vec![CircuitElement::Gate(pg)]).unwrap();
     let circuit2 = circuit.clone();
     assert_eq!(circuit2.num_sites(), 2);
     assert_eq!(circuit2.total_dim(), 4);
-    assert_eq!(circuit2.gates.len(), 1);
+    assert_eq!(circuit2.elements.len(), 1);
 }
 
 // === put() and control() builder tests ===
 
 #[test]
 fn test_put_single_gate() {
-    let pg = put(vec![0], Gate::H);
-    assert_eq!(pg.target_locs, vec![0]);
-    assert!(pg.control_locs.is_empty());
-    assert!(pg.control_configs.is_empty());
+    let elem = put(vec![0], Gate::H);
+    if let CircuitElement::Gate(pg) = elem {
+        assert_eq!(pg.target_locs, vec![0]);
+        assert!(pg.control_locs.is_empty());
+        assert!(pg.control_configs.is_empty());
+    } else {
+        panic!("Expected Gate element");
+    }
 }
 
 #[test]
 fn test_put_multi_site_gate() {
-    let pg = put(vec![1, 3], Gate::SWAP);
-    assert_eq!(pg.target_locs, vec![1, 3]);
-    assert!(pg.control_locs.is_empty());
+    let elem = put(vec![1, 3], Gate::SWAP);
+    if let CircuitElement::Gate(pg) = elem {
+        assert_eq!(pg.target_locs, vec![1, 3]);
+        assert!(pg.control_locs.is_empty());
+    } else {
+        panic!("Expected Gate element");
+    }
 }
 
 #[test]
 fn test_control_cnot() {
-    let pg = control(vec![0], vec![1], Gate::X);
-    assert_eq!(pg.control_locs, vec![0]);
-    assert_eq!(pg.target_locs, vec![1]);
-    assert_eq!(pg.control_configs, vec![true]);
+    let elem = control(vec![0], vec![1], Gate::X);
+    if let CircuitElement::Gate(pg) = elem {
+        assert_eq!(pg.control_locs, vec![0]);
+        assert_eq!(pg.target_locs, vec![1]);
+        assert_eq!(pg.control_configs, vec![true]);
+    } else {
+        panic!("Expected Gate element");
+    }
 }
 
 #[test]
 fn test_control_toffoli() {
-    let pg = control(vec![0, 1], vec![2], Gate::X);
-    assert_eq!(pg.control_locs, vec![0, 1]);
-    assert_eq!(pg.target_locs, vec![2]);
-    assert_eq!(pg.control_configs, vec![true, true]);
+    let elem = control(vec![0, 1], vec![2], Gate::X);
+    if let CircuitElement::Gate(pg) = elem {
+        assert_eq!(pg.control_locs, vec![0, 1]);
+        assert_eq!(pg.target_locs, vec![2]);
+        assert_eq!(pg.control_configs, vec![true, true]);
+    } else {
+        panic!("Expected Gate element");
+    }
 }
 
 #[test]
 fn test_put_in_circuit() {
-    let gates = vec![
+    let elements = vec![
         put(vec![0], Gate::H),
         put(vec![1], Gate::X),
     ];
-    let circuit = Circuit::new(vec![2, 2], gates).unwrap();
-    assert_eq!(circuit.gates.len(), 2);
+    let circuit = Circuit::new(vec![2, 2], elements).unwrap();
+    assert_eq!(circuit.elements.len(), 2);
 }
 
 #[test]
 fn test_control_in_circuit() {
-    let gates = vec![
+    let elements = vec![
         put(vec![0], Gate::H),
         control(vec![0], vec![1], Gate::X),
     ];
-    let circuit = Circuit::new(vec![2, 2], gates).unwrap();
-    assert_eq!(circuit.gates.len(), 2);
+    let circuit = Circuit::new(vec![2, 2], elements).unwrap();
+    assert_eq!(circuit.elements.len(), 2);
 }
 
 #[test]
 fn test_qft_circuit_builds() {
     use std::f64::consts::PI;
     let n = 4;
-    let mut gates: Vec<PositionedGate> = Vec::new();
+    let mut elements: Vec<CircuitElement> = Vec::new();
     for i in 0..n {
-        gates.push(put(vec![i], Gate::H));
+        elements.push(put(vec![i], Gate::H));
         for j in 1..(n - i) {
             let theta = 2.0 * PI / (1 << (j + 1)) as f64;
-            gates.push(control(vec![i + j], vec![i], Gate::Phase(theta)));
+            elements.push(control(vec![i + j], vec![i], Gate::Phase(theta)));
         }
     }
     for i in 0..(n / 2) {
-        gates.push(PositionedGate::new(Gate::SWAP, vec![i, n - 1 - i], vec![], vec![]));
+        elements.push(CircuitElement::Gate(PositionedGate::new(Gate::SWAP, vec![i, n - 1 - i], vec![], vec![])));
     }
-    let circuit = Circuit::new(vec![2; n], gates).unwrap();
+    let circuit = Circuit::new(vec![2; n], elements).unwrap();
     assert_eq!(circuit.num_sites(), 4);
-    assert_eq!(circuit.gates.len(), 12); // 4 H + 3+2+1 CPhase + 2 SWAP = 12
+    assert_eq!(circuit.elements.len(), 12); // 4 H + 3+2+1 CPhase + 2 SWAP = 12
 }
 
 // ============================================================
@@ -577,16 +593,16 @@ fn test_circuit_display_multi_target() {
 fn test_circuit_display_qft_3qubit() {
     use std::f64::consts::PI;
     let n = 3;
-    let mut gates: Vec<PositionedGate> = Vec::new();
+    let mut elements: Vec<CircuitElement> = Vec::new();
     for i in 0..n {
-        gates.push(put(vec![i], Gate::H));
+        elements.push(put(vec![i], Gate::H));
         for j in 1..(n - i) {
             let theta = 2.0 * PI / (1 << (j + 1)) as f64;
-            gates.push(control(vec![i + j], vec![i], Gate::Phase(theta)));
+            elements.push(control(vec![i + j], vec![i], Gate::Phase(theta)));
         }
     }
-    gates.push(put(vec![0, 2], Gate::SWAP));
-    let circuit = Circuit::new(vec![2; n], gates).unwrap();
+    elements.push(put(vec![0, 2], Gate::SWAP));
+    let circuit = Circuit::new(vec![2; n], elements).unwrap();
     let s = format!("{}", circuit);
     assert!(s.starts_with("nqubits: 3\n"));
     assert!(s.contains("H @ q[0]"));
@@ -727,9 +743,13 @@ fn test_circuit_dagger_single_gate() {
     let circuit = Circuit::new(vec![2], vec![put(vec![0], Gate::H)]).unwrap();
 
     let dagger = circuit.dagger().unwrap();
-    assert_eq!(dagger.gates.len(), 1);
+    assert_eq!(dagger.elements.len(), 1);
     // H is self-adjoint
-    assert_eq!(dagger.gates[0].gate, Gate::H);
+    if let CircuitElement::Gate(pg) = &dagger.elements[0] {
+        assert_eq!(pg.gate, Gate::H);
+    } else {
+        panic!("Expected Gate element");
+    }
 }
 
 #[test]
@@ -741,18 +761,26 @@ fn test_circuit_dagger_reverses_order() {
     .unwrap();
 
     let dagger = circuit.dagger().unwrap();
-    assert_eq!(dagger.gates.len(), 2);
+    assert_eq!(dagger.elements.len(), 2);
 
     // First gate in dagger should be S†
-    match &dagger.gates[0].gate {
-        Gate::Phase(theta) => {
-            assert!((theta + std::f64::consts::FRAC_PI_2).abs() < 1e-10);
+    if let CircuitElement::Gate(pg) = &dagger.elements[0] {
+        match &pg.gate {
+            Gate::Phase(theta) => {
+                assert!((theta + std::f64::consts::FRAC_PI_2).abs() < 1e-10);
+            }
+            _ => panic!("Expected Phase gate for S†"),
         }
-        _ => panic!("Expected Phase gate for S†"),
+    } else {
+        panic!("Expected Gate element");
     }
 
     // Second gate should be H
-    assert_eq!(dagger.gates[1].gate, Gate::H);
+    if let CircuitElement::Gate(pg) = &dagger.elements[1] {
+        assert_eq!(pg.gate, Gate::H);
+    } else {
+        panic!("Expected Gate element");
+    }
 }
 
 #[test]
@@ -768,11 +796,15 @@ fn test_circuit_dagger_preserves_control_locs() {
     let circuit = Circuit::new(vec![2, 2], vec![control(vec![0], vec![1], Gate::X)]).unwrap();
 
     let dagger = circuit.dagger().unwrap();
-    assert_eq!(dagger.gates.len(), 1);
-    assert_eq!(dagger.gates[0].control_locs, vec![0]);
-    assert_eq!(dagger.gates[0].target_locs, vec![1]);
-    // X is self-adjoint
-    assert_eq!(dagger.gates[0].gate, Gate::X);
+    assert_eq!(dagger.elements.len(), 1);
+    if let CircuitElement::Gate(pg) = &dagger.elements[0] {
+        assert_eq!(pg.control_locs, vec![0]);
+        assert_eq!(pg.target_locs, vec![1]);
+        // X is self-adjoint
+        assert_eq!(pg.gate, Gate::X);
+    } else {
+        panic!("Expected Gate element");
+    }
 }
 
 #[test]
@@ -789,20 +821,26 @@ fn test_circuit_dagger_rotation_sequence() {
     .unwrap();
 
     let dagger = circuit.dagger().unwrap();
-    assert_eq!(dagger.gates.len(), 3);
+    assert_eq!(dagger.elements.len(), 3);
 
     // Dagger should be: Rz(-0.3) -> Ry(-1.0) -> Rx(-0.5)
-    match &dagger.gates[0].gate {
-        Gate::Rz(theta) => assert!((theta + 0.3).abs() < 1e-10),
-        _ => panic!("Expected Rz"),
+    if let CircuitElement::Gate(pg) = &dagger.elements[0] {
+        match &pg.gate {
+            Gate::Rz(theta) => assert!((theta + 0.3).abs() < 1e-10),
+            _ => panic!("Expected Rz"),
+        }
     }
-    match &dagger.gates[1].gate {
-        Gate::Ry(theta) => assert!((theta + 1.0).abs() < 1e-10),
-        _ => panic!("Expected Ry"),
+    if let CircuitElement::Gate(pg) = &dagger.elements[1] {
+        match &pg.gate {
+            Gate::Ry(theta) => assert!((theta + 1.0).abs() < 1e-10),
+            _ => panic!("Expected Ry"),
+        }
     }
-    match &dagger.gates[2].gate {
-        Gate::Rx(theta) => assert!((theta + 0.5).abs() < 1e-10),
-        _ => panic!("Expected Rx"),
+    if let CircuitElement::Gate(pg) = &dagger.elements[2] {
+        match &pg.gate {
+            Gate::Rx(theta) => assert!((theta + 0.5).abs() < 1e-10),
+            _ => panic!("Expected Rx"),
+        }
     }
 }
 
@@ -810,6 +848,59 @@ fn test_circuit_dagger_rotation_sequence() {
 fn test_circuit_dagger_empty() {
     let circuit = Circuit::new(vec![2, 2], vec![]).unwrap();
     let dagger = circuit.dagger().unwrap();
-    assert!(dagger.gates.is_empty());
+    assert!(dagger.elements.is_empty());
     assert_eq!(dagger.dims, vec![2, 2]);
+}
+
+// ============================================================
+// Annotation tests
+// ============================================================
+
+#[test]
+fn test_label_annotation() {
+    let elem = label(0, "test label");
+    if let CircuitElement::Annotation(pa) = elem {
+        assert_eq!(pa.loc, 0);
+        assert!(matches!(pa.annotation, Annotation::Label(ref s) if s == "test label"));
+    } else {
+        panic!("Expected Annotation element");
+    }
+}
+
+#[test]
+fn test_circuit_with_labels() {
+    let elements = vec![
+        put(vec![0], Gate::H),
+        label(0, "Bell prep"),
+        control(vec![0], vec![1], Gate::X),
+    ];
+    let circuit = Circuit::new(vec![2, 2], elements).unwrap();
+    assert_eq!(circuit.elements.len(), 3);
+}
+
+#[test]
+fn test_label_validation() {
+    // Label with out-of-range loc should fail
+    let elements = vec![label(5, "bad loc")];
+    let result = Circuit::new(vec![2, 2], elements);
+    assert!(result.is_err());
+    assert_eq!(
+        result.unwrap_err(),
+        CircuitError::LocOutOfRange {
+            loc: 5,
+            num_sites: 2
+        }
+    );
+}
+
+#[test]
+fn test_circuit_display_with_label() {
+    let elements = vec![
+        put(vec![0], Gate::H),
+        label(0, "step1"),
+    ];
+    let circuit = Circuit::new(vec![2], elements).unwrap();
+    let s = format!("{}", circuit);
+    assert!(s.contains("H @ q[0]"));
+    assert!(s.contains("\"step1\" @ q[0]"));
 }
