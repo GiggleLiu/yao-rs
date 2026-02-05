@@ -22,8 +22,8 @@
     // Handle label annotations
     if entry.type == "label" {
       // Render floating text on the qubit wire at entry.loc
-      // Using quill's gate function to display the label text
-      ops.push(tequila.gate(entry.loc, entry.text))
+      // Using gate with transparent fill/stroke so labels are not rendered as gates
+      ops.push(tequila.gate(entry.loc, entry.text, fill: none, stroke: none))
       continue
     }
 
