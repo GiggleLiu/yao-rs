@@ -20,8 +20,8 @@
 //! ```
 
 use std::f64::consts::PI;
-use yao_rs::{Gate, Circuit, CircuitElement, State, put, control, apply, circuit_to_einsum};
 use yao_rs::circuit::PositionedGate;
+use yao_rs::{Circuit, CircuitElement, Gate, State, apply, circuit_to_einsum, control, put};
 
 /// Build an n-qubit QFT circuit.
 fn qft_circuit(n: usize) -> Circuit {
@@ -57,7 +57,11 @@ fn main() {
 
     // Build the QFT circuit
     let circuit = qft_circuit(n);
-    println!("Circuit: {} elements on {} qubits", circuit.elements.len(), n);
+    println!(
+        "Circuit: {} elements on {} qubits",
+        circuit.elements.len(),
+        n
+    );
 
     // Apply QFT to |0000⟩ — should give uniform superposition
     let state = State::zero_state(&vec![2; n]);
@@ -69,7 +73,13 @@ fn main() {
     println!("  First few amplitudes:");
     for i in 0..total_dim.min(8) {
         let amp = result.data[i];
-        println!("    |{:0width$b}⟩: {:.6} + {:.6}i", i, amp.re, amp.im, width = n);
+        println!(
+            "    |{:0width$b}⟩: {:.6} + {:.6}i",
+            i,
+            amp.re,
+            amp.im,
+            width = n
+        );
     }
 
     // Apply QFT to |0001⟩ — should give phases e^(2πi k/2^n)
@@ -78,8 +88,14 @@ fn main() {
     println!("\nQFT|0001⟩ (should have phase progression):");
     for i in 0..total_dim.min(8) {
         let amp = result1.data[i];
-        println!("    |{:0width$b}⟩: {:.6} + {:.6}i  (|amp|={:.6})",
-                 i, amp.re, amp.im, amp.norm(), width = n);
+        println!(
+            "    |{:0width$b}⟩: {:.6} + {:.6}i  (|amp|={:.6})",
+            i,
+            amp.re,
+            amp.im,
+            amp.norm(),
+            width = n
+        );
     }
 
     // Verify norm preservation

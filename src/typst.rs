@@ -102,7 +102,9 @@ pub fn to_pdf(circuit: &Circuit) -> Result<Vec<u8>, PdfError> {
 
     // Compile the document
     let compiled = engine.compile::<PagedDocument>();
-    let document = compiled.output.map_err(|e| PdfError::Compilation(format!("{}", e)))?;
+    let document = compiled
+        .output
+        .map_err(|e| PdfError::Compilation(format!("{}", e)))?;
 
     // Export to PDF (use {:?} as EcoVec<SourceDiagnostic> doesn't implement Display)
     typst_pdf::pdf(&document, &Default::default())

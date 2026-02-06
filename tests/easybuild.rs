@@ -7,9 +7,9 @@ use rand::rngs::StdRng;
 
 use yao_rs::apply::apply;
 use yao_rs::easybuild::{
-    general_u2, general_u4, hadamard_test_circuit, pair_ring, pair_square,
-    phase_estimation_circuit, qft_circuit, rand_google53, rand_supremacy2d,
-    swap_test_circuit, variational_circuit,
+    general_u2, general_u4, hadamard_test_circuit, mat_mul, pair_ring, pair_square,
+    phase_estimation_circuit, qft_circuit, rand_google53, rand_supremacy2d, swap_test_circuit,
+    variational_circuit,
 };
 use yao_rs::gate::Gate;
 use yao_rs::state::State;
@@ -95,7 +95,7 @@ fn test_general_u2_unitary() {
     // Apply general_u2 to |0>, check output norm = 1
     let gates = general_u2(0, 0.3, 0.7, 1.2);
     let circuit = yao_rs::Circuit::new(vec![2], gates).unwrap();
-    let state = State::zero_state(&vec![2]);
+    let state = State::zero_state(&[2]);
     let result = apply(&circuit, &state);
     assert!(
         (result.norm() - 1.0).abs() < ATOL,
@@ -112,7 +112,7 @@ fn test_general_u4_unitary() {
     ];
     let gates = general_u4(0, &params);
     let circuit = yao_rs::Circuit::new(vec![2, 2], gates).unwrap();
-    let state = State::zero_state(&vec![2, 2]);
+    let state = State::zero_state(&[2, 2]);
     let result = apply(&circuit, &state);
     assert!(
         (result.norm() - 1.0).abs() < ATOL,
@@ -251,7 +251,7 @@ fn test_rand_supremacy2d_structure() {
     let mut rng = StdRng::seed_from_u64(42);
     let circuit = rand_supremacy2d(3, 3, 5, &mut rng);
     assert_eq!(circuit.num_sites(), 9);
-    let state = State::zero_state(&vec![2; 9]);
+    let state = State::zero_state(&[2; 9]);
     let result = apply(&circuit, &state);
     assert_abs_diff_eq!(result.norm(), 1.0, epsilon = 1e-10);
 }
@@ -261,7 +261,7 @@ fn test_rand_google53_structure() {
     let mut rng = StdRng::seed_from_u64(42);
     let circuit = rand_google53(4, 10, &mut rng);
     assert_eq!(circuit.num_sites(), 10);
-    let state = State::zero_state(&vec![2; 10]);
+    let state = State::zero_state(&[2; 10]);
     let result = apply(&circuit, &state);
     assert_abs_diff_eq!(result.norm(), 1.0, epsilon = 1e-10);
 }
@@ -273,4 +273,72 @@ fn test_rand_supremacy2d_deterministic_with_seed() {
     let c1 = rand_supremacy2d(2, 2, 3, &mut rng1);
     let c2 = rand_supremacy2d(2, 2, 3, &mut rng2);
     assert_eq!(c1.elements.len(), c2.elements.len());
+}
+
+#[test]
+fn test_mat_mul_identity() {
+    let one = Complex64::new(1.0, 0.0);
+    let zero = Complex64::new(0.0, 0.0);
+    let id = Array2::from_shape_vec((2, 2), vec![one, zero, zero, one]).unwrap();
+    let a = Array2::from_shape_vec(
+        (2, 2),
+        vec![
+            Complex64::new(1.0, 2.0),
+            Complex64::new(3.0, 4.0),
+            Complex64::new(5.0, 6.0),
+            Complex64::new(7.0, 8.0),
+        ],
+    )
+    .unwrap();
+
+    let result = mat_mul(&a, &id, 2);
+    for i in 0..2 {
+        for j in 0..2 {
+            assert!((result[[i, j]] - a[[i, j]]).norm() < 1e-10);
+        }
+    }
+}
+
+#[test]
+fn test_mat_mul_known_product() {
+    // [[1, 2], [3, 4]] * [[5, 6], [7, 8]] = [[19, 22], [43, 50]]
+    let a = Array2::from_shape_vec(
+        (2, 2),
+        vec![
+            Complex64::new(1.0, 0.0),
+            Complex64::new(2.0, 0.0),
+            Complex64::new(3.0, 0.0),
+            Complex64::new(4.0, 0.0),
+        ],
+    )
+    .unwrap();
+    let b = Array2::from_shape_vec(
+        (2, 2),
+        vec![
+            Complex64::new(5.0, 0.0),
+            Complex64::new(6.0, 0.0),
+            Complex64::new(7.0, 0.0),
+            Complex64::new(8.0, 0.0),
+        ],
+    )
+    .unwrap();
+    let result = mat_mul(&a, &b, 2);
+    assert!((result[[0, 0]] - Complex64::new(19.0, 0.0)).norm() < 1e-10);
+    assert!((result[[0, 1]] - Complex64::new(22.0, 0.0)).norm() < 1e-10);
+    assert!((result[[1, 0]] - Complex64::new(43.0, 0.0)).norm() < 1e-10);
+    assert!((result[[1, 1]] - Complex64::new(50.0, 0.0)).norm() < 1e-10);
+}
+
+#[test]
+fn test_mat_mul_complex() {
+    // Pauli Y = [[0, -i], [i, 0]], Y^2 = I
+    let i = Complex64::new(0.0, 1.0);
+    let one = Complex64::new(1.0, 0.0);
+    let zero = Complex64::new(0.0, 0.0);
+    let y = Array2::from_shape_vec((2, 2), vec![zero, -i, i, zero]).unwrap();
+    let result = mat_mul(&y, &y, 2);
+    assert!((result[[0, 0]] - one).norm() < 1e-10);
+    assert!((result[[0, 1]] - zero).norm() < 1e-10);
+    assert!((result[[1, 0]] - zero).norm() < 1e-10);
+    assert!((result[[1, 1]] - one).norm() < 1e-10);
 }

@@ -1,4 +1,4 @@
-use ndarray::{ArrayD, IxDyn, Array2};
+use ndarray::{Array2, ArrayD, IxDyn};
 use num_complex::Complex64;
 
 use crate::circuit::PositionedGate;
@@ -33,7 +33,11 @@ pub fn gate_to_tensor(pg: &PositionedGate, dims: &[usize]) -> (ArrayD<Complex64>
     if is_diagonal {
         // Diagonal gate without controls: tensor has one leg per target site
         let target_dims: Vec<usize> = pg.target_locs.iter().map(|&loc| dims[loc]).collect();
-        let d = if pg.target_locs.is_empty() { 2 } else { dims[pg.target_locs[0]] };
+        let d = if pg.target_locs.is_empty() {
+            2
+        } else {
+            dims[pg.target_locs[0]]
+        };
         let mat = pg.gate.matrix(d);
 
         // Extract diagonal elements
@@ -90,12 +94,20 @@ fn build_controlled_matrix(pg: &PositionedGate, dims: &[usize]) -> Array2<Comple
     let total_dim: usize = all_dims.iter().product();
 
     let ctrl_dims: Vec<usize> = pg.control_locs.iter().map(|&loc| dims[loc]).collect();
-    let ctrl_dim: usize = if ctrl_dims.is_empty() { 1 } else { ctrl_dims.iter().product() };
+    let ctrl_dim: usize = if ctrl_dims.is_empty() {
+        1
+    } else {
+        ctrl_dims.iter().product()
+    };
     let tgt_dim: usize = pg.target_locs.iter().map(|&loc| dims[loc]).product();
 
     if pg.control_locs.is_empty() {
         // No controls: just return the gate matrix
-        let d = if pg.target_locs.is_empty() { 2 } else { dims[pg.target_locs[0]] };
+        let d = if pg.target_locs.is_empty() {
+            2
+        } else {
+            dims[pg.target_locs[0]]
+        };
         return pg.gate.matrix(d);
     }
 
@@ -105,7 +117,11 @@ fn build_controlled_matrix(pg: &PositionedGate, dims: &[usize]) -> Array2<Comple
     let trigger_index = compute_trigger_index(&pg.control_configs, &ctrl_dims);
 
     // Get the gate matrix for targets
-    let d = if pg.target_locs.is_empty() { 2 } else { dims[pg.target_locs[0]] };
+    let d = if pg.target_locs.is_empty() {
+        2
+    } else {
+        dims[pg.target_locs[0]]
+    };
     let gate_matrix = pg.gate.matrix(d);
 
     let one = Complex64::new(1.0, 0.0);

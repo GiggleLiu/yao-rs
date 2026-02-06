@@ -1,0 +1,632 @@
+{
+  "cases": [
+    {
+      "label": "H|0> probabilities",
+      "gates": [
+        {
+          "name": "H",
+          "controls": [],
+          "targets": [
+            0
+          ],
+          "params": [],
+          "control_configs": []
+        }
+      ],
+      "num_qubits": 1,
+      "probabilities": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "label": "|0> probabilities",
+      "gates": [],
+      "num_qubits": 1,
+      "probabilities": [
+        1.0,
+        0.0
+      ]
+    },
+    {
+      "label": "X|0> probabilities",
+      "gates": [
+        {
+          "name": "X",
+          "controls": [],
+          "targets": [
+            0
+          ],
+          "params": [],
+          "control_configs": []
+        }
+      ],
+      "num_qubits": 1,
+      "probabilities": [
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "label": "Bell state probabilities",
+      "gates": [
+        {
+          "name": "H",
+          "controls": [],
+          "targets": [
+            0
+          ],
+          "params": [],
+          "control_configs": []
+        },
+        {
+          "name": "X",
+          "controls": [
+            0
+          ],
+          "targets": [
+            1
+          ],
+          "params": [],
+          "control_configs": [
+            true
+          ]
+        }
+      ],
+      "num_qubits": 2,
+      "probabilities": [
+        0.5,
+        0.0,
+        0.0,
+        0.5
+      ]
+    },
+    {
+      "label": "H|00> probabilities",
+      "gates": [
+        {
+          "name": "H",
+          "controls": [],
+          "targets": [
+            0
+          ],
+          "params": [],
+          "control_configs": []
+        },
+        {
+          "name": "H",
+          "controls": [],
+          "targets": [
+            1
+          ],
+          "params": [],
+          "control_configs": []
+        }
+      ],
+      "num_qubits": 2,
+      "probabilities": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ]
+    },
+    {
+      "label": "GHZ 3 qubits probabilities",
+      "gates": [
+        {
+          "name": "H",
+          "controls": [],
+          "targets": [
+            0
+          ],
+          "params": [],
+          "control_configs": []
+        },
+        {
+          "name": "X",
+          "controls": [
+            0
+          ],
+          "targets": [
+            1
+          ],
+          "params": [],
+          "control_configs": [
+            true
+          ]
+        },
+        {
+          "name": "X",
+          "controls": [
+            1
+          ],
+          "targets": [
+            2
+          ],
+          "params": [],
+          "control_configs": [
+            true
+          ]
+        }
+      ],
+      "num_qubits": 3,
+      "probabilities": [
+        0.4999999999999999,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.4999999999999999
+      ]
+    },
+    {
+      "label": "QFT 3 qubits probabilities",
+      "gates": [
+        {
+          "name": "H",
+          "controls": [],
+          "targets": [
+            0
+          ],
+          "params": [],
+          "control_configs": []
+        },
+        {
+          "name": "Phase",
+          "controls": [
+            1
+          ],
+          "targets": [
+            0
+          ],
+          "params": [
+            1.5707963267948966
+          ],
+          "control_configs": [
+            true
+          ]
+        },
+        {
+          "name": "Phase",
+          "controls": [
+            2
+          ],
+          "targets": [
+            0
+          ],
+          "params": [
+            0.7853981633974483
+          ],
+          "control_configs": [
+            true
+          ]
+        },
+        {
+          "name": "H",
+          "controls": [],
+          "targets": [
+            1
+          ],
+          "params": [],
+          "control_configs": []
+        },
+        {
+          "name": "Phase",
+          "controls": [
+            2
+          ],
+          "targets": [
+            1
+          ],
+          "params": [
+            1.5707963267948966
+          ],
+          "control_configs": [
+            true
+          ]
+        },
+        {
+          "name": "H",
+          "controls": [],
+          "targets": [
+            2
+          ],
+          "params": [],
+          "control_configs": []
+        },
+        {
+          "name": "SWAP",
+          "controls": [],
+          "targets": [
+            0,
+            2
+          ],
+          "params": [],
+          "control_configs": []
+        }
+      ],
+      "num_qubits": 3,
+      "probabilities": [
+        0.12499999999999994,
+        0.12499999999999994,
+        0.12499999999999994,
+        0.12499999999999994,
+        0.12499999999999994,
+        0.12499999999999994,
+        0.12499999999999994,
+        0.12499999999999994
+      ]
+    },
+    {
+      "label": "H Rx(pi/4) probabilities",
+      "gates": [
+        {
+          "name": "H",
+          "controls": [],
+          "targets": [
+            0
+          ],
+          "params": [],
+          "control_configs": []
+        },
+        {
+          "name": "Rx",
+          "controls": [],
+          "targets": [
+            0
+          ],
+          "params": [
+            0.7853981633974483
+          ],
+          "control_configs": []
+        }
+      ],
+      "num_qubits": 1,
+      "probabilities": [
+        0.49999999999999983,
+        0.49999999999999983
+      ]
+    },
+    {
+      "label": "Mixed 4-qubit probabilities",
+      "gates": [
+        {
+          "name": "H",
+          "controls": [],
+          "targets": [
+            0
+          ],
+          "params": [],
+          "control_configs": []
+        },
+        {
+          "name": "H",
+          "controls": [],
+          "targets": [
+            1
+          ],
+          "params": [],
+          "control_configs": []
+        },
+        {
+          "name": "X",
+          "controls": [
+            0
+          ],
+          "targets": [
+            2
+          ],
+          "params": [],
+          "control_configs": [
+            true
+          ]
+        },
+        {
+          "name": "Ry",
+          "controls": [],
+          "targets": [
+            3
+          ],
+          "params": [
+            1.0471975511965976
+          ],
+          "control_configs": []
+        }
+      ],
+      "num_qubits": 4,
+      "probabilities": [
+        0.18749999999999992,
+        0.06249999999999996,
+        0.0,
+        0.0,
+        0.18749999999999992,
+        0.06249999999999996,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.18749999999999992,
+        0.06249999999999996,
+        0.0,
+        0.0,
+        0.18749999999999992,
+        0.06249999999999996
+      ]
+    },
+    {
+      "label": "Variational 3 qubits probabilities",
+      "gates": [
+        {
+          "name": "Rx",
+          "controls": [],
+          "targets": [
+            0
+          ],
+          "params": [
+            0.0
+          ],
+          "control_configs": []
+        },
+        {
+          "name": "Rz",
+          "controls": [],
+          "targets": [
+            0
+          ],
+          "params": [
+            0.0
+          ],
+          "control_configs": []
+        },
+        {
+          "name": "Rx",
+          "controls": [],
+          "targets": [
+            1
+          ],
+          "params": [
+            0.0
+          ],
+          "control_configs": []
+        },
+        {
+          "name": "Rz",
+          "controls": [],
+          "targets": [
+            1
+          ],
+          "params": [
+            0.0
+          ],
+          "control_configs": []
+        },
+        {
+          "name": "Rx",
+          "controls": [],
+          "targets": [
+            2
+          ],
+          "params": [
+            0.0
+          ],
+          "control_configs": []
+        },
+        {
+          "name": "Rz",
+          "controls": [],
+          "targets": [
+            2
+          ],
+          "params": [
+            0.0
+          ],
+          "control_configs": []
+        },
+        {
+          "name": "X",
+          "controls": [
+            0
+          ],
+          "targets": [
+            1
+          ],
+          "params": [],
+          "control_configs": [
+            true
+          ]
+        },
+        {
+          "name": "X",
+          "controls": [
+            1
+          ],
+          "targets": [
+            2
+          ],
+          "params": [],
+          "control_configs": [
+            true
+          ]
+        },
+        {
+          "name": "X",
+          "controls": [
+            2
+          ],
+          "targets": [
+            0
+          ],
+          "params": [],
+          "control_configs": [
+            true
+          ]
+        },
+        {
+          "name": "Rz",
+          "controls": [],
+          "targets": [
+            0
+          ],
+          "params": [
+            0.0
+          ],
+          "control_configs": []
+        },
+        {
+          "name": "Rx",
+          "controls": [],
+          "targets": [
+            0
+          ],
+          "params": [
+            0.0
+          ],
+          "control_configs": []
+        },
+        {
+          "name": "Rz",
+          "controls": [],
+          "targets": [
+            1
+          ],
+          "params": [
+            0.0
+          ],
+          "control_configs": []
+        },
+        {
+          "name": "Rx",
+          "controls": [],
+          "targets": [
+            1
+          ],
+          "params": [
+            0.0
+          ],
+          "control_configs": []
+        },
+        {
+          "name": "Rz",
+          "controls": [],
+          "targets": [
+            2
+          ],
+          "params": [
+            0.0
+          ],
+          "control_configs": []
+        },
+        {
+          "name": "Rx",
+          "controls": [],
+          "targets": [
+            2
+          ],
+          "params": [
+            0.0
+          ],
+          "control_configs": []
+        }
+      ],
+      "num_qubits": 3,
+      "probabilities": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "label": "H on all 5 qubits probabilities",
+      "gates": [
+        {
+          "name": "H",
+          "controls": [],
+          "targets": [
+            0
+          ],
+          "params": [],
+          "control_configs": []
+        },
+        {
+          "name": "H",
+          "controls": [],
+          "targets": [
+            1
+          ],
+          "params": [],
+          "control_configs": []
+        },
+        {
+          "name": "H",
+          "controls": [],
+          "targets": [
+            2
+          ],
+          "params": [],
+          "control_configs": []
+        },
+        {
+          "name": "H",
+          "controls": [],
+          "targets": [
+            3
+          ],
+          "params": [],
+          "control_configs": []
+        },
+        {
+          "name": "H",
+          "controls": [],
+          "targets": [
+            4
+          ],
+          "params": [],
+          "control_configs": []
+        }
+      ],
+      "num_qubits": 5,
+      "probabilities": [
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976,
+        0.031249999999999976
+      ]
+    }
+  ]
+}

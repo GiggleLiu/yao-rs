@@ -5,7 +5,7 @@ use num_complex::Complex64;
 use omeco::EinCode;
 
 use crate::circuit::{Circuit, CircuitElement};
-use crate::operator::{op_matrix, OperatorPolynomial};
+use crate::operator::{OperatorPolynomial, op_matrix};
 use crate::tensors::gate_to_tensor;
 
 /// A tensor network representation of a quantum circuit.
@@ -66,7 +66,9 @@ pub fn circuit_to_einsum(circuit: &Circuit) -> TensorNetwork {
         if is_diagonal {
             // Diagonal (no controls): tensor legs are just current labels of target sites.
             // Labels don't change.
-            let tensor_ixs: Vec<usize> = pg.target_locs.iter()
+            let tensor_ixs: Vec<usize> = pg
+                .target_locs
+                .iter()
                 .map(|&loc| current_labels[loc])
                 .collect();
             all_ixs.push(tensor_ixs);
@@ -146,10 +148,7 @@ pub fn circuit_to_overlap(circuit: &Circuit) -> TensorNetwork {
 ///
 /// # Returns
 /// A `TensorNetwork` with boundary tensors included.
-pub fn circuit_to_einsum_with_boundary(
-    circuit: &Circuit,
-    final_state: &[usize],
-) -> TensorNetwork {
+pub fn circuit_to_einsum_with_boundary(circuit: &Circuit, final_state: &[usize]) -> TensorNetwork {
     let n = circuit.num_sites();
 
     // Labels 0..n-1 are initial state indices for each site
@@ -187,7 +186,9 @@ pub fn circuit_to_einsum_with_boundary(
         let is_diagonal = pg.gate.is_diagonal() && !has_controls;
 
         if is_diagonal {
-            let tensor_ixs: Vec<usize> = pg.target_locs.iter()
+            let tensor_ixs: Vec<usize> = pg
+                .target_locs
+                .iter()
                 .map(|&loc| current_labels[loc])
                 .collect();
             all_ixs.push(tensor_ixs);
@@ -308,7 +309,9 @@ pub fn circuit_to_expectation(circuit: &Circuit, operator: &OperatorPolynomial) 
         let is_diagonal = pg.gate.is_diagonal() && !has_controls;
 
         if is_diagonal {
-            let tensor_ixs: Vec<usize> = pg.target_locs.iter()
+            let tensor_ixs: Vec<usize> = pg
+                .target_locs
+                .iter()
                 .map(|&loc| current_labels[loc])
                 .collect();
             all_ixs.push(tensor_ixs);
@@ -352,7 +355,8 @@ pub fn circuit_to_expectation(circuit: &Circuit, operator: &OperatorPolynomial) 
     if operator.is_empty() {
         // Zero operator - return a network that gives 0
         // We can do this by adding a zero tensor
-        let zero_tensor = ArrayD::from_shape_vec(IxDyn(&[1]), vec![Complex64::new(0.0, 0.0)]).unwrap();
+        let zero_tensor =
+            ArrayD::from_shape_vec(IxDyn(&[1]), vec![Complex64::new(0.0, 0.0)]).unwrap();
         all_ixs.push(vec![]);
         all_tensors.push(zero_tensor);
     } else {
@@ -408,7 +412,9 @@ pub fn circuit_to_expectation(circuit: &Circuit, operator: &OperatorPolynomial) 
     // ===== Part 4: U† circuit tensors (conjugate transpose, reverse order) =====
     // For U†, we process gates in reverse order and conjugate the matrices
     // We need to filter to only gates and reverse
-    let gates_only: Vec<_> = circuit.elements.iter()
+    let gates_only: Vec<_> = circuit
+        .elements
+        .iter()
         .filter_map(|e| match e {
             CircuitElement::Gate(pg) => Some(pg),
             CircuitElement::Annotation(_) => None,
@@ -427,7 +433,9 @@ pub fn circuit_to_expectation(circuit: &Circuit, operator: &OperatorPolynomial) 
 
         if is_diagonal {
             // For diagonal U†: still diagonal, just conjugated values
-            let tensor_ixs: Vec<usize> = pg.target_locs.iter()
+            let tensor_ixs: Vec<usize> = pg
+                .target_locs
+                .iter()
                 .map(|&loc| current_labels[loc])
                 .collect();
             all_ixs.push(tensor_ixs);
@@ -440,7 +448,7 @@ pub fn circuit_to_expectation(circuit: &Circuit, operator: &OperatorPolynomial) 
             let n_sites = all_locs.len();
 
             // Transpose the tensor: swap first half and second half of axes
-            let mut axes: Vec<usize> = (n_sites..2*n_sites).collect();
+            let mut axes: Vec<usize> = (n_sites..2 * n_sites).collect();
             axes.extend(0..n_sites);
             let transposed = conj_tensor.permuted_axes(axes.as_slice());
 
