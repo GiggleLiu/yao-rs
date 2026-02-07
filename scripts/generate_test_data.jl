@@ -13,9 +13,12 @@
 # Convention mapping (critical):
 #   yao-rs qubit i (0-indexed, MSB first) = Yao.jl qubit (n - i) (1-indexed, LSB first)
 #   State vector indexing is the SAME in both conventions.
+#
+# This script uses Yao.jl's native API (mat, apply!, probs, yao2einsum)
+# to generate ground-truth data.
 
 using Yao
-using Yao.ConstGate
+using Yao.EasyBuild
 using JSON
 using LinearAlgebra
 
@@ -53,6 +56,46 @@ Map yao-rs qubit index (0-indexed, MSB) to Yao.jl qubit index (1-indexed, LSB).
 For n qubits: yao_rs_qubit i -> yao_jl_qubit (n - i)
 """
 yaors_to_yaojl(i::Int, n::Int) = n - i
+
+"""Create a Yao.jl gate block from a gate name and parameters.
+Uses Yao.jl's native gate constructors (mat, EasyBuild, ConstGate)."""
+function make_gate_block(name::String, params::Vector)
+    if name == "X"
+        return X
+    elseif name == "Y"
+        return Y
+    elseif name == "Z"
+        return Z
+    elseif name == "H"
+        return H
+    elseif name == "S"
+        return ConstGate.S
+    elseif name == "T"
+        return ConstGate.T
+    elseif name == "SWAP"
+        return SWAP
+    elseif name == "Phase"
+        return shift(params[1])
+    elseif name == "Rx"
+        return Rx(params[1])
+    elseif name == "Ry"
+        return Ry(params[1])
+    elseif name == "Rz"
+        return Rz(params[1])
+    elseif name == "SqrtX"
+        return SqrtX
+    elseif name == "SqrtY"
+        return SqrtY
+    elseif name == "SqrtW"
+        return SqrtW
+    elseif name == "ISWAP"
+        return ISWAP
+    elseif name == "FSim"
+        return FSimGate(params[1], params[2])
+    else
+        error("Unknown gate: $name")
+    end
+end
 
 """
 Build a Yao.jl circuit block from a list of gate specifications.
@@ -106,163 +149,33 @@ function build_yao_circuit(num_qubits::Int, gates::Vector{Dict{String,Any}})
     return chain(num_qubits, blocks...)
 end
 
-"""Create a Yao.jl gate block from a gate name and parameters."""
-function make_gate_block(name::String, params::Vector)
-    if name == "X"
-        return X
-    elseif name == "Y"
-        return Y
-    elseif name == "Z"
-        return Z
-    elseif name == "H"
-        return H
-    elseif name == "S"
-        return ConstGate.S
-    elseif name == "T"
-        return ConstGate.T
-    elseif name == "SWAP"
-        return SWAP
-    elseif name == "Phase"
-        return shift(params[1])
-    elseif name == "Rx"
-        return Rx(params[1])
-    elseif name == "Ry"
-        return Ry(params[1])
-    elseif name == "Rz"
-        return Rz(params[1])
-    elseif name == "SqrtX"
-        return make_sqrtx()
-    elseif name == "SqrtY"
-        return make_sqrty()
-    elseif name == "SqrtW"
-        return make_sqrtw()
-    elseif name == "ISWAP"
-        return make_iswap()
-    elseif name == "FSim"
-        return make_fsim(params[1], params[2])
-    else
-        error("Unknown gate: $name")
-    end
-end
-
-"""SqrtX gate: (1+i)/2 * [[1, -i], [-i, 1]]"""
-function make_sqrtx()
-    f = (1 + im) / 2
-    m = f * ComplexF64[1 -im; -im 1]
-    return matblock(m; tag="SqrtX")
-end
-
-"""SqrtY gate: (1+i)/2 * [[1, -1], [1, 1]]"""
-function make_sqrty()
-    f = (1 + im) / 2
-    m = f * ComplexF64[1 -1; 1 1]
-    return matblock(m; tag="SqrtY")
-end
-
-"""SqrtW gate: cos(pi/4)*I - i*sin(pi/4)*(X+Y)/sqrt(2)"""
-function make_sqrtw()
-    X_m = ComplexF64[0 1; 1 0]
-    Y_m = ComplexF64[0 -im; im 0]
-    I_m = ComplexF64[1 0; 0 1]
-    m = cos(pi/4) * I_m - im * sin(pi/4) * (X_m + Y_m) / sqrt(2)
-    return matblock(m; tag="SqrtW")
-end
-
-"""ISWAP gate: diag(1,0,0,1) with m[2,3]=i, m[3,2]=i"""
-function make_iswap()
-    m = zeros(ComplexF64, 4, 4)
-    m[1,1] = 1
-    m[2,3] = im
-    m[3,2] = im
-    m[4,4] = 1
-    return matblock(m; tag="ISWAP")
-end
-
-"""FSim gate: [[1,0,0,0],[0,cos(t),-i*sin(t),0],[0,-i*sin(t),cos(t),0],[0,0,0,e^(-i*phi)]]"""
-function make_fsim(theta::Float64, phi::Float64)
-    m = zeros(ComplexF64, 4, 4)
-    m[1,1] = 1
-    m[2,2] = cos(theta)
-    m[2,3] = -im * sin(theta)
-    m[3,2] = -im * sin(theta)
-    m[3,3] = cos(theta)
-    m[4,4] = exp(-im * phi)
-    return matblock(m; tag="FSim")
-end
-
-"""Apply a circuit to |0...0> and return the output state vector."""
+"""Apply a circuit to |0...0> using apply! and return the output state vector."""
 function apply_circuit(num_qubits::Int, gates::Vector{Dict{String,Any}})
     circuit = build_yao_circuit(num_qubits, gates)
     reg = zero_state(num_qubits)
-    out = apply(reg, circuit)
-    return statevec(out)
+    apply!(reg, circuit)
+    return statevec(reg)
 end
 
-"""Get probability distribution from a circuit applied to |0...0>."""
+"""Get probability distribution using Yao's probs function."""
 function circuit_probs(num_qubits::Int, gates::Vector{Dict{String,Any}})
-    sv = apply_circuit(num_qubits, gates)
-    return [rnd(abs2(x)) for x in sv]
+    circuit = build_yao_circuit(num_qubits, gates)
+    reg = zero_state(num_qubits)
+    apply!(reg, circuit)
+    return [rnd(p) for p in probs(reg)]
+end
+
+"""Get einsum contraction result using yao2einsum."""
+function circuit_einsum(num_qubits::Int, gates::Vector{Dict{String,Any}})
+    circuit = build_yao_circuit(num_qubits, gates)
+    # Use yao2einsum to convert circuit to tensor network, then contract
+    tn = yao2einsum(circuit; initial_state=Dict([i=>0 for i in 1:num_qubits]), final_state=Dict{Int,Int}())
+    result = contract(tn)
+    return vec(result)
 end
 
 # ============================================================================
-# Gate matrix computation (matching yao-rs exactly)
-# ============================================================================
-
-"""Compute the gate matrix as yao-rs defines it (not necessarily Yao.jl's)."""
-function yaors_gate_matrix(name::String, params::Vector)
-    # Use Yao.jl where possible, manual computation for non-standard gates
-    if name == "X"
-        return Matrix(X)
-    elseif name == "Y"
-        return Matrix(Y)
-    elseif name == "Z"
-        return Matrix(Z)
-    elseif name == "H"
-        return Matrix(H)
-    elseif name == "S"
-        return Matrix(ConstGate.S)
-    elseif name == "T"
-        return Matrix(ConstGate.T)
-    elseif name == "SWAP"
-        return Matrix(SWAP)
-    elseif name == "Phase"
-        return Matrix(shift(params[1]))
-    elseif name == "Rx"
-        return Matrix(Rx(params[1]))
-    elseif name == "Ry"
-        return Matrix(Ry(params[1]))
-    elseif name == "Rz"
-        return Matrix(Rz(params[1]))
-    elseif name == "SqrtX"
-        f = (1 + im) / 2
-        return f * ComplexF64[1 -im; -im 1]
-    elseif name == "SqrtY"
-        f = (1 + im) / 2
-        return f * ComplexF64[1 -1; 1 1]
-    elseif name == "SqrtW"
-        X_m = ComplexF64[0 1; 1 0]
-        Y_m = ComplexF64[0 -im; im 0]
-        I_m = ComplexF64[1 0; 0 1]
-        return cos(pi/4) * I_m - im * sin(pi/4) * (X_m + Y_m) / sqrt(2)
-    elseif name == "ISWAP"
-        m = zeros(ComplexF64, 4, 4)
-        m[1,1] = 1; m[2,3] = im; m[3,2] = im; m[4,4] = 1
-        return m
-    elseif name == "FSim"
-        theta, phi = params[1], params[2]
-        m = zeros(ComplexF64, 4, 4)
-        m[1,1] = 1
-        m[2,2] = cos(theta); m[2,3] = -im*sin(theta)
-        m[3,2] = -im*sin(theta); m[3,3] = cos(theta)
-        m[4,4] = exp(-im*phi)
-        return m
-    else
-        error("Unknown gate: $name")
-    end
-end
-
-# ============================================================================
-# 1. Generate gates.json
+# 1. Generate gates.json - using mat() for all gates
 # ============================================================================
 
 function generate_gates()
@@ -273,9 +186,15 @@ function generate_gates()
 
     gate_entries = []
 
-    # Constant gates (no parameters)
-    for name in ["X", "Y", "Z", "H", "S", "T", "SWAP", "SqrtX", "SqrtY", "SqrtW", "ISWAP"]
-        m = yaors_gate_matrix(name, Float64[])
+    # Constant gates (no parameters) - use mat() for all
+    for (name, gate) in [
+        ("X", X), ("Y", Y), ("Z", Z), ("H", H),
+        ("S", ConstGate.S), ("T", ConstGate.T),
+        ("SWAP", SWAP),
+        ("SqrtX", SqrtX), ("SqrtY", SqrtY), ("SqrtW", SqrtW),
+        ("ISWAP", ISWAP),
+    ]
+        m = mat(gate)
         re, im_part = matrix_to_re_im(m)
         push!(gate_entries, Dict(
             "name" => name,
@@ -285,10 +204,11 @@ function generate_gates()
         ))
     end
 
-    # Single-parameter gates: Phase, Rx, Ry, Rz
+    # Single-parameter gates: Phase, Rx, Ry, Rz - use mat()
     for name in ["Phase", "Rx", "Ry", "Rz"]
         for theta in angles
-            m = yaors_gate_matrix(name, [theta])
+            gate = make_gate_block(name, [theta])
+            m = mat(gate)
             re, im_part = matrix_to_re_im(m)
             push!(gate_entries, Dict(
                 "name" => name,
@@ -299,7 +219,7 @@ function generate_gates()
         end
     end
 
-    # Two-parameter gate: FSim
+    # Two-parameter gate: FSim - use mat(FSimGate(theta, phi))
     fsim_param_pairs = [
         (0.0, 0.0),
         (pi/4, pi/6),
@@ -309,7 +229,8 @@ function generate_gates()
         (1e-10, 1e-10),
     ]
     for (theta, phi) in fsim_param_pairs
-        m = yaors_gate_matrix("FSim", [theta, phi])
+        gate = FSimGate(theta, phi)
+        m = mat(gate)
         re, im_part = matrix_to_re_im(m)
         push!(gate_entries, Dict(
             "name" => "FSim",
@@ -509,9 +430,9 @@ function define_test_circuits()
 
     # ------------------------------------------------------------------
     # QFT circuits (with bit-reversal SWAPs, i.e. textbook QFT)
-    # Note: yao-rs easybuild::qft_circuit matches Yao.jl and does NOT
-    # include the SWAP layer. These test cases include SWAPs to test
-    # the full textbook QFT as an explicit gate sequence.
+    # Note: yao-rs easybuild::qft_circuit matches Yao.jl's qft_circuit
+    # and does NOT include the SWAP layer. These test cases include SWAPs
+    # to test the full textbook QFT as an explicit gate sequence.
     # ------------------------------------------------------------------
     for n in [3, 4, 5]
         gates = Dict{String,Any}[]
@@ -596,16 +517,12 @@ function define_test_circuits()
     # ------------------------------------------------------------------
     # Hadamard test circuit (matching yao-rs easybuild::hadamard_test_circuit)
     # ------------------------------------------------------------------
-    # hadamard_test_circuit(X, 0.0): 2-qubit circuit: H(0) + Rz(0,0) + controlled-X(0->1) + H(0)
-    # yao-rs qubit 0 = Yao.jl qubit n (MSB->LSB mapping)
-    # For 2 qubits: yao-rs qubit 0 -> Yao.jl qubit 2, yao-rs qubit 1 -> Yao.jl qubit 1
     push!(circuits, ("Hadamard test X phi=0", [2,2],
         [gate_spec("H"; targets=[0]),
          gate_spec("Rz"; params=[0.0], targets=[0]),
          gate_spec("X"; controls=[0], targets=[1], control_configs=[true]),
          gate_spec("H"; targets=[0])]))
 
-    # hadamard_test_circuit(X, pi/4)
     push!(circuits, ("Hadamard test X phi=pi/4", [2,2],
         [gate_spec("H"; targets=[0]),
          gate_spec("Rz"; params=[pi/4], targets=[0]),
@@ -615,8 +532,6 @@ function define_test_circuits()
     # ------------------------------------------------------------------
     # Swap test circuit (matching yao-rs easybuild::swap_test_circuit)
     # ------------------------------------------------------------------
-    # swap_test_circuit(1, 2, 0.0): 3-qubit circuit
-    # H(0) + Rz(0, 0) + controlled-SWAP(0 -> 1,2) + H(0)
     push!(circuits, ("Swap test nbit=1 nstate=2 phi=0", [2,2,2],
         [gate_spec("H"; targets=[0]),
          gate_spec("Rz"; params=[0.0], targets=[0]),
@@ -637,7 +552,6 @@ function define_qudit_circuits()
     # ------------------------------------------------------------------
     # Single qutrit (d=3) gate: cyclic permutation P|i> = |i+1 mod 3>
     # ------------------------------------------------------------------
-    # P = [[0,0,1],[1,0,0],[0,1,0]]  (P|0>=|1>, P|1>=|2>, P|2>=|0>)
     P3 = ComplexF64[0 0 1; 1 0 0; 0 1 0]
     input_3 = ComplexF64[1, 0, 0]
     output_3 = P3 * input_3  # = [0, 1, 0]
@@ -652,10 +566,9 @@ function define_qudit_circuits()
     # ------------------------------------------------------------------
     # Single ququart (d=4) gate: diagonal phase gate
     # ------------------------------------------------------------------
-    # D = diag(1, i, -1, -i) = diag(e^(i*0*pi/2), e^(i*1*pi/2), e^(i*2*pi/2), e^(i*3*pi/2))
     D4 = diagm(ComplexF64[1, im, -1, -im])
     input_4 = ComplexF64[1, 0, 0, 0]
-    output_4 = D4 * input_4  # = [1, 0, 0, 0]
+    output_4 = D4 * input_4
     push!(qudit_cases, (
         "Ququart diagonal phase on |0>",
         [4],
@@ -667,31 +580,15 @@ function define_qudit_circuits()
     # ------------------------------------------------------------------
     # Two-qutrit circuit (d=3,3) with a custom 9x9 gate
     # ------------------------------------------------------------------
-    # Use a simple 9x9 permutation: SWAP-like gate that swaps the two qutrits
-    # SWAP on d=3: |ij> -> |ji>, matrix is permutation of the 9 basis states
-    # Basis ordering: |00>, |01>, |02>, |10>, |11>, |12>, |20>, |21>, |22>
-    # SWAP: |ij> -> |ji>
     SWAP9 = zeros(ComplexF64, 9, 9)
     for i in 0:2, j in 0:2
         src = i * 3 + j + 1  # 1-indexed: |ij>
         dst = j * 3 + i + 1  # 1-indexed: |ji>
         SWAP9[dst, src] = 1.0
     end
-    # Apply to |10> (index 3+0=3 -> 1-indexed: 4) -> should give |01> (index 0+1=1 -> 1-indexed: 2)
-    # But we start from |00>, apply cyclic perm on site 0, then swap
-    # Start: |00> -> after P3 on site 0: |10> -> after SWAP: |01>
-    # State |00> in 2-qutrit system: [1,0,0,0,0,0,0,0,0]
-    # After P3 on site 0: |10> = [0,0,0,1,0,0,0,0,0]
-    # After SWAP9: |01> = [0,1,0,0,0,0,0,0,0]
     input_33 = zeros(ComplexF64, 9); input_33[1] = 1.0
-    # P3 acts on site 0 (the "big" site, stride=3). In the tensor picture for dims=[3,3]:
-    # state[i,j] with i=site0, j=site1. Flatten as i*3+j (row-major).
-    # P3 on site 0: state[i,j] -> state[P3*i, j]
-    # |00> -> P3|0> tensor |0> = |1> tensor |0> = |10>
-    # In flat: index = 1*3+0 = 3 -> 1-indexed: 4
     state_after_p3 = zeros(ComplexF64, 9)
     state_after_p3[4] = 1.0  # |10>
-    # SWAP9: |10> -> |01>, index = 0*3+1 = 1 -> 1-indexed: 2
     output_33 = SWAP9 * state_after_p3  # = |01>
     push!(qudit_cases, (
         "Two-qutrit P3 then SWAP on |00>",
@@ -705,19 +602,8 @@ function define_qudit_circuits()
     # ------------------------------------------------------------------
     # Mixed qubit-qutrit circuit (d=[2,3])
     # ------------------------------------------------------------------
-    # Site 0: qubit (d=2), Site 1: qutrit (d=3)
-    # Total dimension: 2*3 = 6
-    # Apply X (2x2) on site 0, then cyclic perm P3 (3x3) on site 1
     X2 = ComplexF64[0 1; 1 0]
-    # Start: |00> = [1,0,0,0,0,0] in dims=[2,3]
-    # Flat index: site0 * 3 + site1 (row-major with dims=[2,3])
-    # After X on site 0: |0> -> |1>, so |00> -> |10> = index 1*3+0 = 3 -> 1-indexed: 4
-    # After P3 on site 1: |0> -> |1>, so |10> -> |11> = index 1*3+1 = 4 -> 1-indexed: 5
     input_23 = zeros(ComplexF64, 6); input_23[1] = 1.0
-    # X on site 0: state[i,j] -> X*state[,j] for each j
-    state_after_x = zeros(ComplexF64, 6)
-    state_after_x[4] = 1.0  # |10>
-    # P3 on site 1: state[i,j] -> state[i, P3*j] for each i
     output_23 = zeros(ComplexF64, 6)
     output_23[5] = 1.0  # |11>
     push!(qudit_cases, (
@@ -740,6 +626,7 @@ function generate_apply()
 
     for (label, dims, gates) in circuits
         num_qubits = length(dims)
+        # Use apply! to apply circuit and get output state
         sv = apply_circuit(num_qubits, gates)
 
         # Input state is always |0...0>
@@ -790,7 +677,7 @@ function generate_apply()
 end
 
 # ============================================================================
-# 3. Generate einsum.json
+# 3. Generate einsum.json - using yao2einsum for tensor network contraction
 # ============================================================================
 
 function generate_einsum()
@@ -802,8 +689,11 @@ function generate_einsum()
 
     for (label, dims, gates) in circuits
         num_qubits = length(dims)
-        # The einsum result should be the same as apply result
-        sv = apply_circuit(num_qubits, gates)
+        # Use yao2einsum to convert circuit to tensor network and contract
+        circuit = build_yao_circuit(num_qubits, gates)
+        tn = yao2einsum(circuit; initial_state=Dict([i=>0 for i in 1:num_qubits]), final_state=Dict{Int,Int}())
+        result = contract(tn)
+        sv = vec(result)
         out_re, out_im = vec_to_re_im(sv)
 
         push!(cases, Dict(
@@ -841,7 +731,7 @@ function generate_einsum()
 end
 
 # ============================================================================
-# 4. Generate measure.json
+# 4. Generate measure.json - using probs() from Yao.jl
 # ============================================================================
 
 function generate_measure()
@@ -850,7 +740,7 @@ function generate_measure()
     cases = []
 
     # ------------------------------------------------------------------
-    # Simple probability distributions
+    # Simple probability distributions - use Yao's probs()
     # ------------------------------------------------------------------
 
     # H|0> = 50/50
@@ -858,7 +748,7 @@ function generate_measure()
         "label" => "H|0> probabilities",
         "num_qubits" => 1,
         "gates" => [gate_spec("H")],
-        "probabilities" => [0.5, 0.5],
+        "probabilities" => circuit_probs(1, [gate_spec("H")]),
     ))
 
     # |0> = deterministic 0
@@ -866,7 +756,7 @@ function generate_measure()
         "label" => "|0> probabilities",
         "num_qubits" => 1,
         "gates" => Dict{String,Any}[],
-        "probabilities" => [1.0, 0.0],
+        "probabilities" => circuit_probs(1, Dict{String,Any}[]),
     ))
 
     # X|0> = |1> = deterministic 1
@@ -874,42 +764,41 @@ function generate_measure()
         "label" => "X|0> probabilities",
         "num_qubits" => 1,
         "gates" => [gate_spec("X")],
-        "probabilities" => [0.0, 1.0],
+        "probabilities" => circuit_probs(1, [gate_spec("X")]),
     ))
 
     # Bell state
+    bell_gates = [
+        gate_spec("H"; targets=[0]),
+        gate_spec("X"; controls=[0], targets=[1], control_configs=[true]),
+    ]
     push!(cases, Dict(
         "label" => "Bell state probabilities",
         "num_qubits" => 2,
-        "gates" => [
-            gate_spec("H"; targets=[0]),
-            gate_spec("X"; controls=[0], targets=[1], control_configs=[true]),
-        ],
-        "probabilities" => [0.5, 0.0, 0.0, 0.5],
+        "gates" => bell_gates,
+        "probabilities" => circuit_probs(2, bell_gates),
     ))
 
     # H on all 2 qubits = equal superposition
+    h2_gates = [gate_spec("H"; targets=[0]), gate_spec("H"; targets=[1])]
     push!(cases, Dict(
         "label" => "H|00> probabilities",
         "num_qubits" => 2,
-        "gates" => [gate_spec("H"; targets=[0]), gate_spec("H"; targets=[1])],
-        "probabilities" => [0.25, 0.25, 0.25, 0.25],
+        "gates" => h2_gates,
+        "probabilities" => circuit_probs(2, h2_gates),
     ))
 
     # GHZ 3 qubits
+    ghz3_gates = [
+        gate_spec("H"; targets=[0]),
+        gate_spec("X"; controls=[0], targets=[1], control_configs=[true]),
+        gate_spec("X"; controls=[1], targets=[2], control_configs=[true]),
+    ]
     push!(cases, Dict(
         "label" => "GHZ 3 qubits probabilities",
         "num_qubits" => 3,
-        "gates" => [
-            gate_spec("H"; targets=[0]),
-            gate_spec("X"; controls=[0], targets=[1], control_configs=[true]),
-            gate_spec("X"; controls=[1], targets=[2], control_configs=[true]),
-        ],
-        "probabilities" => circuit_probs(3, [
-            gate_spec("H"; targets=[0]),
-            gate_spec("X"; controls=[0], targets=[1], control_configs=[true]),
-            gate_spec("X"; controls=[1], targets=[2], control_configs=[true]),
-        ]),
+        "gates" => ghz3_gates,
+        "probabilities" => circuit_probs(3, ghz3_gates),
     ))
 
     # QFT 3 qubits on |0>
@@ -934,11 +823,12 @@ function generate_measure()
     ))
 
     # H + Rx(pi/4) on qubit 0
+    hrx_gates = [gate_spec("H"), gate_spec("Rx"; params=[pi/4])]
     push!(cases, Dict(
         "label" => "H Rx(pi/4) probabilities",
         "num_qubits" => 1,
-        "gates" => [gate_spec("H"), gate_spec("Rx"; params=[pi/4])],
-        "probabilities" => circuit_probs(1, [gate_spec("H"), gate_spec("Rx"; params=[pi/4])]),
+        "gates" => hrx_gates,
+        "probabilities" => circuit_probs(1, hrx_gates),
     ))
 
     # 4-qubit mixed circuit
@@ -984,11 +874,12 @@ function generate_measure()
     ))
 
     # 5-qubit H on all then measure
+    h5_gates = [gate_spec("H"; targets=[i]) for i in 0:4]
     push!(cases, Dict(
         "label" => "H on all 5 qubits probabilities",
         "num_qubits" => 5,
-        "gates" => [gate_spec("H"; targets=[i]) for i in 0:4],
-        "probabilities" => circuit_probs(5, [gate_spec("H"; targets=[i]) for i in 0:4]),
+        "gates" => h5_gates,
+        "probabilities" => circuit_probs(5, h5_gates),
     ))
 
     data = Dict("cases" => cases)
