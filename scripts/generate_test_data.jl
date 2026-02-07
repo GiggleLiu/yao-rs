@@ -242,7 +242,7 @@ function generate_gates()
 
     data = Dict("gates" => gate_entries)
     open(joinpath(OUTPUT_DIR, "gates.json"), "w") do f
-        JSON.print(f, data, 2)
+        JSON.print(f, data)
     end
     println("  Generated $(length(gate_entries)) gate entries")
 end
@@ -671,7 +671,7 @@ function generate_apply()
 
     data = Dict("cases" => cases)
     open(joinpath(OUTPUT_DIR, "apply.json"), "w") do f
-        JSON.print(f, data, 2)
+        JSON.print(f, data)
     end
     println("  Generated $(length(cases)) apply test cases ($(length(qudit_circuits)) qudit)")
 end
@@ -725,7 +725,7 @@ function generate_einsum()
 
     data = Dict("cases" => cases)
     open(joinpath(OUTPUT_DIR, "einsum.json"), "w") do f
-        JSON.print(f, data, 2)
+        JSON.print(f, data)
     end
     println("  Generated $(length(cases)) einsum test cases ($(length(qudit_circuits)) qudit)")
 end
@@ -884,7 +884,7 @@ function generate_measure()
 
     data = Dict("cases" => cases)
     open(joinpath(OUTPUT_DIR, "measure.json"), "w") do f
-        JSON.print(f, data, 2)
+        JSON.print(f, data)
     end
     println("  Generated $(length(cases)) measure test cases")
 end
