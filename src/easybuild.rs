@@ -49,7 +49,9 @@ pub fn pair_square(m: usize, n: usize, periodic: bool) -> Vec<(usize, usize)> {
 ///
 /// For each qubit i (0-indexed): apply H, then for j in 1..(n-i):
 /// controlled-Phase(2pi/2^(j+1)) with control=i+j, target=i.
-/// Finally SWAP pairs to reverse bit order.
+///
+/// This matches Yao.jl's `EasyBuild.qft_circuit` which does NOT include
+/// the final bit-reversal SWAP layer.
 pub fn qft_circuit(n: usize) -> Circuit {
     let mut elements: Vec<CircuitElement> = Vec::new();
 
@@ -62,11 +64,6 @@ pub fn qft_circuit(n: usize) -> Circuit {
             let theta = 2.0 * PI / (1u64 << (j + 1)) as f64;
             elements.push(control(vec![i + j], vec![i], Gate::Phase(theta)));
         }
-    }
-
-    // Reverse qubit order with SWAPs
-    for i in 0..(n / 2) {
-        elements.push(put(vec![i, n - 1 - i], Gate::SWAP));
     }
 
     Circuit::new(vec![2; n], elements).unwrap()
@@ -281,7 +278,11 @@ pub fn phase_estimation_circuit(unitary: Gate, n_reg: usize, n_b: usize) -> Circ
 }
 
 /// Helper: multiply two complex matrices of given dimension.
-pub fn mat_mul(a: &Array2<Complex64>, b: &Array2<Complex64>, dim: usize) -> Array2<Complex64> {
+pub(crate) fn mat_mul(
+    a: &Array2<Complex64>,
+    b: &Array2<Complex64>,
+    dim: usize,
+) -> Array2<Complex64> {
     let mut result = Array2::zeros((dim, dim));
     for i in 0..dim {
         for j in 0..dim {

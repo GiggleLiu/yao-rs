@@ -23,7 +23,10 @@ use std::f64::consts::PI;
 use yao_rs::circuit::PositionedGate;
 use yao_rs::{Circuit, CircuitElement, Gate, State, apply, circuit_to_einsum, control, put};
 
-/// Build an n-qubit QFT circuit.
+/// Build an n-qubit QFT circuit (textbook version with bit-reversal SWAPs).
+///
+/// Note: `yao_rs::easybuild::qft_circuit` matches Yao.jl and omits the
+/// final SWAP layer. This example includes it for the standard textbook QFT.
 fn qft_circuit(n: usize) -> Circuit {
     let mut elements: Vec<CircuitElement> = Vec::new();
 

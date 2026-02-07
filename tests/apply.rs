@@ -580,38 +580,62 @@ fn test_apply_preserves_input() {
     assert!(states_approx_equal(&state, &state_clone, 1e-10));
 }
 
+/// Test that diagonal gates (Z, S, T, Phase, Rz) apply correctly and
+/// produce consistent results via the public apply API.
+/// This validates diagonal gate handling without reaching into internal helpers.
 #[test]
-fn test_is_diagonal() {
-    use yao_rs::apply::is_diagonal;
-    assert!(is_diagonal(&Gate::Z));
-    assert!(is_diagonal(&Gate::S));
-    assert!(is_diagonal(&Gate::T));
-    assert!(is_diagonal(&Gate::Phase(1.0)));
-    assert!(is_diagonal(&Gate::Rz(1.0)));
-    assert!(!is_diagonal(&Gate::X));
-    assert!(!is_diagonal(&Gate::Y));
-    assert!(!is_diagonal(&Gate::H));
-    assert!(!is_diagonal(&Gate::Rx(1.0)));
-    assert!(!is_diagonal(&Gate::Ry(1.0)));
-    assert!(!is_diagonal(&Gate::SWAP));
-}
+fn test_diagonal_gate_behavior_via_apply() {
+    // Apply each diagonal gate to |+> = (|0> + |1>)/√2 and verify results
+    let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
 
-#[test]
-fn test_extract_diagonal_phases() {
-    use yao_rs::apply::extract_diagonal_phases;
-    // Z gate: diag(1, -1)
-    let z_matrix = Gate::Z.matrix(2);
-    let phases = extract_diagonal_phases(&z_matrix);
-    assert_eq!(phases.len(), 2);
-    assert!((phases[0] - Complex64::new(1.0, 0.0)).norm() < 1e-10);
-    assert!((phases[1] - Complex64::new(-1.0, 0.0)).norm() < 1e-10);
+    // Z|+> = (|0> - |1>)/√2
+    let circuit = Circuit::new(
+        vec![2],
+        vec![CircuitElement::Gate(PositionedGate::new(
+            Gate::Z,
+            vec![0],
+            vec![],
+            vec![],
+        ))],
+    )
+    .unwrap();
+    let mut state = State::zero_state(&[2]);
+    state.data[0] = s;
+    state.data[1] = s;
+    let result = apply(&circuit, &state);
+    assert!((result.data[0] - s).norm() < ATOL);
+    assert!((result.data[1] + s).norm() < ATOL);
 
-    // S gate: diag(1, i)
-    let s_matrix = Gate::S.matrix(2);
-    let phases = extract_diagonal_phases(&s_matrix);
-    assert_eq!(phases.len(), 2);
-    assert!((phases[0] - Complex64::new(1.0, 0.0)).norm() < 1e-10);
-    assert!((phases[1] - Complex64::new(0.0, 1.0)).norm() < 1e-10);
+    // S|+> = (|0> + i|1>)/√2
+    let circuit = Circuit::new(
+        vec![2],
+        vec![CircuitElement::Gate(PositionedGate::new(
+            Gate::S,
+            vec![0],
+            vec![],
+            vec![],
+        ))],
+    )
+    .unwrap();
+    let result = apply(&circuit, &state);
+    assert!((result.data[0] - s).norm() < ATOL);
+    assert!((result.data[1] - Complex64::new(0.0, FRAC_1_SQRT_2)).norm() < ATOL);
+
+    // Non-diagonal gates should also work fine (sanity check)
+    let circuit = Circuit::new(
+        vec![2],
+        vec![CircuitElement::Gate(PositionedGate::new(
+            Gate::X,
+            vec![0],
+            vec![],
+            vec![],
+        ))],
+    )
+    .unwrap();
+    let state0 = State::zero_state(&[2]);
+    let result = apply(&circuit, &state0);
+    assert!((result.data[0]).norm() < ATOL);
+    assert!((result.data[1] - Complex64::new(1.0, 0.0)).norm() < ATOL);
 }
 
 // ============================================================

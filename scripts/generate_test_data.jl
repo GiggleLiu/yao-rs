@@ -508,7 +508,10 @@ function define_test_circuits()
         )))
 
     # ------------------------------------------------------------------
-    # QFT circuits (matching yao-rs easybuild::qft_circuit)
+    # QFT circuits (with bit-reversal SWAPs, i.e. textbook QFT)
+    # Note: yao-rs easybuild::qft_circuit matches Yao.jl and does NOT
+    # include the SWAP layer. These test cases include SWAPs to test
+    # the full textbook QFT as an explicit gate sequence.
     # ------------------------------------------------------------------
     for n in [3, 4, 5]
         gates = Dict{String,Any}[]

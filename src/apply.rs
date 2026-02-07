@@ -14,14 +14,14 @@ const PARALLEL_THRESHOLD: usize = 16384;
 use crate::state::State;
 
 /// Check if a gate is diagonal.
-pub fn is_diagonal(gate: &Gate) -> bool {
+pub(crate) fn is_diagonal(gate: &Gate) -> bool {
     gate.is_diagonal()
 }
 
 /// Extract the diagonal phases from a diagonal gate matrix.
 ///
 /// For a diagonal matrix, returns the diagonal elements as a vector.
-pub fn extract_diagonal_phases(matrix: &Array2<Complex64>) -> Vec<Complex64> {
+pub(crate) fn extract_diagonal_phases(matrix: &Array2<Complex64>) -> Vec<Complex64> {
     let d = matrix.nrows();
     (0..d).map(|i| matrix[[i, i]]).collect()
 }
