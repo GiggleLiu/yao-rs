@@ -1,6 +1,6 @@
-use pyo3::prelude::*;
 use pyo3::exceptions::PyValueError;
-use yao_rs::{Circuit, put, control, circuit_to_json, circuit_from_json};
+use pyo3::prelude::*;
+use yao_rs::{Circuit, circuit_from_json, circuit_to_json, control, put};
 
 use crate::gate::PyGate;
 
@@ -62,7 +62,8 @@ impl PyCircuit {
     /// The dagger of a circuit has gates in reverse order,
     /// with each gate replaced by its adjoint.
     fn dagger(&self) -> PyResult<Self> {
-        self.0.dagger()
+        self.0
+            .dagger()
             .map(PyCircuit)
             .map_err(|e| PyValueError::new_err(e.to_string()))
     }
@@ -104,9 +105,11 @@ impl PyCircuit {
     ///     A new Circuit
     #[staticmethod]
     fn from_dict(data: &pyo3::types::PyDict) -> PyResult<Self> {
-        let json_str = serde_json::to_string(&pythonize::depythonize::<serde_json::Value>(data)
-            .map_err(|e| PyValueError::new_err(format!("Failed to convert dict: {}", e)))?)
-            .map_err(|e| PyValueError::new_err(format!("Failed to serialize: {}", e)))?;
+        let json_str = serde_json::to_string(
+            &pythonize::depythonize::<serde_json::Value>(data)
+                .map_err(|e| PyValueError::new_err(format!("Failed to convert dict: {}", e)))?,
+        )
+        .map_err(|e| PyValueError::new_err(format!("Failed to serialize: {}", e)))?;
         circuit_from_json(&json_str)
             .map(PyCircuit)
             .map_err(PyValueError::new_err)

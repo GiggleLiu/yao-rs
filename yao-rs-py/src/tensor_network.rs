@@ -1,9 +1,9 @@
+use crate::circuit::PyCircuit;
+use crate::operator::PyOperatorPolynomial;
 use pyo3::prelude::*;
 #[cfg(feature = "torch")]
 use pyo3::types::PyComplex;
 use yao_rs::TensorNetwork;
-use crate::circuit::PyCircuit;
-use crate::operator::PyOperatorPolynomial;
 
 #[cfg(feature = "torch")]
 use yao_rs::torch_contractor;
@@ -43,7 +43,8 @@ impl PyTensorNetwork {
             let tn = self.0.clone();
             let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
                 torch_contractor::contract(&tn, dev)
-            })).map_err(|e| {
+            }))
+            .map_err(|e| {
                 let msg = if let Some(s) = e.downcast_ref::<&str>() {
                     s.to_string()
                 } else if let Some(s) = e.downcast_ref::<String>() {
@@ -56,10 +57,16 @@ impl PyTensorNetwork {
 
             // Extract real and imaginary parts from the scalar tensor
             let re = f64::try_from(result.real()).map_err(|e| {
-                pyo3::exceptions::PyRuntimeError::new_err(format!("Failed to extract real part: {}", e))
+                pyo3::exceptions::PyRuntimeError::new_err(format!(
+                    "Failed to extract real part: {}",
+                    e
+                ))
             })?;
             let im = f64::try_from(result.imag()).map_err(|e| {
-                pyo3::exceptions::PyRuntimeError::new_err(format!("Failed to extract imag part: {}", e))
+                pyo3::exceptions::PyRuntimeError::new_err(format!(
+                    "Failed to extract imag part: {}",
+                    e
+                ))
             })?;
 
             Ok(PyComplex::from_doubles(py, re, im).into())
@@ -69,7 +76,7 @@ impl PyTensorNetwork {
         {
             let _ = (py, device); // silence unused warnings
             Err(pyo3::exceptions::PyRuntimeError::new_err(
-                "Torch feature is not enabled. Rebuild with: maturin develop --features torch"
+                "Torch feature is not enabled. Rebuild with: maturin develop --features torch",
             ))
         }
     }
@@ -93,15 +100,22 @@ fn parse_device(device: &str) -> PyResult<tch::Device> {
             Ok(Device::Cuda(0))
         } else if let Some(idx_str) = device_lower.strip_prefix("cuda:") {
             let idx: usize = idx_str.parse().map_err(|_| {
-                pyo3::exceptions::PyValueError::new_err(format!("Invalid CUDA device index: {}", idx_str))
+                pyo3::exceptions::PyValueError::new_err(format!(
+                    "Invalid CUDA device index: {}",
+                    idx_str
+                ))
             })?;
             Ok(Device::Cuda(idx))
         } else {
-            Err(pyo3::exceptions::PyValueError::new_err(format!("Invalid device: {}", device)))
+            Err(pyo3::exceptions::PyValueError::new_err(format!(
+                "Invalid device: {}",
+                device
+            )))
         }
     } else {
         Err(pyo3::exceptions::PyValueError::new_err(format!(
-            "Unknown device: {}. Use 'cpu' or 'cuda:N'", device
+            "Unknown device: {}. Use 'cpu' or 'cuda:N'",
+            device
         )))
     }
 }
@@ -133,7 +147,10 @@ pub fn circuit_to_overlap(circuit: &PyCircuit) -> PyTensorNetwork {
 /// Returns:
 ///     A TensorNetwork representing the expectation value computation
 #[pyfunction]
-pub fn circuit_to_expectation(circuit: &PyCircuit, operator: &PyOperatorPolynomial) -> PyTensorNetwork {
+pub fn circuit_to_expectation(
+    circuit: &PyCircuit,
+    operator: &PyOperatorPolynomial,
+) -> PyTensorNetwork {
     PyTensorNetwork(yao_rs::circuit_to_expectation(&circuit.0, &operator.0))
 }
 

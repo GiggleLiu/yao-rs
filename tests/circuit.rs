@@ -1,6 +1,8 @@
 use ndarray::Array2;
 use num_complex::Complex64;
-use yao_rs::circuit::{Circuit, CircuitElement, CircuitError, PositionedGate, put, control, label, Annotation};
+use yao_rs::circuit::{
+    Annotation, Circuit, CircuitElement, CircuitError, PositionedGate, control, label, put,
+};
 use yao_rs::gate::Gate;
 
 // ============================================================
@@ -96,7 +98,14 @@ fn test_valid_multi_gate_circuit() {
     let pg1 = PositionedGate::new(Gate::H, vec![0], vec![], vec![]);
     let pg2 = PositionedGate::new(Gate::X, vec![1], vec![0], vec![true]);
     let pg3 = PositionedGate::new(Gate::Z, vec![1], vec![], vec![]);
-    let circuit = Circuit::new(vec![2, 2], vec![CircuitElement::Gate(pg1), CircuitElement::Gate(pg2), CircuitElement::Gate(pg3)]);
+    let circuit = Circuit::new(
+        vec![2, 2],
+        vec![
+            CircuitElement::Gate(pg1),
+            CircuitElement::Gate(pg2),
+            CircuitElement::Gate(pg3),
+        ],
+    );
     assert!(circuit.is_ok());
     let c = circuit.unwrap();
     assert_eq!(c.num_sites(), 2);
@@ -116,7 +125,14 @@ fn test_valid_rotation_gates() {
     let pg1 = PositionedGate::new(Gate::Rx(1.0), vec![0], vec![], vec![]);
     let pg2 = PositionedGate::new(Gate::Ry(2.0), vec![1], vec![], vec![]);
     let pg3 = PositionedGate::new(Gate::Rz(3.0), vec![2], vec![], vec![]);
-    let circuit = Circuit::new(vec![2, 2, 2], vec![CircuitElement::Gate(pg1), CircuitElement::Gate(pg2), CircuitElement::Gate(pg3)]);
+    let circuit = Circuit::new(
+        vec![2, 2, 2],
+        vec![
+            CircuitElement::Gate(pg1),
+            CircuitElement::Gate(pg2),
+            CircuitElement::Gate(pg3),
+        ],
+    );
     assert!(circuit.is_ok());
 }
 
@@ -427,7 +443,10 @@ fn test_second_gate_fails_validation() {
     // First gate is valid, second is invalid
     let pg1 = PositionedGate::new(Gate::H, vec![0], vec![], vec![]);
     let pg2 = PositionedGate::new(Gate::X, vec![5], vec![], vec![]);
-    let result = Circuit::new(vec![2, 2], vec![CircuitElement::Gate(pg1), CircuitElement::Gate(pg2)]);
+    let result = Circuit::new(
+        vec![2, 2],
+        vec![CircuitElement::Gate(pg1), CircuitElement::Gate(pg2)],
+    );
     assert!(result.is_err());
     assert_eq!(
         result.unwrap_err(),
@@ -508,20 +527,14 @@ fn test_control_toffoli() {
 
 #[test]
 fn test_put_in_circuit() {
-    let elements = vec![
-        put(vec![0], Gate::H),
-        put(vec![1], Gate::X),
-    ];
+    let elements = vec![put(vec![0], Gate::H), put(vec![1], Gate::X)];
     let circuit = Circuit::new(vec![2, 2], elements).unwrap();
     assert_eq!(circuit.elements.len(), 2);
 }
 
 #[test]
 fn test_control_in_circuit() {
-    let elements = vec![
-        put(vec![0], Gate::H),
-        control(vec![0], vec![1], Gate::X),
-    ];
+    let elements = vec![put(vec![0], Gate::H), control(vec![0], vec![1], Gate::X)];
     let circuit = Circuit::new(vec![2, 2], elements).unwrap();
     assert_eq!(circuit.elements.len(), 2);
 }
@@ -539,7 +552,12 @@ fn test_qft_circuit_builds() {
         }
     }
     for i in 0..(n / 2) {
-        elements.push(CircuitElement::Gate(PositionedGate::new(Gate::SWAP, vec![i, n - 1 - i], vec![], vec![])));
+        elements.push(CircuitElement::Gate(PositionedGate::new(
+            Gate::SWAP,
+            vec![i, n - 1 - i],
+            vec![],
+            vec![],
+        )));
     }
     let circuit = Circuit::new(vec![2; n], elements).unwrap();
     assert_eq!(circuit.num_sites(), 4);
@@ -754,11 +772,8 @@ fn test_circuit_dagger_single_gate() {
 
 #[test]
 fn test_circuit_dagger_reverses_order() {
-    let circuit = Circuit::new(
-        vec![2],
-        vec![put(vec![0], Gate::H), put(vec![0], Gate::S)],
-    )
-    .unwrap();
+    let circuit =
+        Circuit::new(vec![2], vec![put(vec![0], Gate::H), put(vec![0], Gate::S)]).unwrap();
 
     let dagger = circuit.dagger().unwrap();
     assert_eq!(dagger.elements.len(), 2);
@@ -895,10 +910,7 @@ fn test_label_validation() {
 
 #[test]
 fn test_circuit_display_with_label() {
-    let elements = vec![
-        put(vec![0], Gate::H),
-        label(0, "step1"),
-    ];
+    let elements = vec![put(vec![0], Gate::H), label(0, "step1")];
     let circuit = Circuit::new(vec![2], elements).unwrap();
     let s = format!("{}", circuit);
     assert!(s.contains("H @ q[0]"));

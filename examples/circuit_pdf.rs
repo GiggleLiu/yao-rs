@@ -7,7 +7,7 @@
 //!
 //! Run with: cargo run --example circuit_pdf --features typst
 
-use yao_rs::{Circuit, Gate, put, control, label};
+use yao_rs::{Circuit, Gate, control, label, put};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Create a Bell state circuit with annotations:
@@ -18,11 +18,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let circuit = Circuit::new(
         vec![2, 2],
         vec![
-            label(0, "|0⟩"),           // Input state annotation on qubit 0
-            label(1, "|0⟩"),           // Input state annotation on qubit 1
-            put(vec![0], Gate::H),     // Hadamard on qubit 0
-            control(vec![0], vec![1], Gate::X),  // CNOT: control=0, target=1
-            label(0, "|Φ+⟩"),          // Bell state annotation
+            label(0, "|0⟩"),                    // Input state annotation on qubit 0
+            label(1, "|0⟩"),                    // Input state annotation on qubit 1
+            put(vec![0], Gate::H),              // Hadamard on qubit 0
+            control(vec![0], vec![1], Gate::X), // CNOT: control=0, target=1
+            label(0, "|Φ+⟩"),                   // Bell state annotation
         ],
     )?;
 

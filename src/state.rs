@@ -36,9 +36,19 @@ impl State {
     /// Index computation uses row-major ordering:
     /// index = levels[0]*d_1*d_2*... + levels[1]*d_2*... + ... + levels[n-1]
     pub fn product_state(dims: &[usize], levels: &[usize]) -> Self {
-        assert_eq!(dims.len(), levels.len(), "dims and levels must have the same length");
+        assert_eq!(
+            dims.len(),
+            levels.len(),
+            "dims and levels must have the same length"
+        );
         for (i, (&level, &dim)) in levels.iter().zip(dims.iter()).enumerate() {
-            assert!(level < dim, "level[{}] = {} is out of range for dim = {}", i, level, dim);
+            assert!(
+                level < dim,
+                "level[{}] = {} is out of range for dim = {}",
+                i,
+                level,
+                dim
+            );
         }
 
         let total: usize = dims.iter().product();

@@ -36,29 +36,15 @@ pub enum CircuitError {
         control_configs_len: usize,
     },
     /// A location index is out of range
-    LocOutOfRange {
-        loc: usize,
-        num_sites: usize,
-    },
+    LocOutOfRange { loc: usize, num_sites: usize },
     /// Overlap between target_locs and control_locs
-    OverlappingLocs {
-        overlapping: Vec<usize>,
-    },
+    OverlappingLocs { overlapping: Vec<usize> },
     /// Control site does not have dimension 2
-    ControlSiteNotQubit {
-        loc: usize,
-        dim: usize,
-    },
+    ControlSiteNotQubit { loc: usize, dim: usize },
     /// Named gate target site does not have dimension 2
-    NamedGateTargetNotQubit {
-        loc: usize,
-        dim: usize,
-    },
+    NamedGateTargetNotQubit { loc: usize, dim: usize },
     /// Gate matrix size does not match the product of target site dimensions
-    MatrixSizeMismatch {
-        expected: usize,
-        actual: usize,
-    },
+    MatrixSizeMismatch { expected: usize, actual: usize },
 }
 
 impl fmt::Display for CircuitError {
@@ -298,19 +284,20 @@ impl fmt::Display for Circuit {
                     if pg.control_locs.is_empty() {
                         writeln!(f, "  {} @ q[{}]", pg.gate, format_locs(&pg.target_locs))?;
                     } else {
-                        writeln!(f, "  C(q[{}]) {} @ q[{}]",
+                        writeln!(
+                            f,
+                            "  C(q[{}]) {} @ q[{}]",
                             format_locs(&pg.control_locs),
                             pg.gate,
-                            format_locs(&pg.target_locs))?;
+                            format_locs(&pg.target_locs)
+                        )?;
                     }
                 }
-                CircuitElement::Annotation(pa) => {
-                    match &pa.annotation {
-                        Annotation::Label(text) => {
-                            writeln!(f, "  \"{}\" @ q[{}]", text, pa.loc)?;
-                        }
+                CircuitElement::Annotation(pa) => match &pa.annotation {
+                    Annotation::Label(text) => {
+                        writeln!(f, "  \"{}\" @ q[{}]", text, pa.loc)?;
                     }
-                }
+                },
             }
         }
         Ok(())
@@ -318,7 +305,10 @@ impl fmt::Display for Circuit {
 }
 
 fn format_locs(locs: &[usize]) -> String {
-    locs.iter().map(|l| l.to_string()).collect::<Vec<_>>().join(", ")
+    locs.iter()
+        .map(|l| l.to_string())
+        .collect::<Vec<_>>()
+        .join(", ")
 }
 
 /// Place a gate on target locations (no controls).

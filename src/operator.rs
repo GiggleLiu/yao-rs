@@ -1,4 +1,4 @@
-use ndarray::{array, Array2};
+use ndarray::{Array2, array};
 use num_complex::Complex64;
 use serde::{Deserialize, Serialize};
 use std::ops::{Add, Mul, Neg};
@@ -6,14 +6,14 @@ use std::ops::{Add, Mul, Neg};
 /// Single-site operator (Pauli basis + projectors)
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Op {
-    I,   // Identity
-    X,   // Pauli X
-    Y,   // Pauli Y
-    Z,   // Pauli Z
-    P0,  // |0><0| projector
-    P1,  // |1><1| projector
-    Pu,  // |0><1| raising
-    Pd,  // |1><0| lowering
+    I,  // Identity
+    X,  // Pauli X
+    Y,  // Pauli Y
+    Z,  // Pauli Z
+    P0, // |0><0| projector
+    P1, // |1><1| projector
+    Pu, // |0><1| raising
+    Pd, // |1><0| lowering
 }
 
 /// Product of operators at different sites: Z(0)Z(1)

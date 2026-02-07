@@ -49,7 +49,9 @@ pub fn pair_square(m: usize, n: usize, periodic: bool) -> Vec<(usize, usize)> {
 ///
 /// For each qubit i (0-indexed): apply H, then for j in 1..(n-i):
 /// controlled-Phase(2pi/2^(j+1)) with control=i+j, target=i.
-/// Finally SWAP pairs to reverse bit order.
+///
+/// This matches Yao.jl's `EasyBuild.qft_circuit` which does NOT include
+/// the final bit-reversal SWAP layer.
 pub fn qft_circuit(n: usize) -> Circuit {
     let mut elements: Vec<CircuitElement> = Vec::new();
 
@@ -62,11 +64,6 @@ pub fn qft_circuit(n: usize) -> Circuit {
             let theta = 2.0 * PI / (1u64 << (j + 1)) as f64;
             elements.push(control(vec![i + j], vec![i], Gate::Phase(theta)));
         }
-    }
-
-    // Reverse qubit order with SWAPs
-    for i in 0..(n / 2) {
-        elements.push(put(vec![i, n - 1 - i], Gate::SWAP));
     }
 
     Circuit::new(vec![2; n], elements).unwrap()
@@ -281,7 +278,11 @@ pub fn phase_estimation_circuit(unitary: Gate, n_reg: usize, n_b: usize) -> Circ
 }
 
 /// Helper: multiply two complex matrices of given dimension.
-fn mat_mul(a: &Array2<Complex64>, b: &Array2<Complex64>, dim: usize) -> Array2<Complex64> {
+pub(crate) fn mat_mul(
+    a: &Array2<Complex64>,
+    b: &Array2<Complex64>,
+    dim: usize,
+) -> Array2<Complex64> {
     let mut result = Array2::zeros((dim, dim));
     for i in 0..dim {
         for j in 0..dim {
@@ -577,9 +578,13 @@ impl Lattice53 {
         r2: usize,
         c2: usize,
     ) {
-        if r1 < self.nrows && c1 < self.ncols && r2 < self.nrows && c2 < self.ncols
+        if r1 < self.nrows
+            && c1 < self.ncols
+            && r2 < self.nrows
+            && c2 < self.ncols
             && let (Some(q1), Some(q2)) = (self.grid[r1][c1], self.grid[r2][c2])
-            && q1 < self.nbits && q2 < self.nbits
+            && q1 < self.nbits
+            && q2 < self.nbits
         {
             pairs.push((q1, q2));
         }
@@ -617,61 +622,4 @@ pub fn rand_google53(depth: usize, nbits: usize, rng: &mut impl Rng) -> Circuit 
     }
 
     Circuit::new(vec![2; n], elements).unwrap()
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use num_complex::Complex64;
-    use ndarray::Array2;
-
-    #[test]
-    fn test_mat_mul_identity() {
-        let one = Complex64::new(1.0, 0.0);
-        let zero = Complex64::new(0.0, 0.0);
-        let id = Array2::from_shape_vec((2, 2), vec![one, zero, zero, one]).unwrap();
-        let a = Array2::from_shape_vec((2, 2), vec![
-            Complex64::new(1.0, 2.0), Complex64::new(3.0, 4.0),
-            Complex64::new(5.0, 6.0), Complex64::new(7.0, 8.0),
-        ]).unwrap();
-
-        let result = mat_mul(&a, &id, 2);
-        for i in 0..2 {
-            for j in 0..2 {
-                assert!((result[[i, j]] - a[[i, j]]).norm() < 1e-10);
-            }
-        }
-    }
-
-    #[test]
-    fn test_mat_mul_known_product() {
-        // [[1, 2], [3, 4]] * [[5, 6], [7, 8]] = [[19, 22], [43, 50]]
-        let a = Array2::from_shape_vec((2, 2), vec![
-            Complex64::new(1.0, 0.0), Complex64::new(2.0, 0.0),
-            Complex64::new(3.0, 0.0), Complex64::new(4.0, 0.0),
-        ]).unwrap();
-        let b = Array2::from_shape_vec((2, 2), vec![
-            Complex64::new(5.0, 0.0), Complex64::new(6.0, 0.0),
-            Complex64::new(7.0, 0.0), Complex64::new(8.0, 0.0),
-        ]).unwrap();
-        let result = mat_mul(&a, &b, 2);
-        assert!((result[[0, 0]] - Complex64::new(19.0, 0.0)).norm() < 1e-10);
-        assert!((result[[0, 1]] - Complex64::new(22.0, 0.0)).norm() < 1e-10);
-        assert!((result[[1, 0]] - Complex64::new(43.0, 0.0)).norm() < 1e-10);
-        assert!((result[[1, 1]] - Complex64::new(50.0, 0.0)).norm() < 1e-10);
-    }
-
-    #[test]
-    fn test_mat_mul_complex() {
-        // Pauli Y = [[0, -i], [i, 0]], Y^2 = I
-        let i = Complex64::new(0.0, 1.0);
-        let one = Complex64::new(1.0, 0.0);
-        let zero = Complex64::new(0.0, 0.0);
-        let y = Array2::from_shape_vec((2, 2), vec![zero, -i, i, zero]).unwrap();
-        let result = mat_mul(&y, &y, 2);
-        assert!((result[[0, 0]] - one).norm() < 1e-10);
-        assert!((result[[0, 1]] - zero).norm() < 1e-10);
-        assert!((result[[1, 0]] - zero).norm() < 1e-10);
-        assert!((result[[1, 1]] - one).norm() < 1e-10);
-    }
 }

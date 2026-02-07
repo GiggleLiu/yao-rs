@@ -1,6 +1,6 @@
-use yao_rs::operator::{Op, op_matrix, OperatorString, OperatorPolynomial};
 use ndarray::array;
 use num_complex::Complex64;
+use yao_rs::operator::{Op, OperatorPolynomial, OperatorString, op_matrix};
 
 #[test]
 fn test_op_x_matrix() {

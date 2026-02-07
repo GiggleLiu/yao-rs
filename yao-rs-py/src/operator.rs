@@ -1,6 +1,6 @@
-use pyo3::prelude::*;
-use pyo3::exceptions::PyValueError;
 use num_complex::Complex64;
+use pyo3::exceptions::PyValueError;
+use pyo3::prelude::*;
 use yao_rs::operator::{Op, OperatorPolynomial};
 
 #[pyclass(name = "OperatorPolynomial")]
@@ -11,42 +11,74 @@ pub struct PyOperatorPolynomial(pub OperatorPolynomial);
 impl PyOperatorPolynomial {
     #[staticmethod]
     fn i(site: usize) -> Self {
-        PyOperatorPolynomial(OperatorPolynomial::single(site, Op::I, Complex64::new(1.0, 0.0)))
+        PyOperatorPolynomial(OperatorPolynomial::single(
+            site,
+            Op::I,
+            Complex64::new(1.0, 0.0),
+        ))
     }
 
     #[staticmethod]
     fn x(site: usize) -> Self {
-        PyOperatorPolynomial(OperatorPolynomial::single(site, Op::X, Complex64::new(1.0, 0.0)))
+        PyOperatorPolynomial(OperatorPolynomial::single(
+            site,
+            Op::X,
+            Complex64::new(1.0, 0.0),
+        ))
     }
 
     #[staticmethod]
     fn y(site: usize) -> Self {
-        PyOperatorPolynomial(OperatorPolynomial::single(site, Op::Y, Complex64::new(1.0, 0.0)))
+        PyOperatorPolynomial(OperatorPolynomial::single(
+            site,
+            Op::Y,
+            Complex64::new(1.0, 0.0),
+        ))
     }
 
     #[staticmethod]
     fn z(site: usize) -> Self {
-        PyOperatorPolynomial(OperatorPolynomial::single(site, Op::Z, Complex64::new(1.0, 0.0)))
+        PyOperatorPolynomial(OperatorPolynomial::single(
+            site,
+            Op::Z,
+            Complex64::new(1.0, 0.0),
+        ))
     }
 
     #[staticmethod]
     fn p0(site: usize) -> Self {
-        PyOperatorPolynomial(OperatorPolynomial::single(site, Op::P0, Complex64::new(1.0, 0.0)))
+        PyOperatorPolynomial(OperatorPolynomial::single(
+            site,
+            Op::P0,
+            Complex64::new(1.0, 0.0),
+        ))
     }
 
     #[staticmethod]
     fn p1(site: usize) -> Self {
-        PyOperatorPolynomial(OperatorPolynomial::single(site, Op::P1, Complex64::new(1.0, 0.0)))
+        PyOperatorPolynomial(OperatorPolynomial::single(
+            site,
+            Op::P1,
+            Complex64::new(1.0, 0.0),
+        ))
     }
 
     #[staticmethod]
     fn pu(site: usize) -> Self {
-        PyOperatorPolynomial(OperatorPolynomial::single(site, Op::Pu, Complex64::new(1.0, 0.0)))
+        PyOperatorPolynomial(OperatorPolynomial::single(
+            site,
+            Op::Pu,
+            Complex64::new(1.0, 0.0),
+        ))
     }
 
     #[staticmethod]
     fn pd(site: usize) -> Self {
-        PyOperatorPolynomial(OperatorPolynomial::single(site, Op::Pd, Complex64::new(1.0, 0.0)))
+        PyOperatorPolynomial(OperatorPolynomial::single(
+            site,
+            Op::Pd,
+            Complex64::new(1.0, 0.0),
+        ))
     }
 
     #[staticmethod]
@@ -98,8 +130,7 @@ impl PyOperatorPolynomial {
     }
 
     fn to_json(&self) -> PyResult<String> {
-        serde_json::to_string(&self.0)
-            .map_err(|e| PyValueError::new_err(format!("{}", e)))
+        serde_json::to_string(&self.0).map_err(|e| PyValueError::new_err(format!("{}", e)))
     }
 
     #[staticmethod]

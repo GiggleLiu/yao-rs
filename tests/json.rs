@@ -1,8 +1,10 @@
-use yao_rs::{Gate, Circuit, CircuitElement, put, control, label, circuit_to_json, circuit_from_json};
+use approx::assert_abs_diff_eq;
 use ndarray::Array2;
 use num_complex::Complex64;
-use approx::assert_abs_diff_eq;
 use std::f64::consts::PI;
+use yao_rs::{
+    Circuit, CircuitElement, Gate, circuit_from_json, circuit_to_json, control, label, put,
+};
 
 #[test]
 fn test_roundtrip_named_gates() {
@@ -36,24 +38,40 @@ fn test_roundtrip_controlled_gate() {
 
 #[test]
 fn test_roundtrip_custom_gate() {
-    let matrix = Array2::from_shape_vec((2, 2), vec![
-        Complex64::new(0.0, 0.0), Complex64::new(1.0, 0.0),
-        Complex64::new(1.0, 0.0), Complex64::new(0.0, 0.0),
-    ]).unwrap();
-    let elements = vec![put(vec![0], Gate::Custom {
-        matrix: matrix.clone(), is_diagonal: false, label: "MyGate".to_string(),
-    })];
+    let matrix = Array2::from_shape_vec(
+        (2, 2),
+        vec![
+            Complex64::new(0.0, 0.0),
+            Complex64::new(1.0, 0.0),
+            Complex64::new(1.0, 0.0),
+            Complex64::new(0.0, 0.0),
+        ],
+    )
+    .unwrap();
+    let elements = vec![put(
+        vec![0],
+        Gate::Custom {
+            matrix: matrix.clone(),
+            is_diagonal: false,
+            label: "MyGate".to_string(),
+        },
+    )];
     let circuit = Circuit::new(vec![2], elements).unwrap();
     let json = circuit_to_json(&circuit);
     let restored = circuit_from_json(&json).unwrap();
     if let CircuitElement::Gate(pg) = &restored.elements[0] {
-        if let Gate::Custom { matrix: m, is_diagonal, label } = &pg.gate {
+        if let Gate::Custom {
+            matrix: m,
+            is_diagonal,
+            label,
+        } = &pg.gate
+        {
             assert_eq!(label, "MyGate");
             assert!(!is_diagonal);
             for i in 0..2 {
                 for j in 0..2 {
-                    assert_abs_diff_eq!(m[[i,j]].re, matrix[[i,j]].re, epsilon = 1e-15);
-                    assert_abs_diff_eq!(m[[i,j]].im, matrix[[i,j]].im, epsilon = 1e-15);
+                    assert_abs_diff_eq!(m[[i, j]].re, matrix[[i, j]].re, epsilon = 1e-15);
+                    assert_abs_diff_eq!(m[[i, j]].im, matrix[[i, j]].im, epsilon = 1e-15);
                 }
             }
         } else {
@@ -175,7 +193,8 @@ fn test_from_json_malformed() {
 
 #[test]
 fn test_from_json_unknown_gate() {
-    let json = r#"{"num_qubits": 1, "elements": [{"type": "gate", "gate": "FooBar", "targets": [0]}]}"#;
+    let json =
+        r#"{"num_qubits": 1, "elements": [{"type": "gate", "gate": "FooBar", "targets": [0]}]}"#;
     let result = circuit_from_json(json);
     assert!(result.is_err());
     assert!(result.unwrap_err().contains("Unknown gate type: FooBar"));
@@ -183,7 +202,8 @@ fn test_from_json_unknown_gate() {
 
 #[test]
 fn test_from_json_phase_missing_params() {
-    let json = r#"{"num_qubits": 1, "elements": [{"type": "gate", "gate": "Phase", "targets": [0]}]}"#;
+    let json =
+        r#"{"num_qubits": 1, "elements": [{"type": "gate", "gate": "Phase", "targets": [0]}]}"#;
     let result = circuit_from_json(json);
     assert!(result.is_err());
     assert!(result.unwrap_err().contains("Phase gate requires params"));
@@ -194,7 +214,11 @@ fn test_from_json_phase_empty_params() {
     let json = r#"{"num_qubits": 1, "elements": [{"type": "gate", "gate": "Phase", "targets": [0], "params": []}]}"#;
     let result = circuit_from_json(json);
     assert!(result.is_err());
-    assert!(result.unwrap_err().contains("Phase gate requires at least 1 parameter"));
+    assert!(
+        result
+            .unwrap_err()
+            .contains("Phase gate requires at least 1 parameter")
+    );
 }
 
 #[test]
@@ -223,7 +247,8 @@ fn test_from_json_rz_missing_params() {
 
 #[test]
 fn test_from_json_fsim_missing_params() {
-    let json = r#"{"num_qubits": 2, "elements": [{"type": "gate", "gate": "FSim", "targets": [0, 1]}]}"#;
+    let json =
+        r#"{"num_qubits": 2, "elements": [{"type": "gate", "gate": "FSim", "targets": [0, 1]}]}"#;
     let result = circuit_from_json(json);
     assert!(result.is_err());
     assert!(result.unwrap_err().contains("FSim gate requires params"));
@@ -234,12 +259,17 @@ fn test_from_json_fsim_insufficient_params() {
     let json = r#"{"num_qubits": 2, "elements": [{"type": "gate", "gate": "FSim", "targets": [0, 1], "params": [1.0]}]}"#;
     let result = circuit_from_json(json);
     assert!(result.is_err());
-    assert!(result.unwrap_err().contains("FSim gate requires 2 parameters"));
+    assert!(
+        result
+            .unwrap_err()
+            .contains("FSim gate requires 2 parameters")
+    );
 }
 
 #[test]
 fn test_from_json_custom_missing_matrix() {
-    let json = r#"{"num_qubits": 1, "elements": [{"type": "gate", "gate": "Custom", "targets": [0]}]}"#;
+    let json =
+        r#"{"num_qubits": 1, "elements": [{"type": "gate", "gate": "Custom", "targets": [0]}]}"#;
     let result = circuit_from_json(json);
     assert!(result.is_err());
     assert!(result.unwrap_err().contains("Custom gate requires matrix"));
@@ -250,7 +280,11 @@ fn test_from_json_custom_empty_matrix() {
     let json = r#"{"num_qubits": 1, "elements": [{"type": "gate", "gate": "Custom", "targets": [0], "matrix": []}]}"#;
     let result = circuit_from_json(json);
     assert!(result.is_err());
-    assert!(result.unwrap_err().contains("Custom gate matrix cannot be empty"));
+    assert!(
+        result
+            .unwrap_err()
+            .contains("Custom gate matrix cannot be empty")
+    );
 }
 
 #[test]
@@ -258,7 +292,11 @@ fn test_from_json_custom_ragged_matrix() {
     let json = r#"{"num_qubits": 1, "elements": [{"type": "gate", "gate": "Custom", "targets": [0], "matrix": [[[1,0],[0,0]], [[0,0]]]}]}"#;
     let result = circuit_from_json(json);
     assert!(result.is_err());
-    assert!(result.unwrap_err().contains("Custom gate matrix rows must have equal length"));
+    assert!(
+        result
+            .unwrap_err()
+            .contains("Custom gate matrix rows must have equal length")
+    );
 }
 
 #[test]
@@ -272,18 +310,32 @@ fn test_from_json_circuit_validation_error() {
 
 #[test]
 fn test_roundtrip_custom_diagonal() {
-    let matrix = Array2::from_shape_vec((2, 2), vec![
-        Complex64::new(1.0, 0.0), Complex64::new(0.0, 0.0),
-        Complex64::new(0.0, 0.0), Complex64::new(0.0, 1.0),
-    ]).unwrap();
-    let elements = vec![put(vec![0], Gate::Custom {
-        matrix: matrix.clone(), is_diagonal: true, label: "DiagGate".to_string(),
-    })];
+    let matrix = Array2::from_shape_vec(
+        (2, 2),
+        vec![
+            Complex64::new(1.0, 0.0),
+            Complex64::new(0.0, 0.0),
+            Complex64::new(0.0, 0.0),
+            Complex64::new(0.0, 1.0),
+        ],
+    )
+    .unwrap();
+    let elements = vec![put(
+        vec![0],
+        Gate::Custom {
+            matrix: matrix.clone(),
+            is_diagonal: true,
+            label: "DiagGate".to_string(),
+        },
+    )];
     let circuit = Circuit::new(vec![2], elements).unwrap();
     let json = circuit_to_json(&circuit);
     let restored = circuit_from_json(&json).unwrap();
     if let CircuitElement::Gate(pg) = &restored.elements[0] {
-        if let Gate::Custom { is_diagonal, label, .. } = &pg.gate {
+        if let Gate::Custom {
+            is_diagonal, label, ..
+        } = &pg.gate
+        {
             assert!(is_diagonal);
             assert_eq!(label, "DiagGate");
         } else {
@@ -325,11 +377,8 @@ fn test_roundtrip_label() {
     // Check label is preserved
     if let CircuitElement::Annotation(pa) = &restored.elements[1] {
         assert_eq!(pa.loc, 0);
-        if let yao_rs::Annotation::Label(text) = &pa.annotation {
-            assert_eq!(text, "Bell prep");
-        } else {
-            panic!("Expected Label annotation");
-        }
+        let yao_rs::Annotation::Label(text) = &pa.annotation;
+        assert_eq!(text, "Bell prep");
     } else {
         panic!("Expected Annotation element");
     }

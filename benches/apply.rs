@@ -3,20 +3,20 @@
 //! Run with: cargo bench
 //! For HTML reports: cargo bench -- --verbose
 
-use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
+use criterion::{BenchmarkId, Criterion, black_box, criterion_group, criterion_main};
 use std::f64::consts::PI;
-use yao_rs::circuit::PositionedGate;
-use yao_rs::{apply, control, put, Circuit, Gate, State};
+use yao_rs::circuit::CircuitElement;
+use yao_rs::{Circuit, Gate, State, apply, control, put};
 
 /// Build a circuit with H gates on all qubits.
 fn h_all_circuit(n: usize) -> Circuit {
-    let gates: Vec<PositionedGate> = (0..n).map(|i| put(vec![i], Gate::H)).collect();
+    let gates: Vec<CircuitElement> = (0..n).map(|i| put(vec![i], Gate::H)).collect();
     Circuit::new(vec![2; n], gates).unwrap()
 }
 
 /// Build a QFT circuit on n qubits (without final SWAP).
 fn qft_circuit(n: usize) -> Circuit {
-    let mut gates: Vec<PositionedGate> = Vec::new();
+    let mut gates: Vec<CircuitElement> = Vec::new();
 
     for i in 0..n {
         // H gate on qubit i
@@ -31,7 +31,12 @@ fn qft_circuit(n: usize) -> Circuit {
 
     // Reverse qubit order with SWAPs
     for i in 0..(n / 2) {
-        gates.push(PositionedGate::new(Gate::SWAP, vec![i, n - 1 - i], vec![], vec![]));
+        gates.push(CircuitElement::Gate(yao_rs::circuit::PositionedGate::new(
+            Gate::SWAP,
+            vec![i, n - 1 - i],
+            vec![],
+            vec![],
+        )));
     }
 
     Circuit::new(vec![2; n], gates).unwrap()
@@ -39,7 +44,7 @@ fn qft_circuit(n: usize) -> Circuit {
 
 /// Build a random-ish circuit with H, X, CNOT gates.
 fn mixed_circuit(n: usize) -> Circuit {
-    let mut gates: Vec<PositionedGate> = Vec::new();
+    let mut gates: Vec<CircuitElement> = Vec::new();
 
     // Layer of H gates
     for i in 0..n {
@@ -118,11 +123,9 @@ fn bench_scaling(c: &mut Criterion) {
         let circuit = h_all_circuit(n_qubits);
         let state = State::zero_state(&vec![2; n_qubits]);
 
-        group.bench_with_input(
-            BenchmarkId::new("h_gates", n_qubits),
-            &n_qubits,
-            |b, _| b.iter(|| apply(black_box(&circuit), black_box(&state))),
-        );
+        group.bench_with_input(BenchmarkId::new("h_gates", n_qubits), &n_qubits, |b, _| {
+            b.iter(|| apply(black_box(&circuit), black_box(&state)))
+        });
     }
 
     group.finish();

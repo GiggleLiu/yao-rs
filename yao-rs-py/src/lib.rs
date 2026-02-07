@@ -4,15 +4,15 @@
 
 use pyo3::prelude::*;
 
-mod gate;
 mod circuit;
+mod gate;
 mod operator;
 mod tensor_network;
 
-use gate::PyGate;
 use circuit::PyCircuit;
+use gate::PyGate;
 use operator::PyOperatorPolynomial;
-use tensor_network::{PyTensorNetwork, circuit_to_overlap, circuit_to_expectation};
+use tensor_network::{PyTensorNetwork, circuit_to_expectation, circuit_to_overlap};
 
 #[pyfunction]
 fn version() -> &'static str {

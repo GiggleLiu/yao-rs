@@ -31,7 +31,9 @@ use crate::einsum::TensorNetwork;
 /// Panics if the contraction order optimization fails.
 pub fn contract(tn: &TensorNetwork, device: Device) -> Tensor {
     // Convert ndarray tensors to tch tensors
-    let tch_tensors: Vec<Tensor> = tn.tensors.iter()
+    let tch_tensors: Vec<Tensor> = tn
+        .tensors
+        .iter()
         .map(|t| ndarray_to_tch(t, device))
         .collect();
 
@@ -48,9 +50,7 @@ fn ndarray_to_tch(arr: &ArrayD<Complex64>, device: Device) -> Tensor {
     let shape: Vec<i64> = arr.shape().iter().map(|&d| d as i64).collect();
 
     // Interleave real and imaginary parts for ComplexFloat64
-    let data: Vec<f64> = arr.iter()
-        .flat_map(|c| [c.re, c.im])
-        .collect();
+    let data: Vec<f64> = arr.iter().flat_map(|c| [c.re, c.im]).collect();
 
     // Create as real tensor with doubled last dimension, then view as complex
     let numel: i64 = shape.iter().product();
@@ -69,12 +69,11 @@ fn execute_tree(
     original_ixs: &[Vec<usize>],
 ) -> Tensor {
     match tree {
-        NestedEinsum::Leaf { tensor_index } => {
-            tensors[*tensor_index].shallow_clone()
-        }
+        NestedEinsum::Leaf { tensor_index } => tensors[*tensor_index].shallow_clone(),
         NestedEinsum::Node { args, eins } => {
             // Recursively compute children
-            let child_results: Vec<Tensor> = args.iter()
+            let child_results: Vec<Tensor> = args
+                .iter()
                 .map(|child| execute_tree(child, tensors, original_ixs))
                 .collect();
 
@@ -106,19 +105,20 @@ fn eincode_to_string(code: &EinCode<usize>) -> String {
     }
 
     // Map labels to characters
-    let label_to_char: HashMap<usize, char> = all_labels.iter()
+    let label_to_char: HashMap<usize, char> = all_labels
+        .iter()
         .enumerate()
         .map(|(i, &l)| (l, index_to_char(i)))
         .collect();
 
     // Build the string: "input1,input2,...->output"
-    let inputs: Vec<String> = code.ixs.iter()
+    let inputs: Vec<String> = code
+        .ixs
+        .iter()
         .map(|ixs| ixs.iter().map(|l| label_to_char[l]).collect())
         .collect();
 
-    let output: String = code.iy.iter()
-        .map(|l| label_to_char[l])
-        .collect();
+    let output: String = code.iy.iter().map(|l| label_to_char[l]).collect();
 
     format!("{}->{}", inputs.join(","), output)
 }
@@ -132,63 +132,5 @@ fn index_to_char(i: usize) -> char {
         (b'A' + (i - 26) as u8) as char
     } else {
         panic!("Too many unique labels (max 52) for einsum string notation")
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::einsum::circuit_to_einsum_with_boundary;
-    use crate::circuit::{Circuit, put, control};
-    use crate::gate::Gate;
-
-    #[test]
-    fn test_contract_identity() {
-        let circuit = Circuit::new(vec![2, 2], vec![]).unwrap();
-        let tn = circuit_to_einsum_with_boundary(&circuit, &[0, 1]);
-        let result = contract(&tn, Device::Cpu);
-
-        // Scalar result: ⟨00|I|00⟩ = 1
-        let re = f64::try_from(result.real()).unwrap();
-        let im = f64::try_from(result.imag()).unwrap();
-        assert!((re - 1.0).abs() < 1e-10);
-        assert!(im.abs() < 1e-10);
-    }
-
-    #[test]
-    fn test_contract_h_gate() {
-        let circuit = Circuit::new(
-            vec![2],
-            vec![put(vec![0], Gate::H)],
-        ).unwrap();
-        let tn = circuit_to_einsum_with_boundary(&circuit, &[0]);
-        let result = contract(&tn, Device::Cpu);
-
-        // ⟨0|H|0⟩ = 1/√2
-        let expected = 1.0 / 2.0_f64.sqrt();
-        let re = f64::try_from(result.real()).unwrap();
-        let im = f64::try_from(result.imag()).unwrap();
-        assert!((re - expected).abs() < 1e-10);
-        assert!(im.abs() < 1e-10);
-    }
-
-    #[test]
-    fn test_contract_bell_state() {
-        let circuit = Circuit::new(
-            vec![2, 2],
-            vec![
-                put(vec![0], Gate::H),
-                control(vec![0], vec![1], Gate::X),
-            ],
-        ).unwrap();
-        let tn = circuit_to_einsum_with_boundary(&circuit, &[0, 1]);
-        let result = contract(&tn, Device::Cpu);
-
-        // ⟨00|Bell⟩ = 1/√2
-        let expected = 1.0 / 2.0_f64.sqrt();
-        let re = f64::try_from(result.real()).unwrap();
-        let im = f64::try_from(result.imag()).unwrap();
-        assert!((re - expected).abs() < 1e-10);
-        assert!(im.abs() < 1e-10);
     }
 }

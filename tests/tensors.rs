@@ -2,7 +2,7 @@ use ndarray::{Array2, IxDyn};
 use num_complex::Complex64;
 use yao_rs::circuit::PositionedGate;
 use yao_rs::gate::Gate;
-use yao_rs::tensors::{gate_to_tensor, Leg};
+use yao_rs::tensors::{Leg, gate_to_tensor};
 
 fn c(re: f64, im: f64) -> Complex64 {
     Complex64::new(re, im)
@@ -62,10 +62,7 @@ fn test_cnot_gate() {
     let (tensor, legs) = gate_to_tensor(&pg, &dims);
 
     assert_eq!(tensor.shape(), &[2, 2, 2, 2]);
-    assert_eq!(
-        legs,
-        vec![Leg::Out(0), Leg::Out(1), Leg::In(0), Leg::In(1)]
-    );
+    assert_eq!(legs, vec![Leg::Out(0), Leg::Out(1), Leg::In(0), Leg::In(1)]);
 
     // CNOT matrix (in |ctrl, tgt> basis):
     // |00> -> |00>  : M[0,0] = 1
@@ -107,10 +104,7 @@ fn test_cz_gate() {
     let (tensor, legs) = gate_to_tensor(&pg, &dims);
 
     assert_eq!(tensor.shape(), &[2, 2, 2, 2]);
-    assert_eq!(
-        legs,
-        vec![Leg::Out(0), Leg::Out(1), Leg::In(0), Leg::In(1)]
-    );
+    assert_eq!(legs, vec![Leg::Out(0), Leg::Out(1), Leg::In(0), Leg::In(1)]);
 
     // CZ matrix:
     // ctrl=0: identity => M[0,0]=1, M[1,1]=1
@@ -140,10 +134,7 @@ fn test_swap_gate() {
     let (tensor, legs) = gate_to_tensor(&pg, &dims);
 
     assert_eq!(tensor.shape(), &[2, 2, 2, 2]);
-    assert_eq!(
-        legs,
-        vec![Leg::Out(0), Leg::Out(1), Leg::In(0), Leg::In(1)]
-    );
+    assert_eq!(legs, vec![Leg::Out(0), Leg::Out(1), Leg::In(0), Leg::In(1)]);
 
     // SWAP matrix: |00>->|00>, |01>->|10>, |10>->|01>, |11>->|11>
     // tensor[out0, out1, in0, in1] = M[out0*2+out1, in0*2+in1]
@@ -275,10 +266,7 @@ fn test_controlled_gate_trigger_on_zero() {
     let (tensor, legs) = gate_to_tensor(&pg, &dims);
 
     assert_eq!(tensor.shape(), &[2, 2, 2, 2]);
-    assert_eq!(
-        legs,
-        vec![Leg::Out(0), Leg::Out(1), Leg::In(0), Leg::In(1)]
-    );
+    assert_eq!(legs, vec![Leg::Out(0), Leg::Out(1), Leg::In(0), Leg::In(1)]);
 
     // ctrl=0 (trigger): X on target => |00>->|01>, |01>->|00>
     // ctrl=1: identity => |10>->|10>, |11>->|11>
