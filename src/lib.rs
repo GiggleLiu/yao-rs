@@ -1,11 +1,13 @@
 pub mod apply;
 pub mod bitutils;
 pub mod circuit;
+
 pub mod easybuild;
 pub mod einsum;
 pub mod gate;
 pub mod index;
 pub mod instruct;
+pub mod instruct_qubit;
 pub mod json;
 pub mod measure;
 pub mod noise;
