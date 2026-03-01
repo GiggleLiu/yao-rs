@@ -31,11 +31,13 @@ make rustdoc       # Build and open Rust API docs
 Gate → PositionedGate → Circuit → TensorNetwork/State
 ```
 
-- **Gate** (`gate.rs`): Enum of quantum gates (X, Y, Z, H, S, T, SWAP, Rx, Ry, Rz, etc.) with matrix representations. Named gates require d=2 (qubits); `Gate::Custom` supports arbitrary qudit matrices.
+- **Gate** (`gate.rs`): Enum of quantum gates (X, Y, Z, H, S, T, SWAP, Phase, Rx, Ry, Rz, SqrtX, SqrtY, SqrtW, ISWAP, FSim) with matrix representations. Named gates require d=2 (qubits); `Gate::Custom` supports arbitrary qudit matrices.
 
 - **PositionedGate** (`circuit.rs`): Gate + placement info (`target_locs`, `control_locs`, `control_configs`). Built via `put()` for uncontrolled gates or `control()` for controlled gates.
 
-- **Circuit** (`circuit.rs`): Validated sequence of positioned gates on a register with specified dimensions (`dims: Vec<usize>`). Constructor validates: control sites must be qubits, no overlapping control/target locs, matrix size matches target dimensions.
+- **CircuitElement** (`circuit.rs`): Enum wrapping `Gate(PositionedGate)` or `Annotation(PositionedAnnotation)`. Annotations are visual-only labels (no-op in execution, rendered in PDF diagrams).
+
+- **Circuit** (`circuit.rs`): Validated sequence of `CircuitElement`s on a register with specified dimensions (`dims: Vec<usize>`). Constructor validates: control sites must be qubits, no overlapping control/target locs, matrix size matches target dimensions.
 
 - **State** (`state.rs`): Dense state vector as `ArrayD<Complex64>`.
 
@@ -56,7 +58,9 @@ Gate → PositionedGate → Circuit → TensorNetwork/State
 - `easybuild.rs`: Pre-built circuits (QFT, variational ansatz, phase estimation, Google supremacy)
 - `measure.rs`: Measurement operations (`probs`, `measure`, `measure_and_collapse`)
 - `operator.rs`: Pauli operators and polynomials for expectation values
+- `index.rs`: Mixed-radix indexing utilities for qudit support (`mixed_radix_index`, `linear_to_indices`, `iter_basis`)
 - `json.rs`: Circuit serialization
+- `torch_contractor.rs` (feature-gated): libtorch-based tensor network contraction via omeco greedy optimizer
 - `typst.rs` (feature-gated): PDF circuit rendering via embedded Typst
 
 ## Feature Flags
@@ -64,3 +68,16 @@ Gate → PositionedGate → Circuit → TensorNetwork/State
 - `parallel`: Enable rayon for parallel operations
 - `torch`: PyTorch tensor contraction via tch
 - `typst`: PDF circuit diagram generation
+
+## Claude Skills
+
+- `/issue-to-pr <number>` — Convert a GitHub issue into a PR with a brainstormed plan that triggers automated execution
+- `/fix-pr` — Address PR review comments, fix CI failures, and resolve codecov coverage gaps for the current branch
+- `/review-implementation` — Dispatch review subagents to check code quality, test coverage, and correctness before committing
+
+## Automation
+
+```bash
+make run-plan                          # Execute latest plan in docs/plans/ with Claude
+make run-plan PLAN_FILE=docs/plans/foo.md  # Execute a specific plan
+```
