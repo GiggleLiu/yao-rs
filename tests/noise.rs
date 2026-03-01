@@ -298,3 +298,204 @@ fn verify_completeness(kraus: &[Array2<Complex64>]) {
     let eye = Array2::from_diag(&ndarray::Array1::from_vec(vec![c(1.0, 0.0); d]));
     assert_matrix_approx(&sum, &eye, 1e-10);
 }
+
+// =========================================================================
+// Julia fixture cross-validation tests
+// =========================================================================
+
+/// Load noise fixture data from tests/data/noise.json
+fn load_noise_fixtures() -> serde_json::Value {
+    let data = std::fs::read_to_string(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/tests/data/noise.json"
+    ))
+    .unwrap();
+    serde_json::from_str(&data).unwrap()
+}
+
+/// Parse a 2D matrix from fixture JSON {re: [[...]], im: [[...]]}
+fn parse_matrix(val: &serde_json::Value) -> Array2<Complex64> {
+    let re = val["re"].as_array().unwrap();
+    let im = val["im"].as_array().unwrap();
+    let rows = re.len();
+    let cols = re[0].as_array().unwrap().len();
+    let mut mat = Array2::zeros((rows, cols));
+    for i in 0..rows {
+        for j in 0..cols {
+            let r = re[i].as_array().unwrap()[j].as_f64().unwrap();
+            let m = im[i].as_array().unwrap()[j].as_f64().unwrap();
+            mat[[i, j]] = c(r, m);
+        }
+    }
+    mat
+}
+
+#[test]
+fn test_kraus_matches_julia_bit_flip() {
+    use yao_rs::noise::NoiseChannel;
+    let fixtures = load_noise_fixtures();
+    let fixture = &fixtures["kraus"]["bit_flip_0.1"];
+
+    let ch = NoiseChannel::BitFlip { p: 0.1 };
+    let kraus = ch.kraus_operators();
+
+    assert_eq!(kraus.len(), fixture["num_kraus"].as_u64().unwrap() as usize);
+    for (i, k) in kraus.iter().enumerate() {
+        let expected = parse_matrix(&fixture["kraus"][i]);
+        assert_matrix_approx(k, &expected, 1e-10);
+    }
+}
+
+#[test]
+fn test_kraus_matches_julia_phase_flip() {
+    use yao_rs::noise::NoiseChannel;
+    let fixtures = load_noise_fixtures();
+    let fixture = &fixtures["kraus"]["phase_flip_0.2"];
+
+    let ch = NoiseChannel::PhaseFlip { p: 0.2 };
+    let kraus = ch.kraus_operators();
+
+    assert_eq!(kraus.len(), fixture["num_kraus"].as_u64().unwrap() as usize);
+    for (i, k) in kraus.iter().enumerate() {
+        let expected = parse_matrix(&fixture["kraus"][i]);
+        assert_matrix_approx(k, &expected, 1e-10);
+    }
+}
+
+#[test]
+fn test_kraus_matches_julia_pauli_channel() {
+    use yao_rs::noise::NoiseChannel;
+    let fixtures = load_noise_fixtures();
+    let fixture = &fixtures["kraus"]["pauli_0.1_0.2_0.05"];
+
+    let ch = NoiseChannel::PauliChannel {
+        px: 0.1,
+        py: 0.2,
+        pz: 0.05,
+    };
+    let kraus = ch.kraus_operators();
+
+    assert_eq!(kraus.len(), fixture["num_kraus"].as_u64().unwrap() as usize);
+    for (i, k) in kraus.iter().enumerate() {
+        let expected = parse_matrix(&fixture["kraus"][i]);
+        assert_matrix_approx(k, &expected, 1e-10);
+    }
+}
+
+#[test]
+fn test_kraus_matches_julia_amplitude_damping() {
+    use yao_rs::noise::NoiseChannel;
+    let fixtures = load_noise_fixtures();
+    let fixture = &fixtures["kraus"]["amplitude_damping_0.3_0.0"];
+
+    let ch = NoiseChannel::AmplitudeDamping {
+        gamma: 0.3,
+        excited_population: 0.0,
+    };
+    let kraus = ch.kraus_operators();
+
+    assert_eq!(kraus.len(), fixture["num_kraus"].as_u64().unwrap() as usize);
+    for (i, k) in kraus.iter().enumerate() {
+        let expected = parse_matrix(&fixture["kraus"][i]);
+        assert_matrix_approx(k, &expected, 1e-10);
+    }
+}
+
+#[test]
+fn test_kraus_matches_julia_phase_damping() {
+    use yao_rs::noise::NoiseChannel;
+    let fixtures = load_noise_fixtures();
+    let fixture = &fixtures["kraus"]["phase_damping_0.2"];
+
+    let ch = NoiseChannel::PhaseDamping { gamma: 0.2 };
+    let kraus = ch.kraus_operators();
+
+    assert_eq!(kraus.len(), fixture["num_kraus"].as_u64().unwrap() as usize);
+    for (i, k) in kraus.iter().enumerate() {
+        let expected = parse_matrix(&fixture["kraus"][i]);
+        assert_matrix_approx(k, &expected, 1e-10);
+    }
+}
+
+#[test]
+fn test_kraus_matches_julia_phase_amp_damping() {
+    use yao_rs::noise::NoiseChannel;
+    let fixtures = load_noise_fixtures();
+    let fixture = &fixtures["kraus"]["phase_amp_damping_0.3_0.2_0.0"];
+
+    let ch = NoiseChannel::PhaseAmplitudeDamping {
+        amplitude: 0.3,
+        phase: 0.2,
+        excited_population: 0.0,
+    };
+    let kraus = ch.kraus_operators();
+
+    assert_eq!(kraus.len(), fixture["num_kraus"].as_u64().unwrap() as usize);
+    for (i, k) in kraus.iter().enumerate() {
+        let expected = parse_matrix(&fixture["kraus"][i]);
+        assert_matrix_approx(k, &expected, 1e-10);
+    }
+}
+
+#[test]
+fn test_kraus_matches_julia_phase_amp_damping_excited() {
+    use yao_rs::noise::NoiseChannel;
+    let fixtures = load_noise_fixtures();
+    let fixture = &fixtures["kraus"]["phase_amp_damping_0.3_0.2_0.4"];
+
+    let ch = NoiseChannel::PhaseAmplitudeDamping {
+        amplitude: 0.3,
+        phase: 0.2,
+        excited_population: 0.4,
+    };
+    let kraus = ch.kraus_operators();
+
+    assert_eq!(kraus.len(), fixture["num_kraus"].as_u64().unwrap() as usize);
+    for (i, k) in kraus.iter().enumerate() {
+        let expected = parse_matrix(&fixture["kraus"][i]);
+        assert_matrix_approx(k, &expected, 1e-10);
+    }
+}
+
+#[test]
+fn test_kraus_matches_julia_thermal_relaxation() {
+    use yao_rs::noise::NoiseChannel;
+    let fixtures = load_noise_fixtures();
+    let fixture = &fixtures["kraus"]["thermal_relaxation_100_80_10_0.0"];
+
+    let ch = NoiseChannel::ThermalRelaxation {
+        t1: 100.0,
+        t2: 80.0,
+        time: 10.0,
+        excited_population: 0.0,
+    };
+    let kraus = ch.kraus_operators();
+
+    assert_eq!(kraus.len(), fixture["num_kraus"].as_u64().unwrap() as usize);
+    for (i, k) in kraus.iter().enumerate() {
+        let expected = parse_matrix(&fixture["kraus"][i]);
+        assert_matrix_approx(k, &expected, 1e-10);
+    }
+}
+
+#[test]
+fn test_superop_matches_julia_bit_flip() {
+    use yao_rs::noise::NoiseChannel;
+    let fixtures = load_noise_fixtures();
+    let expected = parse_matrix(&fixtures["kraus"]["bit_flip_0.1"]["superop"]);
+
+    let ch = NoiseChannel::BitFlip { p: 0.1 };
+    let superop = ch.superop();
+    assert_matrix_approx(&superop, &expected, 1e-10);
+}
+
+#[test]
+fn test_superop_matches_julia_depolarizing() {
+    use yao_rs::noise::NoiseChannel;
+    let fixtures = load_noise_fixtures();
+    let expected = parse_matrix(&fixtures["kraus"]["depolarizing_1_0.1"]["superop"]);
+
+    let ch = NoiseChannel::Depolarizing { n: 1, p: 0.1 };
+    let superop = ch.superop();
+    assert_matrix_approx(&superop, &expected, 1e-10);
+}
