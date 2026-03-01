@@ -13,7 +13,7 @@ Add noise channel support to yao-rs with full Yao.jl parity. Noise channels are 
 - **Superoperator-based**: All noise channels are converted to superoperator matrices via `sum_i kron(conj(K_i), K_i)`, then inserted as `D^(4k)`-index tensors in the density matrix einsum.
 - **Circuit integration**: Noise channels are explicit `CircuitElement::Channel` variants, matching Yao.jl's block-based approach.
 - **Separate DM functions**: New `circuit_to_einsum_dm()` and `circuit_to_expectation_dm()` functions; existing API unchanged.
-- **Label scheme**: `isize` labels with negation for dual (bra) indices, matching Yao.jl exactly.
+- **Label scheme**: `i32` labels with negation for dual (bra) indices, matching Yao.jl's sign convention.
 
 ## Component 1: `NoiseChannel` Enum (`src/noise.rs`)
 
@@ -64,9 +64,9 @@ pub enum CircuitElement {
 
 ```rust
 pub struct TensorNetworkDM {
-    pub code: EinCode<isize>,
+    pub code: EinCode<i32>,
     pub tensors: Vec<ArrayD<Complex64>>,
-    pub size_dict: HashMap<isize, usize>,
+    pub size_dict: HashMap<i32, usize>,
 }
 ```
 
