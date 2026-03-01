@@ -491,3 +491,171 @@ pub fn circuit_to_expectation(circuit: &Circuit, operator: &OperatorPolynomial) 
         size_dict,
     }
 }
+
+/// Tensor network with i32 labels for density matrix mode.
+/// Positive labels = ket (forward), negative = bra (conjugate).
+///
+/// Julia ref: YaoToEinsum/src/Core.jl TensorNetwork
+#[derive(Debug, Clone)]
+pub struct TensorNetworkDM {
+    pub code: EinCode<i32>,
+    pub tensors: Vec<ArrayD<Complex64>>,
+    pub size_dict: HashMap<i32, usize>,
+}
+
+/// Convert a circuit to a density matrix tensor network.
+///
+/// Pure gates are doubled (ket + bra copies). Noise channels are
+/// converted to superoperator tensors.
+///
+/// Initial state: |0...0><0...0|
+///
+/// Julia ref: YaoToEinsum/src/circuitmap.jl:353-381 yao2einsum(; mode=DensityMatrixMode())
+pub fn circuit_to_einsum_dm(circuit: &Circuit) -> TensorNetworkDM {
+    let n = circuit.num_sites();
+
+    // Labels 1..n for ket, -1..-n for bra (matching Yao.jl)
+    let mut slots: Vec<i32> = (1..=n as i32).collect();
+    let mut next_label: i32 = n as i32 + 1;
+
+    let mut size_dict: HashMap<i32, usize> = HashMap::new();
+    for i in 0..n {
+        let label = (i + 1) as i32;
+        size_dict.insert(label, circuit.dims[i]);
+        size_dict.insert(-label, circuit.dims[i]);
+    }
+
+    let mut all_ixs: Vec<Vec<i32>> = Vec::new();
+    let mut all_tensors: Vec<ArrayD<Complex64>> = Vec::new();
+
+    // Initial state: |0><0| boundary tensors on each qubit
+    for (i, (&d, &slot)) in circuit.dims.iter().zip(slots.iter()).enumerate().take(n) {
+        let _ = i; // used implicitly via zip
+        let mut data = vec![Complex64::new(0.0, 0.0); d];
+        data[0] = Complex64::new(1.0, 0.0);
+        let tensor = ArrayD::from_shape_vec(IxDyn(&[d]), data.clone()).unwrap();
+        let tensor_conj = tensor.clone();
+
+        // Ket boundary
+        all_ixs.push(vec![slot]);
+        all_tensors.push(tensor);
+        // Bra boundary
+        all_ixs.push(vec![-slot]);
+        all_tensors.push(tensor_conj);
+    }
+
+    for element in &circuit.elements {
+        match element {
+            CircuitElement::Gate(pg) => {
+                let (tensor, _legs) = gate_to_tensor(pg, &circuit.dims);
+
+                let all_locs = pg.all_locs();
+                let has_controls = !pg.control_locs.is_empty();
+                let is_diag = pg.gate.is_diagonal() && !has_controls;
+
+                if is_diag {
+                    // Diagonal: reuse labels, add ket and bra copies
+                    let ket_ixs: Vec<i32> = pg.target_locs.iter().map(|&loc| slots[loc]).collect();
+                    all_ixs.push(ket_ixs.clone());
+                    all_tensors.push(tensor.clone());
+
+                    // Bra copy: conj tensor, negated labels
+                    let bra_ixs: Vec<i32> = ket_ixs.iter().map(|&l| -l).collect();
+                    all_ixs.push(bra_ixs);
+                    all_tensors.push(tensor.mapv(|c| c.conj()));
+                } else {
+                    // Non-diagonal: allocate new output labels
+                    let mut new_labels: Vec<i32> = Vec::new();
+                    for &loc in &all_locs {
+                        let nl = next_label;
+                        next_label += 1;
+                        size_dict.insert(nl, circuit.dims[loc]);
+                        size_dict.insert(-nl, circuit.dims[loc]);
+                        new_labels.push(nl);
+                    }
+
+                    // Ket tensor: [new_out..., current_in...]
+                    let mut ket_ixs: Vec<i32> = new_labels.clone();
+                    for &loc in &all_locs {
+                        ket_ixs.push(slots[loc]);
+                    }
+                    all_ixs.push(ket_ixs);
+                    all_tensors.push(tensor.clone());
+
+                    // Bra tensor: conj, negated labels
+                    let mut bra_ixs: Vec<i32> = new_labels.iter().map(|&l| -l).collect();
+                    for &loc in &all_locs {
+                        bra_ixs.push(-slots[loc]);
+                    }
+                    all_ixs.push(bra_ixs);
+                    all_tensors.push(tensor.mapv(|c| c.conj()));
+
+                    // Update slots
+                    for (i, &loc) in all_locs.iter().enumerate() {
+                        slots[loc] = new_labels[i];
+                    }
+                }
+            }
+            CircuitElement::Channel(pc) => {
+                // Convert to superoperator tensor
+                let superop = pc.channel.superop();
+                let k = pc.locs.len();
+                let d = 2_usize; // qubit dimension
+
+                // Reshape to D^(4k) tensor
+                let shape: Vec<usize> = vec![d; 4 * k];
+                let tensor =
+                    ArrayD::from_shape_vec(IxDyn(&shape), superop.into_raw_vec_and_offset().0)
+                        .unwrap();
+
+                // Allocate new output labels
+                let mut new_labels: Vec<i32> = Vec::new();
+                for &loc in &pc.locs {
+                    let nl = next_label;
+                    next_label += 1;
+                    size_dict.insert(nl, circuit.dims[loc]);
+                    size_dict.insert(-nl, circuit.dims[loc]);
+                    new_labels.push(nl);
+                }
+
+                // Superoperator S maps rho_in to rho_out:
+                // S = sum_i kron(K_i^*, K_i)
+                // As matrix: S[bra_out * d + ket_out, bra_in * d + ket_in]
+                // Reshaped to tensor: S[bra_out, ket_out, bra_in, ket_in]
+                // Labels: [-out, out, -in, in]
+                let mut ixs: Vec<i32> = Vec::new();
+                for &l in &new_labels {
+                    ixs.push(-l); // out bra
+                }
+                for &l in &new_labels {
+                    ixs.push(l); // out ket
+                }
+                for &loc in &pc.locs {
+                    ixs.push(-slots[loc]); // in bra
+                }
+                for &loc in &pc.locs {
+                    ixs.push(slots[loc]); // in ket
+                }
+
+                all_ixs.push(ixs);
+                all_tensors.push(tensor);
+
+                // Update slots
+                for (i, &loc) in pc.locs.iter().enumerate() {
+                    slots[loc] = new_labels[i];
+                }
+            }
+            CircuitElement::Annotation(_) => continue,
+        }
+    }
+
+    // Output: [ket_slots, bra_slots] for full density matrix
+    let mut output_labels: Vec<i32> = slots.clone();
+    output_labels.extend(slots.iter().map(|&l| -l));
+
+    TensorNetworkDM {
+        code: EinCode::new(all_ixs, output_labels),
+        tensors: all_tensors,
+        size_dict,
+    }
+}

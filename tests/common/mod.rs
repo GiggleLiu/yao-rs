@@ -870,3 +870,87 @@ pub fn apply_old(circuit: &yao_rs::Circuit, state: &State) -> State {
         data: current_data,
     }
 }
+
+// ==================== DM Tensor Network Contraction ====================
+
+/// Contract a TensorNetworkDM by naive summation (for testing small networks).
+/// Works with i32 labels (positive=ket, negative=bra).
+#[allow(dead_code)]
+pub fn contract_tn_dm(tn: &yao_rs::einsum::TensorNetworkDM) -> ArrayD<Complex64> {
+    let size_dict = &tn.size_dict;
+
+    // Collect all unique labels
+    let mut all_labels: Vec<i32> = Vec::new();
+    for ixs in &tn.code.ixs {
+        for &label in ixs {
+            if !all_labels.contains(&label) {
+                all_labels.push(label);
+            }
+        }
+    }
+    for &label in &tn.code.iy {
+        if !all_labels.contains(&label) {
+            all_labels.push(label);
+        }
+    }
+
+    let output_labels = &tn.code.iy;
+
+    let label_to_idx: HashMap<i32, usize> = all_labels
+        .iter()
+        .enumerate()
+        .map(|(i, &l)| (l, i))
+        .collect();
+
+    let all_dims: Vec<usize> = all_labels
+        .iter()
+        .map(|l| *size_dict.get(l).unwrap())
+        .collect();
+
+    let total: usize = all_dims.iter().product();
+
+    let out_dims: Vec<usize> = output_labels
+        .iter()
+        .map(|l| *size_dict.get(l).unwrap())
+        .collect();
+    let out_total: usize = if out_dims.is_empty() {
+        1
+    } else {
+        out_dims.iter().product()
+    };
+
+    let mut result_data = vec![Complex64::new(0.0, 0.0); out_total];
+
+    for flat_idx in 0..total {
+        let mut multi_idx = vec![0usize; all_labels.len()];
+        let mut remainder = flat_idx;
+        for i in (0..all_labels.len()).rev() {
+            multi_idx[i] = remainder % all_dims[i];
+            remainder /= all_dims[i];
+        }
+
+        let mut product = Complex64::new(1.0, 0.0);
+        for (t_idx, tensor) in tn.tensors.iter().enumerate() {
+            let ixs = &tn.code.ixs[t_idx];
+            let t_indices: Vec<usize> = ixs.iter().map(|l| multi_idx[label_to_idx[l]]).collect();
+            let ix_dyn = IxDyn(&t_indices);
+            product *= tensor[ix_dyn];
+        }
+
+        let mut out_flat = 0usize;
+        let mut out_stride = 1usize;
+        for i in (0..output_labels.len()).rev() {
+            let label = output_labels[i];
+            out_flat += multi_idx[label_to_idx[&label]] * out_stride;
+            out_stride *= out_dims[i];
+        }
+
+        result_data[out_flat] += product;
+    }
+
+    if out_dims.is_empty() {
+        ArrayD::from_shape_vec(IxDyn(&[]), result_data).unwrap()
+    } else {
+        ArrayD::from_shape_vec(IxDyn(&out_dims), result_data).unwrap()
+    }
+}
