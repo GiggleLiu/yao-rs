@@ -83,3 +83,175 @@ fn test_noise_channel_num_qubits() {
         1
     );
 }
+
+#[test]
+fn test_bit_flip_kraus() {
+    use yao_rs::noise::NoiseChannel;
+
+    let ch = NoiseChannel::BitFlip { p: 0.1 };
+    let kraus = ch.kraus_operators();
+    assert_eq!(kraus.len(), 2);
+
+    // K0 = sqrt(0.9)*I
+    assert!((kraus[0][[0, 0]].re - 0.9_f64.sqrt()).abs() < 1e-10);
+    assert!((kraus[0][[1, 1]].re - 0.9_f64.sqrt()).abs() < 1e-10);
+    // K1 = sqrt(0.1)*X
+    assert!((kraus[1][[0, 1]].re - 0.1_f64.sqrt()).abs() < 1e-10);
+    assert!((kraus[1][[1, 0]].re - 0.1_f64.sqrt()).abs() < 1e-10);
+
+    verify_completeness(&kraus);
+}
+
+#[test]
+fn test_phase_flip_kraus() {
+    use yao_rs::noise::NoiseChannel;
+
+    let ch = NoiseChannel::PhaseFlip { p: 0.2 };
+    let kraus = ch.kraus_operators();
+    assert_eq!(kraus.len(), 2);
+    verify_completeness(&kraus);
+
+    // K1 = sqrt(0.2)*Z → [[sqrt(0.2), 0], [0, -sqrt(0.2)]]
+    assert!((kraus[1][[0, 0]].re - 0.2_f64.sqrt()).abs() < 1e-10);
+    assert!((kraus[1][[1, 1]].re + 0.2_f64.sqrt()).abs() < 1e-10);
+}
+
+#[test]
+fn test_pauli_channel_kraus() {
+    use yao_rs::noise::NoiseChannel;
+
+    let ch = NoiseChannel::PauliChannel { px: 0.1, py: 0.2, pz: 0.05 };
+    let kraus = ch.kraus_operators();
+    assert_eq!(kraus.len(), 4);
+    verify_completeness(&kraus);
+}
+
+#[test]
+fn test_depolarizing_single_qubit_kraus() {
+    use yao_rs::noise::NoiseChannel;
+
+    let ch = NoiseChannel::Depolarizing { n: 1, p: 0.1 };
+    let kraus = ch.kraus_operators();
+    assert_eq!(kraus.len(), 4);
+    verify_completeness(&kraus);
+}
+
+#[test]
+fn test_depolarizing_two_qubit_kraus() {
+    use yao_rs::noise::NoiseChannel;
+
+    let ch = NoiseChannel::Depolarizing { n: 2, p: 0.1 };
+    let kraus = ch.kraus_operators();
+    assert_eq!(kraus.len(), 16);
+
+    // Verify each is 4x4
+    for k in &kraus {
+        assert_eq!(k.shape(), &[4, 4]);
+    }
+    verify_completeness(&kraus);
+}
+
+#[test]
+fn test_reset_kraus() {
+    use yao_rs::noise::NoiseChannel;
+
+    let ch = NoiseChannel::Reset { p0: 0.1, p1: 0.05 };
+    let kraus = ch.kraus_operators();
+    // 1 (identity) + 2 (p0>0) + 2 (p1>0) = 5
+    assert_eq!(kraus.len(), 5);
+    verify_completeness(&kraus);
+}
+
+#[test]
+fn test_reset_only_p0() {
+    use yao_rs::noise::NoiseChannel;
+
+    let ch = NoiseChannel::Reset { p0: 0.3, p1: 0.0 };
+    let kraus = ch.kraus_operators();
+    assert_eq!(kraus.len(), 3); // identity + P0 + Pd
+    verify_completeness(&kraus);
+}
+
+#[test]
+fn test_amplitude_damping_kraus() {
+    use yao_rs::noise::NoiseChannel;
+
+    let ch = NoiseChannel::AmplitudeDamping { gamma: 0.3, excited_population: 0.0 };
+    let kraus = ch.kraus_operators();
+    assert_eq!(kraus.len(), 2); // A0 and A1
+    verify_completeness(&kraus);
+}
+
+#[test]
+fn test_phase_damping_kraus() {
+    use yao_rs::noise::NoiseChannel;
+
+    let ch = NoiseChannel::PhaseDamping { gamma: 0.2 };
+    let kraus = ch.kraus_operators();
+    assert_eq!(kraus.len(), 2); // A0 and A2
+    verify_completeness(&kraus);
+}
+
+#[test]
+fn test_thermal_relaxation_kraus() {
+    use yao_rs::noise::NoiseChannel;
+
+    let ch = NoiseChannel::ThermalRelaxation { t1: 100.0, t2: 80.0, time: 10.0, excited_population: 0.0 };
+    let kraus = ch.kraus_operators();
+    assert!(kraus.len() >= 2);
+    verify_completeness(&kraus);
+}
+
+#[test]
+fn test_coherent_kraus() {
+    use yao_rs::noise::NoiseChannel;
+
+    // Coherent error = single unitary (e.g., small rotation)
+    let theta = 0.01_f64;
+    let matrix = Array2::from_shape_vec(
+        (2, 2),
+        vec![c(theta.cos(), 0.0), c(0.0, -theta.sin()), c(0.0, -theta.sin()), c(theta.cos(), 0.0)],
+    ).unwrap();
+    let ch = NoiseChannel::Coherent { matrix: matrix.clone() };
+    let kraus = ch.kraus_operators();
+    assert_eq!(kraus.len(), 1);
+    assert_matrix_approx(&kraus[0], &matrix, 1e-10);
+}
+
+#[test]
+fn test_superop_from_kraus() {
+    use yao_rs::noise::NoiseChannel;
+
+    let ch = NoiseChannel::BitFlip { p: 0.1 };
+    let superop = ch.superop();
+    assert_eq!(superop.shape(), &[4, 4]);
+
+    // Verify: superop = sum_i kron(conj(K_i), K_i)
+    let kraus = ch.kraus_operators();
+    let mut expected = Array2::<Complex64>::zeros((4, 4));
+    for k in &kraus {
+        let kc = k.mapv(|c| c.conj());
+        for i in 0..2 {
+            for j in 0..2 {
+                for m in 0..2 {
+                    for n in 0..2 {
+                        expected[[i * 2 + m, j * 2 + n]] += kc[[i, j]] * k[[m, n]];
+                    }
+                }
+            }
+        }
+    }
+    assert_matrix_approx(&superop, &expected, 1e-10);
+}
+
+/// Verify Kraus completeness: sum_i K_i^dag K_i = I
+fn verify_completeness(kraus: &[Array2<Complex64>]) {
+    let d = kraus[0].nrows();
+    let mut sum = Array2::<Complex64>::zeros((d, d));
+    for k in kraus {
+        let kdag = k.t().mapv(|c| c.conj());
+        sum = sum + kdag.dot(k);
+    }
+    let eye = Array2::from_diag(&ndarray::Array1::from_vec(vec![c(1.0, 0.0); d]));
+    assert_matrix_approx(&sum, &eye, 1e-10);
+}
