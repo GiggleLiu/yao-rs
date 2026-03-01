@@ -116,14 +116,15 @@ pub fn circuit_to_json(circuit: &Circuit) -> String {
     let elements: Vec<ElementJson> = circuit
         .elements
         .iter()
-        .map(|element| match element {
-            CircuitElement::Gate(pg) => ElementJson::Gate(positioned_gate_to_json(pg)),
+        .filter_map(|element| match element {
+            CircuitElement::Gate(pg) => Some(ElementJson::Gate(positioned_gate_to_json(pg))),
             CircuitElement::Annotation(pa) => match &pa.annotation {
-                Annotation::Label(text) => ElementJson::Label {
+                Annotation::Label(text) => Some(ElementJson::Label {
                     text: text.clone(),
                     loc: pa.loc,
-                },
+                }),
             },
+            CircuitElement::Channel(_) => None,
         })
         .collect();
 

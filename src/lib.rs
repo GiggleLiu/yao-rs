@@ -20,7 +20,8 @@ pub use typst::{PdfError, to_pdf};
 
 pub use apply::{apply, apply_inplace};
 pub use circuit::{
-    Annotation, Circuit, CircuitElement, PositionedAnnotation, PositionedGate, control, label, put,
+    Annotation, Circuit, CircuitElement, PositionedAnnotation, PositionedChannel, PositionedGate,
+    channel, control, label, put,
 };
 pub use einsum::{
     TensorNetwork, circuit_to_einsum, circuit_to_einsum_with_boundary, circuit_to_expectation,

@@ -14,17 +14,49 @@ fn c(re: f64, im: f64) -> Complex64 {
 /// Julia ref: `~/.julia/dev/Yao/lib/YaoBlocks/src/channel/errortypes.jl`
 #[derive(Debug, Clone)]
 pub enum NoiseChannel {
-    BitFlip { p: f64 },
-    PhaseFlip { p: f64 },
-    Depolarizing { n: usize, p: f64 },
-    PauliChannel { px: f64, py: f64, pz: f64 },
-    Reset { p0: f64, p1: f64 },
-    AmplitudeDamping { gamma: f64, excited_population: f64 },
-    PhaseDamping { gamma: f64 },
-    PhaseAmplitudeDamping { amplitude: f64, phase: f64, excited_population: f64 },
-    ThermalRelaxation { t1: f64, t2: f64, time: f64, excited_population: f64 },
-    Coherent { matrix: Array2<Complex64> },
-    Custom { kraus_ops: Vec<Array2<Complex64>> },
+    BitFlip {
+        p: f64,
+    },
+    PhaseFlip {
+        p: f64,
+    },
+    Depolarizing {
+        n: usize,
+        p: f64,
+    },
+    PauliChannel {
+        px: f64,
+        py: f64,
+        pz: f64,
+    },
+    Reset {
+        p0: f64,
+        p1: f64,
+    },
+    AmplitudeDamping {
+        gamma: f64,
+        excited_population: f64,
+    },
+    PhaseDamping {
+        gamma: f64,
+    },
+    PhaseAmplitudeDamping {
+        amplitude: f64,
+        phase: f64,
+        excited_population: f64,
+    },
+    ThermalRelaxation {
+        t1: f64,
+        t2: f64,
+        time: f64,
+        excited_population: f64,
+    },
+    Coherent {
+        matrix: Array2<Complex64>,
+    },
+    Custom {
+        kraus_ops: Vec<Array2<Complex64>>,
+    },
 }
 
 impl NoiseChannel {
@@ -51,10 +83,15 @@ impl NoiseChannel {
     /// Julia ref: errortypes.jl KrausChannel() conversions
     pub fn kraus_operators(&self) -> Vec<Array2<Complex64>> {
         match self {
-            NoiseChannel::PhaseAmplitudeDamping { amplitude, phase, excited_population } => {
-                phase_amplitude_damping_kraus(*amplitude, *phase, *excited_population)
-            }
-            NoiseChannel::AmplitudeDamping { gamma, excited_population } => {
+            NoiseChannel::PhaseAmplitudeDamping {
+                amplitude,
+                phase,
+                excited_population,
+            } => phase_amplitude_damping_kraus(*amplitude, *phase, *excited_population),
+            NoiseChannel::AmplitudeDamping {
+                gamma,
+                excited_population,
+            } => {
                 // Julia ref: errortypes.jl:362
                 phase_amplitude_damping_kraus(*gamma, 0.0, *excited_population)
             }
@@ -62,7 +99,12 @@ impl NoiseChannel {
                 // Julia ref: errortypes.jl:327
                 phase_amplitude_damping_kraus(0.0, *gamma, 0.0)
             }
-            NoiseChannel::ThermalRelaxation { t1, t2, time, excited_population } => {
+            NoiseChannel::ThermalRelaxation {
+                t1,
+                t2,
+                time,
+                excited_population,
+            } => {
                 // Julia ref: errortypes.jl:223-229
                 let t_phi = (t1 * t2) / (2.0 * t1 - t2);
                 let a = 1.0 - (-time / t1).exp();
@@ -75,8 +117,16 @@ impl NoiseChannel {
                 let s0 = (1.0 - p).sqrt();
                 let s1 = p.sqrt();
                 vec![
-                    Array2::from_shape_vec((2, 2), vec![c(s0, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(s0, 0.0)]).unwrap(),
-                    Array2::from_shape_vec((2, 2), vec![c(0.0, 0.0), c(s1, 0.0), c(s1, 0.0), c(0.0, 0.0)]).unwrap(),
+                    Array2::from_shape_vec(
+                        (2, 2),
+                        vec![c(s0, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(s0, 0.0)],
+                    )
+                    .unwrap(),
+                    Array2::from_shape_vec(
+                        (2, 2),
+                        vec![c(0.0, 0.0), c(s1, 0.0), c(s1, 0.0), c(0.0, 0.0)],
+                    )
+                    .unwrap(),
                 ]
             }
             NoiseChannel::PhaseFlip { p } => {
@@ -85,8 +135,16 @@ impl NoiseChannel {
                 let s0 = (1.0 - p).sqrt();
                 let s1 = p.sqrt();
                 vec![
-                    Array2::from_shape_vec((2, 2), vec![c(s0, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(s0, 0.0)]).unwrap(),
-                    Array2::from_shape_vec((2, 2), vec![c(s1, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(-s1, 0.0)]).unwrap(),
+                    Array2::from_shape_vec(
+                        (2, 2),
+                        vec![c(s0, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(s0, 0.0)],
+                    )
+                    .unwrap(),
+                    Array2::from_shape_vec(
+                        (2, 2),
+                        vec![c(s1, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(-s1, 0.0)],
+                    )
+                    .unwrap(),
                 ]
             }
             NoiseChannel::PauliChannel { px, py, pz } => {
@@ -97,10 +155,26 @@ impl NoiseChannel {
                 let sy = py.sqrt();
                 let sz = pz.sqrt();
                 vec![
-                    Array2::from_shape_vec((2, 2), vec![c(s0, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(s0, 0.0)]).unwrap(),
-                    Array2::from_shape_vec((2, 2), vec![c(0.0, 0.0), c(sx, 0.0), c(sx, 0.0), c(0.0, 0.0)]).unwrap(),
-                    Array2::from_shape_vec((2, 2), vec![c(0.0, 0.0), c(0.0, -sy), c(0.0, sy), c(0.0, 0.0)]).unwrap(),
-                    Array2::from_shape_vec((2, 2), vec![c(sz, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(-sz, 0.0)]).unwrap(),
+                    Array2::from_shape_vec(
+                        (2, 2),
+                        vec![c(s0, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(s0, 0.0)],
+                    )
+                    .unwrap(),
+                    Array2::from_shape_vec(
+                        (2, 2),
+                        vec![c(0.0, 0.0), c(sx, 0.0), c(sx, 0.0), c(0.0, 0.0)],
+                    )
+                    .unwrap(),
+                    Array2::from_shape_vec(
+                        (2, 2),
+                        vec![c(0.0, 0.0), c(0.0, -sy), c(0.0, sy), c(0.0, 0.0)],
+                    )
+                    .unwrap(),
+                    Array2::from_shape_vec(
+                        (2, 2),
+                        vec![c(sz, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(-sz, 0.0)],
+                    )
+                    .unwrap(),
                 ]
             }
             NoiseChannel::Depolarizing { n, p } => {
@@ -108,7 +182,12 @@ impl NoiseChannel {
                 // Multi-qubit: all n-qubit Pauli products
                 if *n == 1 {
                     let q = p / 4.0;
-                    NoiseChannel::PauliChannel { px: q, py: q, pz: q }.kraus_operators()
+                    NoiseChannel::PauliChannel {
+                        px: q,
+                        py: q,
+                        pz: q,
+                    }
+                    .kraus_operators()
                 } else {
                     depolarizing_multi_qubit_kraus(*n, *p)
                 }
@@ -118,21 +197,49 @@ impl NoiseChannel {
                 let s = (1.0 - p0 - p1).sqrt();
                 let mut ops = vec![
                     // K0 = sqrt(1-p0-p1) * I
-                    Array2::from_shape_vec((2, 2), vec![c(s, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(s, 0.0)]).unwrap(),
+                    Array2::from_shape_vec(
+                        (2, 2),
+                        vec![c(s, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(s, 0.0)],
+                    )
+                    .unwrap(),
                 ];
                 if *p0 > 0.0 {
                     let sp0 = p0.sqrt();
                     // sqrt(p0) * P0 = sqrt(p0) * |0><0|
-                    ops.push(Array2::from_shape_vec((2, 2), vec![c(sp0, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(0.0, 0.0)]).unwrap());
+                    ops.push(
+                        Array2::from_shape_vec(
+                            (2, 2),
+                            vec![c(sp0, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(0.0, 0.0)],
+                        )
+                        .unwrap(),
+                    );
                     // sqrt(p0) * Pd = sqrt(p0) * |0><1|
-                    ops.push(Array2::from_shape_vec((2, 2), vec![c(0.0, 0.0), c(sp0, 0.0), c(0.0, 0.0), c(0.0, 0.0)]).unwrap());
+                    ops.push(
+                        Array2::from_shape_vec(
+                            (2, 2),
+                            vec![c(0.0, 0.0), c(sp0, 0.0), c(0.0, 0.0), c(0.0, 0.0)],
+                        )
+                        .unwrap(),
+                    );
                 }
                 if *p1 > 0.0 {
                     let sp1 = p1.sqrt();
                     // sqrt(p1) * P1 = sqrt(p1) * |1><1|
-                    ops.push(Array2::from_shape_vec((2, 2), vec![c(0.0, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(sp1, 0.0)]).unwrap());
+                    ops.push(
+                        Array2::from_shape_vec(
+                            (2, 2),
+                            vec![c(0.0, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(sp1, 0.0)],
+                        )
+                        .unwrap(),
+                    );
                     // sqrt(p1) * Pu = sqrt(p1) * |1><0|
-                    ops.push(Array2::from_shape_vec((2, 2), vec![c(0.0, 0.0), c(0.0, 0.0), c(sp1, 0.0), c(0.0, 0.0)]).unwrap());
+                    ops.push(
+                        Array2::from_shape_vec(
+                            (2, 2),
+                            vec![c(0.0, 0.0), c(0.0, 0.0), c(sp1, 0.0), c(0.0, 0.0)],
+                        )
+                        .unwrap(),
+                    );
                 }
                 ops
             }
@@ -140,9 +247,7 @@ impl NoiseChannel {
                 // Julia ref: errortypes.jl:19 — single Kraus op = the unitary
                 vec![matrix.clone()]
             }
-            NoiseChannel::Custom { kraus_ops } => {
-                kraus_ops.clone()
-            }
+            NoiseChannel::Custom { kraus_ops } => kraus_ops.clone(),
         }
     }
 
@@ -163,7 +268,8 @@ impl NoiseChannel {
                 for j in 0..d {
                     for k_row in 0..d {
                         for k_col in 0..d {
-                            superop[[i * d + k_row, j * d + k_col]] += k_conj[[i, j]] * k[[k_row, k_col]];
+                            superop[[i * d + k_row, j * d + k_col]] +=
+                                k_conj[[i, j]] * k[[k_row, k_col]];
                         }
                     }
                 }
@@ -182,16 +288,34 @@ fn phase_amplitude_damping_kraus(a: f64, b: f64, p1: f64) -> Vec<Array2<Complex6
         // Damping to ground state
         let s = (1.0 - p1).sqrt();
         // A0
-        ops.push(Array2::from_shape_vec((2, 2), vec![c(s, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(s * rest, 0.0)]).unwrap());
+        ops.push(
+            Array2::from_shape_vec(
+                (2, 2),
+                vec![c(s, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(s * rest, 0.0)],
+            )
+            .unwrap(),
+        );
         // A1 (if a > 0)
         if a > 0.0 {
             let sa = (a).sqrt() * s;
-            ops.push(Array2::from_shape_vec((2, 2), vec![c(0.0, 0.0), c(sa, 0.0), c(0.0, 0.0), c(0.0, 0.0)]).unwrap());
+            ops.push(
+                Array2::from_shape_vec(
+                    (2, 2),
+                    vec![c(0.0, 0.0), c(sa, 0.0), c(0.0, 0.0), c(0.0, 0.0)],
+                )
+                .unwrap(),
+            );
         }
         // A2 (if b > 0)
         if b > 0.0 {
             let sb = (b).sqrt() * s;
-            ops.push(Array2::from_shape_vec((2, 2), vec![c(0.0, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(sb, 0.0)]).unwrap());
+            ops.push(
+                Array2::from_shape_vec(
+                    (2, 2),
+                    vec![c(0.0, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(sb, 0.0)],
+                )
+                .unwrap(),
+            );
         }
     }
 
@@ -199,16 +323,34 @@ fn phase_amplitude_damping_kraus(a: f64, b: f64, p1: f64) -> Vec<Array2<Complex6
         // Damping to excited state
         let s = p1.sqrt();
         // B0
-        ops.push(Array2::from_shape_vec((2, 2), vec![c(s * rest, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(s, 0.0)]).unwrap());
+        ops.push(
+            Array2::from_shape_vec(
+                (2, 2),
+                vec![c(s * rest, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(s, 0.0)],
+            )
+            .unwrap(),
+        );
         // B1 (if a > 0)
         if a > 0.0 {
             let sa = (a).sqrt() * s;
-            ops.push(Array2::from_shape_vec((2, 2), vec![c(0.0, 0.0), c(0.0, 0.0), c(sa, 0.0), c(0.0, 0.0)]).unwrap());
+            ops.push(
+                Array2::from_shape_vec(
+                    (2, 2),
+                    vec![c(0.0, 0.0), c(0.0, 0.0), c(sa, 0.0), c(0.0, 0.0)],
+                )
+                .unwrap(),
+            );
         }
         // B2 (if b > 0)
         if b > 0.0 {
             let sb = (b).sqrt() * s;
-            ops.push(Array2::from_shape_vec((2, 2), vec![c(sb, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(0.0, 0.0)]).unwrap());
+            ops.push(
+                Array2::from_shape_vec(
+                    (2, 2),
+                    vec![c(sb, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(0.0, 0.0)],
+                )
+                .unwrap(),
+            );
         }
     }
 
@@ -219,10 +361,26 @@ fn phase_amplitude_damping_kraus(a: f64, b: f64, p1: f64) -> Vec<Array2<Complex6
 /// Julia ref: mixed_unitary_channel.jl:144-152
 fn depolarizing_multi_qubit_kraus(n: usize, p: f64) -> Vec<Array2<Complex64>> {
     // Pauli matrices
-    let eye = Array2::from_shape_vec((2, 2), vec![c(1.0, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(1.0, 0.0)]).unwrap();
-    let px = Array2::from_shape_vec((2, 2), vec![c(0.0, 0.0), c(1.0, 0.0), c(1.0, 0.0), c(0.0, 0.0)]).unwrap();
-    let py = Array2::from_shape_vec((2, 2), vec![c(0.0, 0.0), c(0.0, -1.0), c(0.0, 1.0), c(0.0, 0.0)]).unwrap();
-    let pz = Array2::from_shape_vec((2, 2), vec![c(1.0, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(-1.0, 0.0)]).unwrap();
+    let eye = Array2::from_shape_vec(
+        (2, 2),
+        vec![c(1.0, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(1.0, 0.0)],
+    )
+    .unwrap();
+    let px = Array2::from_shape_vec(
+        (2, 2),
+        vec![c(0.0, 0.0), c(1.0, 0.0), c(1.0, 0.0), c(0.0, 0.0)],
+    )
+    .unwrap();
+    let py = Array2::from_shape_vec(
+        (2, 2),
+        vec![c(0.0, 0.0), c(0.0, -1.0), c(0.0, 1.0), c(0.0, 0.0)],
+    )
+    .unwrap();
+    let pz = Array2::from_shape_vec(
+        (2, 2),
+        vec![c(1.0, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(-1.0, 0.0)],
+    )
+    .unwrap();
     let paulis = [eye, px, py, pz];
 
     let dim = 1usize << (2 * n); // 4^n
@@ -238,7 +396,11 @@ fn depolarizing_multi_qubit_kraus(n: usize, p: f64) -> Vec<Array2<Complex64>> {
             mat = kron(&mat, &paulis[pauli_idx]);
         }
         // Weight: p/4^n for all, identity gets extra 1-p
-        let weight = if idx == 0 { 1.0 - p + p / dim as f64 } else { p / dim as f64 };
+        let weight = if idx == 0 {
+            1.0 - p + p / dim as f64
+        } else {
+            p / dim as f64
+        };
         let s = weight.sqrt();
         ops.push(mat.mapv(|v| v * c(s, 0.0)));
     }

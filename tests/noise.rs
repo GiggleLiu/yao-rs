@@ -29,22 +29,40 @@ fn test_phase_amplitude_damping_kraus() {
     // A0 = sqrt(1-p1) * [[1, 0], [0, sqrt(1-a-b)]] = [[1,0],[0,sqrt(0.5)]]
     let expected_a0 = Array2::from_shape_vec(
         (2, 2),
-        vec![c(1.0, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(0.5_f64.sqrt(), 0.0)],
-    ).unwrap();
+        vec![
+            c(1.0, 0.0),
+            c(0.0, 0.0),
+            c(0.0, 0.0),
+            c(0.5_f64.sqrt(), 0.0),
+        ],
+    )
+    .unwrap();
     assert_matrix_approx(&kraus[0], &expected_a0, 1e-10);
 
     // A1 = sqrt(1-p1) * [[0, sqrt(a)], [0, 0]] = [[0, sqrt(0.3)], [0, 0]]
     let expected_a1 = Array2::from_shape_vec(
         (2, 2),
-        vec![c(0.0, 0.0), c(0.3_f64.sqrt(), 0.0), c(0.0, 0.0), c(0.0, 0.0)],
-    ).unwrap();
+        vec![
+            c(0.0, 0.0),
+            c(0.3_f64.sqrt(), 0.0),
+            c(0.0, 0.0),
+            c(0.0, 0.0),
+        ],
+    )
+    .unwrap();
     assert_matrix_approx(&kraus[1], &expected_a1, 1e-10);
 
     // A2 = sqrt(1-p1) * [[0, 0], [0, sqrt(b)]] = [[0, 0], [0, sqrt(0.2)]]
     let expected_a2 = Array2::from_shape_vec(
         (2, 2),
-        vec![c(0.0, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(0.2_f64.sqrt(), 0.0)],
-    ).unwrap();
+        vec![
+            c(0.0, 0.0),
+            c(0.0, 0.0),
+            c(0.0, 0.0),
+            c(0.2_f64.sqrt(), 0.0),
+        ],
+    )
+    .unwrap();
     assert_matrix_approx(&kraus[2], &expected_a2, 1e-10);
 
     assert_eq!(kraus.len(), 3);
@@ -79,7 +97,12 @@ fn test_noise_channel_num_qubits() {
     use yao_rs::noise::NoiseChannel;
 
     assert_eq!(
-        NoiseChannel::PhaseAmplitudeDamping { amplitude: 0.1, phase: 0.1, excited_population: 0.0 }.num_qubits(),
+        NoiseChannel::PhaseAmplitudeDamping {
+            amplitude: 0.1,
+            phase: 0.1,
+            excited_population: 0.0
+        }
+        .num_qubits(),
         1
     );
 }
@@ -120,7 +143,11 @@ fn test_phase_flip_kraus() {
 fn test_pauli_channel_kraus() {
     use yao_rs::noise::NoiseChannel;
 
-    let ch = NoiseChannel::PauliChannel { px: 0.1, py: 0.2, pz: 0.05 };
+    let ch = NoiseChannel::PauliChannel {
+        px: 0.1,
+        py: 0.2,
+        pz: 0.05,
+    };
     let kraus = ch.kraus_operators();
     assert_eq!(kraus.len(), 4);
     verify_completeness(&kraus);
@@ -176,7 +203,10 @@ fn test_reset_only_p0() {
 fn test_amplitude_damping_kraus() {
     use yao_rs::noise::NoiseChannel;
 
-    let ch = NoiseChannel::AmplitudeDamping { gamma: 0.3, excited_population: 0.0 };
+    let ch = NoiseChannel::AmplitudeDamping {
+        gamma: 0.3,
+        excited_population: 0.0,
+    };
     let kraus = ch.kraus_operators();
     assert_eq!(kraus.len(), 2); // A0 and A1
     verify_completeness(&kraus);
@@ -196,7 +226,12 @@ fn test_phase_damping_kraus() {
 fn test_thermal_relaxation_kraus() {
     use yao_rs::noise::NoiseChannel;
 
-    let ch = NoiseChannel::ThermalRelaxation { t1: 100.0, t2: 80.0, time: 10.0, excited_population: 0.0 };
+    let ch = NoiseChannel::ThermalRelaxation {
+        t1: 100.0,
+        t2: 80.0,
+        time: 10.0,
+        excited_population: 0.0,
+    };
     let kraus = ch.kraus_operators();
     assert!(kraus.len() >= 2);
     verify_completeness(&kraus);
@@ -210,9 +245,17 @@ fn test_coherent_kraus() {
     let theta = 0.01_f64;
     let matrix = Array2::from_shape_vec(
         (2, 2),
-        vec![c(theta.cos(), 0.0), c(0.0, -theta.sin()), c(0.0, -theta.sin()), c(theta.cos(), 0.0)],
-    ).unwrap();
-    let ch = NoiseChannel::Coherent { matrix: matrix.clone() };
+        vec![
+            c(theta.cos(), 0.0),
+            c(0.0, -theta.sin()),
+            c(0.0, -theta.sin()),
+            c(theta.cos(), 0.0),
+        ],
+    )
+    .unwrap();
+    let ch = NoiseChannel::Coherent {
+        matrix: matrix.clone(),
+    };
     let kraus = ch.kraus_operators();
     assert_eq!(kraus.len(), 1);
     assert_matrix_approx(&kraus[0], &matrix, 1e-10);

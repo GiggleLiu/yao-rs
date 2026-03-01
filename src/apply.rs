@@ -44,7 +44,7 @@ pub fn apply_inplace(circuit: &Circuit, state: &mut State) {
     for element in &circuit.elements {
         let pg = match element {
             CircuitElement::Gate(pg) => pg,
-            CircuitElement::Annotation(_) => continue, // Skip annotations
+            CircuitElement::Annotation(_) | CircuitElement::Channel(_) => continue,
         };
 
         // Get the gate's local matrix on target sites

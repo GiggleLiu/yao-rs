@@ -50,7 +50,7 @@ pub fn circuit_to_einsum(circuit: &Circuit) -> TensorNetwork {
     for element in &circuit.elements {
         let pg = match element {
             CircuitElement::Gate(pg) => pg,
-            CircuitElement::Annotation(_) => continue, // Skip annotations
+            CircuitElement::Annotation(_) | CircuitElement::Channel(_) => continue,
         };
 
         // Get the tensor for this gate
@@ -177,7 +177,7 @@ pub fn circuit_to_einsum_with_boundary(circuit: &Circuit, final_state: &[usize])
     for element in &circuit.elements {
         let pg = match element {
             CircuitElement::Gate(pg) => pg,
-            CircuitElement::Annotation(_) => continue, // Skip annotations
+            CircuitElement::Annotation(_) | CircuitElement::Channel(_) => continue,
         };
 
         let (tensor, _legs) = gate_to_tensor(pg, &circuit.dims);
@@ -300,7 +300,7 @@ pub fn circuit_to_expectation(circuit: &Circuit, operator: &OperatorPolynomial) 
     for element in &circuit.elements {
         let pg = match element {
             CircuitElement::Gate(pg) => pg,
-            CircuitElement::Annotation(_) => continue, // Skip annotations
+            CircuitElement::Annotation(_) | CircuitElement::Channel(_) => continue,
         };
 
         let (tensor, _legs) = gate_to_tensor(pg, &circuit.dims);
@@ -417,7 +417,7 @@ pub fn circuit_to_expectation(circuit: &Circuit, operator: &OperatorPolynomial) 
         .iter()
         .filter_map(|e| match e {
             CircuitElement::Gate(pg) => Some(pg),
-            CircuitElement::Annotation(_) => None,
+            CircuitElement::Annotation(_) | CircuitElement::Channel(_) => None,
         })
         .collect();
 

@@ -2,6 +2,7 @@ use std::collections::HashSet;
 use std::fmt;
 
 use crate::gate::Gate;
+use crate::noise::NoiseChannel;
 
 /// Annotation variants for circuit visualization.
 ///
@@ -20,11 +21,19 @@ pub struct PositionedAnnotation {
     pub loc: usize, // single qubit only
 }
 
+/// A noise channel placed at specific qubit locations.
+#[derive(Debug, Clone)]
+pub struct PositionedChannel {
+    pub channel: NoiseChannel,
+    pub locs: Vec<usize>,
+}
+
 /// Elements that can appear in a circuit sequence.
 #[derive(Debug, Clone)]
 pub enum CircuitElement {
     Gate(PositionedGate),
     Annotation(PositionedAnnotation),
+    Channel(PositionedChannel),
 }
 
 /// Error types for circuit validation.
@@ -201,6 +210,22 @@ impl Circuit {
                         });
                     }
                 }
+                CircuitElement::Channel(pc) => {
+                    // Validate locs are in range
+                    for &loc in &pc.locs {
+                        if loc >= num_sites {
+                            return Err(CircuitError::LocOutOfRange { loc, num_sites });
+                        }
+                    }
+                    // Validate qubit count matches channel
+                    let expected_qubits = pc.channel.num_qubits();
+                    if pc.locs.len() != expected_qubits {
+                        return Err(CircuitError::MatrixSizeMismatch {
+                            expected: expected_qubits,
+                            actual: pc.locs.len(),
+                        });
+                    }
+                }
                 CircuitElement::Annotation(pa) => {
                     // Annotations only require loc < dims.len()
                     if pa.loc >= num_sites {
@@ -247,6 +272,7 @@ impl Circuit {
                     control_configs: pg.control_configs.clone(),
                 }),
                 CircuitElement::Annotation(pa) => CircuitElement::Annotation(pa.clone()),
+                CircuitElement::Channel(pc) => CircuitElement::Channel(pc.clone()),
             })
             .collect();
 
@@ -292,6 +318,9 @@ impl fmt::Display for Circuit {
                             format_locs(&pg.target_locs)
                         )?;
                     }
+                }
+                CircuitElement::Channel(pc) => {
+                    writeln!(f, "  {:?} @ q[{}]", pc.channel, format_locs(&pc.locs))?;
                 }
                 CircuitElement::Annotation(pa) => match &pa.annotation {
                     Annotation::Label(text) => {
@@ -363,6 +392,14 @@ pub fn control(ctrl_locs: Vec<usize>, target_locs: Vec<usize>, gate: Gate) -> Ci
 ///     assert!(matches!(pa.annotation, Annotation::Label(ref s) if s == "Bell prep"));
 /// }
 /// ```
+/// Place a noise channel at specific qubit locations.
+pub fn channel(locs: Vec<usize>, noise: NoiseChannel) -> CircuitElement {
+    CircuitElement::Channel(PositionedChannel {
+        channel: noise,
+        locs,
+    })
+}
+
 pub fn label(loc: usize, text: impl Into<String>) -> CircuitElement {
     CircuitElement::Annotation(PositionedAnnotation {
         annotation: Annotation::Label(text.into()),
