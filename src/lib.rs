@@ -1,4 +1,5 @@
 pub mod apply;
+pub mod bitutils;
 pub mod circuit;
 pub mod easybuild;
 pub mod einsum;
