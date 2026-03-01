@@ -659,3 +659,87 @@ pub fn circuit_to_einsum_dm(circuit: &Circuit) -> TensorNetworkDM {
         size_dict,
     }
 }
+
+/// Compute expectation value tr(O * rho) in density matrix mode.
+///
+/// Builds the DM tensor network, inserts the operator on the ket side,
+/// and traces ket with bra indices to produce a scalar.
+///
+/// Julia ref: circuitmap.jl:252-258 eat_observable!
+pub fn circuit_to_expectation_dm(
+    circuit: &Circuit,
+    operator: &OperatorPolynomial,
+) -> TensorNetworkDM {
+    let n = circuit.num_sites();
+
+    // Build the DM tensor network
+    let mut tn = circuit_to_einsum_dm(circuit);
+
+    // The current output labels are [ket_slots, bra_slots]
+    let ket_labels: Vec<i32> = tn.code.iy[..n].to_vec();
+    let bra_labels: Vec<i32> = tn.code.iy[n..].to_vec();
+
+    if operator.is_empty() {
+        let zero_tensor =
+            ArrayD::from_shape_vec(IxDyn(&[]), vec![Complex64::new(0.0, 0.0)]).unwrap();
+        let mut ixs = tn.code.ixs;
+        ixs.push(vec![]);
+        return TensorNetworkDM {
+            code: EinCode::new(ixs, vec![]),
+            tensors: {
+                let mut t = tn.tensors;
+                t.push(zero_tensor);
+                t
+            },
+            size_dict: tn.size_dict,
+        };
+    }
+
+    // Handle first term
+    let (coeff, opstring) = operator.iter().next().unwrap();
+
+    let mut site_ops: Vec<Option<crate::operator::Op>> = vec![None; n];
+    for (site, op) in opstring.ops() {
+        site_ops[*site] = Some(*op);
+    }
+
+    // For each site, insert operator tensor on the ket side:
+    // O[bra_label, ket_label] — connecting ket output to bra (for trace)
+    let mut first_op_site = true;
+    let mut ixs = tn.code.ixs;
+
+    for i in 0..n {
+        let d = circuit.dims[i];
+        let op_mat = if let Some(op) = &site_ops[i] {
+            let mut mat = op_matrix(op);
+            if first_op_site {
+                for elem in mat.iter_mut() {
+                    *elem *= coeff;
+                }
+                first_op_site = false;
+            }
+            mat
+        } else {
+            op_matrix(&crate::operator::Op::I)
+        };
+
+        // Operator tensor: O[out, in] with legs [bra_label, ket_label]
+        // Using bra_label as output traces it with the bra copy of rho
+        let mut data = Vec::with_capacity(d * d);
+        for out_idx in 0..d {
+            for in_idx in 0..d {
+                data.push(op_mat[[out_idx, in_idx]]);
+            }
+        }
+        let tensor = ArrayD::from_shape_vec(IxDyn(&[d, d]), data).unwrap();
+        tn.tensors.push(tensor);
+        ixs.push(vec![bra_labels[i], ket_labels[i]]);
+    }
+
+    // Output is empty (scalar = trace)
+    TensorNetworkDM {
+        code: EinCode::new(ixs, vec![]),
+        tensors: tn.tensors,
+        size_dict: tn.size_dict,
+    }
+}

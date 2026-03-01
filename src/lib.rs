@@ -25,7 +25,8 @@ pub use circuit::{
 };
 pub use einsum::{
     TensorNetwork, TensorNetworkDM, circuit_to_einsum, circuit_to_einsum_dm,
-    circuit_to_einsum_with_boundary, circuit_to_expectation, circuit_to_overlap,
+    circuit_to_einsum_with_boundary, circuit_to_expectation, circuit_to_expectation_dm,
+    circuit_to_overlap,
 };
 pub use gate::Gate;
 pub use index::{insert_index, iter_basis, iter_basis_fixed, linear_to_indices, mixed_radix_index};

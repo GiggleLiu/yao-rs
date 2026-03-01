@@ -1,6 +1,8 @@
 use num_complex::Complex64;
 use yao_rs::circuit::{Circuit, channel, control, put};
-use yao_rs::einsum::{circuit_to_einsum_dm, circuit_to_einsum_with_boundary};
+use yao_rs::einsum::{
+    circuit_to_einsum_dm, circuit_to_einsum_with_boundary, circuit_to_expectation_dm,
+};
 use yao_rs::gate::Gate;
 use yao_rs::noise::NoiseChannel;
 
@@ -169,4 +171,48 @@ fn test_dm_pure_matches_vector_mode() {
             }
         }
     }
+}
+
+#[test]
+fn test_expectation_dm_hadamard_z() {
+    use yao_rs::operator::{Op, OperatorPolynomial, OperatorString};
+
+    // <Z> for H|0⟩ = 0 (|+⟩ state)
+    let elements = vec![put(vec![0], Gate::H)];
+    let circuit = Circuit::new(vec![2], elements).unwrap();
+
+    let op = OperatorPolynomial::new(
+        vec![Complex64::new(1.0, 0.0)],
+        vec![OperatorString::new(vec![(0, Op::Z)])],
+    );
+
+    let tn = circuit_to_expectation_dm(&circuit, &op);
+    let result = contract_tn_dm(&tn);
+    // Scalar output
+    assert_eq!(result.shape(), &[] as &[usize]);
+    assert!((result[[]].re - 0.0).abs() < 1e-10);
+}
+
+#[test]
+fn test_expectation_dm_noisy_hadamard_x() {
+    use yao_rs::operator::{Op, OperatorPolynomial, OperatorString};
+
+    // <X> for H|0⟩ = |+⟩ with depolarizing(p=0.1)
+    // Pure: <X> = 1.0
+    // Depolarizing: E(rho) = (1-p)rho + p*I/2
+    // <X>_noisy = (1-p)*tr(X*rho) + p*tr(X*I/2) = (1-p)*1 + p*0 = 0.9
+    let elements = vec![
+        put(vec![0], Gate::H),
+        channel(vec![0], NoiseChannel::Depolarizing { n: 1, p: 0.1 }),
+    ];
+    let circuit = Circuit::new(vec![2], elements).unwrap();
+
+    let op = OperatorPolynomial::new(
+        vec![Complex64::new(1.0, 0.0)],
+        vec![OperatorString::new(vec![(0, Op::X)])],
+    );
+
+    let tn = circuit_to_expectation_dm(&circuit, &op);
+    let result = contract_tn_dm(&tn);
+    assert!((result[[]].re - 0.9).abs() < 1e-8);
 }
