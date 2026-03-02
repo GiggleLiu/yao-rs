@@ -65,7 +65,7 @@ fn test_group_shift_basic() {
     // positions [1, 3, 4, 7] (Julia 1-indexed)
     // In Rust 0-indexed: [0, 2, 3, 6]
     // nbits=7
-    let (masks, factors) = group_shift(7, &mut vec![0, 2, 3, 6]);
+    let (masks, factors) = group_shift(7, &mut [0, 2, 3, 6]);
     // After sorting: [0, 2, 3, 6]
     // Gaps: before 0 (none), between 0..2 (bit 1), between 3..6 (bits 4,5)
     // After removing locked bits, free bits are: 1, 4, 5

@@ -66,13 +66,112 @@ impl NoiseChannel {
             NoiseChannel::Depolarizing { n, .. } => *n,
             NoiseChannel::Custom { kraus_ops } => {
                 let d = kraus_ops[0].nrows();
-                (d as f64).log2() as usize
+                assert!(
+                    d.is_power_of_two(),
+                    "Custom channel dimension {d} is not a power of 2"
+                );
+                d.ilog2() as usize
             }
             NoiseChannel::Coherent { matrix } => {
                 let d = matrix.nrows();
-                (d as f64).log2() as usize
+                assert!(
+                    d.is_power_of_two(),
+                    "Coherent channel dimension {d} is not a power of 2"
+                );
+                d.ilog2() as usize
             }
             _ => 1, // All other single-qubit channels
+        }
+    }
+
+    /// Validate parameter ranges for this noise channel.
+    ///
+    /// Panics if parameters are outside their physical ranges.
+    fn validate_params(&self) {
+        match self {
+            NoiseChannel::BitFlip { p } | NoiseChannel::PhaseFlip { p } => {
+                assert!(
+                    (0.0..=1.0).contains(p),
+                    "probability p={p} must be in [0, 1]"
+                );
+            }
+            NoiseChannel::PauliChannel { px, py, pz } => {
+                assert!(
+                    *px >= 0.0 && *py >= 0.0 && *pz >= 0.0 && px + py + pz <= 1.0,
+                    "Pauli probabilities (px={px}, py={py}, pz={pz}) must be non-negative and sum <= 1"
+                );
+            }
+            NoiseChannel::Depolarizing { p, .. } => {
+                assert!(
+                    (0.0..=1.0).contains(p),
+                    "probability p={p} must be in [0, 1]"
+                );
+            }
+            NoiseChannel::Reset { p0, p1 } => {
+                assert!(
+                    *p0 >= 0.0 && *p1 >= 0.0 && p0 + p1 <= 1.0,
+                    "Reset probabilities (p0={p0}, p1={p1}) must be non-negative and sum <= 1"
+                );
+            }
+            NoiseChannel::PhaseAmplitudeDamping {
+                amplitude,
+                phase,
+                excited_population,
+            } => {
+                assert!(
+                    *amplitude >= 0.0 && *phase >= 0.0 && amplitude + phase <= 1.0,
+                    "amplitude={amplitude} and phase={phase} must be non-negative and sum <= 1"
+                );
+                assert!(
+                    (0.0..=1.0).contains(excited_population),
+                    "excited_population={excited_population} must be in [0, 1]"
+                );
+            }
+            NoiseChannel::AmplitudeDamping {
+                gamma,
+                excited_population,
+            } => {
+                assert!(
+                    (0.0..=1.0).contains(gamma),
+                    "gamma={gamma} must be in [0, 1]"
+                );
+                assert!(
+                    (0.0..=1.0).contains(excited_population),
+                    "excited_population={excited_population} must be in [0, 1]"
+                );
+            }
+            NoiseChannel::PhaseDamping { gamma } => {
+                assert!(
+                    (0.0..=1.0).contains(gamma),
+                    "gamma={gamma} must be in [0, 1]"
+                );
+            }
+            NoiseChannel::ThermalRelaxation {
+                t1,
+                t2,
+                time,
+                excited_population,
+            } => {
+                assert!(*t1 > 0.0, "t1={t1} must be positive");
+                assert!(*t2 > 0.0, "t2={t2} must be positive");
+                assert!(*time >= 0.0, "time={time} must be non-negative");
+                assert!(
+                    *t2 <= 2.0 * t1,
+                    "t2={t2} must be <= 2*t1={} (physics constraint)",
+                    2.0 * t1
+                );
+                assert!(
+                    (0.0..=1.0).contains(excited_population),
+                    "excited_population={excited_population} must be in [0, 1]"
+                );
+            }
+            NoiseChannel::Custom { kraus_ops } => {
+                assert!(
+                    !kraus_ops.is_empty(),
+                    "Custom channel must have at least one Kraus operator"
+                );
+            }
+            NoiseChannel::Coherent { .. } => {}
         }
     }
 
@@ -82,6 +181,7 @@ impl NoiseChannel {
     ///
     /// Julia ref: errortypes.jl KrausChannel() conversions
     pub fn kraus_operators(&self) -> Vec<Array2<Complex64>> {
+        self.validate_params();
         match self {
             NoiseChannel::PhaseAmplitudeDamping {
                 amplitude,
@@ -261,15 +361,15 @@ impl NoiseChannel {
         let d = kraus[0].nrows();
         let d2 = d * d;
         let mut superop = Array2::<Complex64>::zeros((d2, d2));
-        for k in &kraus {
-            let k_conj = k.mapv(|c| c.conj());
+        for kraus_op in &kraus {
+            let k_conj = kraus_op.mapv(|c| c.conj());
             // kron(conj(K), K)
             for i in 0..d {
                 for j in 0..d {
                     for k_row in 0..d {
                         for k_col in 0..d {
                             superop[[i * d + k_row, j * d + k_col]] +=
-                                k_conj[[i, j]] * k[[k_row, k_col]];
+                                k_conj[[i, j]] * kraus_op[[k_row, k_col]];
                         }
                     }
                 }

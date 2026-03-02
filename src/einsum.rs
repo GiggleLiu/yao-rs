@@ -363,7 +363,12 @@ pub fn circuit_to_expectation(circuit: &Circuit, operator: &OperatorPolynomial) 
         // For each site, collect which operator is applied
         let mut site_ops: Vec<Option<(crate::operator::Op, Complex64)>> = vec![None; n];
 
-        // Use the first term (simplification - full implementation would handle all terms)
+        // Only single-term polynomials are supported
+        assert!(
+            operator.len() == 1,
+            "circuit_to_expectation() only supports single-term OperatorPolynomial, got {} terms",
+            operator.len()
+        );
         let (coeff, opstring) = operator.iter().next().unwrap();
 
         for (site, op) in opstring.ops() {
@@ -529,8 +534,7 @@ pub fn circuit_to_einsum_dm(circuit: &Circuit) -> TensorNetworkDM {
     let mut all_tensors: Vec<ArrayD<Complex64>> = Vec::new();
 
     // Initial state: |0><0| boundary tensors on each qubit
-    for (i, (&d, &slot)) in circuit.dims.iter().zip(slots.iter()).enumerate().take(n) {
-        let _ = i; // used implicitly via zip
+    for (&d, &slot) in circuit.dims.iter().zip(slots.iter()).take(n) {
         let mut data = vec![Complex64::new(0.0, 0.0); d];
         data[0] = Complex64::new(1.0, 0.0);
         let tensor = ArrayD::from_shape_vec(IxDyn(&[d]), data.clone()).unwrap();
@@ -600,7 +604,7 @@ pub fn circuit_to_einsum_dm(circuit: &Circuit) -> TensorNetworkDM {
                 // Convert to superoperator tensor
                 let superop = pc.channel.superop();
                 let k = pc.locs.len();
-                let d = 2_usize; // qubit dimension
+                let d = circuit.dims[pc.locs[0]];
 
                 // Reshape to D^(4k) tensor
                 let shape: Vec<usize> = vec![d; 4 * k];
@@ -695,7 +699,12 @@ pub fn circuit_to_expectation_dm(
         };
     }
 
-    // Handle first term
+    // Handle first term (only single-term polynomials are supported)
+    assert!(
+        operator.len() == 1,
+        "circuit_to_expectation_dm() only supports single-term OperatorPolynomial, got {} terms",
+        operator.len()
+    );
     let (coeff, opstring) = operator.iter().next().unwrap();
 
     let mut site_ops: Vec<Option<crate::operator::Op>> = vec![None; n];
@@ -720,7 +729,14 @@ pub fn circuit_to_expectation_dm(
             }
             mat
         } else {
-            op_matrix(&crate::operator::Op::I)
+            let mut mat = op_matrix(&crate::operator::Op::I);
+            if first_op_site {
+                for elem in mat.iter_mut() {
+                    *elem *= coeff;
+                }
+                first_op_site = false;
+            }
+            mat
         };
 
         // Operator tensor: O[out, in] with legs [bra_label, ket_label]
