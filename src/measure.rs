@@ -231,3 +231,100 @@ pub fn collapse_to(state: &mut State, locs: &[usize], values: &[usize]) {
         }
     }
 }
+
+/// Measure specified qudits and reset them to a given value.
+///
+/// After measuring, collapses the state and then swaps amplitudes so the
+/// measured qudits are in the `reset_val` basis state.
+///
+/// # Safety invariant
+/// The swap loop is safe because after `measure_and_collapse`, only amplitudes
+/// matching the measurement result are nonzero. Since `result != reset_val` on
+/// at least one loc (early return handles the equal case), the source set
+/// (indices matching result) and target set (indices matching reset_val) are disjoint.
+///
+/// Julia: `measure!(YaoAPI.ResetTo(val), reg, locs)`
+pub fn measure_reset(
+    state: &mut State,
+    locs: &[usize],
+    reset_val: usize,
+    rng: &mut impl Rng,
+) -> Vec<usize> {
+    let result = measure_and_collapse(state, Some(locs), rng);
+
+    // If already in target state, nothing to do
+    if result.iter().all(|&v| v == reset_val) {
+        return result;
+    }
+
+    // Swap amplitudes from measured values to reset values
+    let total_dim: usize = state.dims.iter().product();
+    for flat_idx in 0..total_dim {
+        let indices = linear_to_indices(flat_idx, &state.dims);
+
+        // Check if this index has the measured values at locs
+        let matches_measured = locs
+            .iter()
+            .zip(result.iter())
+            .all(|(&l, &v)| indices[l] == v);
+        if matches_measured {
+            let mut target_indices = indices.clone();
+            for &l in locs {
+                target_indices[l] = reset_val;
+            }
+            let target_flat = mixed_radix_index(&target_indices, &state.dims);
+            state.data[target_flat] = state.data[flat_idx];
+            state.data[flat_idx] = Complex64::new(0.0, 0.0);
+        }
+    }
+
+    result
+}
+
+/// Measure specified qudits and remove them from the state.
+///
+/// Returns (measurement_result, new_smaller_state).
+///
+/// Julia: `measure!(YaoAPI.RemoveMeasured(), reg, locs)`
+pub fn measure_remove(state: &State, locs: &[usize], rng: &mut impl Rng) -> (Vec<usize>, State) {
+    let result = measure(state, Some(locs), 1, rng).pop().unwrap();
+
+    // Build new dims without the measured qudits
+    let remaining_locs: Vec<usize> = (0..state.dims.len())
+        .filter(|i| !locs.contains(i))
+        .collect();
+    let new_dims: Vec<usize> = remaining_locs.iter().map(|&i| state.dims[i]).collect();
+    let new_total: usize = new_dims.iter().product();
+
+    let mut new_data = ndarray::Array1::zeros(new_total);
+
+    let total_dim: usize = state.dims.iter().product();
+    let mut norm_sq = 0.0;
+
+    for flat_idx in 0..total_dim {
+        let indices = linear_to_indices(flat_idx, &state.dims);
+
+        // Check if measured qudits match the result
+        let matches = locs
+            .iter()
+            .zip(result.iter())
+            .all(|(&l, &v)| indices[l] == v);
+        if !matches {
+            continue;
+        }
+
+        // Compute new index without measured qudits
+        let new_indices: Vec<usize> = remaining_locs.iter().map(|&i| indices[i]).collect();
+        let new_flat = mixed_radix_index(&new_indices, &new_dims);
+        new_data[new_flat] = state.data[flat_idx];
+        norm_sq += state.data[flat_idx].norm_sqr();
+    }
+
+    // Normalize
+    let norm = norm_sq.sqrt();
+    if norm > 1e-15 {
+        new_data.mapv_inplace(|v| v / norm);
+    }
+
+    (result, State::new(new_dims, new_data))
+}

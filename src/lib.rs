@@ -34,7 +34,9 @@ pub use einsum::{
 pub use gate::Gate;
 pub use index::{insert_index, iter_basis, iter_basis_fixed, linear_to_indices, mixed_radix_index};
 pub use json::{circuit_from_json, circuit_to_json};
-pub use measure::{collapse_to, measure, measure_and_collapse, probs};
+pub use measure::{
+    collapse_to, measure, measure_and_collapse, measure_remove, measure_reset, probs,
+};
 pub use noise::NoiseChannel;
 pub use operator::{Op, OperatorPolynomial, OperatorString, op_matrix};
 pub use state::State;

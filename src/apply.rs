@@ -1,7 +1,7 @@
 use ndarray::Array2;
 use num_complex::Complex64;
 
-use crate::circuit::{Circuit, CircuitElement};
+use crate::circuit::{Circuit, CircuitElement, PositionedGate};
 use crate::gate::Gate;
 use crate::instruct::{instruct_controlled, instruct_diagonal, instruct_single};
 #[cfg(feature = "parallel")]
@@ -26,6 +26,108 @@ pub(crate) fn extract_diagonal_phases(matrix: &Array2<Complex64>) -> Vec<Complex
     (0..d).map(|i| matrix[[i, i]]).collect()
 }
 
+/// Dispatch a single qubit gate through the bit-manipulation fast path.
+fn apply_qubit_gate(pg: &PositionedGate, state: &mut State, nbits: usize) {
+    let gate_matrix = pg.gate.matrix(2);
+    let state_slice = state.data.as_slice_mut().unwrap();
+
+    let ctrl_locs = &pg.control_locs;
+    let ctrl_bits: Vec<usize> = pg.control_configs.iter().map(|&b| usize::from(b)).collect();
+    let has_controls = !ctrl_locs.is_empty();
+
+    if pg.target_locs.len() == 1 {
+        let loc = pg.target_locs[0];
+        if is_diagonal(&pg.gate) {
+            let d0 = gate_matrix[[0, 0]];
+            let d1 = gate_matrix[[1, 1]];
+            if has_controls {
+                crate::instruct_qubit::instruct_1q_diag_controlled(
+                    state_slice,
+                    nbits,
+                    loc,
+                    d0,
+                    d1,
+                    ctrl_locs,
+                    &ctrl_bits,
+                );
+            } else {
+                crate::instruct_qubit::instruct_1q_diag(state_slice, loc, d0, d1);
+            }
+        } else {
+            let a = gate_matrix[[0, 0]];
+            let b = gate_matrix[[0, 1]];
+            let c = gate_matrix[[1, 0]];
+            let d = gate_matrix[[1, 1]];
+            if has_controls {
+                crate::instruct_qubit::instruct_1q_controlled(
+                    state_slice,
+                    nbits,
+                    loc,
+                    a,
+                    b,
+                    c,
+                    d,
+                    ctrl_locs,
+                    &ctrl_bits,
+                );
+            } else {
+                crate::instruct_qubit::instruct_1q(state_slice, loc, a, b, c, d);
+            }
+        }
+    } else if pg.target_locs.len() == 2 {
+        let locs = &pg.target_locs;
+        if is_diagonal(&pg.gate) {
+            let diag = [
+                gate_matrix[[0, 0]],
+                gate_matrix[[1, 1]],
+                gate_matrix[[2, 2]],
+                gate_matrix[[3, 3]],
+            ];
+            if has_controls {
+                crate::instruct_qubit::instruct_2q_diag_controlled(
+                    state_slice,
+                    nbits,
+                    locs,
+                    &diag,
+                    ctrl_locs,
+                    &ctrl_bits,
+                );
+            } else {
+                crate::instruct_qubit::instruct_2q_diag(state_slice, nbits, locs, &diag);
+            }
+        } else {
+            let mut gate_flat = Vec::with_capacity(16);
+            for i in 0..4 {
+                for j in 0..4 {
+                    gate_flat.push(gate_matrix[[i, j]]);
+                }
+            }
+            if has_controls {
+                crate::instruct_qubit::instruct_2q_controlled(
+                    state_slice,
+                    nbits,
+                    locs,
+                    &gate_flat,
+                    ctrl_locs,
+                    &ctrl_bits,
+                );
+            } else {
+                crate::instruct_qubit::instruct_2q(state_slice, nbits, locs, &gate_flat);
+            }
+        }
+    } else {
+        // >2 target qubits: fall through to generic path
+        let ctrl_configs: Vec<usize> = pg.control_configs.iter().map(|&b| usize::from(b)).collect();
+        instruct_controlled(
+            state,
+            &gate_matrix,
+            &pg.control_locs,
+            &ctrl_configs,
+            &pg.target_locs,
+        );
+    }
+}
+
 /// Apply a circuit to a quantum state in-place using efficient instruct functions.
 ///
 /// This function modifies the state directly without allocating new matrices.
@@ -37,6 +139,8 @@ pub(crate) fn extract_diagonal_phases(matrix: &Array2<Complex64>) -> Vec<Complex
 /// for improved performance on large states.
 pub fn apply_inplace(circuit: &Circuit, state: &mut State) {
     let dims = &circuit.dims;
+    let all_qubit = dims.iter().all(|&d| d == 2);
+    let nbits = dims.len();
 
     #[cfg(feature = "parallel")]
     let use_parallel = state.data.len() >= PARALLEL_THRESHOLD;
@@ -47,15 +151,17 @@ pub fn apply_inplace(circuit: &Circuit, state: &mut State) {
             CircuitElement::Annotation(_) | CircuitElement::Channel(_) => continue,
         };
 
-        // Get the gate's local matrix on target sites
+        // Qubit fast path: use bit-manipulation-based instruct functions
+        if all_qubit {
+            apply_qubit_gate(pg, state, nbits);
+            continue;
+        }
+
+        // Generic path (qudits or mixed dimensions)
         let d = dims[pg.target_locs[0]];
         let gate_matrix = pg.gate.matrix(d);
 
         if pg.control_locs.is_empty() {
-            // No controls
-            // Diagonal optimization only applies to single-target gates
-            // Multi-target diagonal gates (e.g., 2-qubit diagonal with d^2 phases)
-            // cannot use this path as it would incorrectly apply phases per-site
             if is_diagonal(&pg.gate) && pg.target_locs.len() == 1 {
                 let phases = extract_diagonal_phases(&gate_matrix);
                 for &loc in &pg.target_locs {
@@ -73,7 +179,6 @@ pub fn apply_inplace(circuit: &Circuit, state: &mut State) {
                     }
                 }
             } else if pg.target_locs.len() == 1 {
-                // Single-target non-diagonal gate
                 let loc = pg.target_locs[0];
                 #[cfg(feature = "parallel")]
                 {
@@ -88,13 +193,9 @@ pub fn apply_inplace(circuit: &Circuit, state: &mut State) {
                     instruct_single(state, &gate_matrix, loc);
                 }
             } else {
-                // Multi-target gate without controls (including multi-target diagonal gates):
-                // use instruct_controlled with empty controls
                 instruct_controlled(state, &gate_matrix, &[], &[], &pg.target_locs);
             }
         } else {
-            // Controlled gate
-            // Convert control_configs from Vec<bool> to Vec<usize>
             let ctrl_configs: Vec<usize> = pg
                 .control_configs
                 .iter()

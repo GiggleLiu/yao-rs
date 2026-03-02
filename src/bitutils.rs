@@ -92,6 +92,10 @@ impl IterControl {
         self.n
     }
 
+    pub fn is_empty(&self) -> bool {
+        self.n == 0
+    }
+
     /// Random access: get the k-th element (0-indexed).
     ///
     /// Julia: `getindex(it, k) = sum((k & mask) * factor for (mask, factor)) + base`
@@ -168,7 +172,7 @@ pub fn itercontrol(nbits: usize, positions: &[usize], bit_configs: &[usize]) -> 
 ///
 /// NOTE: Julia uses 1-indexed positions. This function uses 0-indexed.
 /// The algorithm converts to 1-indexed internally to match Julia exactly.
-pub fn group_shift(nbits: usize, positions: &mut Vec<usize>) -> (Vec<usize>, Vec<usize>) {
+pub fn group_shift(nbits: usize, positions: &mut [usize]) -> (Vec<usize>, Vec<usize>) {
     positions.sort();
 
     let mut masks = Vec::new();
