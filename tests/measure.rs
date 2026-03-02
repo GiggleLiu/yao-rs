@@ -7,7 +7,9 @@ use rand::SeedableRng;
 use yao_rs::apply::apply;
 use yao_rs::circuit::{Circuit, control, put};
 use yao_rs::gate::Gate;
-use yao_rs::measure::{collapse_to, measure, measure_and_collapse, probs};
+use yao_rs::measure::{
+    collapse_to, measure, measure_and_collapse, measure_remove, measure_reset, probs,
+};
 use yao_rs::state::State;
 
 fn approx_eq(a: f64, b: f64) -> bool {
@@ -732,4 +734,102 @@ fn test_measure_ground_truth() {
         tested += 1;
     }
     assert_eq!(tested, 11, "Expected 11 measure cases in ground truth data");
+}
+
+// ============================================================
+// measure_reset and measure_remove tests
+// ============================================================
+
+#[test]
+fn test_measure_reset_to_zero() {
+    // Create superposition state, measure and reset to 0
+    let circuit = Circuit::new(vec![2, 2], vec![put(vec![0], Gate::H)]).unwrap();
+    let mut state = apply(&circuit, &State::zero_state(&[2, 2]));
+
+    let mut rng = rand::rngs::StdRng::seed_from_u64(42);
+    let result = measure_reset(&mut state, &[0], 0, &mut rng);
+
+    // Measurement result should be a valid qubit outcome
+    assert!(
+        result[0] == 0 || result[0] == 1,
+        "Invalid measurement result"
+    );
+
+    // State should be normalized after reset
+    assert!(
+        (state.norm() - 1.0).abs() < 1e-10,
+        "State not normalized after reset"
+    );
+
+    // Qubit 0 should be in |0> state
+    let p = probs(&state, Some(&[0]));
+    assert!(
+        (p[0] - 1.0).abs() < 1e-10,
+        "Qubit 0 should be |0> after reset to 0"
+    );
+}
+
+#[test]
+fn test_measure_reset_to_one() {
+    // Create superposition, measure and reset to 1
+    let circuit = Circuit::new(vec![2, 2], vec![put(vec![0], Gate::H)]).unwrap();
+    let mut state = apply(&circuit, &State::zero_state(&[2, 2]));
+
+    let mut rng = rand::rngs::StdRng::seed_from_u64(42);
+    let result = measure_reset(&mut state, &[0], 1, &mut rng);
+
+    // Measurement result should be a valid qubit outcome
+    assert!(
+        result[0] == 0 || result[0] == 1,
+        "Invalid measurement result"
+    );
+
+    assert!(
+        (state.norm() - 1.0).abs() < 1e-10,
+        "State not normalized after reset"
+    );
+
+    let p = probs(&state, Some(&[0]));
+    assert!(
+        (p[1] - 1.0).abs() < 1e-10,
+        "Qubit 0 should be |1> after reset to 1"
+    );
+}
+
+#[test]
+fn test_measure_remove_product_state() {
+    let state = State::product_state(&[2, 2, 2], &[1, 0, 1]); // |101>
+    let mut rng = rand::rngs::StdRng::seed_from_u64(42);
+
+    let (result, new_state) = measure_remove(&state, &[1], &mut rng);
+
+    // Measured qubit 1 should be 0
+    assert_eq!(result, vec![0]);
+    // Remaining state should have 2 qubits
+    assert_eq!(new_state.dims.len(), 2);
+    assert_eq!(new_state.dims, vec![2, 2]);
+    // Remaining state should be |11> (qubits 0 and 2, which were |1> and |1>)
+    assert!((new_state.data[3].norm() - 1.0).abs() < 1e-10);
+}
+
+#[test]
+fn test_measure_remove_bell_state() {
+    // Bell state
+    let circuit = Circuit::new(
+        vec![2, 2],
+        vec![put(vec![0], Gate::H), control(vec![0], vec![1], Gate::X)],
+    )
+    .unwrap();
+    let state = apply(&circuit, &State::zero_state(&[2, 2]));
+
+    let mut rng = rand::rngs::StdRng::seed_from_u64(42);
+    let (result, new_state) = measure_remove(&state, &[0], &mut rng);
+
+    // Should get a single-qubit state
+    assert_eq!(new_state.dims, vec![2]);
+    assert!((new_state.norm() - 1.0).abs() < 1e-10);
+
+    // Due to entanglement, remaining qubit should match measured result
+    let p = probs(&new_state, None);
+    assert!((p[result[0]] - 1.0).abs() < 1e-10);
 }

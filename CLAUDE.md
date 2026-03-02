@@ -74,6 +74,7 @@ Gate → PositionedGate → Circuit → TensorNetwork/State
 - `/issue-to-pr <number>` — Convert a GitHub issue into a PR with a brainstormed plan that triggers automated execution
 - `/fix-pr` — Address PR review comments, fix CI failures, and resolve codecov coverage gaps for the current branch
 - `/review-implementation` — Dispatch review subagents to check code quality, test coverage, and correctness before committing
+- `/plan-review` — Execute a plan end-to-end: implement, review, Copilot review, fix CI loop, and squash merge
 
 ## Automation
 
