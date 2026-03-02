@@ -111,6 +111,10 @@ fn positioned_gate_to_json(pg: &PositionedGate) -> GateJson {
 }
 
 /// Serialize a Circuit to a pretty-printed JSON string.
+///
+/// Note: `CircuitElement::Channel` elements are not serialized and will be
+/// silently dropped. A round-trip through `circuit_to_json`/`circuit_from_json`
+/// will lose all noise channels.
 pub fn circuit_to_json(circuit: &Circuit) -> String {
     let num_qubits = circuit.num_sites();
     let elements: Vec<ElementJson> = circuit

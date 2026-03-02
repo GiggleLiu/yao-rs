@@ -225,6 +225,30 @@ impl Circuit {
                             actual: pc.locs.len(),
                         });
                     }
+                    // Validate that all channel target sites are qubits (d=2)
+                    for &loc in &pc.locs {
+                        if dims[loc] != 2 {
+                            return Err(CircuitError::NamedGateTargetNotQubit {
+                                loc,
+                                dim: dims[loc],
+                            });
+                        }
+                    }
+                    // Validate that channel target locs are unique
+                    let mut seen = Vec::new();
+                    let mut overlapping = Vec::new();
+                    for &loc in &pc.locs {
+                        if seen.contains(&loc) {
+                            if !overlapping.contains(&loc) {
+                                overlapping.push(loc);
+                            }
+                        } else {
+                            seen.push(loc);
+                        }
+                    }
+                    if !overlapping.is_empty() {
+                        return Err(CircuitError::OverlappingLocs { overlapping });
+                    }
                 }
                 CircuitElement::Annotation(pa) => {
                     // Annotations only require loc < dims.len()
@@ -378,6 +402,14 @@ pub fn control(ctrl_locs: Vec<usize>, target_locs: Vec<usize>, gate: Gate) -> Ci
     CircuitElement::Gate(PositionedGate::new(gate, target_locs, ctrl_locs, configs))
 }
 
+/// Place a noise channel at specific qubit locations.
+pub fn channel(locs: Vec<usize>, noise: NoiseChannel) -> CircuitElement {
+    CircuitElement::Channel(PositionedChannel {
+        channel: noise,
+        locs,
+    })
+}
+
 /// Place a text label annotation on a qubit wire.
 ///
 /// Labels are no-ops in execution but render as floating text on the
@@ -392,14 +424,6 @@ pub fn control(ctrl_locs: Vec<usize>, target_locs: Vec<usize>, gate: Gate) -> Ci
 ///     assert!(matches!(pa.annotation, Annotation::Label(ref s) if s == "Bell prep"));
 /// }
 /// ```
-/// Place a noise channel at specific qubit locations.
-pub fn channel(locs: Vec<usize>, noise: NoiseChannel) -> CircuitElement {
-    CircuitElement::Channel(PositionedChannel {
-        channel: noise,
-        locs,
-    })
-}
-
 pub fn label(loc: usize, text: impl Into<String>) -> CircuitElement {
     CircuitElement::Annotation(PositionedAnnotation {
         annotation: Annotation::Label(text.into()),

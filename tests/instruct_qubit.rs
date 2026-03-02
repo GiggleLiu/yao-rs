@@ -498,14 +498,11 @@ fn test_instruct_2q_diag_controlled_3q() {
     ];
     instruct_2q_diag_controlled(&mut state, 3, &[1, 2], &diag, &[0], &[1]);
     // All amplitudes unchanged except |111⟩ (index 7) which gets -1
-    for i in 0..n {
+    for (i, s) in state.iter().enumerate() {
         if i == 7 {
-            assert!(
-                (state[i] - (-amp)).norm() < 1e-10,
-                "index {i} should be -amp"
-            );
+            assert!((*s - (-amp)).norm() < 1e-10, "index {i} should be -amp");
         } else {
-            assert!((state[i] - amp).norm() < 1e-10, "index {i} should be amp");
+            assert!((*s - amp).norm() < 1e-10, "index {i} should be amp");
         }
     }
 }
