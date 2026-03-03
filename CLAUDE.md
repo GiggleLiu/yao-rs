@@ -63,6 +63,11 @@ Gate → PositionedGate → Circuit → TensorNetwork/State
 - `torch_contractor.rs` (feature-gated): libtorch-based tensor network contraction via omeco greedy optimizer
 - `typst.rs` (feature-gated): PDF circuit rendering via embedded Typst
 
+## Test Layout
+
+- **Unit tests** (`src/unit_tests/`): Each source file owns its tests via `#[cfg(test)] #[path = "unit_tests/xxx.rs"] mod tests;`. These compile with the lib crate for fast incremental builds.
+- **Integration tests** (`tests/suites/`): Cross-module tests that depend on shared helpers (`tests/common/`) and JSON ground-truth data (`tests/data/`). Single entry point at `tests/main.rs`.
+
 ## Feature Flags
 
 - `parallel`: Enable rayon for parallel operations
