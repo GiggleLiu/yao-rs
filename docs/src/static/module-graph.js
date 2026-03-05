@@ -73,7 +73,9 @@ document.addEventListener('DOMContentLoaded', function() {
               category: mod.category,
               kind: item.kind,
               doc: item.doc || '',
-              isChild: true
+              isChild: true,
+              moduleName: mod.name,
+              itemName: item.name
             },
             position: {
               x: pos.x,
@@ -178,12 +180,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       });
 
+      // Rustdoc URL prefixes by kind
+      var kindPrefix = {
+        'function': 'fn', 'struct': 'struct', 'enum': 'enum',
+        'trait': 'trait', 'type_alias': 'type', 'constant': 'constant'
+      };
+
       // Double-click: open rustdoc
       cy.on('dbltap', 'node[?isParent]', function(evt) {
         var d = evt.target.data();
         if (d.doc_path) {
           window.open('api/yao_rs/' + d.doc_path, '_blank');
         }
+      });
+      cy.on('dbltap', 'node[?isChild]', function(evt) {
+        var d = evt.target.data();
+        var prefix = kindPrefix[d.kind] || d.kind;
+        window.open('api/yao_rs/' + d.moduleName + '/' + prefix + '.' + d.itemName + '.html', '_blank');
       });
 
       // Tooltip
