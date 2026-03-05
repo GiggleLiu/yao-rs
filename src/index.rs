@@ -6,7 +6,7 @@
 /// Convert site indices to flat state vector index using row-major ordering.
 ///
 /// The index is computed as:
-/// index = indices[0]*d_1*d_2*... + indices[1]*d_2*... + ... + indices[n-1]
+/// `index = indices[0]*d_1*d_2*... + indices[1]*d_2*... + ... + indices[n-1]`
 ///
 /// # Example
 /// ```

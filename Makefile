@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help build build-release check fmt fmt-check clippy test check-all clean doc doc-serve doc-open rustdoc example-qft run-plan
+.PHONY: help build build-release check fmt fmt-check clippy test check-all clean doc doc-serve doc-open rustdoc example-qft run-plan module-graph
 
 CARGO ?= cargo
 DOC_PORT ?= 3001
@@ -21,6 +21,7 @@ help:
 	@printf "  doc-serve     Serve mdBook at http://%s:%s\n" "$(DOC_HOST)" "$(DOC_PORT)"
 	@printf "  doc-open      Build and open mdBook in browser\n"
 	@printf "  rustdoc       Build Rust API docs\n"
+	@printf "  module-graph  Generate module graph JSON from rustdoc\n"
 	@printf "\nAutomation:\n"
 	@printf "  run-plan      Execute a plan with Claude autorun\n"
 	@printf "\nExamples:\n"
@@ -52,9 +53,14 @@ check-all: fmt-check clippy test
 
 doc:
 	mdbook build docs
+	$(CARGO) doc --no-deps
+	rm -rf docs/book/api
+	cp -r target/doc docs/book/api
 
-doc-serve:
-	mdbook serve docs -p $(DOC_PORT) -n $(DOC_HOST)
+doc-serve: doc
+	@-lsof -ti:$(DOC_PORT) | xargs kill 2>/dev/null || true
+	@echo "Serving at http://$(DOC_HOST):$(DOC_PORT)"
+	python3 -m http.server $(DOC_PORT) -b $(DOC_HOST) -d docs/book
 
 doc-open: doc
 	open docs/book/index.html 2>/dev/null || xdg-open docs/book/index.html
@@ -64,6 +70,10 @@ rustdoc:
 
 example-qft:
 	$(CARGO) run --example qft
+
+module-graph:  ## Generate module graph JSON from rustdoc
+	cargo +nightly rustdoc -- -Z unstable-options --output-format json
+	python3 scripts/gen_module_graph.py
 
 clean:
 	$(CARGO) clean

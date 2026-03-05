@@ -133,7 +133,7 @@ pub fn circuit_to_overlap(circuit: &Circuit) -> TensorNetwork {
 /// Convert a quantum circuit into a tensor network with boundary conditions.
 ///
 /// The initial state is always |0...0⟩. Each qubit gets a rank-1 tensor
-/// `[1, 0, ..., 0]` (length = dims[i]) attached to its input leg.
+/// `[1, 0, ..., 0]` (length = `dims[i]`) attached to its input leg.
 ///
 /// Qubits listed in `final_state` are pinned to |0⟩ in the output,
 /// receiving a similar rank-1 tensor on their output leg.

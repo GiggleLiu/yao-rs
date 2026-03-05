@@ -34,7 +34,7 @@ impl State {
 
     /// Creates |i_0, i_1, ..., i_{n-1}> state.
     /// Index computation uses row-major ordering:
-    /// index = levels[0]*d_1*d_2*... + levels[1]*d_2*... + ... + levels[n-1]
+    /// `index = levels[0]*d_1*d_2*... + levels[1]*d_2*... + ... + levels[n-1]`
     pub fn product_state(dims: &[usize], levels: &[usize]) -> Self {
         assert_eq!(
             dims.len(),

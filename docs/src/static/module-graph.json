@@ -1,0 +1,549 @@
+{
+  "modules": [
+    {
+      "name": "apply",
+      "category": "simulation",
+      "doc_path": "apply/index.html",
+      "items": [
+        {
+          "name": "apply_inplace",
+          "kind": "function",
+          "doc": "Apply a circuit to a quantum state in-place using efficient instruct functions."
+        },
+        {
+          "name": "apply",
+          "kind": "function",
+          "doc": "Apply a circuit to a quantum state, returning a new state."
+        }
+      ]
+    },
+    {
+      "name": "bitutils",
+      "category": "utility",
+      "doc_path": "bitutils/index.html",
+      "items": [
+        {
+          "name": "indicator",
+          "kind": "function",
+          "doc": "Return an integer with the k-th bit set to 1 (0-indexed)."
+        },
+        {
+          "name": "bmask",
+          "kind": "function",
+          "doc": "Return a bitmask with bits set at the given positions (0-indexed)."
+        },
+        {
+          "name": "bmask_range",
+          "kind": "function",
+          "doc": "Return a bitmask for a contiguous range [start, stop) of bit positions."
+        },
+        {
+          "name": "flip",
+          "kind": "function",
+          "doc": "XOR flip bits at masked positions."
+        },
+        {
+          "name": "anyone",
+          "kind": "function",
+          "doc": "Return true if any bit at masked position is 1."
+        },
+        {
+          "name": "allone",
+          "kind": "function",
+          "doc": "Return true if all bits at masked positions are 1."
+        },
+        {
+          "name": "ismatch",
+          "kind": "function",
+          "doc": "Return true if bits at masked positions equal target."
+        },
+        {
+          "name": "IterControl",
+          "kind": "struct",
+          "doc": "Iterator for controlled subspace of bits."
+        },
+        {
+          "name": "itercontrol",
+          "kind": "function",
+          "doc": "Create an IterControl that iterates through the controlled subspace."
+        },
+        {
+          "name": "group_shift",
+          "kind": "function",
+          "doc": "Compute masks and shift factors for IterControl."
+        }
+      ]
+    },
+    {
+      "name": "circuit",
+      "category": "core",
+      "doc_path": "circuit/index.html",
+      "items": [
+        {
+          "name": "Annotation",
+          "kind": "enum",
+          "doc": "Annotation variants for circuit visualization."
+        },
+        {
+          "name": "PositionedAnnotation",
+          "kind": "struct",
+          "doc": "An annotation placed at a specific qubit location."
+        },
+        {
+          "name": "PositionedChannel",
+          "kind": "struct",
+          "doc": "A noise channel placed at specific qubit locations."
+        },
+        {
+          "name": "CircuitElement",
+          "kind": "enum",
+          "doc": "Elements that can appear in a circuit sequence."
+        },
+        {
+          "name": "CircuitError",
+          "kind": "enum",
+          "doc": "Error types for circuit validation."
+        },
+        {
+          "name": "PositionedGate",
+          "kind": "struct",
+          "doc": "A gate placed at specific locations in a circuit."
+        },
+        {
+          "name": "Circuit",
+          "kind": "struct",
+          "doc": "A quantum circuit consisting of positioned gates and annotations on a register of qudits."
+        },
+        {
+          "name": "put",
+          "kind": "function",
+          "doc": "Place a gate on target locations (no controls)."
+        },
+        {
+          "name": "control",
+          "kind": "function",
+          "doc": "Place a controlled gate with active-high control (all controls trigger on |1\u27e9)."
+        },
+        {
+          "name": "channel",
+          "kind": "function",
+          "doc": "Place a noise channel at specific qubit locations."
+        },
+        {
+          "name": "label",
+          "kind": "function",
+          "doc": "Place a text label annotation on a qubit wire."
+        }
+      ]
+    },
+    {
+      "name": "easybuild",
+      "category": "higher",
+      "doc_path": "easybuild/index.html",
+      "items": [
+        {
+          "name": "pair_ring",
+          "kind": "function",
+          "doc": "Ring entanglement layout: [(0,1), (1,2), ..., (n-2,n-1), (n-1,0)]"
+        },
+        {
+          "name": "pair_square",
+          "kind": "function",
+          "doc": "Square lattice on m x n grid. Returns pairs of (row-major index, row-major index)."
+        },
+        {
+          "name": "qft_circuit",
+          "kind": "function",
+          "doc": "Build an n-qubit QFT circuit."
+        },
+        {
+          "name": "general_u2",
+          "kind": "function",
+          "doc": "General single-qubit gate: Rz(theta3) * Ry(theta2) * Rz(theta1), positioned on `qubit`."
+        },
+        {
+          "name": "general_u4",
+          "kind": "function",
+          "doc": "General two-qubit SU(4) decomposition (15 params), on qubits qubit0, qubit0+1."
+        },
+        {
+          "name": "variational_circuit",
+          "kind": "function",
+          "doc": "Hardware-efficient variational circuit. All rotation angles = 0."
+        },
+        {
+          "name": "hadamard_test_circuit",
+          "kind": "function",
+          "doc": "Hadamard test circuit. N+1 qubits (qubit 0 = ancilla)."
+        },
+        {
+          "name": "swap_test_circuit",
+          "kind": "function",
+          "doc": "Swap test circuit. nstate*nbit+1 qubits (qubit 0 = ancilla)."
+        },
+        {
+          "name": "phase_estimation_circuit",
+          "kind": "function",
+          "doc": "Phase estimation circuit. n_reg + n_b qubits."
+        },
+        {
+          "name": "rand_supremacy2d",
+          "kind": "function",
+          "doc": "Build a random supremacy circuit on an nx x ny qubit grid with given depth."
+        },
+        {
+          "name": "rand_google53",
+          "kind": "function",
+          "doc": "Build a random Google-53 (Sycamore-style) circuit."
+        }
+      ]
+    },
+    {
+      "name": "einsum",
+      "category": "tensor",
+      "doc_path": "einsum/index.html",
+      "items": [
+        {
+          "name": "TensorNetwork",
+          "kind": "struct",
+          "doc": "A tensor network representation of a quantum circuit."
+        },
+        {
+          "name": "circuit_to_einsum",
+          "kind": "function",
+          "doc": "Convert a quantum circuit into a tensor network (einsum) representation."
+        },
+        {
+          "name": "circuit_to_overlap",
+          "kind": "function",
+          "doc": "Convert circuit to tensor network for \u27e80|U|0\u27e9 (overlap with zero state)"
+        },
+        {
+          "name": "circuit_to_einsum_with_boundary",
+          "kind": "function",
+          "doc": "Convert a quantum circuit into a tensor network with boundary conditions."
+        },
+        {
+          "name": "circuit_to_expectation",
+          "kind": "function",
+          "doc": "Convert circuit to tensor network for computing expectation value \u27e80|U\u2020OU|0\u27e9"
+        },
+        {
+          "name": "TensorNetworkDM",
+          "kind": "struct",
+          "doc": "Tensor network with i32 labels for density matrix mode."
+        },
+        {
+          "name": "circuit_to_einsum_dm",
+          "kind": "function",
+          "doc": "Convert a circuit to a density matrix tensor network."
+        },
+        {
+          "name": "circuit_to_expectation_dm",
+          "kind": "function",
+          "doc": "Compute expectation value tr(O * rho) in density matrix mode."
+        }
+      ]
+    },
+    {
+      "name": "gate",
+      "category": "core",
+      "doc_path": "gate/index.html",
+      "items": [
+        {
+          "name": "Gate",
+          "kind": "enum",
+          "doc": "Quantum gate enum supporting named qubit gates and custom gates."
+        }
+      ]
+    },
+    {
+      "name": "index",
+      "category": "utility",
+      "doc_path": "index/index.html",
+      "items": [
+        {
+          "name": "mixed_radix_index",
+          "kind": "function",
+          "doc": "Convert site indices to flat state vector index using row-major ordering."
+        },
+        {
+          "name": "linear_to_indices",
+          "kind": "function",
+          "doc": "Decompose a flat index into site indices using row-major ordering."
+        },
+        {
+          "name": "iter_basis",
+          "kind": "function",
+          "doc": "Iterate over all computational basis states."
+        },
+        {
+          "name": "iter_basis_fixed",
+          "kind": "function",
+          "doc": "Iterate over basis states with fixed values at certain sites."
+        },
+        {
+          "name": "insert_index",
+          "kind": "function",
+          "doc": "Insert a value at a location in site indices."
+        }
+      ]
+    },
+    {
+      "name": "instruct",
+      "category": "simulation",
+      "doc_path": "instruct/index.html",
+      "items": [
+        {
+          "name": "u1rows",
+          "kind": "function",
+          "doc": "Apply a 2x2 unitary gate to a pair of amplitudes at indices i and j."
+        },
+        {
+          "name": "udrows",
+          "kind": "function",
+          "doc": "Apply a d x d unitary gate to d amplitudes at given indices."
+        },
+        {
+          "name": "mulrow",
+          "kind": "function",
+          "doc": "Multiply an amplitude at index i by a scalar factor."
+        },
+        {
+          "name": "instruct_single",
+          "kind": "function",
+          "doc": "Apply a general d x d gate at a single site location."
+        },
+        {
+          "name": "instruct_controlled",
+          "kind": "function",
+          "doc": "Apply a controlled gate to target sites when control sites have specified values."
+        },
+        {
+          "name": "instruct_diagonal",
+          "kind": "function",
+          "doc": "Apply a diagonal gate at a single site location."
+        }
+      ]
+    },
+    {
+      "name": "instruct_qubit",
+      "category": "simulation",
+      "doc_path": "instruct_qubit/index.html",
+      "items": [
+        {
+          "name": "instruct_1q",
+          "kind": "function",
+          "doc": "Apply single-qubit gate to state vector using stride-based iteration."
+        },
+        {
+          "name": "instruct_1q_diag",
+          "kind": "function",
+          "doc": "Apply single-qubit diagonal gate diag(d0, d1) using stride-based iteration."
+        },
+        {
+          "name": "instruct_2q",
+          "kind": "function",
+          "doc": "Apply 2-qubit 4x4 gate using itercontrol-based iteration."
+        },
+        {
+          "name": "instruct_2q_diag",
+          "kind": "function",
+          "doc": "Apply 2-qubit diagonal gate diag(d0, d1, d2, d3)."
+        },
+        {
+          "name": "instruct_1q_controlled",
+          "kind": "function",
+          "doc": "Apply controlled single-qubit gate."
+        },
+        {
+          "name": "instruct_2q_controlled",
+          "kind": "function",
+          "doc": "Apply controlled 2-qubit gate."
+        },
+        {
+          "name": "instruct_1q_diag_controlled",
+          "kind": "function",
+          "doc": "Apply controlled 1-qubit diagonal gate."
+        },
+        {
+          "name": "instruct_2q_diag_controlled",
+          "kind": "function",
+          "doc": "Apply controlled 2-qubit diagonal gate."
+        }
+      ]
+    },
+    {
+      "name": "json",
+      "category": "utility",
+      "doc_path": "json/index.html",
+      "items": [
+        {
+          "name": "circuit_to_json",
+          "kind": "function",
+          "doc": "Serialize a Circuit to a pretty-printed JSON string."
+        },
+        {
+          "name": "circuit_from_json",
+          "kind": "function",
+          "doc": "Deserialize a Circuit from a JSON string."
+        }
+      ]
+    },
+    {
+      "name": "measure",
+      "category": "simulation",
+      "doc_path": "measure/index.html",
+      "items": [
+        {
+          "name": "probs",
+          "kind": "function",
+          "doc": "Compute probability distribution over computational basis."
+        },
+        {
+          "name": "measure",
+          "kind": "function",
+          "doc": "Sample measurement outcomes without collapsing state."
+        },
+        {
+          "name": "measure_and_collapse",
+          "kind": "function",
+          "doc": "Measure and collapse state to the measured outcome."
+        },
+        {
+          "name": "collapse_to",
+          "kind": "function",
+          "doc": "Collapse state to a specific outcome (post-selection)."
+        },
+        {
+          "name": "measure_reset",
+          "kind": "function",
+          "doc": "Measure specified qudits and reset them to a given value."
+        },
+        {
+          "name": "measure_remove",
+          "kind": "function",
+          "doc": "Measure specified qudits and remove them from the state."
+        }
+      ]
+    },
+    {
+      "name": "noise",
+      "category": "higher",
+      "doc_path": "noise/index.html",
+      "items": [
+        {
+          "name": "NoiseChannel",
+          "kind": "enum",
+          "doc": "Quantum noise channel types."
+        }
+      ]
+    },
+    {
+      "name": "operator",
+      "category": "higher",
+      "doc_path": "operator/index.html",
+      "items": [
+        {
+          "name": "Op",
+          "kind": "enum",
+          "doc": "Single-site operator (Pauli basis + projectors)"
+        },
+        {
+          "name": "OperatorString",
+          "kind": "struct",
+          "doc": "Product of operators at different sites: Z(0)Z(1)"
+        },
+        {
+          "name": "op_matrix",
+          "kind": "function",
+          "doc": "Get 2x2 matrix for operator"
+        },
+        {
+          "name": "OperatorPolynomial",
+          "kind": "struct",
+          "doc": "Linear combination of operator strings: \u03a3 c\u1d62\u00b7O\u1d62"
+        }
+      ]
+    },
+    {
+      "name": "state",
+      "category": "core",
+      "doc_path": "state/index.html",
+      "items": [
+        {
+          "name": "State",
+          "kind": "struct",
+          "doc": ""
+        }
+      ]
+    },
+    {
+      "name": "tensors",
+      "category": "tensor",
+      "doc_path": "tensors/index.html",
+      "items": [
+        {
+          "name": "Leg",
+          "kind": "enum",
+          "doc": "Leg descriptor for tensor network labeling."
+        },
+        {
+          "name": "gate_to_tensor",
+          "kind": "function",
+          "doc": "Convert a PositionedGate to a tensor and its leg descriptors."
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "apply",
+      "target": "circuit"
+    },
+    {
+      "source": "apply",
+      "target": "state"
+    },
+    {
+      "source": "circuit",
+      "target": "gate"
+    },
+    {
+      "source": "circuit",
+      "target": "noise"
+    },
+    {
+      "source": "easybuild",
+      "target": "circuit"
+    },
+    {
+      "source": "easybuild",
+      "target": "gate"
+    },
+    {
+      "source": "einsum",
+      "target": "circuit"
+    },
+    {
+      "source": "einsum",
+      "target": "operator"
+    },
+    {
+      "source": "instruct",
+      "target": "state"
+    },
+    {
+      "source": "json",
+      "target": "circuit"
+    },
+    {
+      "source": "measure",
+      "target": "state"
+    },
+    {
+      "source": "tensors",
+      "target": "circuit"
+    }
+  ]
+}
