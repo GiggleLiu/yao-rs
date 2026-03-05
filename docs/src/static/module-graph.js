@@ -97,12 +97,6 @@ document.addEventListener('DOMContentLoaded', function() {
             'source-distance-from-node': 5,
             'target-distance-from-node': 5
           }},
-          { selector: '.highlighted', style: {
-            'border-color': '#ff4444', 'border-width': 3
-          }},
-          { selector: 'edge.highlighted', style: {
-            'line-color': '#ff4444', 'target-arrow-color': '#ff4444', 'width': 3
-          }},
           { selector: '.faded', style: { 'opacity': 0.15 } }
         ],
         layout: { name: 'preset' },
@@ -159,15 +153,10 @@ document.addEventListener('DOMContentLoaded', function() {
       });
       cy.on('mouseout', 'edge', function() { tooltip.style.display = 'none'; });
 
-      // Click node: show detail
+      // Click node: show public items
       cy.on('tap', 'node', function(evt) {
         cy.nodes().removeClass('selected-mod');
-        cy.elements().removeClass('highlighted faded');
         evt.target.addClass('selected-mod');
-        // Highlight connected edges and neighbors
-        var neighborhood = evt.target.neighborhood();
-        cy.elements().not(evt.target).not(neighborhood).addClass('faded');
-        neighborhood.edges().addClass('highlighted');
         var mod = moduleData[evt.target.id()];
         if (mod) showDetail(mod);
       });
@@ -180,19 +169,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       });
 
-      // Click edge: highlight path
-      cy.on('tap', 'edge', function(evt) {
-        cy.elements().removeClass('highlighted selected-mod faded');
-        evt.target.addClass('highlighted');
-        evt.target.source().addClass('highlighted');
-        evt.target.target().addClass('highlighted');
-        cy.elements().not(evt.target).not(evt.target.source()).not(evt.target.target()).addClass('faded');
-      });
-
       // Click background: clear
       cy.on('tap', function(evt) {
         if (evt.target === cy) {
-          cy.elements().removeClass('highlighted selected-mod faded');
+          cy.nodes().removeClass('selected-mod');
           if (detail) detail.style.display = 'none';
         }
       });
