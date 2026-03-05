@@ -12,8 +12,8 @@ use crate::state::State;
 /// Apply a 2x2 unitary gate to a pair of amplitudes at indices i and j.
 ///
 /// The gate matrix is [[a, b], [c, d]] and transforms:
-/// - new_i = a * state[i] + b * state[j]
-/// - new_j = c * state[i] + d * state[j]
+/// - `new_i = a * state[i] + b * state[j]`
+/// - `new_j = c * state[i] + d * state[j]`
 ///
 /// # Arguments
 /// * `state` - Mutable slice of complex amplitudes
@@ -132,7 +132,7 @@ pub fn mulrow(state: &mut [Complex64], i: usize, factor: Complex64) {
 ///
 /// # Arguments
 /// * `state` - The quantum state to modify
-/// * `gate` - d x d unitary matrix where d = state.dims[loc]
+/// * `gate` - d x d unitary matrix where d = `state.dims[loc]`
 /// * `loc` - The site index where the gate is applied
 ///
 /// # Example
@@ -358,8 +358,8 @@ pub fn instruct_controlled(
 ///
 /// # Arguments
 /// * `state` - The quantum state to modify
-/// * `phases` - Slice of d complex phases where d = state.dims[loc].
-///   phases[k] is applied when the site at `loc` has value k.
+/// * `phases` - Slice of d complex phases where d = `state.dims[loc]`.
+///   `phases[k]` is applied when the site at `loc` has value k.
 /// * `loc` - The site index where the gate is applied
 ///
 /// # Example
