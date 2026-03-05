@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
       cy.on('dbltap', 'node', function(evt) {
         var d = evt.target.data();
         if (d.doc_path) {
-          window.open('../yao_rs/' + d.doc_path, '_blank');
+          window.open('rustdoc/yao_rs/' + d.doc_path, '_blank');
         }
       });
 

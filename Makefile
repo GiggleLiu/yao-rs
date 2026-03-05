@@ -53,6 +53,8 @@ check-all: fmt-check clippy test
 
 doc:
 	mdbook build docs
+	$(CARGO) doc --no-deps --all-features
+	cp -r target/doc docs/book/rustdoc
 
 doc-serve:
 	mdbook serve docs -p $(DOC_PORT) -n $(DOC_HOST)
