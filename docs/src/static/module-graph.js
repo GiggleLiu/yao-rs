@@ -43,23 +43,47 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
     .then(function(data) {
       var elements = [];
-      var moduleData = {};
 
       data.modules.forEach(function(mod) {
-        var nodeId = 'mod_' + mod.name;
-        moduleData[nodeId] = mod;
+        var parentId = 'mod_' + mod.name;
+        var pos = fixedPositions[mod.name] || { x: 500, y: 280 };
+
+        // Compound parent node
         elements.push({
           data: {
-            id: nodeId,
+            id: parentId,
             label: mod.name,
             category: mod.category,
             doc_path: mod.doc_path,
-            itemCount: mod.items.length
-          },
-          position: fixedPositions[mod.name] || { x: 500, y: 280 }
+            itemCount: mod.items.length,
+            isParent: true
+          }
+        });
+
+        // Child item nodes (positioned in a vertical list below parent center)
+        mod.items.forEach(function(item, idx) {
+          var childId = mod.name + '::' + item.name;
+          var icon = kindIcons[item.kind] || item.kind;
+          elements.push({
+            data: {
+              id: childId,
+              parent: parentId,
+              label: icon + ' ' + item.name,
+              fullLabel: mod.name + '::' + item.name,
+              category: mod.category,
+              kind: item.kind,
+              doc: item.doc || '',
+              isChild: true
+            },
+            position: {
+              x: pos.x,
+              y: pos.y + 18 + idx * 22
+            }
+          });
         });
       });
 
+      // Module-level edges
       data.edges.forEach(function(e) {
         elements.push({
           data: {
@@ -74,30 +98,46 @@ document.addEventListener('DOMContentLoaded', function() {
         container: container,
         elements: elements,
         style: [
-          { selector: 'node', style: {
+          // Module nodes (compound parents)
+          { selector: 'node[?isParent]', style: {
             'label': 'data(label)',
             'text-valign': 'center', 'text-halign': 'center',
             'font-size': '12px', 'font-family': 'monospace', 'font-weight': 'bold',
-            'width': function(ele) { return Math.max(ele.data('label').length * 8 + 20, 80); },
-            'height': 36,
+            'min-width': function(ele) { return Math.max(ele.data('label').length * 8 + 20, 80); },
+            'min-height': 36,
+            'padding': '4px',
             'shape': 'round-rectangle',
             'background-color': function(ele) { return categoryColors[ele.data('category')] || '#f0f0f0'; },
             'border-width': 2,
             'border-color': function(ele) { return categoryBorders[ele.data('category')] || '#999'; },
+            'compound-sizing-wrt-labels': 'include',
             'cursor': 'pointer'
           }},
-          { selector: 'node.selected-mod', style: {
-            'border-width': 3,
-            'border-color': '#2196F3'
+          // Expanded parent
+          { selector: 'node[?isParent].expanded', style: {
+            'text-valign': 'top',
+            'padding': '10px'
           }},
+          // Child item nodes
+          { selector: 'node[?isChild]', style: {
+            'label': 'data(label)',
+            'text-valign': 'center', 'text-halign': 'center',
+            'font-size': '9px', 'font-family': 'monospace',
+            'width': function(ele) { return Math.max(ele.data('label').length * 5.5 + 8, 40); },
+            'height': 18,
+            'shape': 'round-rectangle',
+            'background-color': function(ele) { return categoryColors[ele.data('category')] || '#f0f0f0'; },
+            'border-width': 1,
+            'border-color': function(ele) { return categoryBorders[ele.data('category')] || '#999'; }
+          }},
+          // Edges
           { selector: 'edge', style: {
             'width': 1.5, 'line-color': '#999', 'target-arrow-color': '#999',
             'target-arrow-shape': 'triangle', 'curve-style': 'bezier',
             'arrow-scale': 0.8,
             'source-distance-from-node': 5,
             'target-distance-from-node': 5
-          }},
-          { selector: '.faded', style: { 'opacity': 0.15 } }
+          }}
         ],
         layout: { name: 'preset' },
         userZoomingEnabled: true,
@@ -105,29 +145,59 @@ document.addEventListener('DOMContentLoaded', function() {
         boxSelectionEnabled: false
       });
 
+      // Initial state: hide all children, then position parents at fixed positions
+      cy.nodes('[?isChild]').style('display', 'none');
+      Object.keys(fixedPositions).forEach(function(name) {
+        var node = cy.getElementById('mod_' + name);
+        if (node.length) node.position(fixedPositions[name]);
+      });
       cy.fit(40);
 
-      // Detail panel: show public items on click
-      var detail = document.getElementById('mg-detail');
+      var expandedParents = {};
 
-      function showDetail(mod) {
-        if (!detail) return;
-        var html = '<strong>' + mod.name + '</strong> <span class="mg-detail-count">(' + mod.items.length + ' public items)</span>';
-        html += '<div class="mg-detail-items">';
-        mod.items.forEach(function(item) {
-          var icon = kindIcons[item.kind] || item.kind;
-          html += '<span class="mg-detail-item"><code>' + icon + '</code> ' + item.name + '</span>';
-        });
-        html += '</div>';
-        detail.innerHTML = html;
-        detail.style.display = 'block';
-      }
+      // Click: toggle expand/collapse
+      cy.on('tap', 'node[?isParent]', function(evt) {
+        var parentNode = evt.target;
+        var parentId = parentNode.id();
+        var children = parentNode.children();
+
+        if (expandedParents[parentId]) {
+          // Collapse
+          children.style('display', 'none');
+          parentNode.removeClass('expanded');
+          expandedParents[parentId] = false;
+          var name = parentNode.data('label');
+          if (fixedPositions[name]) {
+            parentNode.position(fixedPositions[name]);
+          }
+        } else {
+          // Expand
+          children.style('display', 'element');
+          parentNode.addClass('expanded');
+          expandedParents[parentId] = true;
+        }
+      });
+
+      // Double-click: open rustdoc
+      cy.on('dbltap', 'node[?isParent]', function(evt) {
+        var d = evt.target.data();
+        if (d.doc_path) {
+          window.open('api/yao_rs/' + d.doc_path, '_blank');
+        }
+      });
 
       // Tooltip
       var tooltip = document.getElementById('mg-tooltip');
-      cy.on('mouseover', 'node', function(evt) {
+      cy.on('mouseover', 'node[?isParent]', function(evt) {
         var d = evt.target.data();
         tooltip.innerHTML = '<strong>' + d.label + '</strong> (' + d.itemCount + ' items)';
+        tooltip.style.display = 'block';
+      });
+      cy.on('mouseover', 'node[?isChild]', function(evt) {
+        var d = evt.target.data();
+        var html = '<strong>' + d.fullLabel + '</strong><br><code>' + d.kind + '</code>';
+        if (d.doc) html += '<br><em>' + d.doc + '</em>';
+        tooltip.innerHTML = html;
         tooltip.style.display = 'block';
       });
       cy.on('mousemove', 'node', function(evt) {
@@ -152,30 +222,6 @@ document.addEventListener('DOMContentLoaded', function() {
         tooltip.style.top = (rect.top + window.scrollY + pos.y - 10) + 'px';
       });
       cy.on('mouseout', 'edge', function() { tooltip.style.display = 'none'; });
-
-      // Click node: show public items
-      cy.on('tap', 'node', function(evt) {
-        cy.nodes().removeClass('selected-mod');
-        evt.target.addClass('selected-mod');
-        var mod = moduleData[evt.target.id()];
-        if (mod) showDetail(mod);
-      });
-
-      // Double-click: open rustdoc
-      cy.on('dbltap', 'node', function(evt) {
-        var d = evt.target.data();
-        if (d.doc_path) {
-          window.open('rustdoc/yao_rs/' + d.doc_path, '_blank');
-        }
-      });
-
-      // Click background: clear
-      cy.on('tap', function(evt) {
-        if (evt.target === cy) {
-          cy.nodes().removeClass('selected-mod');
-          if (detail) detail.style.display = 'none';
-        }
-      });
     })
     .catch(function(err) {
       container.innerHTML = '<p style="padding:1em;color:#c00;">Failed to load module graph: ' + err.message + '</p>';

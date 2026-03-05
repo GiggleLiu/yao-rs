@@ -13,7 +13,6 @@ Ported from the Julia library [Yao.jl](https://github.com/QuantumBFS/Yao.jl), fo
 <script src="https://unpkg.com/cytoscape@3.30.4/dist/cytoscape.min.js"></script>
 
 <div id="module-graph"></div>
-<div id="mg-detail"></div>
 <div id="mg-controls">
   <div id="mg-legend">
     <span class="swatch" style="background:#c8f0c8;"></span>Core
@@ -25,7 +24,8 @@ Ported from the Julia library [Yao.jl](https://github.com/QuantumBFS/Yao.jl), fo
   </div>
 </div>
 <div id="mg-help">
-  Click a module to highlight dependencies. Double-click to open rustdoc.
+  Click a module to expand/collapse its public items.
+  Double-click to open rustdoc.
 </div>
 <div id="mg-tooltip"></div>
 

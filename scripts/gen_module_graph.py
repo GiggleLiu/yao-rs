@@ -72,7 +72,10 @@ def main():
                     if isinstance(child_inner, dict)
                     else "unknown"
                 )
-                children.append({"name": child.get("name"), "kind": kind})
+                doc = child.get("docs", "") or ""
+                # Take first sentence/line as summary
+                doc_summary = doc.strip().split("\n")[0][:120] if doc.strip() else ""
+                children.append({"name": child.get("name"), "kind": kind, "doc": doc_summary})
         modules[name] = {
             "name": name,
             "category": CATEGORIES.get(name, "utility"),

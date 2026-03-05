@@ -54,10 +54,13 @@ check-all: fmt-check clippy test
 doc:
 	mdbook build docs
 	$(CARGO) doc --no-deps --all-features
-	cp -r target/doc docs/book/rustdoc
+	rm -rf docs/book/api
+	cp -r target/doc docs/book/api
 
-doc-serve:
-	mdbook serve docs -p $(DOC_PORT) -n $(DOC_HOST)
+doc-serve: doc
+	@-lsof -ti:$(DOC_PORT) | xargs kill 2>/dev/null || true
+	@echo "Serving at http://$(DOC_HOST):$(DOC_PORT)"
+	python3 -m http.server $(DOC_PORT) -b $(DOC_HOST) -d docs/book
 
 doc-open: doc
 	open docs/book/index.html 2>/dev/null || xdg-open docs/book/index.html
