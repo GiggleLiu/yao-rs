@@ -53,7 +53,7 @@ check-all: fmt-check clippy test
 
 doc:
 	mdbook build docs
-	$(CARGO) doc --no-deps --all-features
+	$(CARGO) doc --no-deps
 	rm -rf docs/book/api
 	cp -r target/doc docs/book/api
 
