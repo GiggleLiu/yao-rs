@@ -1,0 +1,471 @@
+{
+  "modules": [
+    {
+      "name": "apply",
+      "category": "simulation",
+      "doc_path": "apply/index.html",
+      "items": [
+        {
+          "name": "apply_inplace",
+          "kind": "function"
+        },
+        {
+          "name": "apply",
+          "kind": "function"
+        }
+      ]
+    },
+    {
+      "name": "bitutils",
+      "category": "utility",
+      "doc_path": "bitutils/index.html",
+      "items": [
+        {
+          "name": "indicator",
+          "kind": "function"
+        },
+        {
+          "name": "bmask",
+          "kind": "function"
+        },
+        {
+          "name": "bmask_range",
+          "kind": "function"
+        },
+        {
+          "name": "flip",
+          "kind": "function"
+        },
+        {
+          "name": "anyone",
+          "kind": "function"
+        },
+        {
+          "name": "allone",
+          "kind": "function"
+        },
+        {
+          "name": "ismatch",
+          "kind": "function"
+        },
+        {
+          "name": "IterControl",
+          "kind": "struct"
+        },
+        {
+          "name": "itercontrol",
+          "kind": "function"
+        },
+        {
+          "name": "group_shift",
+          "kind": "function"
+        }
+      ]
+    },
+    {
+      "name": "circuit",
+      "category": "core",
+      "doc_path": "circuit/index.html",
+      "items": [
+        {
+          "name": "Annotation",
+          "kind": "enum"
+        },
+        {
+          "name": "PositionedAnnotation",
+          "kind": "struct"
+        },
+        {
+          "name": "PositionedChannel",
+          "kind": "struct"
+        },
+        {
+          "name": "CircuitElement",
+          "kind": "enum"
+        },
+        {
+          "name": "CircuitError",
+          "kind": "enum"
+        },
+        {
+          "name": "PositionedGate",
+          "kind": "struct"
+        },
+        {
+          "name": "Circuit",
+          "kind": "struct"
+        },
+        {
+          "name": "put",
+          "kind": "function"
+        },
+        {
+          "name": "control",
+          "kind": "function"
+        },
+        {
+          "name": "channel",
+          "kind": "function"
+        },
+        {
+          "name": "label",
+          "kind": "function"
+        }
+      ]
+    },
+    {
+      "name": "easybuild",
+      "category": "higher",
+      "doc_path": "easybuild/index.html",
+      "items": [
+        {
+          "name": "pair_ring",
+          "kind": "function"
+        },
+        {
+          "name": "pair_square",
+          "kind": "function"
+        },
+        {
+          "name": "qft_circuit",
+          "kind": "function"
+        },
+        {
+          "name": "general_u2",
+          "kind": "function"
+        },
+        {
+          "name": "general_u4",
+          "kind": "function"
+        },
+        {
+          "name": "variational_circuit",
+          "kind": "function"
+        },
+        {
+          "name": "hadamard_test_circuit",
+          "kind": "function"
+        },
+        {
+          "name": "swap_test_circuit",
+          "kind": "function"
+        },
+        {
+          "name": "phase_estimation_circuit",
+          "kind": "function"
+        },
+        {
+          "name": "rand_supremacy2d",
+          "kind": "function"
+        },
+        {
+          "name": "rand_google53",
+          "kind": "function"
+        }
+      ]
+    },
+    {
+      "name": "einsum",
+      "category": "tensor",
+      "doc_path": "einsum/index.html",
+      "items": [
+        {
+          "name": "TensorNetwork",
+          "kind": "struct"
+        },
+        {
+          "name": "circuit_to_einsum",
+          "kind": "function"
+        },
+        {
+          "name": "circuit_to_overlap",
+          "kind": "function"
+        },
+        {
+          "name": "circuit_to_einsum_with_boundary",
+          "kind": "function"
+        },
+        {
+          "name": "circuit_to_expectation",
+          "kind": "function"
+        },
+        {
+          "name": "TensorNetworkDM",
+          "kind": "struct"
+        },
+        {
+          "name": "circuit_to_einsum_dm",
+          "kind": "function"
+        },
+        {
+          "name": "circuit_to_expectation_dm",
+          "kind": "function"
+        }
+      ]
+    },
+    {
+      "name": "gate",
+      "category": "core",
+      "doc_path": "gate/index.html",
+      "items": [
+        {
+          "name": "Gate",
+          "kind": "enum"
+        }
+      ]
+    },
+    {
+      "name": "index",
+      "category": "utility",
+      "doc_path": "index/index.html",
+      "items": [
+        {
+          "name": "mixed_radix_index",
+          "kind": "function"
+        },
+        {
+          "name": "linear_to_indices",
+          "kind": "function"
+        },
+        {
+          "name": "iter_basis",
+          "kind": "function"
+        },
+        {
+          "name": "iter_basis_fixed",
+          "kind": "function"
+        },
+        {
+          "name": "insert_index",
+          "kind": "function"
+        }
+      ]
+    },
+    {
+      "name": "instruct",
+      "category": "simulation",
+      "doc_path": "instruct/index.html",
+      "items": [
+        {
+          "name": "u1rows",
+          "kind": "function"
+        },
+        {
+          "name": "udrows",
+          "kind": "function"
+        },
+        {
+          "name": "mulrow",
+          "kind": "function"
+        },
+        {
+          "name": "instruct_single",
+          "kind": "function"
+        },
+        {
+          "name": "instruct_controlled",
+          "kind": "function"
+        },
+        {
+          "name": "instruct_diagonal",
+          "kind": "function"
+        }
+      ]
+    },
+    {
+      "name": "instruct_qubit",
+      "category": "simulation",
+      "doc_path": "instruct_qubit/index.html",
+      "items": [
+        {
+          "name": "instruct_1q",
+          "kind": "function"
+        },
+        {
+          "name": "instruct_1q_diag",
+          "kind": "function"
+        },
+        {
+          "name": "instruct_2q",
+          "kind": "function"
+        },
+        {
+          "name": "instruct_2q_diag",
+          "kind": "function"
+        },
+        {
+          "name": "instruct_1q_controlled",
+          "kind": "function"
+        },
+        {
+          "name": "instruct_2q_controlled",
+          "kind": "function"
+        },
+        {
+          "name": "instruct_1q_diag_controlled",
+          "kind": "function"
+        },
+        {
+          "name": "instruct_2q_diag_controlled",
+          "kind": "function"
+        }
+      ]
+    },
+    {
+      "name": "json",
+      "category": "utility",
+      "doc_path": "json/index.html",
+      "items": [
+        {
+          "name": "circuit_to_json",
+          "kind": "function"
+        },
+        {
+          "name": "circuit_from_json",
+          "kind": "function"
+        }
+      ]
+    },
+    {
+      "name": "measure",
+      "category": "simulation",
+      "doc_path": "measure/index.html",
+      "items": [
+        {
+          "name": "probs",
+          "kind": "function"
+        },
+        {
+          "name": "measure",
+          "kind": "function"
+        },
+        {
+          "name": "measure_and_collapse",
+          "kind": "function"
+        },
+        {
+          "name": "collapse_to",
+          "kind": "function"
+        },
+        {
+          "name": "measure_reset",
+          "kind": "function"
+        },
+        {
+          "name": "measure_remove",
+          "kind": "function"
+        }
+      ]
+    },
+    {
+      "name": "noise",
+      "category": "higher",
+      "doc_path": "noise/index.html",
+      "items": [
+        {
+          "name": "NoiseChannel",
+          "kind": "enum"
+        }
+      ]
+    },
+    {
+      "name": "operator",
+      "category": "higher",
+      "doc_path": "operator/index.html",
+      "items": [
+        {
+          "name": "Op",
+          "kind": "enum"
+        },
+        {
+          "name": "OperatorString",
+          "kind": "struct"
+        },
+        {
+          "name": "op_matrix",
+          "kind": "function"
+        },
+        {
+          "name": "OperatorPolynomial",
+          "kind": "struct"
+        }
+      ]
+    },
+    {
+      "name": "state",
+      "category": "core",
+      "doc_path": "state/index.html",
+      "items": [
+        {
+          "name": "State",
+          "kind": "struct"
+        }
+      ]
+    },
+    {
+      "name": "tensors",
+      "category": "tensor",
+      "doc_path": "tensors/index.html",
+      "items": [
+        {
+          "name": "Leg",
+          "kind": "enum"
+        },
+        {
+          "name": "gate_to_tensor",
+          "kind": "function"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "apply",
+      "target": "circuit"
+    },
+    {
+      "source": "apply",
+      "target": "state"
+    },
+    {
+      "source": "circuit",
+      "target": "gate"
+    },
+    {
+      "source": "circuit",
+      "target": "noise"
+    },
+    {
+      "source": "easybuild",
+      "target": "circuit"
+    },
+    {
+      "source": "easybuild",
+      "target": "gate"
+    },
+    {
+      "source": "einsum",
+      "target": "circuit"
+    },
+    {
+      "source": "einsum",
+      "target": "operator"
+    },
+    {
+      "source": "instruct",
+      "target": "state"
+    },
+    {
+      "source": "json",
+      "target": "circuit"
+    },
+    {
+      "source": "measure",
+      "target": "state"
+    },
+    {
+      "source": "tensors",
+      "target": "circuit"
+    }
+  ]
+}
