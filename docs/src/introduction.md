@@ -8,6 +8,27 @@ yao-rs is a library for describing quantum circuits and exporting them as tensor
 
 Ported from the Julia library [Yao.jl](https://github.com/QuantumBFS/Yao.jl), focused on the circuit description and tensor network layers.
 
+## Module Architecture
+
+<script src="https://unpkg.com/cytoscape@3.30.4/dist/cytoscape.min.js"></script>
+
+<div id="module-graph"></div>
+<div id="mg-controls">
+  <div id="mg-legend">
+    <span class="swatch" style="background:#c8f0c8;"></span>Core
+    <span class="swatch" style="background:#c8c8f0;"></span>Simulation
+    <span class="swatch" style="background:#f0f0a0;"></span>Tensor Export
+    <span class="swatch" style="background:#e0e0e0;"></span>Utilities
+    <span class="swatch" style="background:#e0c8f0;"></span>Higher-level
+    <span class="swatch" style="background:#f0c8e0;"></span>Visualization
+  </div>
+</div>
+<div id="mg-help">
+  Click a module to expand/collapse its public items.
+  Double-click to open rustdoc.
+</div>
+<div id="mg-tooltip"></div>
+
 ## Why Tensor Network Export?
 
 Tensor networks provide an alternative to full state-vector simulation. Instead of tracking the entire 2^n-dimensional state vector, a circuit is decomposed into a network of small tensors. The contraction order determines computational cost — and can make an exponential difference:

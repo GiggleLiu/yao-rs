@@ -83,16 +83,16 @@ pub fn general_u2(qubit: usize, theta1: f64, theta2: f64, theta3: f64) -> Vec<Ci
 /// General two-qubit SU(4) decomposition (15 params), on qubits qubit0, qubit0+1.
 ///
 /// Structure:
-/// - general_u2(q0, p[0..3])
-/// - general_u2(q1, p[3..6])
-/// - CNOT(control=q1, target=q0)
-/// - Rz(p[6]) on q0
-/// - Ry(p[7]) on q1
-/// - CNOT(control=q0, target=q1)
-/// - Ry(p[8]) on q1
-/// - CNOT(control=q1, target=q0)
-/// - general_u2(q0, p[9..12])
-/// - general_u2(q1, p[12..15])
+/// - `general_u2(q0, p[0..3])`
+/// - `general_u2(q1, p[3..6])`
+/// - `CNOT(control=q1, target=q0)`
+/// - `Rz(p[6])` on q0
+/// - `Ry(p[7])` on q1
+/// - `CNOT(control=q0, target=q1)`
+/// - `Ry(p[8])` on q1
+/// - `CNOT(control=q1, target=q0)`
+/// - `general_u2(q0, p[9..12])`
+/// - `general_u2(q1, p[12..15])`
 pub fn general_u4(qubit0: usize, params: &[f64; 15]) -> Vec<CircuitElement> {
     let q0 = qubit0;
     let q1 = qubit0 + 1;
@@ -124,7 +124,7 @@ pub fn general_u4(qubit0: usize, params: &[f64; 15]) -> Vec<CircuitElement> {
 
 /// Hardware-efficient variational circuit. All rotation angles = 0.
 ///
-/// Structure: [rotor_noleading] + nlayer * [CNOT_entangler + rotor_full] + [rotor_notrailing]
+/// Structure: `[rotor_noleading]` + nlayer * `[CNOT_entangler + rotor_full]` + `[rotor_notrailing]`
 /// where:
 /// - rotor_noleading = Rx(0), Rz(0) per qubit
 /// - rotor_full = Rz(0), Rx(0), Rz(0) per qubit

@@ -12,6 +12,8 @@ default-theme = "rust"
 preferred-dark-theme = "coal"
 git-repository-url = "https://github.com/QuantumBFS/yao-rs"
 edit-url-template = "https://github.com/QuantumBFS/yao-rs/edit/main/docs/src/{path}"
+additional-css = ["src/static/module-graph.css"]
+additional-js = ["src/static/module-graph.js"]
 
 [output.html.search]
 enable = true
