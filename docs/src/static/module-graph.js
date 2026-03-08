@@ -57,7 +57,8 @@ document.addEventListener('DOMContentLoaded', function() {
             doc_path: mod.doc_path,
             itemCount: mod.items.length,
             isParent: true
-          }
+          },
+          position: pos
         });
 
         // Child item nodes (positioned in a vertical list below parent center)
@@ -96,7 +97,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
       });
 
-      var cy = cytoscape({
+      if (!window.cytoscape) {
+        container.innerHTML = '<p style="font-family: sans-serif; font-size: 14px; color: #555;">' +
+          'Module graph visualization is unavailable because the required library failed to load.' +
+          '</p>';
+        return;
+      }
+
+      var cy = window.cytoscape({
         container: container,
         elements: elements,
         style: [
@@ -201,15 +209,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // Tooltip
       var tooltip = document.getElementById('mg-tooltip');
+      function escapeHtml(s) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(s));
+        return div.innerHTML;
+      }
       cy.on('mouseover', 'node[?isParent]', function(evt) {
         var d = evt.target.data();
-        tooltip.innerHTML = '<strong>' + d.label + '</strong> (' + d.itemCount + ' items)';
+        tooltip.innerHTML = '<strong>' + escapeHtml(d.label) + '</strong> (' + d.itemCount + ' items)';
         tooltip.style.display = 'block';
       });
       cy.on('mouseover', 'node[?isChild]', function(evt) {
         var d = evt.target.data();
-        var html = '<strong>' + d.fullLabel + '</strong><br><code>' + d.kind + '</code>';
-        if (d.doc) html += '<br><em>' + d.doc + '</em>';
+        var html = '<strong>' + escapeHtml(d.fullLabel) + '</strong><br><code>' + escapeHtml(d.kind) + '</code>';
+        if (d.doc) html += '<br><em>' + escapeHtml(d.doc) + '</em>';
         tooltip.innerHTML = html;
         tooltip.style.display = 'block';
       });

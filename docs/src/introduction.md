@@ -10,7 +10,7 @@ Ported from the Julia library [Yao.jl](https://github.com/QuantumBFS/Yao.jl), fo
 
 ## Module Architecture
 
-<script src="https://unpkg.com/cytoscape@3.30.4/dist/cytoscape.min.js"></script>
+<script src="https://unpkg.com/cytoscape@3.30.4/dist/cytoscape.min.js" integrity="sha384-H3uzGzTfGHUAumB8+s4GEdfFwzAceN9wCCndN8AXubWKFIPuBSWKKtWDx7RhSf/z" crossorigin="anonymous"></script>
 
 <div id="module-graph"></div>
 <div id="mg-controls">
