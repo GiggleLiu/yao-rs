@@ -172,6 +172,10 @@ mod tests {
     fn test_sum() {
         let poly = parse_operator("Z(0) + X(1)").unwrap();
         assert_eq!(poly.len(), 2);
+        assert_eq!(poly.coeffs()[0], c(1.0));
+        assert_eq!(poly.coeffs()[1], c(1.0));
+        assert_eq!(poly.opstrings()[0].ops(), &[(0, Op::Z)]);
+        assert_eq!(poly.opstrings()[1].ops(), &[(1, Op::X)]);
     }
 
     #[test]

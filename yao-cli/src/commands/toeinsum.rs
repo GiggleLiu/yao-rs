@@ -1,26 +1,25 @@
+use crate::cli::TnMode;
 use crate::output::OutputConfig;
 use crate::tn_dto::TensorNetworkDto;
-use anyhow::{Result, bail};
+use anyhow::Result;
 
-pub fn toeinsum(circuit_path: &str, mode: &str, out: &OutputConfig) -> Result<()> {
+pub fn toeinsum(circuit_path: &str, mode: TnMode, out: &OutputConfig) -> Result<()> {
     let circuit = super::load_circuit(circuit_path)?;
 
     let dto = match mode {
-        "pure" => {
+        TnMode::Pure => {
             let tn = yao_rs::circuit_to_einsum(&circuit);
             TensorNetworkDto::from_pure(&tn)
         }
-        "dm" => {
+        TnMode::Dm => {
             let tn = yao_rs::circuit_to_einsum_dm(&circuit);
             TensorNetworkDto::from_dm(&tn)
         }
-        _ => bail!("Unknown mode '{mode}'. Use 'pure' or 'dm'."),
     };
 
     let json_value = serde_json::to_value(&dto)?;
     let human = format!(
-        "Tensor Network (mode={}):\n  Tensors: {}\n  Labels: {}\n",
-        mode,
+        "Tensor Network (mode={mode:?}):\n  Tensors: {}\n  Labels: {}\n",
         dto.tensors.len(),
         dto.size_dict.len(),
     );

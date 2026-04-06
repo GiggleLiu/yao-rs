@@ -12,11 +12,16 @@ pub fn probs(input: &str, locs: Option<&[usize]>, out: &OutputConfig) -> Result<
         "probabilities": &probabilities,
     });
 
+    let marginal_dims: Vec<usize> = locs.map_or_else(
+        || state.dims.clone(),
+        |selected| selected.iter().map(|&loc| state.dims[loc]).collect(),
+    );
+
     let mut human = String::from("Probabilities:\n");
     for (index, probability) in probabilities.iter().enumerate() {
         if *probability > 1e-10 {
-            let num_bits = locs.map_or(state.dims.len(), |selected| selected.len());
-            let label = format!("{index:0>width$b}", width = num_bits);
+            let indices = yao_rs::linear_to_indices(index, &marginal_dims);
+            let label: String = indices.iter().map(|d| d.to_string()).collect();
             human.push_str(&format!("  |{label}> : {probability:.6}\n"));
         }
     }

@@ -1,4 +1,4 @@
-use clap::{Parser, Subcommand};
+use clap::{Parser, Subcommand, ValueEnum};
 use std::path::PathBuf;
 
 #[derive(Parser)]
@@ -7,6 +7,8 @@ use std::path::PathBuf;
     about = "Quantum circuit simulation toolkit",
     version,
     after_help = "\
+Output is human-readable in a terminal, JSON when piped. Use --json to force JSON.
+
 Typical workflow:
   yao inspect circuit.json
   yao run circuit.json --shots 1024
@@ -98,6 +100,9 @@ Examples:
 
     /// Compute expectation value of an operator on a state
     #[command(after_help = "\
+Operators: I, X, Y, Z, P0(=|0><0|), P1(=|1><1|), Pu(=|0><1| raising), Pd(=|1><0| lowering)
+Syntax: coeff * Op(site)Op(site) [+/- ...]
+
 Examples:
   yao expect state.bin --op \"Z(0)\"
   yao expect state.bin --op \"0.5*Z(0)Z(1) + X(0)\"
@@ -106,12 +111,14 @@ Examples:
         /// State file (use - for stdin)
         input: String,
         /// Operator expression (e.g. "Z(0)Z(1) + 0.5*X(0)")
-        #[arg(long)]
+        #[arg(long, allow_hyphen_values = true)]
         op: String,
     },
 
     /// Simulate and post-process in one step (no intermediate files)
     #[command(after_help = "\
+Operators: I, X, Y, Z, P0(=|0><0|), P1(=|1><1|), Pu(=|0><1| raising), Pd(=|1><0| lowering)
+
 Examples:
   yao run circuit.json --shots 1024
   yao run circuit.json --op \"Z(0)Z(1)\"
@@ -127,7 +134,7 @@ Examples:
         #[arg(long, conflicts_with = "op")]
         shots: Option<usize>,
         /// Operator expression for expectation (mutually exclusive with --shots)
-        #[arg(long, conflicts_with = "shots")]
+        #[arg(long, conflicts_with = "shots", allow_hyphen_values = true)]
         op: Option<String>,
         /// Qubit indices for partial measurement (comma-separated, used with --shots)
         #[arg(long, value_delimiter = ',')]
@@ -144,8 +151,8 @@ Examples:
         /// Circuit JSON file (use - for stdin)
         circuit: String,
         /// Export mode: pure (default) or dm (density matrix)
-        #[arg(long, default_value = "pure")]
-        mode: String,
+        #[arg(long, value_enum, default_value_t = TnMode::Pure)]
+        mode: TnMode,
     },
 
     /// Render circuit diagram as PDF
@@ -167,4 +174,12 @@ Examples:
         /// Shell to generate completions for (auto-detected if omitted)
         shell: Option<clap_complete::Shell>,
     },
+}
+
+#[derive(Debug, Clone, Copy, ValueEnum)]
+pub enum TnMode {
+    /// Pure-state tensor network
+    Pure,
+    /// Density-matrix tensor network
+    Dm,
 }

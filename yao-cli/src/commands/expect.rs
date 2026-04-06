@@ -4,7 +4,6 @@ use crate::state_io;
 use anyhow::Result;
 use ndarray::Array2;
 use num_complex::Complex64;
-use std::collections::HashMap;
 use yao_rs::{State, op_matrix};
 
 pub fn expect(input: &str, op_str: &str, out: &OutputConfig) -> Result<()> {
@@ -12,45 +11,36 @@ pub fn expect(input: &str, op_str: &str, out: &OutputConfig) -> Result<()> {
     let operator = operator_parser::parse_operator(op_str)?;
     let value = compute_expectation(&state, &operator);
 
-    let json_value = serde_json::json!({
-        "operator": op_str,
-        "expectation_value": {
-            "re": value.re,
-            "im": value.im,
-        },
-    });
-
-    let human = if value.im.abs() < 1e-10 {
-        format!("<op> = {:.10}", value.re)
-    } else {
-        format!("<op> = {:.10} + {:.10}i", value.re, value.im)
-    };
+    let (human, json_value) = super::format_expectation(op_str, value);
 
     out.emit(&human, &json_value)
 }
 
+/// Compute <psi|O|psi> via brute-force double-loop over the full Hilbert space.
+///
+/// **Warning**: O(D^2) where D = product of dims, so this is O(4^n) for n qubits.
+/// Suitable for small systems only (n <= ~15).
 pub fn compute_expectation(state: &State, operator: &yao_rs::OperatorPolynomial) -> Complex64 {
     let n = state.dims.len();
     let total_dim: usize = state.dims.iter().product();
     let mut result = Complex64::new(0.0, 0.0);
+    let identity = op_matrix(&yao_rs::Op::I);
 
     for (coeff, opstring) in operator.iter() {
         let ops = opstring.ops();
         let mut term_val = Complex64::new(0.0, 0.0);
 
-        let mut site_ops: Vec<Array2<Complex64>> = Vec::with_capacity(n);
-        let mut op_map: HashMap<usize, Array2<Complex64>> = HashMap::new();
-        for &(site, ref op) in ops {
-            op_map.insert(site, op_matrix(op));
-        }
-
-        for site in 0..n {
-            if let Some(matrix) = op_map.get(&site) {
-                site_ops.push(matrix.clone());
-            } else {
-                site_ops.push(op_matrix(&yao_rs::Op::I));
-            }
-        }
+        let op_matrices: Vec<Array2<Complex64>> = ops.iter().map(|(_, op)| op_matrix(op)).collect();
+        let op_sites: Vec<usize> = ops.iter().map(|(site, _)| *site).collect();
+        let site_ops: Vec<&Array2<Complex64>> = (0..n)
+            .map(|site| {
+                op_sites
+                    .iter()
+                    .position(|&s| s == site)
+                    .map(|idx| &op_matrices[idx])
+                    .unwrap_or(&identity)
+            })
+            .collect();
 
         for i in 0..total_dim {
             let psi_i_conj = state.data[i].conj();
@@ -58,12 +48,7 @@ pub fn compute_expectation(state: &State, operator: &yao_rs::OperatorPolynomial)
                 continue;
             }
 
-            let mut i_indices = vec![0usize; n];
-            let mut idx = i;
-            for site in (0..n).rev() {
-                i_indices[site] = idx % state.dims[site];
-                idx /= state.dims[site];
-            }
+            let i_indices = yao_rs::linear_to_indices(i, &state.dims);
 
             for j in 0..total_dim {
                 let psi_j = state.data[j];
@@ -71,12 +56,7 @@ pub fn compute_expectation(state: &State, operator: &yao_rs::OperatorPolynomial)
                     continue;
                 }
 
-                let mut j_indices = vec![0usize; n];
-                let mut jdx = j;
-                for site in (0..n).rev() {
-                    j_indices[site] = jdx % state.dims[site];
-                    jdx /= state.dims[site];
-                }
+                let j_indices = yao_rs::linear_to_indices(j, &state.dims);
 
                 let mut matrix_elem = Complex64::new(1.0, 0.0);
                 for site in 0..n {
@@ -126,5 +106,51 @@ mod tests {
         let value = compute_expectation(&state, &operator);
 
         assert!((value - Complex64::new(1.0, 0.0)).norm() < 1e-12);
+    }
+
+    #[test]
+    fn computes_zz_expectation_for_bell_state() {
+        // Bell state |00> + |11> / sqrt(2): <ZZ> = 1
+        let amp = 1.0 / 2.0_f64.sqrt();
+        let state = State::new(
+            vec![2, 2],
+            array![
+                Complex64::new(amp, 0.0),
+                Complex64::new(0.0, 0.0),
+                Complex64::new(0.0, 0.0),
+                Complex64::new(amp, 0.0)
+            ],
+        );
+        let operator = OperatorPolynomial::new(
+            vec![Complex64::new(1.0, 0.0)],
+            vec![yao_rs::OperatorString::new(vec![(0, Op::Z), (1, Op::Z)])],
+        );
+
+        let value = compute_expectation(&state, &operator);
+        assert!((value - Complex64::new(1.0, 0.0)).norm() < 1e-12);
+    }
+
+    #[test]
+    fn computes_sum_operator_on_two_qubits() {
+        // |01>: <Z(0)> = 1, <Z(1)> = -1, so <Z(0) + Z(1)> = 0
+        let state = State::new(
+            vec![2, 2],
+            array![
+                Complex64::new(0.0, 0.0),
+                Complex64::new(1.0, 0.0),
+                Complex64::new(0.0, 0.0),
+                Complex64::new(0.0, 0.0)
+            ],
+        );
+        let operator = OperatorPolynomial::new(
+            vec![Complex64::new(1.0, 0.0), Complex64::new(1.0, 0.0)],
+            vec![
+                yao_rs::OperatorString::new(vec![(0, Op::Z)]),
+                yao_rs::OperatorString::new(vec![(1, Op::Z)]),
+            ],
+        );
+
+        let value = compute_expectation(&state, &operator);
+        assert!(value.norm() < 1e-12);
     }
 }

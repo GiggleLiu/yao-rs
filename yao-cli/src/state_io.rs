@@ -71,6 +71,16 @@ pub fn read_state_from_reader(reader: &mut impl BufRead) -> anyhow::Result<State
         bail!("Unsupported dtype: {} (expected complex128)", header.dtype);
     }
 
+    let expected_from_dims: usize = header.dims.iter().product();
+    if header.num_elements != expected_from_dims {
+        bail!(
+            "Header mismatch: num_elements={} but dims {:?} imply {} elements",
+            header.num_elements,
+            header.dims,
+            expected_from_dims
+        );
+    }
+
     let expected_bytes = header.num_elements * 16;
     let mut buf = vec![0u8; expected_bytes];
     reader
@@ -141,6 +151,30 @@ mod tests {
         let loaded = read_state_from_reader(&mut &buf[..]).unwrap();
         assert_eq!(loaded.dims, dims);
         assert_eq!(loaded.data.len(), 8);
-        assert!((loaded.data[0] - Complex64::new(1.0, 0.0)).norm() < 1e-12);
+        for (a, b) in loaded.data.iter().zip(state.data.iter()) {
+            assert!((a - b).norm() < 1e-12);
+        }
+    }
+
+    #[test]
+    fn test_rejects_mismatched_dims_and_num_elements() {
+        // Craft a header where num_elements doesn't match dims product
+        let header_json = serde_json::json!({
+            "format": "yao-state-v1",
+            "num_qubits": 2,
+            "dims": [2, 2],
+            "num_elements": 999,
+            "dtype": "complex128",
+        });
+        let mut buf = Vec::new();
+        buf.extend_from_slice(header_json.to_string().as_bytes());
+        buf.push(b'\n');
+        // Append some dummy data
+        buf.extend_from_slice(&[0u8; 64]);
+
+        let result = read_state_from_reader(&mut &buf[..]);
+        assert!(result.is_err());
+        let err_msg = result.unwrap_err().to_string();
+        assert!(err_msg.contains("num_elements=999"));
     }
 }

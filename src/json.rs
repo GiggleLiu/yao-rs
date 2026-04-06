@@ -142,7 +142,7 @@ pub fn circuit_to_json(circuit: &Circuit) -> String {
 /// Helper function to convert GateJson to a CircuitElement
 fn gate_json_to_element(gj: GateJson) -> Result<CircuitElement, String> {
     let gate = match gj.gate.as_str() {
-        "X" => Gate::X,
+        "X" | "CNOT" | "CX" => Gate::X,
         "Y" => Gate::Y,
         "Z" => Gate::Z,
         "H" => Gate::H,

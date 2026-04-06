@@ -64,7 +64,7 @@ fn main() -> anyhow::Result<()> {
         }
         Commands::Probs { input, locs } => commands::probs::probs(&input, locs.as_deref(), &out),
         Commands::Expect { input, op } => commands::expect::expect(&input, &op, &out),
-        Commands::Toeinsum { circuit, mode } => commands::toeinsum::toeinsum(&circuit, &mode, &out),
+        Commands::Toeinsum { circuit, mode } => commands::toeinsum::toeinsum(&circuit, mode, &out),
         #[cfg(feature = "typst")]
         Commands::Visualize { circuit } => commands::visualize::visualize(&circuit, &out),
         Commands::Completions { shell } => {

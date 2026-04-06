@@ -107,6 +107,14 @@ mod tests {
         let json = serde_json::to_string_pretty(&dto).unwrap();
         let parsed: TensorNetworkDto = serde_json::from_str(&json).unwrap();
         assert_eq!(parsed.format, dto.format);
+        assert_eq!(parsed.mode, dto.mode);
         assert_eq!(parsed.tensors.len(), dto.tensors.len());
+        assert_eq!(parsed.size_dict, dto.size_dict);
+        assert_eq!(parsed.eincode.output_indices, dto.eincode.output_indices);
+        for (orig, rt) in dto.tensors.iter().zip(parsed.tensors.iter()) {
+            assert_eq!(orig.shape, rt.shape);
+            assert_eq!(orig.data_re, rt.data_re);
+            assert_eq!(orig.data_im, rt.data_im);
+        }
     }
 }
