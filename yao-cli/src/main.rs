@@ -1,4 +1,5 @@
 mod cli;
+mod operator_parser;
 mod output;
 mod state_io;
 mod tn_dto;
