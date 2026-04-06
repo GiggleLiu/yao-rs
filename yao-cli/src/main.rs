@@ -1,4 +1,5 @@
 mod cli;
+mod commands;
 mod operator_parser;
 mod output;
 mod state_io;
@@ -32,69 +33,40 @@ fn main() -> anyhow::Result<()> {
             | Commands::Toeinsum { .. }
     );
 
-    let _out = OutputConfig {
-        output: cli.output.clone(),
+    let out = OutputConfig {
+        output: cli.output,
         quiet: cli.quiet,
         json: cli.json,
         auto_json,
     };
 
     match cli.command {
-        Commands::Inspect { input: _input } => {
-            eprintln!("inspect: not yet implemented");
-            Ok(())
-        }
-        Commands::Simulate {
-            circuit: _circuit,
-            input: _input,
-        } => {
-            eprintln!("simulate: not yet implemented");
-            Ok(())
-        }
-        Commands::Measure {
-            input: _input,
-            shots: _shots,
-            locs: _locs,
-        } => {
-            eprintln!("measure: not yet implemented");
-            Ok(())
-        }
-        Commands::Probs {
-            input: _input,
-            locs: _locs,
-        } => {
-            eprintln!("probs: not yet implemented");
-            Ok(())
-        }
-        Commands::Expect {
-            input: _input,
-            op: _op,
-        } => {
-            eprintln!("expect: not yet implemented");
-            Ok(())
+        Commands::Inspect { input } => commands::inspect::inspect(&input, &out),
+        Commands::Simulate { circuit, input } => {
+            commands::simulate::simulate(&circuit, input.as_deref(), &out)
         }
         Commands::Run {
-            circuit: _circuit,
-            input: _input,
-            shots: _shots,
-            op: _op,
-            locs: _locs,
-        } => {
-            eprintln!("run: not yet implemented");
-            Ok(())
+            circuit,
+            input,
+            shots,
+            op,
+            locs,
+        } => commands::run::run(
+            &circuit,
+            input.as_deref(),
+            shots,
+            op.as_deref(),
+            locs.as_deref(),
+            &out,
+        ),
+        Commands::Measure { input, shots, locs } => {
+            commands::measure::measure(&input, shots, locs.as_deref(), &out)
         }
-        Commands::Toeinsum {
-            circuit: _circuit,
-            mode: _mode,
-        } => {
-            eprintln!("toeinsum: not yet implemented");
-            Ok(())
-        }
+        Commands::Probs { input, locs } => commands::probs::probs(&input, locs.as_deref(), &out),
+        Commands::Expect { input, op } => commands::expect::expect(&input, &op, &out),
+        Commands::Toeinsum { circuit, mode } => commands::toeinsum::toeinsum(&circuit, &mode, &out),
         #[cfg(feature = "typst")]
-        Commands::Visualize { circuit: _circuit } => {
-            eprintln!("visualize: not yet implemented");
-            Ok(())
-        }
+        Commands::Visualize { circuit } => commands::visualize::visualize(&circuit, &out),
         Commands::Completions { shell } => {
             let shell = shell
                 .or_else(clap_complete::Shell::from_env)
