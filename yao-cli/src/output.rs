@@ -22,11 +22,7 @@ impl OutputConfig {
         self.json || (self.auto_json && !std::io::stdout().is_terminal())
     }
 
-    pub fn emit(
-        &self,
-        human_text: &str,
-        json_value: &serde_json::Value,
-    ) -> anyhow::Result<()> {
+    pub fn emit(&self, human_text: &str, json_value: &serde_json::Value) -> anyhow::Result<()> {
         if let Some(ref path) = self.output {
             let content =
                 serde_json::to_string_pretty(json_value).context("Failed to serialize JSON")?;

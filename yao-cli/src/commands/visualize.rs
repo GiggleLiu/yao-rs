@@ -14,7 +14,10 @@ pub fn visualize(circuit_path: &str, out: &OutputConfig) -> Result<()> {
         .and_then(|ext| ext.to_str())
         .unwrap_or("");
     if extension != "pdf" {
-        bail!("Only PDF output is supported in v1. Got extension: '.{}'", extension);
+        bail!(
+            "Only PDF output is supported in v1. Got extension: '.{}'",
+            extension
+        );
     }
 
     let pdf_bytes =

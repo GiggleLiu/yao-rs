@@ -11,7 +11,8 @@ use std::collections::HashMap;
 use ndarray::ArrayD;
 use num_complex::Complex64;
 use omeco::{EinCode, GreedyMethod, NestedEinsum};
-use tch::{Device, Kind, Tensor};
+pub use tch::Device;
+use tch::Tensor;
 
 use crate::einsum::TensorNetwork;
 
@@ -42,7 +43,7 @@ pub fn contract(tn: &TensorNetwork, device: Device) -> Tensor {
         .expect("Contraction order optimization failed");
 
     // Execute the contraction tree
-    execute_tree(&tree, &tch_tensors, &tn.code.ixs)
+    execute_tree(&tree, &tch_tensors)
 }
 
 /// Convert an ndarray complex64 tensor to a tch::Tensor on the given device.
@@ -63,18 +64,14 @@ fn ndarray_to_tch(arr: &ArrayD<Complex64>, device: Device) -> Tensor {
 }
 
 /// Recursively execute a NestedEinsum contraction tree.
-fn execute_tree(
-    tree: &NestedEinsum<usize>,
-    tensors: &[Tensor],
-    original_ixs: &[Vec<usize>],
-) -> Tensor {
+fn execute_tree(tree: &NestedEinsum<usize>, tensors: &[Tensor]) -> Tensor {
     match tree {
         NestedEinsum::Leaf { tensor_index } => tensors[*tensor_index].shallow_clone(),
         NestedEinsum::Node { args, eins } => {
             // Recursively compute children
             let child_results: Vec<Tensor> = args
                 .iter()
-                .map(|child| execute_tree(child, tensors, original_ixs))
+                .map(|child| execute_tree(child, tensors))
                 .collect();
 
             // Build einsum string from the node's EinCode

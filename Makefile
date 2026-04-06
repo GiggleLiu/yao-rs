@@ -28,13 +28,13 @@ help:
 	@printf "  example-qft   Run the QFT example\n"
 
 build:
-	$(CARGO) build
+	$(CARGO) build --workspace
 
 build-release:
-	$(CARGO) build --release
+	$(CARGO) build --workspace --release
 
 check:
-	$(CARGO) check
+	$(CARGO) check --workspace
 
 fmt:
 	$(CARGO) fmt
@@ -43,17 +43,17 @@ fmt-check:
 	$(CARGO) fmt -- --check
 
 clippy:
-	$(CARGO) clippy --all-targets --all-features -- -D warnings
+	$(CARGO) clippy --workspace --all-targets --all-features -- -D warnings
 
 test:
-	$(CARGO) test --all-features
+	$(CARGO) test --workspace --all-features
 
 check-all: fmt-check clippy test
 	@echo "All checks passed."
 
 doc:
 	mdbook build docs
-	$(CARGO) doc --no-deps
+	$(CARGO) doc --workspace --no-deps
 	rm -rf docs/book/api
 	cp -r target/doc docs/book/api
 
@@ -66,7 +66,7 @@ doc-open: doc
 	open docs/book/index.html 2>/dev/null || xdg-open docs/book/index.html
 
 rustdoc:
-	$(CARGO) doc --no-deps --all-features --open
+	$(CARGO) doc --workspace --no-deps --all-features --open
 
 example-qft:
 	$(CARGO) run --example qft

@@ -25,10 +25,10 @@ fn test_single_qubit_x_gate() {
 
     // X = [[0, 1], [1, 0]]
     // tensor[out, in] = M[out, in]
-    assert!(approx_eq(tensor[[0, 0].as_ref()], c(0.0, 0.0)));
-    assert!(approx_eq(tensor[[0, 1].as_ref()], c(1.0, 0.0)));
-    assert!(approx_eq(tensor[[1, 0].as_ref()], c(1.0, 0.0)));
-    assert!(approx_eq(tensor[[1, 1].as_ref()], c(0.0, 0.0)));
+    assert!(approx_eq(tensor[[0usize, 0]], c(0.0, 0.0)));
+    assert!(approx_eq(tensor[[0usize, 1]], c(1.0, 0.0)));
+    assert!(approx_eq(tensor[[1usize, 0]], c(1.0, 0.0)));
+    assert!(approx_eq(tensor[[1usize, 1]], c(0.0, 0.0)));
 }
 
 #[test]
@@ -43,8 +43,8 @@ fn test_single_qubit_z_gate_diagonal() {
     assert_eq!(legs, vec![Leg::Diag(0)]);
 
     // Z diagonal: [1, -1]
-    assert!(approx_eq(tensor[[0].as_ref()], c(1.0, 0.0)));
-    assert!(approx_eq(tensor[[1].as_ref()], c(-1.0, 0.0)));
+    assert!(approx_eq(tensor[[0usize]], c(1.0, 0.0)));
+    assert!(approx_eq(tensor[[1usize]], c(-1.0, 0.0)));
 }
 
 #[test]
@@ -176,9 +176,9 @@ fn test_custom_diagonal_qutrit() {
     assert_eq!(tensor.shape(), &[3]);
     assert_eq!(legs, vec![Leg::Diag(0)]);
 
-    assert!(approx_eq(tensor[[0].as_ref()], c(1.0, 0.0)));
-    assert!(approx_eq(tensor[[1].as_ref()], c(0.0, 1.0)));
-    assert!(approx_eq(tensor[[2].as_ref()], c(-1.0, 0.0)));
+    assert!(approx_eq(tensor[[0usize]], c(1.0, 0.0)));
+    assert!(approx_eq(tensor[[1usize]], c(0.0, 1.0)));
+    assert!(approx_eq(tensor[[2usize]], c(-1.0, 0.0)));
 }
 
 #[test]
@@ -194,10 +194,10 @@ fn test_h_gate_non_diagonal() {
 
     let s = 1.0 / 2.0_f64.sqrt();
     // H = 1/sqrt(2) * [[1, 1], [1, -1]]
-    assert!(approx_eq(tensor[[0, 0].as_ref()], c(s, 0.0)));
-    assert!(approx_eq(tensor[[0, 1].as_ref()], c(s, 0.0)));
-    assert!(approx_eq(tensor[[1, 0].as_ref()], c(s, 0.0)));
-    assert!(approx_eq(tensor[[1, 1].as_ref()], c(-s, 0.0)));
+    assert!(approx_eq(tensor[[0usize, 0]], c(s, 0.0)));
+    assert!(approx_eq(tensor[[0usize, 1]], c(s, 0.0)));
+    assert!(approx_eq(tensor[[1usize, 0]], c(s, 0.0)));
+    assert!(approx_eq(tensor[[1usize, 1]], c(-s, 0.0)));
 }
 
 #[test]
@@ -212,8 +212,8 @@ fn test_s_gate_diagonal() {
     assert_eq!(legs, vec![Leg::Diag(0)]);
 
     // S diagonal: [1, i]
-    assert!(approx_eq(tensor[[0].as_ref()], c(1.0, 0.0)));
-    assert!(approx_eq(tensor[[1].as_ref()], c(0.0, 1.0)));
+    assert!(approx_eq(tensor[[0usize]], c(1.0, 0.0)));
+    assert!(approx_eq(tensor[[1usize]], c(0.0, 1.0)));
 }
 
 #[test]
@@ -229,8 +229,8 @@ fn test_t_gate_diagonal() {
 
     // T diagonal: [1, e^(i*pi/4)]
     let t_phase = Complex64::from_polar(1.0, std::f64::consts::FRAC_PI_4);
-    assert!(approx_eq(tensor[[0].as_ref()], c(1.0, 0.0)));
-    assert!(approx_eq(tensor[[1].as_ref()], t_phase));
+    assert!(approx_eq(tensor[[0usize]], c(1.0, 0.0)));
+    assert!(approx_eq(tensor[[1usize]], t_phase));
 }
 
 #[test]
@@ -247,8 +247,8 @@ fn test_rz_gate_diagonal() {
 
     let phase_neg = Complex64::from_polar(1.0, -theta / 2.0);
     let phase_pos = Complex64::from_polar(1.0, theta / 2.0);
-    assert!(approx_eq(tensor[[0].as_ref()], phase_neg));
-    assert!(approx_eq(tensor[[1].as_ref()], phase_pos));
+    assert!(approx_eq(tensor[[0usize]], phase_neg));
+    assert!(approx_eq(tensor[[1usize]], phase_pos));
 }
 
 #[test]
@@ -315,8 +315,8 @@ fn test_custom_non_diagonal_qubit() {
     assert_eq!(tensor.shape(), &[2, 2]);
     assert_eq!(legs, vec![Leg::Out(0), Leg::In(0)]);
 
-    assert!(approx_eq(tensor[[0, 0].as_ref()], c(0.5, 0.5)));
-    assert!(approx_eq(tensor[[0, 1].as_ref()], c(0.5, -0.5)));
-    assert!(approx_eq(tensor[[1, 0].as_ref()], c(0.5, -0.5)));
-    assert!(approx_eq(tensor[[1, 1].as_ref()], c(0.5, 0.5)));
+    assert!(approx_eq(tensor[[0usize, 0]], c(0.5, 0.5)));
+    assert!(approx_eq(tensor[[0usize, 1]], c(0.5, -0.5)));
+    assert!(approx_eq(tensor[[1usize, 0]], c(0.5, -0.5)));
+    assert!(approx_eq(tensor[[1usize, 1]], c(0.5, 0.5)));
 }

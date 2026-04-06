@@ -62,9 +62,7 @@ impl TensorNetworkDto {
     }
 }
 
-fn tensors_from_network(
-    tensors: &[ndarray::ArrayD<num_complex::Complex64>],
-) -> Vec<TensorDto> {
+fn tensors_from_network(tensors: &[ndarray::ArrayD<num_complex::Complex64>]) -> Vec<TensorDto> {
     tensors
         .iter()
         .map(|tensor| TensorDto {

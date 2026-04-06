@@ -18,8 +18,8 @@ struct StateHeader {
 }
 
 pub fn write_state(state: &State, path: &Path) -> anyhow::Result<()> {
-    let file =
-        std::fs::File::create(path).with_context(|| format!("Failed to create {}", path.display()))?;
+    let file = std::fs::File::create(path)
+        .with_context(|| format!("Failed to create {}", path.display()))?;
     let mut writer = std::io::BufWriter::new(file);
     write_state_to_writer(state, &mut writer)
 }
@@ -45,7 +45,8 @@ pub fn write_state_to_writer(state: &State, writer: &mut impl Write) -> anyhow::
 }
 
 pub fn read_state_from_file(path: &Path) -> anyhow::Result<State> {
-    let file = std::fs::File::open(path).with_context(|| format!("Failed to open {}", path.display()))?;
+    let file =
+        std::fs::File::open(path).with_context(|| format!("Failed to open {}", path.display()))?;
     let mut reader = BufReader::new(file);
     read_state_from_reader(&mut reader)
 }

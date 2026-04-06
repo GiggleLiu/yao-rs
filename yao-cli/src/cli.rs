@@ -41,26 +41,22 @@ pub struct Cli {
 #[derive(Subcommand)]
 pub enum Commands {
     /// Display circuit information (gate count, qubit count, gate list)
-    #[command(
-        after_help = "\
+    #[command(after_help = "\
 Examples:
   yao inspect circuit.json
   yao inspect circuit.json --json
-  cat circuit.json | yao inspect -"
-    )]
+  cat circuit.json | yao inspect -")]
     Inspect {
         /// Circuit JSON file (use - for stdin)
         input: String,
     },
 
     /// Simulate a circuit and output the resulting state
-    #[command(
-        after_help = "\
+    #[command(after_help = "\
 Examples:
   yao simulate circuit.json --output state.bin
   yao simulate circuit.json --input initial.bin --output final.bin
-  yao simulate circuit.json | yao measure - --shots 100"
-    )]
+  yao simulate circuit.json | yao measure - --shots 100")]
     Simulate {
         /// Circuit JSON file (use - for stdin)
         circuit: String,
@@ -70,13 +66,11 @@ Examples:
     },
 
     /// Sample measurement outcomes from a state
-    #[command(
-        after_help = "\
+    #[command(after_help = "\
 Examples:
   yao measure state.bin --shots 1024
   yao measure state.bin --shots 100 --locs 0,1
-  yao simulate circuit.json | yao measure - --shots 1024"
-    )]
+  yao simulate circuit.json | yao measure - --shots 1024")]
     Measure {
         /// State file (use - for stdin)
         input: String,
@@ -89,13 +83,11 @@ Examples:
     },
 
     /// Compute probability distribution from a state
-    #[command(
-        after_help = "\
+    #[command(after_help = "\
 Examples:
   yao probs state.bin
   yao probs state.bin --locs 0,1
-  yao simulate circuit.json | yao probs -"
-    )]
+  yao simulate circuit.json | yao probs -")]
     Probs {
         /// State file (use - for stdin)
         input: String,
@@ -105,13 +97,11 @@ Examples:
     },
 
     /// Compute expectation value of an operator on a state
-    #[command(
-        after_help = "\
+    #[command(after_help = "\
 Examples:
   yao expect state.bin --op \"Z(0)\"
   yao expect state.bin --op \"0.5*Z(0)Z(1) + X(0)\"
-  yao simulate circuit.json | yao expect - --op \"Z(0)\""
-    )]
+  yao simulate circuit.json | yao expect - --op \"Z(0)\"")]
     Expect {
         /// State file (use - for stdin)
         input: String,
@@ -121,14 +111,12 @@ Examples:
     },
 
     /// Simulate and post-process in one step (no intermediate files)
-    #[command(
-        after_help = "\
+    #[command(after_help = "\
 Examples:
   yao run circuit.json --shots 1024
   yao run circuit.json --op \"Z(0)Z(1)\"
   yao run circuit.json --shots 100 --locs 0,1
-  yao run circuit.json --output state.bin"
-    )]
+  yao run circuit.json --output state.bin")]
     Run {
         /// Circuit JSON file (use - for stdin)
         circuit: String,
@@ -147,13 +135,11 @@ Examples:
     },
 
     /// Export circuit as tensor network (einsum)
-    #[command(
-        after_help = "\
+    #[command(after_help = "\
 Examples:
   yao toeinsum circuit.json
   yao toeinsum circuit.json --output tn.json
-  yao toeinsum circuit.json --mode dm"
-    )]
+  yao toeinsum circuit.json --mode dm")]
     Toeinsum {
         /// Circuit JSON file (use - for stdin)
         circuit: String,
@@ -164,23 +150,19 @@ Examples:
 
     /// Render circuit diagram as PDF
     #[cfg(feature = "typst")]
-    #[command(
-        after_help = "\
+    #[command(after_help = "\
 Examples:
-  yao visualize circuit.json --output circuit.pdf"
-    )]
+  yao visualize circuit.json --output circuit.pdf")]
     Visualize {
         /// Circuit JSON file
         circuit: String,
     },
 
     /// Generate shell completion scripts
-    #[command(
-        after_help = "\
+    #[command(after_help = "\
 Examples:
   eval \"$(yao completions)\"
-  yao completions zsh > _yao"
-    )]
+  yao completions zsh > _yao")]
     Completions {
         /// Shell to generate completions for (auto-detected if omitted)
         shell: Option<clap_complete::Shell>,
