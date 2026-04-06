@@ -79,17 +79,31 @@ clean:
 	$(CARGO) clean
 	rm -rf docs/book
 
-# Plan execution
-# Usage: make run-plan [PLAN_FILE=...] [OUTPUT=output.log]
+# Run a plan with Codex or Claude
+# Usage: make run-plan [INSTRUCTIONS="..."] [OUTPUT=output.log] [AGENT_TYPE=<codex|claude>]
+# PLAN_FILE defaults to the most recently modified file in docs/plans/
+INSTRUCTIONS ?=
+OUTPUT ?= run-plan-output.log
+AGENT_TYPE ?= $(RUNNER)
 PLAN_FILE ?= $(shell ls -t docs/plans/*.md 2>/dev/null | head -1)
-OUTPUT ?= claude-output.log
 
 run-plan:
-	@PLAN_FILE="$(PLAN_FILE)"; \
-	PROMPT="Use the plan-review skill to execute the plan in '$$PLAN_FILE'."; \
+	@. scripts/make_helpers.sh; \
+	NL=$$'\n'; \
+	BRANCH=$$(git branch --show-current); \
+	PLAN_FILE="$(PLAN_FILE)"; \
+	if [ "$(AGENT_TYPE)" = "claude" ]; then \
+		PROCESS="1. Read the plan file$${NL}2. Execute the plan — it specifies which skill(s) to use$${NL}3. Push: git push origin $$BRANCH$${NL}4. If a PR already exists for this branch, skip. Otherwise create one."; \
+	else \
+		PROCESS="1. Read the plan file$${NL}2. If the plan references repo-local workflow docs under .claude/skills/*/SKILL.md, open and follow them directly. Treat slash-command names as aliases for those files.$${NL}3. Execute the tasks step by step. For each task, implement and test before moving on.$${NL}4. Push: git push origin $$BRANCH$${NL}5. If a PR already exists for this branch, skip. Otherwise create one."; \
+	fi; \
+	PROMPT="Execute the plan in '$$PLAN_FILE'."; \
+	if [ "$(AGENT_TYPE)" != "claude" ]; then \
+		PROMPT="$${PROMPT}$${NL}$${NL}Repo-local skills live in .claude/skills/*/SKILL.md. Treat any slash-command references in the plan as aliases for those skill files."; \
+	fi; \
+	if [ -n "$(INSTRUCTIONS)" ]; then \
+		PROMPT="$${PROMPT}$${NL}$${NL}## Additional Instructions$${NL}$(INSTRUCTIONS)"; \
+	fi; \
+	PROMPT="$${PROMPT}$${NL}$${NL}## Process$${NL}$${PROCESS}$${NL}$${NL}## Rules$${NL}- Tests should be strong enough to catch regressions.$${NL}- Do not modify tests to make them pass.$${NL}- Test failure must be reported."; \
 	echo "=== Prompt ===" && echo "$$PROMPT" && echo "===" ; \
-	claude --dangerously-skip-permissions \
-		--model opus \
-		--verbose \
-		--max-turns 500 \
-		-p "$$PROMPT" 2>&1 | tee "$(OUTPUT)"
+	RUNNER="$(AGENT_TYPE)" run_agent "$(OUTPUT)" "$$PROMPT"
