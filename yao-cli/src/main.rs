@@ -1,5 +1,6 @@
 mod cli;
 mod output;
+mod state_io;
 
 use clap::{CommandFactory, Parser};
 use cli::{Cli, Commands};
