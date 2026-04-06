@@ -29,7 +29,7 @@ pub fn expect(input: &str, op_str: &str, out: &OutputConfig) -> Result<()> {
     out.emit(&human, &json_value)
 }
 
-fn compute_expectation(state: &State, operator: &yao_rs::OperatorPolynomial) -> Complex64 {
+pub fn compute_expectation(state: &State, operator: &yao_rs::OperatorPolynomial) -> Complex64 {
     let n = state.dims.len();
     let total_dim: usize = state.dims.iter().product();
     let mut result = Complex64::new(0.0, 0.0);
