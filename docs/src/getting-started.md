@@ -2,6 +2,8 @@
 
 This guide walks you through installing yao-rs and building your first quantum circuit.
 
+> **Prefer the command line?** The [`yao` CLI tool](./cli.md) lets you simulate circuits and compute measurements without writing Rust code.
+
 ## Installation
 
 Add yao-rs to your project's `Cargo.toml`:

@@ -14,8 +14,11 @@ A Rust port of [Yao.jl](https://github.com/QuantumBFS/Yao.jl) focused on quantum
 - **Tensor network export** via [omeco](https://crates.io/crates/omeco) for contraction order optimization
 - **Diagonal gate optimization** in tensor networks (shared legs vs input/output legs)
 - **Generic apply** for correctness verification
+- **CLI tool** (`yao`) for simulation, measurement, and tensor export from the command line
 
 ## Quick Start
+
+### Library
 
 ```rust
 use yao_rs::{Gate, PositionedGate, Circuit, State, apply, circuit_to_einsum};
@@ -33,6 +36,25 @@ let result = apply(&circuit, &state);
 
 // Or export as tensor network
 let tn = circuit_to_einsum(&circuit);
+```
+
+### CLI
+
+```bash
+# Install
+cargo install --path yao-cli
+
+# Simulate a Bell circuit and measure
+yao run bell.json --shots 1024
+
+# Compute expectation value
+yao run bell.json --op "Z(0)Z(1)"
+
+# Pipeline: simulate then get probabilities
+yao simulate bell.json | yao probs -
+
+# Export as tensor network
+yao toeinsum bell.json --output tn.json
 ```
 
 ## Documentation

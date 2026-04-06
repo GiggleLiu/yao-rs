@@ -46,6 +46,7 @@ yao-rs further optimizes by recognizing diagonal gates (Z, S, T, Phase, Rz), whi
 - **Tensor Network Export**: `circuit_to_einsum` with diagonal gate optimization
 - **Contraction Optimization**: Integration with [omeco](https://crates.io/crates/omeco)
 - **State-Vector Simulation**: Direct `apply` for verification
+- **CLI Tool**: `yao` command for simulation, measurement, and tensor export without writing Rust code
 
 ## Example
 
@@ -70,5 +71,6 @@ println!("Tensors: {}, Labels: {}", tn.tensors.len(), tn.size_dict.len());
 ## Next Steps
 
 - [Getting Started](./getting-started.md) - Install yao-rs and build your first circuit
+- [CLI Tool](./cli.md) - Use the `yao` command-line tool
 - [Gates](./gates.md) - All gate variants and their properties
 - [Tensor Networks](./tensor-networks.md) - Understand the einsum export
