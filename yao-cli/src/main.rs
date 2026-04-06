@@ -1,6 +1,7 @@
 mod cli;
 mod output;
 mod state_io;
+mod tn_dto;
 
 use clap::{CommandFactory, Parser};
 use cli::{Cli, Commands};
