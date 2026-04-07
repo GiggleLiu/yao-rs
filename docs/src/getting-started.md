@@ -24,7 +24,7 @@ The crate uses Rust edition 2024 and depends on:
 Let's build a Bell circuit that entangles two qubits. The circuit applies a Hadamard gate on qubit 0, followed by a CNOT gate with qubit 0 as control and qubit 1 as target:
 
 ```rust
-use yao_rs::{Gate, Circuit, State, put, control, apply};
+use yao_rs::{Gate, Circuit, ArrayReg, put, control, apply};
 
 fn main() {
     // Build a Bell circuit: H on qubit 0, then CNOT
@@ -35,12 +35,11 @@ fn main() {
     let circuit = Circuit::new(vec![2, 2], gates).unwrap();
 
     // Apply to |00⟩
-    let state = State::zero_state(&[2, 2]);
-    let result = apply(&circuit, &state);
+    let reg = ArrayReg::zero_state(2);
+    let result = apply(&circuit, &reg);
 
     // Print amplitudes
-    for i in 0..result.total_dim() {
-        let amp = result.data[i];
+    for (i, amp) in result.state_vec().iter().enumerate() {
         if amp.norm() > 1e-10 {
             println!("|{:02b}⟩: {:.4} + {:.4}i", i, amp.re, amp.im);
         }

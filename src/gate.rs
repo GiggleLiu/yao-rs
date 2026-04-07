@@ -59,22 +59,16 @@ impl std::fmt::Display for Gate {
 }
 
 impl Gate {
-    /// Returns the matrix representation of the gate for local dimension `d`.
-    ///
-    /// # Panics
-    /// Panics if `d != 2` for named (non-Custom) gate variants.
-    pub fn matrix(&self, d: usize) -> Array2<Complex64> {
+    /// Returns the matrix representation of the gate.
+    pub fn matrix(&self) -> Array2<Complex64> {
         match self {
             Gate::Custom { matrix, .. } => matrix.clone(),
-            _ => {
-                assert!(d == 2, "Named gates only support d=2, got d={}", d);
-                self.qubit_matrix()
-            }
+            _ => self.qubit_matrix(),
         }
     }
 
-    /// Returns the number of sites (qubits) the gate acts on.
-    pub fn num_sites(&self, d: usize) -> usize {
+    /// Returns the number of qubits the gate acts on.
+    pub fn num_sites(&self) -> usize {
         match self {
             Gate::SWAP | Gate::ISWAP | Gate::FSim(_, _) => 2,
             Gate::Custom { matrix, .. } => {
@@ -86,18 +80,14 @@ impl Gate {
                     matrix.nrows(),
                     matrix.ncols()
                 );
-                // dim = d^n, solve for n
+
                 let mut n = 0usize;
                 let mut power = 1usize;
                 while power < dim {
-                    power *= d;
+                    power *= 2;
                     n += 1;
                 }
-                assert_eq!(
-                    power, dim,
-                    "Matrix dimension {} is not a power of d={}",
-                    dim, d
-                );
+                assert_eq!(power, dim, "Matrix dimension {} is not a power of 2", dim);
                 n
             }
             _ => 1,

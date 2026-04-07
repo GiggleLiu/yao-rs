@@ -7,7 +7,7 @@ use num_complex::Complex64;
 use serde::Deserialize;
 
 use yao_rs::einsum::TensorNetwork;
-use yao_rs::state::State;
+use yao_rs::register::ArrayReg;
 
 // ==================== JSON Data Structures ====================
 
@@ -268,9 +268,9 @@ pub fn circuit_from_measure_case(case: &MeasureCase) -> yao_rs::Circuit {
 
 // ==================== State Comparison ====================
 
-/// Assert that two state vectors (Array1<Complex64>) are close element-wise.
+/// Assert that two state vectors are close element-wise.
 #[allow(dead_code)]
-pub fn assert_states_close(a: &Array1<Complex64>, b: &Array1<Complex64>) {
+pub fn assert_states_close(a: &[Complex64], b: &Array1<Complex64>) {
     const ATOL: f64 = 1e-10;
     assert_eq!(
         a.len(),
@@ -512,17 +512,18 @@ pub fn contract_tensors(
 
 /// Naive contraction of a tensor network with an input state.
 ///
-/// 1. Convert state to a tensor with shape (d0, d1, ..., d_{n-1}) and indices [0, 1, ..., n-1]
+/// 1. Convert state to a tensor with shape (2, 2, ..., 2) and indices [0, 1, ..., n-1]
 /// 2. For each gate tensor, contract with the current result
 /// 3. Permute the result to match tn.code.iy order
 /// 4. Flatten to Array1
 #[allow(dead_code)]
-pub fn naive_contract(tn: &TensorNetwork, state: &State) -> Array1<Complex64> {
-    let n = state.dims.len();
+pub fn naive_contract(tn: &TensorNetwork, reg: &ArrayReg) -> Array1<Complex64> {
+    let n = reg.nqubits();
 
     // Convert state to a multi-dimensional tensor with initial indices 0..n-1
-    let state_shape: Vec<usize> = state.dims.clone();
-    let state_tensor = ArrayD::from_shape_vec(IxDyn(&state_shape), state.data.to_vec()).unwrap();
+    let state_shape: Vec<usize> = vec![2; n];
+    let state_tensor =
+        ArrayD::from_shape_vec(IxDyn(&state_shape), reg.state_vec().to_vec()).unwrap();
 
     let mut current_tensor = state_tensor;
     let mut current_indices: Vec<usize> = (0..n).collect();
@@ -804,12 +805,12 @@ pub fn build_controlled_matrix(
 /// 2. Embed it into the full Hilbert space
 /// 3. Multiply by the state vector
 #[allow(dead_code)]
-pub fn apply_old(circuit: &yao_rs::Circuit, state: &State) -> State {
+pub fn apply_old(circuit: &yao_rs::Circuit, reg: &ArrayReg) -> ArrayReg {
     use yao_rs::circuit::CircuitElement;
 
     let dims = &circuit.dims;
     let total_dim = circuit.total_dim();
-    let mut current_data = state.data.clone();
+    let mut current_data = Array1::from_vec(reg.state_vec().to_vec());
 
     for element in &circuit.elements {
         let pg = match element {
@@ -818,8 +819,7 @@ pub fn apply_old(circuit: &yao_rs::Circuit, state: &State) -> State {
         };
 
         // Get the gate's local matrix on target sites
-        let d = dims[pg.target_locs[0]];
-        let gate_matrix = pg.gate.matrix(d);
+        let gate_matrix = pg.gate.matrix();
 
         // Build the controlled local matrix on all involved sites
         let all_locs = pg.all_locs(); // control_locs ++ target_locs
@@ -865,10 +865,7 @@ pub fn apply_old(circuit: &yao_rs::Circuit, state: &State) -> State {
         current_data = matrix_vector_mul(&full_matrix, &current_data);
     }
 
-    State {
-        dims: dims.clone(),
-        data: current_data,
-    }
+    ArrayReg::from_vec(reg.nqubits(), current_data.to_vec())
 }
 
 // ==================== DM Tensor Network Contraction ====================

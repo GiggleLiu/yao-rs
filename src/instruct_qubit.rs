@@ -7,9 +7,8 @@
 //! loc 0 = most significant qubit. Internally converted to bit positions
 //! (LSB=0) for stride calculations.
 
+use bitbasis::{controller, indicator, itercontrol};
 use num_complex::Complex64;
-
-use crate::bitutils::itercontrol;
 
 /// Convert yao-rs qubit location (MSB-first, 0-indexed) to bit position (LSB-first).
 #[inline]
@@ -34,6 +33,43 @@ fn u1rows(
     let v = state[j];
     state[i] = a * w + b * v;
     state[j] = c * w + d * v;
+}
+
+/// X gate: swap amplitudes at |...0...> and |...1...>.
+pub fn instruct_x(state: &mut [Complex64], nbits: usize, loc: usize) {
+    let bit = loc_to_bit(nbits, loc);
+    let mask = indicator(bit);
+    let dim = 1usize << nbits;
+
+    for basis in 0..dim {
+        if basis & mask == 0 {
+            state.swap(basis, basis ^ mask);
+        }
+    }
+}
+
+/// Controlled X gate.
+pub fn instruct_x_controlled(
+    state: &mut [Complex64],
+    nbits: usize,
+    loc: usize,
+    ctrl_locs: &[usize],
+    ctrl_bits: &[usize],
+) {
+    let bit = loc_to_bit(nbits, loc);
+    let mask = indicator(bit);
+    let ctrl_bit_positions: Vec<usize> = ctrl_locs
+        .iter()
+        .map(|&loc| loc_to_bit(nbits, loc))
+        .collect();
+    let ctrl = controller(&ctrl_bit_positions, ctrl_bits);
+    let dim = 1usize << nbits;
+
+    for basis in 0..dim {
+        if basis & mask == 0 && ctrl(basis) {
+            state.swap(basis, basis ^ mask);
+        }
+    }
 }
 
 // ========================================================================
@@ -208,6 +244,76 @@ pub fn instruct_2q_diag(
     for base in ic {
         for k in 0..4 {
             state[locs_raw[k] + base] *= diag[k];
+        }
+    }
+}
+
+/// SWAP gate: exchange amplitudes when the target bits differ.
+pub fn instruct_swap(state: &mut [Complex64], nbits: usize, locs: &[usize]) {
+    debug_assert_eq!(locs.len(), 2);
+
+    let bit0 = loc_to_bit(nbits, locs[0]);
+    let bit1 = loc_to_bit(nbits, locs[1]);
+    let mask0 = indicator(bit0);
+    let mask1 = indicator(bit1);
+    let swap_mask = mask0 | mask1;
+    let dim = 1usize << nbits;
+
+    for basis in 0..dim {
+        if basis & mask0 == 0 && basis & mask1 == mask1 {
+            state.swap(basis, basis ^ swap_mask);
+        }
+    }
+}
+
+/// Generic n-qubit gate application with optional controls.
+pub fn instruct_nq(
+    state: &mut [Complex64],
+    nbits: usize,
+    locs: &[usize],
+    gate: &[Complex64],
+    ctrl_locs: &[usize],
+    ctrl_bits: &[usize],
+) {
+    let nlocs = locs.len();
+    let gate_dim = 1usize << nlocs;
+    debug_assert_eq!(gate.len(), gate_dim * gate_dim);
+
+    let target_bits: Vec<usize> = locs.iter().map(|&loc| loc_to_bit(nbits, loc)).collect();
+    let ctrl_bit_positions: Vec<usize> = ctrl_locs
+        .iter()
+        .map(|&loc| loc_to_bit(nbits, loc))
+        .collect();
+
+    let mut locked_positions = ctrl_bit_positions;
+    locked_positions.extend_from_slice(&target_bits);
+    let mut locked_values = ctrl_bits.to_vec();
+    locked_values.extend(std::iter::repeat_n(0usize, nlocs));
+
+    let raw_offsets: Vec<usize> = (0..gate_dim)
+        .map(|config| {
+            target_bits
+                .iter()
+                .enumerate()
+                .fold(0usize, |acc, (idx, &bit)| {
+                    acc | (((config >> idx) & 1) << bit)
+                })
+        })
+        .collect();
+
+    let mut temp = vec![Complex64::new(0.0, 0.0); gate_dim];
+    for base in itercontrol(nbits, &locked_positions, &locked_values) {
+        let indices: Vec<usize> = raw_offsets.iter().map(|&offset| base + offset).collect();
+
+        for row in 0..gate_dim {
+            temp[row] = Complex64::new(0.0, 0.0);
+            for col in 0..gate_dim {
+                temp[row] += gate[row * gate_dim + col] * state[indices[col]];
+            }
+        }
+
+        for (idx, value) in indices.iter().zip(temp.iter()) {
+            state[*idx] = *value;
         }
     }
 }

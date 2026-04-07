@@ -12,7 +12,7 @@ use crate::easybuild::{
     variational_circuit,
 };
 use crate::gate::Gate;
-use crate::state::State;
+use crate::register::ArrayReg;
 
 const ATOL: f64 = 1e-10;
 
@@ -54,17 +54,17 @@ fn test_qft_uniform_superposition() {
     // QFT|000> gives uniform superposition with amplitude 1/sqrt(8)
     let n = 3;
     let circuit = qft_circuit(n);
-    let state = State::zero_state(&vec![2; n]);
+    let state = ArrayReg::zero_state(n);
     let result = apply(&circuit, &state);
 
     let expected_amp = 1.0 / (8.0f64).sqrt();
-    for i in 0..result.total_dim() {
+    for i in 0..result.state_vec().len() {
         assert!(
-            (result.data[i].norm() - expected_amp).abs() < ATOL,
+            (result.state_vec()[i].norm() - expected_amp).abs() < ATOL,
             "Amplitude at index {} should be {}, got {}",
             i,
             expected_amp,
-            result.data[i].norm()
+            result.state_vec()[i].norm()
         );
     }
 }
@@ -75,8 +75,11 @@ fn test_qft_norm_preserved() {
     let n = 3;
     let circuit = qft_circuit(n);
 
-    // Create a state |010>
-    let state = State::product_state(&vec![2; n], &[0, 1, 0]);
+    // Create a state |010> — basis index = 0*4 + 1*2 + 0 = 2
+    let dim = 1usize << n;
+    let mut sv = vec![Complex64::new(0.0, 0.0); dim];
+    sv[2] = Complex64::new(1.0, 0.0);
+    let state = ArrayReg::from_vec(n, sv);
     let result = apply(&circuit, &state);
 
     assert!(
@@ -95,7 +98,7 @@ fn test_general_u2_unitary() {
     // Apply general_u2 to |0>, check output norm = 1
     let gates = general_u2(0, 0.3, 0.7, 1.2);
     let circuit = crate::Circuit::new(vec![2], gates).unwrap();
-    let state = State::zero_state(&[2]);
+    let state = ArrayReg::zero_state(1);
     let result = apply(&circuit, &state);
     assert!(
         (result.norm() - 1.0).abs() < ATOL,
@@ -112,7 +115,7 @@ fn test_general_u4_unitary() {
     ];
     let gates = general_u4(0, &params);
     let circuit = crate::Circuit::new(vec![2, 2], gates).unwrap();
-    let state = State::zero_state(&[2, 2]);
+    let state = ArrayReg::zero_state(2);
     let result = apply(&circuit, &state);
     assert!(
         (result.norm() - 1.0).abs() < ATOL,
@@ -136,7 +139,7 @@ fn test_variational_circuit_structure() {
     assert_eq!(circuit.num_sites(), n);
 
     // Apply to zero state, check output normalized
-    let state = State::zero_state(&vec![2; n]);
+    let state = ArrayReg::zero_state(n);
     let result = apply(&circuit, &state);
     assert!(
         (result.norm() - 1.0).abs() < ATOL,
@@ -172,7 +175,7 @@ fn test_hadamard_test_circuit() {
     assert_eq!(circuit.num_sites(), n_u + 1);
 
     // Apply to zero state, check output normalized
-    let state = State::zero_state(&vec![2; n_u + 1]);
+    let state = ArrayReg::zero_state(n_u + 1);
     let result = apply(&circuit, &state);
     assert!(
         (result.norm() - 1.0).abs() < ATOL,
@@ -197,7 +200,7 @@ fn test_swap_test_circuit() {
     assert_eq!(circuit.num_sites(), expected_sites);
 
     // Apply to zero state, check output normalized
-    let state = State::zero_state(&vec![2; expected_sites]);
+    let state = ArrayReg::zero_state(expected_sites);
     let result = apply(&circuit, &state);
     assert!(
         (result.norm() - 1.0).abs() < ATOL,
@@ -233,7 +236,7 @@ fn test_phase_estimation_circuit() {
     assert_eq!(circuit.num_sites(), n_reg + n_b);
 
     // Apply to zero state, check output normalized
-    let state = State::zero_state(&vec![2; n_reg + n_b]);
+    let state = ArrayReg::zero_state(n_reg + n_b);
     let result = apply(&circuit, &state);
     assert!(
         (result.norm() - 1.0).abs() < ATOL,
@@ -251,7 +254,7 @@ fn test_rand_supremacy2d_structure() {
     let mut rng = StdRng::seed_from_u64(42);
     let circuit = rand_supremacy2d(3, 3, 5, &mut rng);
     assert_eq!(circuit.num_sites(), 9);
-    let state = State::zero_state(&[2; 9]);
+    let state = ArrayReg::zero_state(9);
     let result = apply(&circuit, &state);
     assert_abs_diff_eq!(result.norm(), 1.0, epsilon = 1e-10);
 }
@@ -261,7 +264,7 @@ fn test_rand_google53_structure() {
     let mut rng = StdRng::seed_from_u64(42);
     let circuit = rand_google53(4, 10, &mut rng);
     assert_eq!(circuit.num_sites(), 10);
-    let state = State::zero_state(&[2; 10]);
+    let state = ArrayReg::zero_state(10);
     let result = apply(&circuit, &state);
     assert_abs_diff_eq!(result.norm(), 1.0, epsilon = 1e-10);
 }
@@ -302,10 +305,12 @@ fn test_phase_estimation_powers_correct() {
     assert_eq!(circuit.num_sites(), n_reg + n_b);
 
     // Apply to |0...0, 1> (eigenstate |1> in the last qubit)
-    let mut state = State::zero_state(&vec![2; n_reg + n_b]);
-    // Set |001> (last qubit = 1)
-    state.data[0] = Complex64::new(0.0, 0.0);
-    state.data[1] = Complex64::new(1.0, 0.0);
+    let total = n_reg + n_b;
+    let dim = 1usize << total;
+    let mut sv = vec![Complex64::new(0.0, 0.0); dim];
+    // Set |001> (last qubit = 1): index 1
+    sv[1] = Complex64::new(1.0, 0.0);
+    let state = ArrayReg::from_vec(total, sv);
     let result = apply(&circuit, &state);
     assert!(
         (result.norm() - 1.0).abs() < ATOL,

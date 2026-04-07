@@ -8,7 +8,7 @@
 - [CLI Tool](./cli.md)
 - [Gates](./gates.md)
 - [Circuits](./circuits.md)
-- [States](./states.md)
+- [Quantum Registers](./states.md)
 - [Tensor Networks](./tensor-networks.md)
 
 # Examples

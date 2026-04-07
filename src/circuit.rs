@@ -134,6 +134,8 @@ impl PositionedGate {
 /// A quantum circuit consisting of positioned gates and annotations on a register of qudits.
 #[derive(Debug, Clone)]
 pub struct Circuit {
+    /// The number of qubits in the register.
+    pub nbits: usize,
     /// The local dimension of each site (e.g., [2, 2, 2] for 3 qubits).
     pub dims: Vec<usize>,
     /// The sequence of elements (gates and annotations) in the circuit.
@@ -201,7 +203,7 @@ impl Circuit {
                     // 6. Gate matrix size must match product of target site dimensions
                     let target_dim_product: usize =
                         pg.target_locs.iter().map(|&loc| dims[loc]).product();
-                    let matrix = pg.gate.matrix(dims[pg.target_locs[0]]);
+                    let matrix = pg.gate.matrix();
                     let matrix_size = matrix.nrows();
                     if matrix_size != target_dim_product {
                         return Err(CircuitError::MatrixSizeMismatch {
@@ -262,12 +264,21 @@ impl Circuit {
             }
         }
 
-        Ok(Circuit { dims, elements })
+        Ok(Circuit {
+            nbits: num_sites,
+            dims,
+            elements,
+        })
+    }
+
+    /// Creates a qubit-only circuit with `nbits` sites.
+    pub fn qubits(nbits: usize, elements: Vec<CircuitElement>) -> Result<Self, CircuitError> {
+        Self::new(vec![2; nbits], elements)
     }
 
     /// Returns the number of sites in the circuit.
     pub fn num_sites(&self) -> usize {
-        self.dims.len()
+        self.nbits
     }
 
     /// Returns the total Hilbert space dimension (product of all site dimensions).

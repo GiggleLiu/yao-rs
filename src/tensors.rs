@@ -33,12 +33,7 @@ pub fn gate_to_tensor(pg: &PositionedGate, dims: &[usize]) -> (ArrayD<Complex64>
     if is_diagonal {
         // Diagonal gate without controls: tensor has one leg per target site
         let target_dims: Vec<usize> = pg.target_locs.iter().map(|&loc| dims[loc]).collect();
-        let d = if pg.target_locs.is_empty() {
-            2
-        } else {
-            dims[pg.target_locs[0]]
-        };
-        let mat = pg.gate.matrix(d);
+        let mat = pg.gate.matrix();
 
         // Extract diagonal elements
         let total_dim: usize = target_dims.iter().product();
@@ -103,12 +98,7 @@ fn build_controlled_matrix(pg: &PositionedGate, dims: &[usize]) -> Array2<Comple
 
     if pg.control_locs.is_empty() {
         // No controls: just return the gate matrix
-        let d = if pg.target_locs.is_empty() {
-            2
-        } else {
-            dims[pg.target_locs[0]]
-        };
-        return pg.gate.matrix(d);
+        return pg.gate.matrix();
     }
 
     // Compute the trigger index from control_configs
@@ -117,12 +107,7 @@ fn build_controlled_matrix(pg: &PositionedGate, dims: &[usize]) -> Array2<Comple
     let trigger_index = compute_trigger_index(&pg.control_configs, &ctrl_dims);
 
     // Get the gate matrix for targets
-    let d = if pg.target_locs.is_empty() {
-        2
-    } else {
-        dims[pg.target_locs[0]]
-    };
-    let gate_matrix = pg.gate.matrix(d);
+    let gate_matrix = pg.gate.matrix();
 
     let one = Complex64::new(1.0, 0.0);
 

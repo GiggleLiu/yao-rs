@@ -25,7 +25,7 @@ The full circuit builder function:
 
 ```rust
 use std::f64::consts::PI;
-use yao_rs::{Gate, Circuit, State, put, control, apply, circuit_to_einsum};
+use yao_rs::{Gate, Circuit, ArrayReg, put, control, apply, circuit_to_einsum};
 use yao_rs::circuit::PositionedGate;
 
 fn qft_circuit(n: usize) -> Circuit {
@@ -107,8 +107,8 @@ structure:
 fn main() {
     let n = 4;
     let circuit = qft_circuit(n);
-    let state = State::zero_state(&vec![2; n]);
-    let result = apply(&circuit, &state);
+    let reg = ArrayReg::zero_state(n);
+    let result = apply(&circuit, &reg);
     let tn = circuit_to_einsum(&circuit);
     // ... (prints results)
 }
