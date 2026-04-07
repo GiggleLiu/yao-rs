@@ -41,7 +41,7 @@ fn assert_unitary(m: &ndarray::Array2<Complex64>, n: usize) {
 
 #[test]
 fn test_x_gate_matrix() {
-    let m = Gate::X.matrix(2);
+    let m = Gate::X.matrix();
     assert_eq!(m.dim(), (2, 2));
     let zero = Complex64::new(0.0, 0.0);
     let one = Complex64::new(1.0, 0.0);
@@ -53,7 +53,7 @@ fn test_x_gate_matrix() {
 
 #[test]
 fn test_y_gate_matrix() {
-    let m = Gate::Y.matrix(2);
+    let m = Gate::Y.matrix();
     assert_eq!(m.dim(), (2, 2));
     let zero = Complex64::new(0.0, 0.0);
     let i = Complex64::new(0.0, 1.0);
@@ -66,7 +66,7 @@ fn test_y_gate_matrix() {
 
 #[test]
 fn test_z_gate_matrix() {
-    let m = Gate::Z.matrix(2);
+    let m = Gate::Z.matrix();
     assert_eq!(m.dim(), (2, 2));
     let zero = Complex64::new(0.0, 0.0);
     let one = Complex64::new(1.0, 0.0);
@@ -79,7 +79,7 @@ fn test_z_gate_matrix() {
 
 #[test]
 fn test_h_gate_matrix() {
-    let m = Gate::H.matrix(2);
+    let m = Gate::H.matrix();
     assert_eq!(m.dim(), (2, 2));
     let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
     let neg_s = Complex64::new(-FRAC_1_SQRT_2, 0.0);
@@ -91,7 +91,7 @@ fn test_h_gate_matrix() {
 
 #[test]
 fn test_s_gate_matrix() {
-    let m = Gate::S.matrix(2);
+    let m = Gate::S.matrix();
     assert_eq!(m.dim(), (2, 2));
     let zero = Complex64::new(0.0, 0.0);
     let one = Complex64::new(1.0, 0.0);
@@ -104,7 +104,7 @@ fn test_s_gate_matrix() {
 
 #[test]
 fn test_t_gate_matrix() {
-    let m = Gate::T.matrix(2);
+    let m = Gate::T.matrix();
     assert_eq!(m.dim(), (2, 2));
     let zero = Complex64::new(0.0, 0.0);
     let one = Complex64::new(1.0, 0.0);
@@ -117,7 +117,7 @@ fn test_t_gate_matrix() {
 
 #[test]
 fn test_swap_gate_matrix() {
-    let m = Gate::SWAP.matrix(2);
+    let m = Gate::SWAP.matrix();
     assert_eq!(m.dim(), (4, 4));
     let zero = Complex64::new(0.0, 0.0);
     let one = Complex64::new(1.0, 0.0);
@@ -150,7 +150,7 @@ fn test_swap_gate_matrix() {
 #[test]
 fn test_rx_gate_matrix() {
     let theta = PI / 3.0;
-    let m = Gate::Rx(theta).matrix(2);
+    let m = Gate::Rx(theta).matrix();
     assert_eq!(m.dim(), (2, 2));
     let cos = Complex64::new((theta / 2.0).cos(), 0.0);
     let neg_i_sin = Complex64::new(0.0, -(theta / 2.0).sin());
@@ -162,7 +162,7 @@ fn test_rx_gate_matrix() {
 
 #[test]
 fn test_rx_gate_zero_angle() {
-    let m = Gate::Rx(0.0).matrix(2);
+    let m = Gate::Rx(0.0).matrix();
     let one = Complex64::new(1.0, 0.0);
     let zero = Complex64::new(0.0, 0.0);
     assert_complex_approx(m[[0, 0]], one, "Rx(0)[0,0]");
@@ -174,7 +174,7 @@ fn test_rx_gate_zero_angle() {
 #[test]
 fn test_ry_gate_matrix() {
     let theta = PI / 4.0;
-    let m = Gate::Ry(theta).matrix(2);
+    let m = Gate::Ry(theta).matrix();
     assert_eq!(m.dim(), (2, 2));
     let cos = Complex64::new((theta / 2.0).cos(), 0.0);
     let sin = Complex64::new((theta / 2.0).sin(), 0.0);
@@ -187,7 +187,7 @@ fn test_ry_gate_matrix() {
 
 #[test]
 fn test_ry_gate_zero_angle() {
-    let m = Gate::Ry(0.0).matrix(2);
+    let m = Gate::Ry(0.0).matrix();
     let one = Complex64::new(1.0, 0.0);
     let zero = Complex64::new(0.0, 0.0);
     assert_complex_approx(m[[0, 0]], one, "Ry(0)[0,0]");
@@ -199,7 +199,7 @@ fn test_ry_gate_zero_angle() {
 #[test]
 fn test_rz_gate_matrix() {
     let theta = PI / 6.0;
-    let m = Gate::Rz(theta).matrix(2);
+    let m = Gate::Rz(theta).matrix();
     assert_eq!(m.dim(), (2, 2));
     let zero = Complex64::new(0.0, 0.0);
     let phase_neg = Complex64::from_polar(1.0, -theta / 2.0);
@@ -212,7 +212,7 @@ fn test_rz_gate_matrix() {
 
 #[test]
 fn test_rz_gate_zero_angle() {
-    let m = Gate::Rz(0.0).matrix(2);
+    let m = Gate::Rz(0.0).matrix();
     let one = Complex64::new(1.0, 0.0);
     let zero = Complex64::new(0.0, 0.0);
     assert_complex_approx(m[[0, 0]], one, "Rz(0)[0,0]");
@@ -245,11 +245,10 @@ fn test_custom_gate_matrix_passthrough() {
         label: "custom_diagonal_2x2".to_string(),
     };
 
-    let result = gate.matrix(2);
+    let result = gate.matrix();
     assert_eq!(result, custom_matrix);
 
-    // Custom gate should work with any d value (no panic)
-    let result2 = gate.matrix(3);
+    let result2 = gate.matrix();
     assert_eq!(result2, custom_matrix);
 }
 
@@ -270,72 +269,8 @@ fn test_custom_gate_larger_matrix() {
         label: "custom_4x4_identity".to_string(),
     };
 
-    let result = gate.matrix(2);
+    let result = gate.matrix();
     assert_eq!(result, custom_matrix);
-}
-
-// ============================================================
-// Wrong dimension panic tests
-// ============================================================
-
-#[test]
-#[should_panic(expected = "Named gates only support d=2")]
-fn test_x_gate_wrong_dimension() {
-    Gate::X.matrix(3);
-}
-
-#[test]
-#[should_panic(expected = "Named gates only support d=2")]
-fn test_y_gate_wrong_dimension() {
-    Gate::Y.matrix(4);
-}
-
-#[test]
-#[should_panic(expected = "Named gates only support d=2")]
-fn test_z_gate_wrong_dimension() {
-    Gate::Z.matrix(3);
-}
-
-#[test]
-#[should_panic(expected = "Named gates only support d=2")]
-fn test_h_gate_wrong_dimension() {
-    Gate::H.matrix(5);
-}
-
-#[test]
-#[should_panic(expected = "Named gates only support d=2")]
-fn test_s_gate_wrong_dimension() {
-    Gate::S.matrix(3);
-}
-
-#[test]
-#[should_panic(expected = "Named gates only support d=2")]
-fn test_t_gate_wrong_dimension() {
-    Gate::T.matrix(3);
-}
-
-#[test]
-#[should_panic(expected = "Named gates only support d=2")]
-fn test_swap_gate_wrong_dimension() {
-    Gate::SWAP.matrix(3);
-}
-
-#[test]
-#[should_panic(expected = "Named gates only support d=2")]
-fn test_rx_gate_wrong_dimension() {
-    Gate::Rx(1.0).matrix(3);
-}
-
-#[test]
-#[should_panic(expected = "Named gates only support d=2")]
-fn test_ry_gate_wrong_dimension() {
-    Gate::Ry(1.0).matrix(3);
-}
-
-#[test]
-#[should_panic(expected = "Named gates only support d=2")]
-fn test_rz_gate_wrong_dimension() {
-    Gate::Rz(1.0).matrix(3);
 }
 
 // ============================================================
@@ -344,20 +279,20 @@ fn test_rz_gate_wrong_dimension() {
 
 #[test]
 fn test_num_sites_single_qubit_gates() {
-    assert_eq!(Gate::X.num_sites(2), 1);
-    assert_eq!(Gate::Y.num_sites(2), 1);
-    assert_eq!(Gate::Z.num_sites(2), 1);
-    assert_eq!(Gate::H.num_sites(2), 1);
-    assert_eq!(Gate::S.num_sites(2), 1);
-    assert_eq!(Gate::T.num_sites(2), 1);
-    assert_eq!(Gate::Rx(1.0).num_sites(2), 1);
-    assert_eq!(Gate::Ry(1.0).num_sites(2), 1);
-    assert_eq!(Gate::Rz(1.0).num_sites(2), 1);
+    assert_eq!(Gate::X.num_sites(), 1);
+    assert_eq!(Gate::Y.num_sites(), 1);
+    assert_eq!(Gate::Z.num_sites(), 1);
+    assert_eq!(Gate::H.num_sites(), 1);
+    assert_eq!(Gate::S.num_sites(), 1);
+    assert_eq!(Gate::T.num_sites(), 1);
+    assert_eq!(Gate::Rx(1.0).num_sites(), 1);
+    assert_eq!(Gate::Ry(1.0).num_sites(), 1);
+    assert_eq!(Gate::Rz(1.0).num_sites(), 1);
 }
 
 #[test]
 fn test_num_sites_swap() {
-    assert_eq!(Gate::SWAP.num_sites(2), 2);
+    assert_eq!(Gate::SWAP.num_sites(), 2);
 }
 
 #[test]
@@ -370,7 +305,7 @@ fn test_num_sites_custom_2x2() {
         is_diagonal: true,
         label: "test_2x2".to_string(),
     };
-    assert_eq!(gate.num_sites(2), 1);
+    assert_eq!(gate.num_sites(), 1);
 }
 
 #[test]
@@ -386,7 +321,7 @@ fn test_num_sites_custom_4x4_d2() {
         is_diagonal: true,
         label: "test_4x4".to_string(),
     };
-    assert_eq!(gate.num_sites(2), 2);
+    assert_eq!(gate.num_sites(), 2);
 }
 
 #[test]
@@ -401,12 +336,12 @@ fn test_num_sites_custom_8x8_d2() {
         is_diagonal: false,
         label: "test_8x8".to_string(),
     };
-    assert_eq!(gate.num_sites(2), 3);
+    assert_eq!(gate.num_sites(), 3);
 }
 
 #[test]
-fn test_num_sites_custom_9x9_d3() {
-    // 9 = 3^2, so 2 sites with d=3
+#[should_panic(expected = "Matrix dimension 9 is not a power of 2")]
+fn test_num_sites_custom_non_power_of_two_panics() {
     let one = Complex64::new(1.0, 0.0);
     let mut m: Array2<Complex64> = Array2::zeros((9, 9));
     for i in 0..9 {
@@ -417,7 +352,7 @@ fn test_num_sites_custom_9x9_d3() {
         is_diagonal: true,
         label: "qutrit_9x9".to_string(),
     };
-    assert_eq!(gate.num_sites(3), 2);
+    let _ = gate.num_sites();
 }
 
 // ============================================================
@@ -477,7 +412,7 @@ fn test_is_diagonal_custom_false() {
 #[test]
 fn test_rx_pi_gives_minus_i_times_x() {
     // Rx(pi) = [[0, -i], [-i, 0]]
-    let m = Gate::Rx(PI).matrix(2);
+    let m = Gate::Rx(PI).matrix();
     let zero = Complex64::new(0.0, 0.0);
     let neg_i = Complex64::new(0.0, -1.0);
     assert_complex_approx(m[[0, 0]], zero, "Rx(pi)[0,0]");
@@ -489,7 +424,7 @@ fn test_rx_pi_gives_minus_i_times_x() {
 #[test]
 fn test_ry_pi_gives_rotation() {
     // Ry(pi) = [[0, -1], [1, 0]]
-    let m = Gate::Ry(PI).matrix(2);
+    let m = Gate::Ry(PI).matrix();
     let zero = Complex64::new(0.0, 0.0);
     let one = Complex64::new(1.0, 0.0);
     let neg_one = Complex64::new(-1.0, 0.0);
@@ -502,7 +437,7 @@ fn test_ry_pi_gives_rotation() {
 #[test]
 fn test_rz_pi_gives_z_up_to_phase() {
     // Rz(pi) = [[e^{-i*pi/2}, 0], [0, e^{i*pi/2}]] = [[-i, 0], [0, i]]
-    let m = Gate::Rz(PI).matrix(2);
+    let m = Gate::Rz(PI).matrix();
     let zero = Complex64::new(0.0, 0.0);
     let neg_i = Complex64::new(0.0, -1.0);
     let i = Complex64::new(0.0, 1.0);
@@ -515,7 +450,7 @@ fn test_rz_pi_gives_z_up_to_phase() {
 #[test]
 fn test_h_squared_is_identity() {
     // H^2 = I
-    let h = Gate::H.matrix(2);
+    let h = Gate::H.matrix();
     let h2 = h.dot(&h);
     let one = Complex64::new(1.0, 0.0);
     let zero = Complex64::new(0.0, 0.0);
@@ -527,7 +462,7 @@ fn test_h_squared_is_identity() {
 
 #[test]
 fn test_x_squared_is_identity() {
-    let x = Gate::X.matrix(2);
+    let x = Gate::X.matrix();
     let x2 = x.dot(&x);
     let one = Complex64::new(1.0, 0.0);
     let zero = Complex64::new(0.0, 0.0);
@@ -540,9 +475,9 @@ fn test_x_squared_is_identity() {
 #[test]
 fn test_s_squared_is_z() {
     // S^2 = Z
-    let s = Gate::S.matrix(2);
+    let s = Gate::S.matrix();
     let s2 = s.dot(&s);
-    let z = Gate::Z.matrix(2);
+    let z = Gate::Z.matrix();
     for i in 0..2 {
         for j in 0..2 {
             assert_complex_approx(s2[[i, j]], z[[i, j]], &format!("S^2[{},{}]", i, j));
@@ -553,9 +488,9 @@ fn test_s_squared_is_z() {
 #[test]
 fn test_t_squared_is_s() {
     // T^2 = S
-    let t = Gate::T.matrix(2);
+    let t = Gate::T.matrix();
     let t2 = t.dot(&t);
-    let s = Gate::S.matrix(2);
+    let s = Gate::S.matrix();
     for i in 0..2 {
         for j in 0..2 {
             assert_complex_approx(t2[[i, j]], s[[i, j]], &format!("T^2[{},{}]", i, j));
@@ -568,7 +503,7 @@ fn test_t_squared_is_s() {
 #[test]
 fn test_phase_gate_matrix() {
     let theta = PI / 3.0;
-    let m = Gate::Phase(theta).matrix(2);
+    let m = Gate::Phase(theta).matrix();
     let one = Complex64::new(1.0, 0.0);
     let zero = Complex64::new(0.0, 0.0);
     let phase = Complex64::from_polar(1.0, theta);
@@ -586,8 +521,8 @@ fn test_phase_is_diagonal() {
 #[test]
 fn test_phase_pi_is_z() {
     // Phase(π) = diag(1, e^(iπ)) = diag(1, -1) = Z
-    let phase_pi = Gate::Phase(PI).matrix(2);
-    let z = Gate::Z.matrix(2);
+    let phase_pi = Gate::Phase(PI).matrix();
+    let z = Gate::Z.matrix();
     for i in 0..2 {
         for j in 0..2 {
             assert_complex_approx(
@@ -602,8 +537,8 @@ fn test_phase_pi_is_z() {
 #[test]
 fn test_phase_pi_over_2_is_s() {
     // Phase(π/2) = diag(1, i) = S
-    let phase = Gate::Phase(PI / 2.0).matrix(2);
-    let s = Gate::S.matrix(2);
+    let phase = Gate::Phase(PI / 2.0).matrix();
+    let s = Gate::S.matrix();
     for i in 0..2 {
         for j in 0..2 {
             assert_complex_approx(
@@ -618,8 +553,8 @@ fn test_phase_pi_over_2_is_s() {
 #[test]
 fn test_phase_pi_over_4_is_t() {
     // Phase(π/4) = diag(1, e^(iπ/4)) = T
-    let phase = Gate::Phase(FRAC_PI_4).matrix(2);
-    let t = Gate::T.matrix(2);
+    let phase = Gate::Phase(FRAC_PI_4).matrix();
+    let t = Gate::T.matrix();
     for i in 0..2 {
         for j in 0..2 {
             assert_complex_approx(
@@ -629,12 +564,6 @@ fn test_phase_pi_over_4_is_t() {
             );
         }
     }
-}
-
-#[test]
-#[should_panic(expected = "Named gates only support d=2")]
-fn test_phase_gate_wrong_dimension() {
-    Gate::Phase(1.0).matrix(3);
 }
 
 // ============================================================
@@ -698,7 +627,7 @@ fn test_gate_display_custom() {
 
 #[test]
 fn test_sqrtx_matrix_values() {
-    let m = Gate::SqrtX.matrix(2);
+    let m = Gate::SqrtX.matrix();
     assert_eq!(m.dim(), (2, 2));
 
     // Expected: (1+i)/2 * [[1, -i], [-i, 1]]
@@ -718,9 +647,9 @@ fn test_sqrtx_matrix_values() {
 
 #[test]
 fn test_sqrtx_squared_is_x() {
-    let sqrtx = Gate::SqrtX.matrix(2);
+    let sqrtx = Gate::SqrtX.matrix();
     let sqrtx2 = sqrtx.dot(&sqrtx);
-    let x = Gate::X.matrix(2);
+    let x = Gate::X.matrix();
 
     for i in 0..2 {
         for j in 0..2 {
@@ -735,9 +664,9 @@ fn test_sqrtx_squared_is_x() {
 
 #[test]
 fn test_sqrty_squared_is_y() {
-    let sqrty = Gate::SqrtY.matrix(2);
+    let sqrty = Gate::SqrtY.matrix();
     let sqrty2 = sqrty.dot(&sqrty);
-    let y = Gate::Y.matrix(2);
+    let y = Gate::Y.matrix();
 
     for i in 0..2 {
         for j in 0..2 {
@@ -752,7 +681,7 @@ fn test_sqrty_squared_is_y() {
 
 #[test]
 fn test_sqrtw_is_unitary() {
-    let m = Gate::SqrtW.matrix(2);
+    let m = Gate::SqrtW.matrix();
     assert_unitary(&m, 2);
 }
 
@@ -762,7 +691,7 @@ fn test_sqrtw_is_unitary() {
 
 #[test]
 fn test_iswap_matrix_values() {
-    let m = Gate::ISWAP.matrix(2);
+    let m = Gate::ISWAP.matrix();
     assert_eq!(m.dim(), (4, 4));
 
     let zero = Complex64::new(0.0, 0.0);
@@ -799,7 +728,7 @@ fn test_iswap_matrix_values() {
 
 #[test]
 fn test_iswap_is_unitary() {
-    let m = Gate::ISWAP.matrix(2);
+    let m = Gate::ISWAP.matrix();
     assert_unitary(&m, 4);
 }
 
@@ -811,7 +740,7 @@ fn test_iswap_is_unitary() {
 fn test_fsim_matrix_values() {
     let theta = FRAC_PI_2;
     let phi = PI / 6.0;
-    let m = Gate::FSim(theta, phi).matrix(2);
+    let m = Gate::FSim(theta, phi).matrix();
     assert_eq!(m.dim(), (4, 4));
 
     let zero = Complex64::new(0.0, 0.0);
@@ -850,11 +779,11 @@ fn test_fsim_matrix_values() {
 #[test]
 fn test_fsim_is_unitary() {
     // Test with arbitrary values
-    let m = Gate::FSim(1.23, 0.78).matrix(2);
+    let m = Gate::FSim(1.23, 0.78).matrix();
     assert_unitary(&m, 4);
 
     // Test with different values
-    let m2 = Gate::FSim(PI / 3.0, PI / 5.0).matrix(2);
+    let m2 = Gate::FSim(PI / 3.0, PI / 5.0).matrix();
     assert_unitary(&m2, 4);
 }
 
@@ -864,11 +793,11 @@ fn test_fsim_is_unitary() {
 
 #[test]
 fn test_num_sites_new_gates() {
-    assert_eq!(Gate::SqrtX.num_sites(2), 1);
-    assert_eq!(Gate::SqrtY.num_sites(2), 1);
-    assert_eq!(Gate::SqrtW.num_sites(2), 1);
-    assert_eq!(Gate::ISWAP.num_sites(2), 2);
-    assert_eq!(Gate::FSim(1.0, 2.0).num_sites(2), 2);
+    assert_eq!(Gate::SqrtX.num_sites(), 1);
+    assert_eq!(Gate::SqrtY.num_sites(), 1);
+    assert_eq!(Gate::SqrtW.num_sites(), 1);
+    assert_eq!(Gate::ISWAP.num_sites(), 2);
+    assert_eq!(Gate::FSim(1.0, 2.0).num_sites(), 2);
 }
 
 // ============================================================
@@ -890,7 +819,7 @@ fn test_is_diagonal_new_gates() {
 
 #[test]
 fn test_sqrty_matrix_values() {
-    let m = Gate::SqrtY.matrix(2);
+    let m = Gate::SqrtY.matrix();
     assert_eq!(m.dim(), (2, 2));
 
     // Expected: (1+i)/2 * [[1, -1], [1, 1]]
@@ -910,7 +839,7 @@ fn test_sqrty_matrix_values() {
 
 #[test]
 fn test_sqrtw_matrix_values() {
-    let m = Gate::SqrtW.matrix(2);
+    let m = Gate::SqrtW.matrix();
     assert_eq!(m.dim(), (2, 2));
 
     // SqrtW = cos(π/4)*I - i*sin(π/4)*G where G = (X+Y)/√2
@@ -938,7 +867,7 @@ fn test_sqrtw_matrix_values() {
 
 #[test]
 fn test_sqrtw_squared_properties() {
-    let sqrtw = Gate::SqrtW.matrix(2);
+    let sqrtw = Gate::SqrtW.matrix();
     let w = sqrtw.dot(&sqrtw);
 
     // W^2 = rot((X+Y)/√2, π) which is -i*(X+Y)/√2
@@ -961,8 +890,8 @@ fn test_sqrtw_squared_properties() {
 
 #[test]
 fn test_sqrtx_sqrty_are_unitary() {
-    assert_unitary(&Gate::SqrtX.matrix(2), 2);
-    assert_unitary(&Gate::SqrtY.matrix(2), 2);
+    assert_unitary(&Gate::SqrtX.matrix(), 2);
+    assert_unitary(&Gate::SqrtY.matrix(), 2);
 }
 
 // ============================================================
@@ -978,7 +907,7 @@ fn test_gate_matrices_ground_truth() {
         let expected = common::matrix_from_json(&entry.matrix_re, &entry.matrix_im);
         // Determine d from matrix size: for 2x2 gates d=2, for 4x4 gates d=2 (two-qubit)
         let d = 2;
-        let actual = gate.matrix(d);
+        let actual = gate.matrix();
         common::assert_matrices_close(
             &actual,
             &expected,

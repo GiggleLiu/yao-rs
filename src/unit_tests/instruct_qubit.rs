@@ -247,7 +247,7 @@ fn get_gate_flat(case: &serde_json::Value) -> Option<Vec<Complex64>> {
             "PSWAP" | "CPHASE" => return None,
             _ => return None,
         };
-        let mat = gate.matrix(2);
+        let mat = gate.matrix();
         let d = mat.nrows();
         let mut flat = Vec::with_capacity(d * d);
         for i in 0..d {

@@ -201,7 +201,7 @@ impl Circuit {
                     // 6. Gate matrix size must match product of target site dimensions
                     let target_dim_product: usize =
                         pg.target_locs.iter().map(|&loc| dims[loc]).product();
-                    let matrix = pg.gate.matrix(dims[pg.target_locs[0]]);
+                    let matrix = pg.gate.matrix();
                     let matrix_size = matrix.nrows();
                     if matrix_size != target_dim_product {
                         return Err(CircuitError::MatrixSizeMismatch {

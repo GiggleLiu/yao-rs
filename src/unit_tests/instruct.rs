@@ -617,7 +617,7 @@ fn test_instruct_pauli_x() {
     // X|0⟩ = |1⟩ on 2-qubit system
     // Test on qubit 0
     let mut state = State::zero_state(&[2, 2]); // |00⟩
-    let x_gate = Gate::X.matrix(2);
+    let x_gate = Gate::X.matrix();
     instruct_single(&mut state, &x_gate, 0);
     // Result: |10⟩ = index 2
     assert!(approx_eq(state.data[0], Complex64::new(0.0, 0.0)));
@@ -648,7 +648,7 @@ fn test_instruct_pauli_x() {
 fn test_instruct_pauli_y() {
     // Y|0⟩ = i|1⟩
     let mut state = State::zero_state(&[2]); // |0⟩
-    let y_gate = Gate::Y.matrix(2);
+    let y_gate = Gate::Y.matrix();
     instruct_single(&mut state, &y_gate, 0);
     // Result: i|1⟩
     assert!(approx_eq(state.data[0], Complex64::new(0.0, 0.0)));
@@ -702,7 +702,7 @@ fn test_instruct_pauli_on_superposition() {
     state.data[1] = s;
 
     // Apply X: X|+⟩ = X(|0⟩ + |1⟩)/√2 = (|1⟩ + |0⟩)/√2 = |+⟩
-    let x_gate = Gate::X.matrix(2);
+    let x_gate = Gate::X.matrix();
     instruct_single(&mut state, &x_gate, 0);
     // Result: |+⟩ (same state, amplitudes swapped but still equal)
     assert!(approx_eq(state.data[0], s));
@@ -856,7 +856,7 @@ mod parallel_comprehensive_tests {
         let n_qubits = 14;
         let n_amps = 1 << n_qubits;
 
-        let x_gate = Gate::X.matrix(2);
+        let x_gate = Gate::X.matrix();
         let mut state_seq = State::zero_state(&vec![2; n_qubits]);
         let mut state_par = state_seq.clone();
         for i in 0..n_amps {
@@ -872,7 +872,7 @@ mod parallel_comprehensive_tests {
             "X gate parallel mismatch"
         );
 
-        let y_gate = Gate::Y.matrix(2);
+        let y_gate = Gate::Y.matrix();
         let mut state_seq = State::zero_state(&vec![2; n_qubits]);
         let mut state_par = state_seq.clone();
         for i in 0..n_amps {
@@ -911,7 +911,7 @@ mod parallel_comprehensive_tests {
         let n_amps = 1 << n_qubits;
         let theta = std::f64::consts::FRAC_PI_3;
 
-        let rx_gate = Gate::Rx(theta).matrix(2);
+        let rx_gate = Gate::Rx(theta).matrix();
         let mut state_seq = State::zero_state(&vec![2; n_qubits]);
         let mut state_par = state_seq.clone();
         for i in 0..n_amps {
@@ -927,7 +927,7 @@ mod parallel_comprehensive_tests {
             "Rx gate parallel mismatch"
         );
 
-        let ry_gate = Gate::Ry(theta).matrix(2);
+        let ry_gate = Gate::Ry(theta).matrix();
         let mut state_seq = State::zero_state(&vec![2; n_qubits]);
         let mut state_par = state_seq.clone();
         for i in 0..n_amps {
@@ -968,7 +968,7 @@ mod parallel_comprehensive_tests {
         let n_qubits = 14;
         let n_amps = 1 << n_qubits;
 
-        let x_gate = Gate::X.matrix(2);
+        let x_gate = Gate::X.matrix();
         let mut state_seq = State::zero_state(&vec![2; n_qubits]);
         let mut state_par = state_seq.clone();
         for i in 0..n_amps {
@@ -984,7 +984,7 @@ mod parallel_comprehensive_tests {
             "CNOT-like gate parallel mismatch"
         );
 
-        let h_gate = Gate::H.matrix(2);
+        let h_gate = Gate::H.matrix();
         let mut state_seq = State::zero_state(&vec![2; n_qubits]);
         let mut state_par = state_seq.clone();
         for i in 0..n_amps {
@@ -1006,8 +1006,8 @@ mod parallel_comprehensive_tests {
         let n_qubits = 16;
         let mut state_seq = State::zero_state(&vec![2; n_qubits]);
         let mut state_par = state_seq.clone();
-        let h_gate = Gate::H.matrix(2);
-        let x_gate = Gate::X.matrix(2);
+        let h_gate = Gate::H.matrix();
+        let x_gate = Gate::X.matrix();
         for loc in 0..n_qubits {
             instruct_single(&mut state_seq, &h_gate, loc);
             instruct_single_parallel(&mut state_par, &h_gate, loc);
@@ -1075,7 +1075,7 @@ mod parallel_comprehensive_tests {
     fn test_parallel_deterministic() {
         let n_qubits = 14;
         let n_amps = 1 << n_qubits;
-        let h_gate = Gate::H.matrix(2);
+        let h_gate = Gate::H.matrix();
         let theta = std::f64::consts::FRAC_PI_4;
         let rz_phases = [
             Complex64::from_polar(1.0, -theta / 2.0),
@@ -1124,7 +1124,7 @@ mod parallel_comprehensive_tests {
 #[test]
 fn test_instruct_h_creates_superposition() {
     let mut state = State::zero_state(&[2]);
-    let h_gate = Gate::H.matrix(2);
+    let h_gate = Gate::H.matrix();
     instruct_single(&mut state, &h_gate, 0);
     let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
     assert!(approx_eq(state.data[0], s));
@@ -1138,7 +1138,7 @@ fn test_instruct_h_creates_superposition() {
 
 #[test]
 fn test_instruct_h_on_each_qubit() {
-    let h_gate = Gate::H.matrix(2);
+    let h_gate = Gate::H.matrix();
     let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
     let zero = Complex64::new(0.0, 0.0);
 
@@ -1292,7 +1292,7 @@ fn test_instruct_rx_various_angles() {
     let zero = Complex64::new(0.0, 0.0);
     let neg_i = Complex64::new(0.0, -1.0);
 
-    let rx_0 = Gate::Rx(0.0).matrix(2);
+    let rx_0 = Gate::Rx(0.0).matrix();
     let mut state = State::zero_state(&[2]);
     instruct_single(&mut state, &rx_0, 0);
     assert!(approx_eq(state.data[0], one));
@@ -1303,7 +1303,7 @@ fn test_instruct_rx_various_angles() {
     assert!(approx_eq(state.data[0], zero));
     assert!(approx_eq(state.data[1], one));
 
-    let rx_pi = Gate::Rx(PI).matrix(2);
+    let rx_pi = Gate::Rx(PI).matrix();
     let mut state = State::zero_state(&[2]);
     instruct_single(&mut state, &rx_pi, 0);
     assert!(approx_eq(state.data[0], zero));
@@ -1314,7 +1314,7 @@ fn test_instruct_rx_various_angles() {
     assert!(approx_eq(state.data[0], neg_i));
     assert!(approx_eq(state.data[1], zero));
 
-    let rx_pi_2 = Gate::Rx(PI / 2.0).matrix(2);
+    let rx_pi_2 = Gate::Rx(PI / 2.0).matrix();
     let mut state = State::zero_state(&[2]);
     instruct_single(&mut state, &rx_pi_2, 0);
     let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
@@ -1332,7 +1332,7 @@ fn test_instruct_ry_various_angles() {
     let zero = Complex64::new(0.0, 0.0);
     let neg_one = Complex64::new(-1.0, 0.0);
 
-    let ry_0 = Gate::Ry(0.0).matrix(2);
+    let ry_0 = Gate::Ry(0.0).matrix();
     let mut state = State::zero_state(&[2]);
     instruct_single(&mut state, &ry_0, 0);
     assert!(approx_eq(state.data[0], one));
@@ -1343,7 +1343,7 @@ fn test_instruct_ry_various_angles() {
     assert!(approx_eq(state.data[0], zero));
     assert!(approx_eq(state.data[1], one));
 
-    let ry_pi = Gate::Ry(PI).matrix(2);
+    let ry_pi = Gate::Ry(PI).matrix();
     let mut state = State::zero_state(&[2]);
     instruct_single(&mut state, &ry_pi, 0);
     assert!(approx_eq(state.data[0], zero));
@@ -1354,7 +1354,7 @@ fn test_instruct_ry_various_angles() {
     assert!(approx_eq(state.data[0], neg_one));
     assert!(approx_eq(state.data[1], zero));
 
-    let ry_pi_2 = Gate::Ry(PI / 2.0).matrix(2);
+    let ry_pi_2 = Gate::Ry(PI / 2.0).matrix();
     let mut state = State::zero_state(&[2]);
     instruct_single(&mut state, &ry_pi_2, 0);
     let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
@@ -1376,7 +1376,7 @@ fn test_instruct_rz_various_angles() {
     let one = Complex64::new(1.0, 0.0);
     let zero = Complex64::new(0.0, 0.0);
 
-    let rz_0 = Gate::Rz(0.0).matrix(2);
+    let rz_0 = Gate::Rz(0.0).matrix();
     let rz_phases_0 = [rz_0[[0, 0]], rz_0[[1, 1]]];
     let mut state = State::zero_state(&[2]);
     instruct_diagonal(&mut state, &rz_phases_0, 0);
@@ -1388,7 +1388,7 @@ fn test_instruct_rz_various_angles() {
     assert!(approx_eq(state.data[0], zero));
     assert!(approx_eq(state.data[1], one));
 
-    let rz_pi = Gate::Rz(PI).matrix(2);
+    let rz_pi = Gate::Rz(PI).matrix();
     let rz_phases_pi = [rz_pi[[0, 0]], rz_pi[[1, 1]]];
     let neg_i = Complex64::new(0.0, -1.0);
     let i = Complex64::new(0.0, 1.0);
@@ -1405,7 +1405,7 @@ fn test_instruct_rz_various_angles() {
     assert!(approx_eq(state.data[0], zero));
     assert!(approx_eq(state.data[1], i));
 
-    let rz_pi_2 = Gate::Rz(PI / 2.0).matrix(2);
+    let rz_pi_2 = Gate::Rz(PI / 2.0).matrix();
     let rz_phases_pi_2 = [rz_pi_2[[0, 0]], rz_pi_2[[1, 1]]];
     let exp_neg_pi_4 = Complex64::from_polar(1.0, -FRAC_PI_4);
     let exp_pi_4 = Complex64::from_polar(1.0, FRAC_PI_4);
@@ -1431,7 +1431,7 @@ fn test_instruct_phase_various_angles() {
     let i = Complex64::new(0.0, 1.0);
     let neg_one = Complex64::new(-1.0, 0.0);
 
-    let phase_pi_4 = Gate::Phase(FRAC_PI_4).matrix(2);
+    let phase_pi_4 = Gate::Phase(FRAC_PI_4).matrix();
     let t_phases = [phase_pi_4[[0, 0]], phase_pi_4[[1, 1]]];
     let exp_pi_4 = Complex64::from_polar(1.0, FRAC_PI_4);
     assert!(approx_eq(t_phases[0], one));
@@ -1447,7 +1447,7 @@ fn test_instruct_phase_various_angles() {
     assert!(approx_eq(state.data[0], zero));
     assert!(approx_eq(state.data[1], exp_pi_4));
 
-    let phase_pi_2 = Gate::Phase(PI / 2.0).matrix(2);
+    let phase_pi_2 = Gate::Phase(PI / 2.0).matrix();
     let s_phases = [phase_pi_2[[0, 0]], phase_pi_2[[1, 1]]];
     assert!(approx_eq(s_phases[0], one));
     assert!(approx_eq(s_phases[1], i));
@@ -1457,7 +1457,7 @@ fn test_instruct_phase_various_angles() {
     assert!(approx_eq(state.data[0], zero));
     assert!(approx_eq(state.data[1], i));
 
-    let phase_pi = Gate::Phase(PI).matrix(2);
+    let phase_pi = Gate::Phase(PI).matrix();
     let z_phases = [phase_pi[[0, 0]], phase_pi[[1, 1]]];
     assert!(approx_eq(z_phases[0], one));
     assert!(approx_eq(z_phases[1], neg_one));
@@ -1485,7 +1485,7 @@ fn test_instruct_rotation_on_superposition() {
     let neg_i = Complex64::new(0.0, -1.0);
     let i = Complex64::new(0.0, 1.0);
 
-    let rx_pi = Gate::Rx(PI).matrix(2);
+    let rx_pi = Gate::Rx(PI).matrix();
     let mut state = State::zero_state(&[2]);
     state.data[0] = s;
     state.data[1] = s;
@@ -1493,7 +1493,7 @@ fn test_instruct_rotation_on_superposition() {
     assert!(approx_eq(state.data[0], s * neg_i));
     assert!(approx_eq(state.data[1], s * neg_i));
 
-    let ry_pi = Gate::Ry(PI).matrix(2);
+    let ry_pi = Gate::Ry(PI).matrix();
     let mut state = State::zero_state(&[2]);
     state.data[0] = s;
     state.data[1] = s;
@@ -1502,7 +1502,7 @@ fn test_instruct_rotation_on_superposition() {
     assert!(approx_eq(state.data[0], neg_s));
     assert!(approx_eq(state.data[1], s));
 
-    let rz_pi = Gate::Rz(PI).matrix(2);
+    let rz_pi = Gate::Rz(PI).matrix();
     let rz_phases_pi = [rz_pi[[0, 0]], rz_pi[[1, 1]]];
     let mut state = State::zero_state(&[2]);
     state.data[0] = s;
@@ -1512,7 +1512,7 @@ fn test_instruct_rotation_on_superposition() {
     assert!(approx_eq(state.data[1], s * i));
 
     for angle in [0.0, PI / 4.0, PI / 2.0, PI, 3.0 * PI / 2.0] {
-        let rx = Gate::Rx(angle).matrix(2);
+        let rx = Gate::Rx(angle).matrix();
         let mut state = State::zero_state(&[2]);
         state.data[0] = s;
         state.data[1] = s;
@@ -1520,7 +1520,7 @@ fn test_instruct_rotation_on_superposition() {
         let norm: f64 = state.data.iter().map(|c| c.norm_sqr()).sum();
         assert!((norm - 1.0).abs() < 1e-10);
 
-        let ry = Gate::Ry(angle).matrix(2);
+        let ry = Gate::Ry(angle).matrix();
         let mut state = State::zero_state(&[2]);
         state.data[0] = s;
         state.data[1] = s;
@@ -1528,7 +1528,7 @@ fn test_instruct_rotation_on_superposition() {
         let norm: f64 = state.data.iter().map(|c| c.norm_sqr()).sum();
         assert!((norm - 1.0).abs() < 1e-10);
 
-        let rz = Gate::Rz(angle).matrix(2);
+        let rz = Gate::Rz(angle).matrix();
         let rz_phases = [rz[[0, 0]], rz[[1, 1]]];
         let mut state = State::zero_state(&[2]);
         state.data[0] = s;
@@ -1544,7 +1544,7 @@ fn test_instruct_rotation_on_superposition() {
 fn test_instruct_swap_basic() {
     let zero = Complex64::new(0.0, 0.0);
     let one = Complex64::new(1.0, 0.0);
-    let swap_gate = Gate::SWAP.matrix(2);
+    let swap_gate = Gate::SWAP.matrix();
 
     let mut state = State::product_state(&[2, 2], &[0, 1]);
     instruct_controlled(&mut state, &swap_gate, &[], &[], &[0, 1]);
@@ -1565,7 +1565,7 @@ fn test_instruct_swap_basic() {
 fn test_instruct_swap_symmetric() {
     let zero = Complex64::new(0.0, 0.0);
     let one = Complex64::new(1.0, 0.0);
-    let swap_gate = Gate::SWAP.matrix(2);
+    let swap_gate = Gate::SWAP.matrix();
 
     let mut state = State::product_state(&[2, 2], &[0, 0]);
     instruct_controlled(&mut state, &swap_gate, &[], &[], &[0, 1]);
@@ -1586,7 +1586,7 @@ fn test_instruct_swap_symmetric() {
 fn test_instruct_swap_on_superposition() {
     let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
     let zero = Complex64::new(0.0, 0.0);
-    let swap_gate = Gate::SWAP.matrix(2);
+    let swap_gate = Gate::SWAP.matrix();
 
     let mut state = State::zero_state(&[2, 2]);
     state.data[0] = s;
@@ -1624,7 +1624,7 @@ fn test_instruct_swap_on_superposition() {
 fn test_instruct_swap_non_adjacent() {
     let zero = Complex64::new(0.0, 0.0);
     let one = Complex64::new(1.0, 0.0);
-    let swap_gate = Gate::SWAP.matrix(2);
+    let swap_gate = Gate::SWAP.matrix();
 
     let mut state = State::product_state(&[2, 2, 2], &[0, 0, 1]);
     instruct_controlled(&mut state, &swap_gate, &[], &[], &[0, 2]);
@@ -1669,7 +1669,7 @@ fn test_instruct_swap_non_adjacent() {
 
 #[test]
 fn test_instruct_swap_preserves_norm() {
-    let swap_gate = Gate::SWAP.matrix(2);
+    let swap_gate = Gate::SWAP.matrix();
 
     let mut state = State::zero_state(&[2, 2]);
     state.data[0] = Complex64::new(0.3, 0.1);
@@ -1707,7 +1707,7 @@ fn test_instruct_swap_preserves_norm() {
 fn test_instruct_cnot_all_basis_states() {
     let zero = Complex64::new(0.0, 0.0);
     let one = Complex64::new(1.0, 0.0);
-    let x_gate = Gate::X.matrix(2);
+    let x_gate = Gate::X.matrix();
 
     let mut state = State::product_state(&[2, 2], &[0, 0]);
     instruct_controlled(&mut state, &x_gate, &[0], &[1], &[1]);
@@ -1742,7 +1742,7 @@ fn test_instruct_cnot_all_basis_states() {
 fn test_instruct_cnot_reversed() {
     let _zero = Complex64::new(0.0, 0.0);
     let one = Complex64::new(1.0, 0.0);
-    let x_gate = Gate::X.matrix(2);
+    let x_gate = Gate::X.matrix();
 
     let mut state = State::product_state(&[2, 2], &[0, 0]);
     instruct_controlled(&mut state, &x_gate, &[1], &[1], &[0]);
@@ -1766,7 +1766,7 @@ fn test_instruct_cz_gate() {
     let _zero = Complex64::new(0.0, 0.0);
     let one = Complex64::new(1.0, 0.0);
     let neg_one = Complex64::new(-1.0, 0.0);
-    let z_gate = Gate::Z.matrix(2);
+    let z_gate = Gate::Z.matrix();
 
     let mut state = State::product_state(&[2, 2], &[0, 0]);
     instruct_controlled(&mut state, &z_gate, &[0], &[1], &[1]);
@@ -1803,7 +1803,7 @@ fn test_instruct_cy_gate() {
     let one = Complex64::new(1.0, 0.0);
     let i = Complex64::new(0.0, 1.0);
     let neg_i = Complex64::new(0.0, -1.0);
-    let y_gate = Gate::Y.matrix(2);
+    let y_gate = Gate::Y.matrix();
 
     let mut state = State::product_state(&[2, 2], &[0, 0]);
     instruct_controlled(&mut state, &y_gate, &[0], &[1], &[1]);
@@ -1823,7 +1823,7 @@ fn test_instruct_controlled_h() {
     let _zero = Complex64::new(0.0, 0.0);
     let one = Complex64::new(1.0, 0.0);
     let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
-    let h_gate = Gate::H.matrix(2);
+    let h_gate = Gate::H.matrix();
 
     let mut state = State::product_state(&[2, 2], &[0, 0]);
     instruct_controlled(&mut state, &h_gate, &[0], &[1], &[1]);
@@ -1847,7 +1847,7 @@ fn test_instruct_controlled_phase() {
 
     let theta = FRAC_PI_4;
     let phase = Complex64::from_polar(1.0, theta);
-    let phase_gate = Gate::Phase(theta).matrix(2);
+    let phase_gate = Gate::Phase(theta).matrix();
 
     let mut state = State::product_state(&[2, 2], &[1, 0]);
     instruct_controlled(&mut state, &phase_gate, &[0], &[1], &[1]);
@@ -1859,20 +1859,20 @@ fn test_instruct_controlled_phase() {
 
     let theta = std::f64::consts::FRAC_PI_2;
     let phase = Complex64::from_polar(1.0, theta);
-    let phase_gate = Gate::Phase(theta).matrix(2);
+    let phase_gate = Gate::Phase(theta).matrix();
     let mut state = State::product_state(&[2, 2], &[1, 1]);
     instruct_controlled(&mut state, &phase_gate, &[0], &[1], &[1]);
     assert!(approx_eq(state.data[3], phase));
 
     let theta = std::f64::consts::PI;
     let phase = Complex64::from_polar(1.0, theta);
-    let phase_gate = Gate::Phase(theta).matrix(2);
+    let phase_gate = Gate::Phase(theta).matrix();
     let mut state = State::product_state(&[2, 2], &[1, 1]);
     instruct_controlled(&mut state, &phase_gate, &[0], &[1], &[1]);
     assert!(approx_eq(state.data[3], phase));
 
     let theta = 2.0 * std::f64::consts::PI;
-    let phase_gate = Gate::Phase(theta).matrix(2);
+    let phase_gate = Gate::Phase(theta).matrix();
     let mut state = State::product_state(&[2, 2], &[1, 1]);
     instruct_controlled(&mut state, &phase_gate, &[0], &[1], &[1]);
     assert!(approx_eq(state.data[3], one));
@@ -1882,7 +1882,7 @@ fn test_instruct_controlled_phase() {
 fn test_instruct_controlled_on_superposition() {
     let zero = Complex64::new(0.0, 0.0);
     let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
-    let x_gate = Gate::X.matrix(2);
+    let x_gate = Gate::X.matrix();
 
     let mut state = State::zero_state(&[2, 2]);
     state.data[0] = s;
@@ -1918,7 +1918,7 @@ fn test_instruct_controlled_on_superposition() {
 fn test_instruct_toffoli_all_basis() {
     let zero = Complex64::new(0.0, 0.0);
     let one = Complex64::new(1.0, 0.0);
-    let x_gate = Gate::X.matrix(2);
+    let x_gate = Gate::X.matrix();
 
     let mut state = State::product_state(&[2, 2, 2], &[0, 0, 0]);
     instruct_controlled(&mut state, &x_gate, &[0, 1], &[1, 1], &[2]);
@@ -1962,7 +1962,7 @@ fn test_instruct_toffoli_all_basis() {
 fn test_instruct_ccz_gate() {
     let one = Complex64::new(1.0, 0.0);
     let neg_one = Complex64::new(-1.0, 0.0);
-    let z_gate = Gate::Z.matrix(2);
+    let z_gate = Gate::Z.matrix();
 
     let mut state = State::product_state(&[2, 2, 2], &[0, 0, 0]);
     instruct_controlled(&mut state, &z_gate, &[0, 1], &[1, 1], &[2]);
@@ -1997,7 +1997,7 @@ fn test_instruct_ccz_gate() {
 fn test_instruct_three_controls() {
     let zero = Complex64::new(0.0, 0.0);
     let one = Complex64::new(1.0, 0.0);
-    let x_gate = Gate::X.matrix(2);
+    let x_gate = Gate::X.matrix();
 
     let mut state = State::product_state(&[2, 2, 2, 2], &[1, 1, 1, 0]);
     instruct_controlled(&mut state, &x_gate, &[0, 1, 2], &[1, 1, 1], &[3]);
@@ -2066,7 +2066,7 @@ fn test_instruct_controlled_swap() {
 fn test_instruct_mixed_control_values() {
     let zero = Complex64::new(0.0, 0.0);
     let one = Complex64::new(1.0, 0.0);
-    let x_gate = Gate::X.matrix(2);
+    let x_gate = Gate::X.matrix();
 
     let mut state = State::product_state(&[2, 2], &[0, 0]);
     instruct_controlled(&mut state, &x_gate, &[0], &[0], &[1]);
@@ -2091,7 +2091,7 @@ fn test_instruct_mixed_control_values() {
 fn test_instruct_multi_control_mixed_values() {
     let zero = Complex64::new(0.0, 0.0);
     let one = Complex64::new(1.0, 0.0);
-    let x_gate = Gate::X.matrix(2);
+    let x_gate = Gate::X.matrix();
 
     let mut state = State::product_state(&[2, 2, 2], &[0, 1, 0]);
     instruct_controlled(&mut state, &x_gate, &[0, 1], &[0, 1], &[2]);
@@ -2770,19 +2770,19 @@ fn test_instruct_single_qubit_system() {
     let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
 
     let mut state = State::zero_state(&[2]);
-    let x_gate = Gate::X.matrix(2);
+    let x_gate = Gate::X.matrix();
     instruct_single(&mut state, &x_gate, 0);
     assert!(approx_eq(state.data[0], zero));
     assert!(approx_eq(state.data[1], one));
 
     let mut state = State::zero_state(&[2]);
-    let h_gate = Gate::H.matrix(2);
+    let h_gate = Gate::H.matrix();
     instruct_single(&mut state, &h_gate, 0);
     assert!(approx_eq(state.data[0], s));
     assert!(approx_eq(state.data[1], s));
 
     let mut state = State::zero_state(&[2]);
-    let y_gate = Gate::Y.matrix(2);
+    let y_gate = Gate::Y.matrix();
     instruct_single(&mut state, &y_gate, 0);
     assert!(approx_eq(state.data[0], zero));
     assert!(approx_eq(state.data[1], Complex64::new(0.0, 1.0)));
@@ -2794,13 +2794,13 @@ fn test_instruct_single_qubit_system() {
     assert!(approx_eq(state.data[1], Complex64::new(-1.0, 0.0)));
 
     let mut state = State::product_state(&[2], &[1]);
-    let s_gate = Gate::S.matrix(2);
+    let s_gate = Gate::S.matrix();
     instruct_single(&mut state, &s_gate, 0);
     assert!(approx_eq(state.data[0], zero));
     assert!(approx_eq(state.data[1], Complex64::new(0.0, 1.0)));
 
     let mut state = State::product_state(&[2], &[1]);
-    let t_gate = Gate::T.matrix(2);
+    let t_gate = Gate::T.matrix();
     instruct_single(&mut state, &t_gate, 0);
     let t_phase = Complex64::from_polar(1.0, FRAC_PI_4);
     assert!(approx_eq(state.data[0], zero));
@@ -2814,7 +2814,7 @@ fn test_instruct_large_system() {
     assert_eq!(state.data.len(), 1024);
     assert_eq!(state.total_dim(), 1024);
 
-    let h_gate = Gate::H.matrix(2);
+    let h_gate = Gate::H.matrix();
     instruct_single(&mut state, &h_gate, 0);
     let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
     let zero = Complex64::new(0.0, 0.0);
@@ -2845,7 +2845,7 @@ fn test_instruct_gate_on_last_qubit() {
     let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
 
     let mut state = State::zero_state(&[2, 2, 2]);
-    let x_gate = Gate::X.matrix(2);
+    let x_gate = Gate::X.matrix();
     instruct_single(&mut state, &x_gate, 2);
     assert!(approx_eq(state.data[0], zero));
     assert!(approx_eq(state.data[1], one));
@@ -2854,7 +2854,7 @@ fn test_instruct_gate_on_last_qubit() {
     }
 
     let mut state = State::zero_state(&[2, 2, 2, 2]);
-    let h_gate = Gate::H.matrix(2);
+    let h_gate = Gate::H.matrix();
     instruct_single(&mut state, &h_gate, 3);
     assert!(approx_eq(state.data[0], s));
     assert!(approx_eq(state.data[1], s));
@@ -2872,14 +2872,14 @@ fn test_instruct_gate_on_last_qubit() {
 fn test_instruct_non_contiguous_targets() {
     let zero = Complex64::new(0.0, 0.0);
     let one = Complex64::new(1.0, 0.0);
-    let swap_gate = Gate::SWAP.matrix(2);
+    let swap_gate = Gate::SWAP.matrix();
 
     let mut state = State::product_state(&[2, 2, 2], &[1, 0, 0]);
     instruct_controlled(&mut state, &swap_gate, &[], &[], &[0, 2]);
     assert!(approx_eq(state.data[1], one));
     assert!(approx_eq(state.data[4], zero));
 
-    let x_gate = Gate::X.matrix(2);
+    let x_gate = Gate::X.matrix();
     let mut state = State::product_state(&[2, 2, 2, 2], &[1, 0, 0, 0]);
     instruct_controlled(&mut state, &x_gate, &[0], &[1], &[3]);
     assert!(approx_eq(state.data[8], zero));
@@ -2911,12 +2911,12 @@ fn test_instruct_preserves_normalization_comprehensive() {
     }
 
     let mut state = create_test_state(&[2, 2]);
-    let x_gate = Gate::X.matrix(2);
+    let x_gate = Gate::X.matrix();
     instruct_single(&mut state, &x_gate, 0);
     assert!((state.norm() - 1.0).abs() < tolerance);
 
     let mut state = create_test_state(&[2, 2]);
-    let y_gate = Gate::Y.matrix(2);
+    let y_gate = Gate::Y.matrix();
     instruct_single(&mut state, &y_gate, 0);
     assert!((state.norm() - 1.0).abs() < tolerance);
 
@@ -2926,17 +2926,17 @@ fn test_instruct_preserves_normalization_comprehensive() {
     assert!((state.norm() - 1.0).abs() < tolerance);
 
     let mut state = create_test_state(&[2, 2]);
-    let h_gate = Gate::H.matrix(2);
+    let h_gate = Gate::H.matrix();
     instruct_single(&mut state, &h_gate, 0);
     assert!((state.norm() - 1.0).abs() < tolerance);
 
     let mut state = create_test_state(&[2, 2]);
-    let s_gate = Gate::S.matrix(2);
+    let s_gate = Gate::S.matrix();
     instruct_single(&mut state, &s_gate, 0);
     assert!((state.norm() - 1.0).abs() < tolerance);
 
     let mut state = create_test_state(&[2, 2]);
-    let t_gate = Gate::T.matrix(2);
+    let t_gate = Gate::T.matrix();
     instruct_single(&mut state, &t_gate, 0);
     assert!((state.norm() - 1.0).abs() < tolerance);
 
@@ -2948,21 +2948,21 @@ fn test_instruct_preserves_normalization_comprehensive() {
         2.0 * std::f64::consts::PI,
     ] {
         let mut state = create_test_state(&[2, 2]);
-        let rx_gate = Gate::Rx(theta).matrix(2);
+        let rx_gate = Gate::Rx(theta).matrix();
         instruct_single(&mut state, &rx_gate, 0);
         assert!((state.norm() - 1.0).abs() < tolerance);
     }
 
     for theta in [0.0, 0.5, 1.0, std::f64::consts::PI] {
         let mut state = create_test_state(&[2, 2]);
-        let ry_gate = Gate::Ry(theta).matrix(2);
+        let ry_gate = Gate::Ry(theta).matrix();
         instruct_single(&mut state, &ry_gate, 0);
         assert!((state.norm() - 1.0).abs() < tolerance);
     }
 
     for theta in [0.0, 0.5, 1.0, std::f64::consts::PI] {
         let mut state = create_test_state(&[2, 2]);
-        let rz_gate = Gate::Rz(theta).matrix(2);
+        let rz_gate = Gate::Rz(theta).matrix();
         instruct_single(&mut state, &rz_gate, 0);
         assert!((state.norm() - 1.0).abs() < tolerance);
     }
@@ -2974,18 +2974,18 @@ fn test_instruct_preserves_normalization_comprehensive() {
         std::f64::consts::PI,
     ] {
         let mut state = create_test_state(&[2, 2]);
-        let phase_gate = Gate::Phase(theta).matrix(2);
+        let phase_gate = Gate::Phase(theta).matrix();
         instruct_single(&mut state, &phase_gate, 0);
         assert!((state.norm() - 1.0).abs() < tolerance);
     }
 
     let mut state = create_test_state(&[2, 2]);
-    let x_gate = Gate::X.matrix(2);
+    let x_gate = Gate::X.matrix();
     instruct_controlled(&mut state, &x_gate, &[0], &[1], &[1]);
     assert!((state.norm() - 1.0).abs() < tolerance);
 
     let mut state = create_test_state(&[2, 2]);
-    let swap_gate = Gate::SWAP.matrix(2);
+    let swap_gate = Gate::SWAP.matrix();
     instruct_controlled(&mut state, &swap_gate, &[], &[], &[0, 1]);
     assert!((state.norm() - 1.0).abs() < tolerance);
 
@@ -3000,12 +3000,12 @@ fn test_instruct_multiple_gates_sequence() {
     let zero = Complex64::new(0.0, 0.0);
     let mut state = State::zero_state(&[2, 2]);
 
-    let h_gate = Gate::H.matrix(2);
+    let h_gate = Gate::H.matrix();
     instruct_single(&mut state, &h_gate, 0);
     assert!(approx_eq(state.data[0], s));
     assert!(approx_eq(state.data[2], s));
 
-    let x_gate = Gate::X.matrix(2);
+    let x_gate = Gate::X.matrix();
     instruct_controlled(&mut state, &x_gate, &[0], &[1], &[1]);
     assert!(approx_eq(state.data[0], s));
     assert!(approx_eq(state.data[1], zero));
@@ -3039,7 +3039,7 @@ fn test_instruct_multiple_gates_sequence() {
 #[should_panic]
 fn test_instruct_invalid_location() {
     let mut state = State::zero_state(&[2, 2]);
-    let h_gate = Gate::H.matrix(2);
+    let h_gate = Gate::H.matrix();
     instruct_single(&mut state, &h_gate, 5);
 }
 
@@ -3047,6 +3047,6 @@ fn test_instruct_invalid_location() {
 #[should_panic]
 fn test_instruct_gate_dimension_mismatch() {
     let mut state = State::zero_state(&[3]);
-    let h_gate = Gate::H.matrix(2);
+    let h_gate = Gate::H.matrix();
     instruct_single(&mut state, &h_gate, 0);
 }

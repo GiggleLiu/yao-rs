@@ -28,7 +28,7 @@ pub(crate) fn extract_diagonal_phases(matrix: &Array2<Complex64>) -> Vec<Complex
 
 /// Dispatch a single qubit gate through the bit-manipulation fast path.
 fn apply_qubit_gate(pg: &PositionedGate, state: &mut State, nbits: usize) {
-    let gate_matrix = pg.gate.matrix(2);
+    let gate_matrix = pg.gate.matrix();
     let state_slice = state.data.as_slice_mut().unwrap();
 
     let ctrl_locs = &pg.control_locs;
@@ -159,7 +159,7 @@ pub fn apply_inplace(circuit: &Circuit, state: &mut State) {
 
         // Generic path (qudits or mixed dimensions)
         let d = dims[pg.target_locs[0]];
-        let gate_matrix = pg.gate.matrix(d);
+        let gate_matrix = pg.gate.matrix();
 
         if pg.control_locs.is_empty() {
             if is_diagonal(&pg.gate) && pg.target_locs.len() == 1 {

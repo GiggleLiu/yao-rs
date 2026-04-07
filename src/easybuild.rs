@@ -167,7 +167,7 @@ pub fn variational_circuit(n: usize, nlayer: usize, pairs: &[(usize, usize)]) ->
 /// Takes a Custom gate as the unitary.
 /// Structure: H(0) -> Rz(phi, 0) -> Controlled-U(0 -> 1..N) -> H(0)
 pub fn hadamard_test_circuit(unitary: Gate, phi: f64) -> Circuit {
-    let n_u = unitary.num_sites(2);
+    let n_u = unitary.num_sites();
     let n_total = n_u + 1;
     let mut elements: Vec<CircuitElement> = Vec::new();
 
@@ -236,7 +236,7 @@ pub fn phase_estimation_circuit(unitary: Gate, n_reg: usize, n_b: usize) -> Circ
     let target_locs: Vec<usize> = (n_reg..n_total).collect();
 
     // Compute U^(2^i) by repeated squaring
-    let u_matrix = unitary.matrix(2);
+    let u_matrix = unitary.matrix();
     let dim = u_matrix.nrows();
     let mut current_matrix = u_matrix;
 

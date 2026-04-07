@@ -38,7 +38,7 @@ pub fn gate_to_tensor(pg: &PositionedGate, dims: &[usize]) -> (ArrayD<Complex64>
         } else {
             dims[pg.target_locs[0]]
         };
-        let mat = pg.gate.matrix(d);
+        let mat = pg.gate.matrix();
 
         // Extract diagonal elements
         let total_dim: usize = target_dims.iter().product();
@@ -108,7 +108,7 @@ fn build_controlled_matrix(pg: &PositionedGate, dims: &[usize]) -> Array2<Comple
         } else {
             dims[pg.target_locs[0]]
         };
-        return pg.gate.matrix(d);
+        return pg.gate.matrix();
     }
 
     // Compute the trigger index from control_configs
@@ -122,7 +122,7 @@ fn build_controlled_matrix(pg: &PositionedGate, dims: &[usize]) -> Array2<Comple
     } else {
         dims[pg.target_locs[0]]
     };
-    let gate_matrix = pg.gate.matrix(d);
+    let gate_matrix = pg.gate.matrix();
 
     let one = Complex64::new(1.0, 0.0);
 
