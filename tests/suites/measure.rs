@@ -8,8 +8,10 @@ use yao_rs::apply::apply;
 use yao_rs::circuit::{Circuit, control, put};
 use yao_rs::gate::Gate;
 use yao_rs::measure::{
-    collapse_to, measure, measure_and_collapse, measure_remove, measure_reset, probs,
+    MeasureResult, PostProcess, collapse_to, measure, measure_and_collapse,
+    measure_remove, measure_reset, measure_with_postprocess, probs,
 };
+use yao_rs::{ArrayReg, DensityMatrix};
 use yao_rs::state::State;
 
 fn approx_eq(a: f64, b: f64) -> bool {
@@ -699,6 +701,92 @@ fn test_collapse_then_measure_consistent() {
     let results = measure(&state, Some(&[0]), 100, &mut rng);
     for result in results {
         assert_eq!(result[0], 1);
+    }
+}
+
+#[test]
+fn test_probs_arrayreg_supports_marginals() {
+    let reg = ArrayReg::ghz_state(3);
+    let p = probs(&reg, Some(&[0, 2]));
+
+    assert_eq!(p.len(), 4);
+    assert!(approx_eq(p[0], 0.5));
+    assert!(approx_eq(p[1], 0.0));
+    assert!(approx_eq(p[2], 0.0));
+    assert!(approx_eq(p[3], 0.5));
+}
+
+#[test]
+fn test_probs_density_matrix_uses_diagonal_distribution() {
+    let r0 = ArrayReg::from_vec(
+        1,
+        vec![Complex64::new(1.0, 0.0), Complex64::new(0.0, 0.0)],
+    );
+    let r1 = ArrayReg::from_vec(
+        1,
+        vec![Complex64::new(0.0, 0.0), Complex64::new(1.0, 0.0)],
+    );
+    let dm = DensityMatrix::mixed(&[0.25, 0.75], &[r0, r1]);
+
+    let p = probs(&dm, None);
+    assert_eq!(p.len(), 2);
+    assert!(approx_eq(p[0], 0.25));
+    assert!(approx_eq(p[1], 0.75));
+}
+
+#[test]
+fn test_measure_with_postprocess_no_postprocess_preserves_arrayreg() {
+    let mut reg = ArrayReg::uniform_state(1);
+    let before = reg.clone();
+    let mut rng = rand::rngs::StdRng::seed_from_u64(42);
+
+    let result =
+        measure_with_postprocess(&mut reg, &[0], PostProcess::NoPostProcess, &mut rng);
+
+    match result {
+        MeasureResult::Value(bits) => assert!(bits == vec![0] || bits == vec![1]),
+        MeasureResult::Removed(_, _) => panic!("unexpected register removal"),
+    }
+    assert!(approx_eq(reg.fidelity(&before), 1.0));
+}
+
+#[test]
+fn test_measure_with_postprocess_reset_to_sets_target_value() {
+    let circuit = Circuit::new(
+        vec![2, 2],
+        vec![put(vec![0], Gate::H), control(vec![0], vec![1], Gate::X)],
+    )
+    .unwrap();
+    let mut reg = apply(&circuit, &ArrayReg::zero_state(2));
+    let mut rng = rand::rngs::StdRng::seed_from_u64(42);
+
+    let result = measure_with_postprocess(&mut reg, &[0], PostProcess::ResetTo(0), &mut rng);
+
+    match result {
+        MeasureResult::Value(bits) => assert!(bits == vec![0] || bits == vec![1]),
+        MeasureResult::Removed(_, _) => panic!("unexpected register removal"),
+    }
+    assert!(approx_eq(reg.norm(), 1.0));
+    let p = probs(&reg, Some(&[0]));
+    assert!(approx_eq(p[0], 1.0));
+}
+
+#[test]
+fn test_measure_with_postprocess_remove_measured_returns_smaller_arrayreg() {
+    let mut reg = ArrayReg::ghz_state(2);
+    let mut rng = rand::rngs::StdRng::seed_from_u64(42);
+
+    let result = measure_with_postprocess(&mut reg, &[0], PostProcess::RemoveMeasured, &mut rng);
+
+    match result {
+        MeasureResult::Removed(bits, new_reg) => {
+            assert!(bits == vec![0] || bits == vec![1]);
+            assert_eq!(new_reg.nqubits(), 1);
+            assert!(approx_eq(new_reg.norm(), 1.0));
+            let p = probs(&new_reg, None);
+            assert!(approx_eq(p[bits[0]], 1.0));
+        }
+        MeasureResult::Value(_) => panic!("expected measured qubit removal"),
     }
 }
 

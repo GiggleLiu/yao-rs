@@ -7,18 +7,78 @@
 //! - [`probs`] - Get probability distribution over computational basis
 //! - [`measure`] - Sample measurement outcomes without collapsing state
 //! - [`measure_and_collapse`] - Measure and collapse state to the outcome
+//! - [`measure_with_postprocess`] - Measure an [`ArrayReg`](crate::register::ArrayReg)
+//!   with post-processing
 //! - [`collapse_to`] - Collapse state to a specific outcome (post-selection)
 
 use num_complex::Complex64;
 use rand::Rng;
 
+use crate::density_matrix::DensityMatrix;
 use crate::index::{linear_to_indices, mixed_radix_index};
+use crate::register::{ArrayReg, Register};
 use crate::state::State;
+
+/// Post-processing behavior for qubit-register measurement.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum PostProcess {
+    NoPostProcess,
+    ResetTo(usize),
+    RemoveMeasured,
+}
+
+/// Result of measuring an [`ArrayReg`](crate::register::ArrayReg).
+#[derive(Clone, Debug)]
+pub enum MeasureResult {
+    Value(Vec<usize>),
+    Removed(Vec<usize>, ArrayReg),
+}
+
+#[doc(hidden)]
+pub trait ProbabilitySource {
+    fn full_probs(&self) -> Vec<f64>;
+    fn marginal_probs(&self, locs: &[usize]) -> Vec<f64>;
+}
+
+impl ProbabilitySource for State {
+    fn full_probs(&self) -> Vec<f64> {
+        self.data.iter().map(|c| c.norm_sqr()).collect()
+    }
+
+    fn marginal_probs(&self, locs: &[usize]) -> Vec<f64> {
+        marginal_probs_state(self, locs)
+    }
+}
+
+impl ProbabilitySource for ArrayReg {
+    fn full_probs(&self) -> Vec<f64> {
+        self.state_vec().iter().map(|c| c.norm_sqr()).collect()
+    }
+
+    fn marginal_probs(&self, locs: &[usize]) -> Vec<f64> {
+        validate_measure_locs(self.nqubits(), locs);
+        marginal_probs_qubits(self.state_vec(), locs)
+    }
+}
+
+impl ProbabilitySource for DensityMatrix {
+    fn full_probs(&self) -> Vec<f64> {
+        let dim = 1usize << self.nbits();
+        (0..dim)
+            .map(|basis| self.state_data()[basis * dim + basis].re.max(0.0))
+            .collect()
+    }
+
+    fn marginal_probs(&self, locs: &[usize]) -> Vec<f64> {
+        validate_measure_locs(self.nbits(), locs);
+        marginal_probs_density_matrix(self, locs)
+    }
+}
 
 /// Compute probability distribution over computational basis.
 ///
-/// If `locs` is `None`, returns probabilities for all qudits.
-/// If `locs` is `Some(&[...])`, returns marginal probabilities for specified qudits.
+/// If `locs` is `None`, returns probabilities for all sites.
+/// If `locs` is `Some(&[...])`, returns marginal probabilities for specified sites.
 ///
 /// # Example
 /// ```
@@ -36,21 +96,15 @@ use crate::state::State;
 /// assert!((p[0] - 0.5).abs() < 1e-10);
 /// assert!((p[1] - 0.5).abs() < 1e-10);
 /// ```
-pub fn probs(state: &State, locs: Option<&[usize]>) -> Vec<f64> {
+pub fn probs<T: ProbabilitySource + ?Sized>(state: &T, locs: Option<&[usize]>) -> Vec<f64> {
     match locs {
-        None => {
-            // Full state probabilities
-            state.data.iter().map(|c| c.norm_sqr()).collect()
-        }
-        Some(locs) => {
-            // Marginal probabilities for specified qudits
-            marginal_probs(state, locs)
-        }
+        None => state.full_probs(),
+        Some(locs) => state.marginal_probs(locs),
     }
 }
 
 /// Compute marginal probabilities for a subset of qudits.
-fn marginal_probs(state: &State, locs: &[usize]) -> Vec<f64> {
+fn marginal_probs_state(state: &State, locs: &[usize]) -> Vec<f64> {
     let marginal_dims: Vec<usize> = locs.iter().map(|&i| state.dims[i]).collect();
     let marginal_size: usize = marginal_dims.iter().product();
     let mut prob_vec = vec![0.0; marginal_size];
@@ -66,6 +120,43 @@ fn marginal_probs(state: &State, locs: &[usize]) -> Vec<f64> {
     prob_vec
 }
 
+fn marginal_probs_qubits(state: &[Complex64], locs: &[usize]) -> Vec<f64> {
+    let mut prob_vec = vec![0.0; 1usize << locs.len()];
+
+    for (basis, amp) in state.iter().enumerate() {
+        let mut marginal_idx = 0usize;
+        for (idx, &loc) in locs.iter().enumerate() {
+            marginal_idx |= ((basis >> loc) & 1) << idx;
+        }
+        prob_vec[marginal_idx] += amp.norm_sqr();
+    }
+
+    prob_vec
+}
+
+fn marginal_probs_density_matrix(dm: &DensityMatrix, locs: &[usize]) -> Vec<f64> {
+    let dim = 1usize << dm.nbits();
+    let mut prob_vec = vec![0.0; 1usize << locs.len()];
+
+    for basis in 0..dim {
+        let mut marginal_idx = 0usize;
+        for (idx, &loc) in locs.iter().enumerate() {
+            marginal_idx |= ((basis >> loc) & 1) << idx;
+        }
+        prob_vec[marginal_idx] += dm.state_data()[basis * dim + basis].re.max(0.0);
+    }
+
+    prob_vec
+}
+
+fn validate_measure_locs(nbits: usize, locs: &[usize]) {
+    let mut seen = std::collections::BTreeSet::new();
+    for &loc in locs {
+        assert!(loc < nbits, "measurement location {loc} is out of range for {nbits} qubits");
+        assert!(seen.insert(loc), "duplicate measurement location {loc}");
+    }
+}
+
 /// Sample an index from a probability distribution.
 fn sample_from_probs(probs: &[f64], rng: &mut impl Rng) -> usize {
     let r: f64 = rng.r#gen();
@@ -77,6 +168,122 @@ fn sample_from_probs(probs: &[f64], rng: &mut impl Rng) -> usize {
         }
     }
     probs.len() - 1
+}
+
+fn decode_outcome_bits(outcome_idx: usize, nbits: usize) -> Vec<usize> {
+    (0..nbits).map(|idx| (outcome_idx >> idx) & 1).collect()
+}
+
+fn collapse_qubits_to(state: &mut [Complex64], locs: &[usize], values: &[usize]) {
+    assert_eq!(
+        locs.len(),
+        values.len(),
+        "locs and values must have the same length"
+    );
+
+    let mut norm_sq = 0.0;
+    for (basis, amp) in state.iter_mut().enumerate() {
+        let matches = locs
+            .iter()
+            .zip(values.iter())
+            .all(|(&loc, &value)| ((basis >> loc) & 1) == value);
+        if matches {
+            norm_sq += amp.norm_sqr();
+        } else {
+            *amp = Complex64::new(0.0, 0.0);
+        }
+    }
+
+    let norm = norm_sq.sqrt();
+    if norm > 1e-15 {
+        for amp in state.iter_mut() {
+            *amp /= norm;
+        }
+    }
+}
+
+fn reset_qubits_to(state: &mut [Complex64], locs: &[usize], from: &[usize], reset_val: usize) {
+    let to_bits = decode_outcome_bits(reset_val, locs.len());
+    if from == &to_bits[..] {
+        return;
+    }
+
+    let mut swap_mask = 0usize;
+    for (idx, &loc) in locs.iter().enumerate() {
+        if from[idx] != to_bits[idx] {
+            swap_mask |= 1usize << loc;
+        }
+    }
+
+    for basis in 0..state.len() {
+        let matches_from = locs
+            .iter()
+            .zip(from.iter())
+            .all(|(&loc, &value)| ((basis >> loc) & 1) == value);
+        if !matches_from {
+            continue;
+        }
+
+        let target_basis = basis ^ swap_mask;
+        let amp = state[basis];
+        state[target_basis] = amp;
+        state[basis] = Complex64::new(0.0, 0.0);
+    }
+}
+
+fn remove_measured_qubits(reg: &ArrayReg, locs: &[usize]) -> ArrayReg {
+    let kept_locs: Vec<usize> = (0..reg.nqubits()).filter(|loc| !locs.contains(loc)).collect();
+    let mut new_state = vec![Complex64::new(0.0, 0.0); 1usize << kept_locs.len()];
+
+    for (basis, amp) in reg.state_vec().iter().enumerate() {
+        if amp.norm_sqr() < 1e-30 {
+            continue;
+        }
+
+        let mut new_basis = 0usize;
+        for (idx, &loc) in kept_locs.iter().enumerate() {
+            new_basis |= ((basis >> loc) & 1) << idx;
+        }
+        new_state[new_basis] += *amp;
+    }
+
+    let mut new_reg = ArrayReg::from_vec(kept_locs.len(), new_state);
+    new_reg.normalize();
+    new_reg
+}
+
+/// Measure an [`ArrayReg`](crate::register::ArrayReg) with optional post-processing.
+pub fn measure_with_postprocess(
+    reg: &mut ArrayReg,
+    locs: &[usize],
+    post: PostProcess,
+    rng: &mut impl Rng,
+) -> MeasureResult {
+    validate_measure_locs(reg.nqubits(), locs);
+
+    let probs = marginal_probs_qubits(reg.state_vec(), locs);
+    let outcome_idx = sample_from_probs(&probs, rng);
+    let outcome = decode_outcome_bits(outcome_idx, locs.len());
+
+    match post {
+        PostProcess::NoPostProcess => MeasureResult::Value(outcome),
+        PostProcess::ResetTo(reset_val) => {
+            assert!(
+                reset_val < (1usize << locs.len()),
+                "reset value {} does not fit in {} measured qubits",
+                reset_val,
+                locs.len()
+            );
+            collapse_qubits_to(reg.state_vec_mut(), locs, &outcome);
+            reset_qubits_to(reg.state_vec_mut(), locs, &outcome, reset_val);
+            MeasureResult::Value(outcome)
+        }
+        PostProcess::RemoveMeasured => {
+            collapse_qubits_to(reg.state_vec_mut(), locs, &outcome);
+            let new_reg = remove_measured_qubits(reg, locs);
+            MeasureResult::Removed(outcome, new_reg)
+        }
+    }
 }
 
 /// Sample measurement outcomes without collapsing state.
