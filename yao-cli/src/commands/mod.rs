@@ -1,3 +1,4 @@
+pub mod example;
 pub mod expect;
 pub mod inspect;
 pub mod measure;
@@ -35,20 +36,33 @@ pub fn format_measurement(
     locs: Option<&[usize]>,
     num_qubits: usize,
 ) -> (String, serde_json::Value) {
-    let json_value = serde_json::json!({
-        "num_qubits": num_qubits,
-        "shots": shots,
-        "locs": locs,
-        "outcomes": outcomes,
-    });
-
     let mut counts: HashMap<Vec<usize>, usize> = HashMap::new();
     for outcome in outcomes {
         *counts.entry(outcome.clone()).or_insert(0) += 1;
     }
 
     let mut sorted: Vec<_> = counts.into_iter().collect();
-    sorted.sort_by(|a, b| b.1.cmp(&a.1));
+    sorted.sort_by(|a, b| a.0.cmp(&b.0));
+
+    let counts_map: serde_json::Map<String, serde_json::Value> = sorted
+        .iter()
+        .map(|(outcome, count)| {
+            let key = outcome
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join("");
+            (key, serde_json::Value::from(*count))
+        })
+        .collect();
+
+    let json_value = serde_json::json!({
+        "num_qubits": num_qubits,
+        "shots": shots,
+        "locs": locs,
+        "counts": counts_map,
+        "outcomes": outcomes,
+    });
 
     let mut human = format!("Measurement results ({shots} shots):\n");
     for (outcome, count) in &sorted {

@@ -75,6 +75,22 @@ Gate → PositionedGate → Circuit → TensorNetwork / ArrayReg
 - **Unit tests** (`src/unit_tests/`): Each source file owns its tests via `#[cfg(test)] #[path = "unit_tests/xxx.rs"] mod tests;`. These compile with the lib crate for fast incremental builds.
 - **Integration tests** (`tests/suites/`): Cross-module tests that depend on shared helpers (`tests/common/`) and JSON ground-truth data (`tests/data/`). Single entry point at `tests/main.rs`. Qudit-specific ground-truth cases are skipped (qubit-only simulation).
 
+## CLI Tool (`yao-cli/`)
+
+The `yao` CLI wraps the library for command-line use. Build with `cargo install --path yao-cli`.
+
+```bash
+yao example bell              # Print example circuit JSON (bell, ghz, qft)
+yao example qft --nqubits 6   # QFT with custom qubit count
+yao inspect circuit.json       # Display circuit info
+yao run circuit.json --shots 1024   # Simulate and measure
+yao run circuit.json --op "Z(0)Z(1)"  # Expectation value
+yao simulate circuit.json | yao probs -   # Pipeline workflow
+yao toeinsum circuit.json      # Export as tensor network
+```
+
+All commands output human-readable text in a terminal, JSON when piped. Use `--json` to force JSON. Use `-` for stdin input.
+
 ## Feature Flags
 
 - `parallel`: Enable rayon for parallel operations

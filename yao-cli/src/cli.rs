@@ -165,6 +165,22 @@ Examples:
         circuit: String,
     },
 
+    /// Print example circuit JSON to stdout
+    #[command(after_help = "\
+Available examples: bell, ghz, qft
+
+Examples:
+  yao example bell
+  yao example bell > bell.json
+  yao example qft --nqubits 6")]
+    Example {
+        /// Example name: bell, ghz, qft
+        name: String,
+        /// Number of qubits (default: 2 for bell, 3 for ghz, 4 for qft)
+        #[arg(long)]
+        nqubits: Option<usize>,
+    },
+
     /// Generate shell completion scripts
     #[command(after_help = "\
 Examples:

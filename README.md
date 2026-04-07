@@ -21,18 +21,17 @@ A Rust port of [Yao.jl](https://github.com/QuantumBFS/Yao.jl) focused on quantum
 ### Library
 
 ```rust
-use yao_rs::{Gate, PositionedGate, Circuit, State, apply, circuit_to_einsum};
+use yao_rs::{Gate, Circuit, ArrayReg, put, control, apply, circuit_to_einsum};
 
 // Build a Bell circuit: H on qubit 0, then CNOT(0→1)
-let gates = vec![
-    PositionedGate::new(Gate::H, vec![0], vec![], vec![]),
-    PositionedGate::new(Gate::X, vec![1], vec![0], vec![true]),
-];
-let circuit = Circuit::new(vec![2, 2], gates).unwrap();
+let circuit = Circuit::new(vec![2, 2], vec![
+    put(vec![0], Gate::H),
+    control(vec![0], vec![1], Gate::X),
+]).unwrap();
 
 // Apply to |00⟩
-let state = State::zero_state(&[2, 2]);
-let result = apply(&circuit, &state);
+let reg = ArrayReg::zero_state(2);
+let result = apply(&circuit, &reg);
 
 // Or export as tensor network
 let tn = circuit_to_einsum(&circuit);
