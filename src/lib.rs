@@ -4,6 +4,8 @@ pub mod circuit;
 
 pub mod easybuild;
 pub mod einsum;
+pub mod density_matrix;
+pub mod expect;
 pub mod gate;
 pub mod index;
 pub mod instruct;
@@ -27,11 +29,13 @@ pub use circuit::{
     Annotation, Circuit, CircuitElement, PositionedAnnotation, PositionedChannel, PositionedGate,
     channel, control, label, put,
 };
+pub use density_matrix::{DensityMatrix, density_matrix_from_reg};
 pub use einsum::{
     TensorNetwork, TensorNetworkDM, circuit_to_einsum, circuit_to_einsum_dm,
     circuit_to_einsum_with_boundary, circuit_to_expectation, circuit_to_expectation_dm,
     circuit_to_overlap,
 };
+pub use expect::{expect_arrayreg, expect_dm};
 pub use gate::Gate;
 pub use index::{insert_index, iter_basis, iter_basis_fixed, linear_to_indices, mixed_radix_index};
 pub use json::{circuit_from_json, circuit_to_json};
