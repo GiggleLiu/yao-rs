@@ -134,6 +134,8 @@ impl PositionedGate {
 /// A quantum circuit consisting of positioned gates and annotations on a register of qudits.
 #[derive(Debug, Clone)]
 pub struct Circuit {
+    /// The number of qubits in the register.
+    pub nbits: usize,
     /// The local dimension of each site (e.g., [2, 2, 2] for 3 qubits).
     pub dims: Vec<usize>,
     /// The sequence of elements (gates and annotations) in the circuit.
@@ -262,12 +264,21 @@ impl Circuit {
             }
         }
 
-        Ok(Circuit { dims, elements })
+        Ok(Circuit {
+            nbits: num_sites,
+            dims,
+            elements,
+        })
+    }
+
+    /// Creates a qubit-only circuit with `nbits` sites.
+    pub fn qubits(nbits: usize, elements: Vec<CircuitElement>) -> Result<Self, CircuitError> {
+        Self::new(vec![2; nbits], elements)
     }
 
     /// Returns the number of sites in the circuit.
     pub fn num_sites(&self) -> usize {
-        self.dims.len()
+        self.nbits
     }
 
     /// Returns the total Hilbert space dimension (product of all site dimensions).

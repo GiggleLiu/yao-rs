@@ -5,6 +5,7 @@ use num_complex::Complex64;
 use std::f64::consts::{FRAC_1_SQRT_2, PI};
 
 use yao_rs::apply::{apply, apply_inplace};
+use yao_rs::register::ArrayReg;
 use yao_rs::circuit::{Circuit, CircuitElement, PositionedGate, control, put};
 use yao_rs::gate::Gate;
 use yao_rs::state::State;
@@ -139,6 +140,25 @@ fn test_bell_state() {
     let zero = Complex64::new(0.0, 0.0);
     let expected = vec![s, zero, zero, s];
     assert_state_approx(&result, &expected);
+}
+
+#[test]
+fn test_arrayreg_apply_inplace_bell_state() {
+    let mut reg = ArrayReg::zero_state(2);
+    let circuit = Circuit::new(
+        vec![2, 2],
+        vec![
+            CircuitElement::Gate(PositionedGate::new(Gate::H, vec![0], vec![], vec![])),
+            CircuitElement::Gate(PositionedGate::new(Gate::X, vec![1], vec![0], vec![true])),
+        ],
+    )
+    .unwrap();
+
+    apply_inplace(&circuit, &mut reg);
+
+    let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
+    let zero = Complex64::new(0.0, 0.0);
+    assert_eq!(reg.state_vec(), &[s, zero, zero, s]);
 }
 
 #[test]

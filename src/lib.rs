@@ -12,6 +12,7 @@ pub mod json;
 pub mod measure;
 pub mod noise;
 pub mod operator;
+pub mod register;
 pub mod state;
 pub mod tensors;
 #[cfg(feature = "torch")]
@@ -39,6 +40,7 @@ pub use measure::{
 };
 pub use noise::NoiseChannel;
 pub use operator::{Op, OperatorPolynomial, OperatorString, op_matrix};
+pub use register::{ArrayReg, Register};
 pub use state::State;
 #[cfg(feature = "torch")]
 pub use torch_contractor::contract;

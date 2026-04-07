@@ -4,6 +4,7 @@ use num_complex::Complex64;
 use crate::circuit::{Circuit, CircuitElement, PositionedGate};
 use crate::gate::Gate;
 use crate::instruct::{instruct_controlled, instruct_diagonal, instruct_single};
+use crate::register::ArrayReg;
 #[cfg(feature = "parallel")]
 use crate::instruct::{instruct_diagonal_parallel, instruct_single_parallel};
 
@@ -12,6 +13,25 @@ use crate::instruct::{instruct_diagonal_parallel, instruct_single_parallel};
 #[cfg(feature = "parallel")]
 const PARALLEL_THRESHOLD: usize = 16384;
 use crate::state::State;
+
+#[doc(hidden)]
+pub trait ApplyTarget {
+    fn apply_circuit_inplace(circuit: &Circuit, target: &mut Self);
+}
+
+impl ApplyTarget for State {
+    fn apply_circuit_inplace(circuit: &Circuit, target: &mut Self) {
+        apply_state_inplace(circuit, target);
+    }
+}
+
+impl ApplyTarget for ArrayReg {
+    fn apply_circuit_inplace(circuit: &Circuit, target: &mut Self) {
+        let mut state = target.to_state();
+        apply_state_inplace(circuit, &mut state);
+        *target = ArrayReg::from_state(&state);
+    }
+}
 
 /// Check if a gate is diagonal.
 pub(crate) fn is_diagonal(gate: &Gate) -> bool {
@@ -137,7 +157,7 @@ fn apply_qubit_gate(pg: &PositionedGate, state: &mut State, nbits: usize) {
 /// When the `parallel` feature is enabled and the state has >= 16384 amplitudes,
 /// parallel variants of `instruct_diagonal` and `instruct_single` are used
 /// for improved performance on large states.
-pub fn apply_inplace(circuit: &Circuit, state: &mut State) {
+fn apply_state_inplace(circuit: &Circuit, state: &mut State) {
     let dims = &circuit.dims;
     let all_qubit = dims.iter().all(|&d| d == 2);
     let nbits = dims.len();
@@ -158,7 +178,6 @@ pub fn apply_inplace(circuit: &Circuit, state: &mut State) {
         }
 
         // Generic path (qudits or mixed dimensions)
-        let d = dims[pg.target_locs[0]];
         let gate_matrix = pg.gate.matrix();
 
         if pg.control_locs.is_empty() {
@@ -212,12 +231,13 @@ pub fn apply_inplace(circuit: &Circuit, state: &mut State) {
     }
 }
 
-/// Apply a circuit to a quantum state, returning a new state.
-///
-/// This is a convenience wrapper that clones the input state and applies
-/// the circuit in-place.
-pub fn apply(circuit: &Circuit, state: &State) -> State {
-    let mut result = state.clone();
+pub fn apply_inplace<T: ApplyTarget>(circuit: &Circuit, target: &mut T) {
+    T::apply_circuit_inplace(circuit, target);
+}
+
+/// Apply a circuit to a quantum state or register, returning a new value.
+pub fn apply<T: ApplyTarget + Clone>(circuit: &Circuit, target: &T) -> T {
+    let mut result = target.clone();
     apply_inplace(circuit, &mut result);
     result
 }

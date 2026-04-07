@@ -905,8 +905,6 @@ fn test_gate_matrices_ground_truth() {
     for entry in &data.gates {
         let gate = common::gate_from_entry(entry);
         let expected = common::matrix_from_json(&entry.matrix_re, &entry.matrix_im);
-        // Determine d from matrix size: for 2x2 gates d=2, for 4x4 gates d=2 (two-qubit)
-        let d = 2;
         let actual = gate.matrix();
         common::assert_matrices_close(
             &actual,

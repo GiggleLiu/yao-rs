@@ -818,7 +818,6 @@ pub fn apply_old(circuit: &yao_rs::Circuit, state: &State) -> State {
         };
 
         // Get the gate's local matrix on target sites
-        let d = dims[pg.target_locs[0]];
         let gate_matrix = pg.gate.matrix();
 
         // Build the controlled local matrix on all involved sites
