@@ -162,6 +162,91 @@ fn test_arrayreg_apply_inplace_bell_state() {
 }
 
 #[test]
+fn test_arrayreg_apply_inplace_x_gate() {
+    let mut reg = ArrayReg::zero_state(1);
+    let circuit = Circuit::new(
+        vec![2],
+        vec![CircuitElement::Gate(PositionedGate::new(
+            Gate::X,
+            vec![0],
+            vec![],
+            vec![],
+        ))],
+    )
+    .unwrap();
+
+    apply_inplace(&circuit, &mut reg);
+
+    assert_eq!(
+        reg.state_vec(),
+        &[Complex64::new(0.0, 0.0), Complex64::new(1.0, 0.0)]
+    );
+}
+
+#[test]
+fn test_arrayreg_apply_inplace_swap_gate() {
+    let mut reg = ArrayReg::from_vec(
+        2,
+        vec![
+            Complex64::new(0.0, 0.0),
+            Complex64::new(0.0, 0.0),
+            Complex64::new(1.0, 0.0),
+            Complex64::new(0.0, 0.0),
+        ],
+    );
+    let circuit = Circuit::new(vec![2, 2], vec![put(vec![0, 1], Gate::SWAP)]).unwrap();
+
+    apply_inplace(&circuit, &mut reg);
+
+    assert_eq!(
+        reg.state_vec(),
+        &[
+            Complex64::new(0.0, 0.0),
+            Complex64::new(1.0, 0.0),
+            Complex64::new(0.0, 0.0),
+            Complex64::new(0.0, 0.0),
+        ]
+    );
+}
+
+#[test]
+fn test_arrayreg_apply_inplace_custom_three_qubit_gate() {
+    let zero = Complex64::new(0.0, 0.0);
+    let one = Complex64::new(1.0, 0.0);
+    let mut matrix = Array2::zeros((8, 8));
+    for idx in 0..8 {
+        matrix[[idx, idx]] = one;
+    }
+    matrix[[0, 0]] = zero;
+    matrix[[7, 7]] = zero;
+    matrix[[0, 7]] = one;
+    matrix[[7, 0]] = one;
+
+    let mut reg = ArrayReg::zero_state(3);
+    let circuit = Circuit::new(
+        vec![2, 2, 2],
+        vec![put(
+            vec![0, 1, 2],
+            Gate::Custom {
+                matrix,
+                is_diagonal: false,
+                label: "flip-000-111".to_string(),
+            },
+        )],
+    )
+    .unwrap();
+
+    apply_inplace(&circuit, &mut reg);
+
+    assert_eq!(
+        reg.state_vec(),
+        &[
+            zero, zero, zero, zero, zero, zero, zero, one,
+        ]
+    );
+}
+
+#[test]
 fn test_norm_preservation() {
     // Apply H then X then H on a single qubit, check norm is preserved
     let dims = vec![2];
