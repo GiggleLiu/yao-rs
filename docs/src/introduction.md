@@ -51,7 +51,7 @@ yao-rs further optimizes by recognizing diagonal gates (Z, S, T, Phase, Rz), whi
 ## Example
 
 ```rust
-use yao_rs::{Gate, Circuit, State, put, control, apply, circuit_to_einsum};
+use yao_rs::{Gate, Circuit, ArrayReg, put, control, apply, circuit_to_einsum};
 
 // Build a Bell circuit
 let circuit = Circuit::new(vec![2, 2], vec![
@@ -60,8 +60,8 @@ let circuit = Circuit::new(vec![2, 2], vec![
 ]).unwrap();
 
 // Simulate
-let state = State::zero_state(&[2, 2]);
-let result = apply(&circuit, &state);
+let reg = ArrayReg::zero_state(2);
+let result = apply(&circuit, &reg);
 
 // Export as tensor network
 let tn = circuit_to_einsum(&circuit);
