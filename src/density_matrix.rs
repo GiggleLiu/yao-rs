@@ -42,8 +42,9 @@ impl DensityMatrix {
             assert_eq!(reg.nqubits(), nbits);
             for row in 0..dim {
                 for col in 0..dim {
-                    state[row * dim + col] +=
-                        Complex64::new(*weight, 0.0) * reg.state_vec()[row] * reg.state_vec()[col].conj();
+                    state[row * dim + col] += Complex64::new(*weight, 0.0)
+                        * reg.state_vec()[row]
+                        * reg.state_vec()[col].conj();
                 }
             }
         }
@@ -56,7 +57,9 @@ impl DensityMatrix {
     }
 
     pub fn trace(&self) -> Complex64 {
-        (0..self.dim()).map(|idx| self.state[self.idx(idx, idx)]).sum()
+        (0..self.dim())
+            .map(|idx| self.state[self.idx(idx, idx)])
+            .sum()
     }
 
     pub fn purity(&self) -> f64 {
@@ -84,13 +87,16 @@ impl DensityMatrix {
                     .iter()
                     .all(|&loc| ((row >> loc) & 1) == ((col >> loc) & 1))
                 {
-                    let reduced_row = kept_locs.iter().enumerate().fold(0usize, |acc, (idx, &loc)| {
-                        acc | (((row >> loc) & 1) << idx)
-                    });
-                    let reduced_col = kept_locs.iter().enumerate().fold(0usize, |acc, (idx, &loc)| {
-                        acc | (((col >> loc) & 1) << idx)
-                    });
-                    reduced[reduced_row * dim_reduced + reduced_col] += self.state[self.idx(row, col)];
+                    let reduced_row = kept_locs
+                        .iter()
+                        .enumerate()
+                        .fold(0usize, |acc, (idx, &loc)| acc | (((row >> loc) & 1) << idx));
+                    let reduced_col = kept_locs
+                        .iter()
+                        .enumerate()
+                        .fold(0usize, |acc, (idx, &loc)| acc | (((col >> loc) & 1) << idx));
+                    reduced[reduced_row * dim_reduced + reduced_col] +=
+                        self.state[self.idx(row, col)];
                 }
             }
         }
@@ -193,7 +199,9 @@ impl Register for DensityMatrix {
                 let mut acc = Complex64::new(0.0, 0.0);
                 for left in 0..dim {
                     for right in 0..dim {
-                        acc += columns[left][row] * self.state[left * dim + right] * columns[right][col].conj();
+                        acc += columns[left][row]
+                            * self.state[left * dim + right]
+                            * columns[right][col].conj();
                     }
                 }
                 transformed[row * dim + col] = acc;
@@ -210,7 +218,9 @@ impl Register for DensityMatrix {
 
 pub fn density_matrix_from_reg(reg: &ArrayReg, locs: &[usize]) -> DensityMatrix {
     let full = DensityMatrix::from_reg(reg);
-    let traced_locs: Vec<usize> = (0..reg.nqubits()).filter(|loc| !locs.contains(loc)).collect();
+    let traced_locs: Vec<usize> = (0..reg.nqubits())
+        .filter(|loc| !locs.contains(loc))
+        .collect();
     full.partial_tr(&traced_locs)
 }
 
@@ -236,14 +246,8 @@ mod tests {
 
     #[test]
     fn test_mixed_state_purity() {
-        let r0 = ArrayReg::from_vec(
-            1,
-            vec![Complex64::new(1.0, 0.0), Complex64::new(0.0, 0.0)],
-        );
-        let r1 = ArrayReg::from_vec(
-            1,
-            vec![Complex64::new(0.0, 0.0), Complex64::new(1.0, 0.0)],
-        );
+        let r0 = ArrayReg::from_vec(1, vec![Complex64::new(1.0, 0.0), Complex64::new(0.0, 0.0)]);
+        let r1 = ArrayReg::from_vec(1, vec![Complex64::new(0.0, 0.0), Complex64::new(1.0, 0.0)]);
         let dm = DensityMatrix::mixed(&[0.5, 0.5], &[r0, r1]);
         assert_abs_diff_eq!(dm.purity(), 0.5, epsilon = 1e-12);
     }
@@ -259,15 +263,13 @@ mod tests {
 
     #[test]
     fn test_von_neumann_entropy_maximally_mixed_qubit() {
-        let r0 = ArrayReg::from_vec(
-            1,
-            vec![Complex64::new(1.0, 0.0), Complex64::new(0.0, 0.0)],
-        );
-        let r1 = ArrayReg::from_vec(
-            1,
-            vec![Complex64::new(0.0, 0.0), Complex64::new(1.0, 0.0)],
-        );
+        let r0 = ArrayReg::from_vec(1, vec![Complex64::new(1.0, 0.0), Complex64::new(0.0, 0.0)]);
+        let r1 = ArrayReg::from_vec(1, vec![Complex64::new(0.0, 0.0), Complex64::new(1.0, 0.0)]);
         let dm = DensityMatrix::mixed(&[0.5, 0.5], &[r0, r1]);
-        assert_abs_diff_eq!(dm.von_neumann_entropy(), std::f64::consts::LN_2, epsilon = 1e-8);
+        assert_abs_diff_eq!(
+            dm.von_neumann_entropy(),
+            std::f64::consts::LN_2,
+            epsilon = 1e-8
+        );
     }
 }

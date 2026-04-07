@@ -58,7 +58,10 @@ pub fn instruct_x_controlled(
 ) {
     let bit = loc_to_bit(nbits, loc);
     let mask = indicator(bit);
-    let ctrl_bit_positions: Vec<usize> = ctrl_locs.iter().map(|&loc| loc_to_bit(nbits, loc)).collect();
+    let ctrl_bit_positions: Vec<usize> = ctrl_locs
+        .iter()
+        .map(|&loc| loc_to_bit(nbits, loc))
+        .collect();
     let ctrl = controller(&ctrl_bit_positions, ctrl_bits);
     let dim = 1usize << nbits;
 
@@ -277,7 +280,10 @@ pub fn instruct_nq(
     debug_assert_eq!(gate.len(), gate_dim * gate_dim);
 
     let target_bits: Vec<usize> = locs.iter().map(|&loc| loc_to_bit(nbits, loc)).collect();
-    let ctrl_bit_positions: Vec<usize> = ctrl_locs.iter().map(|&loc| loc_to_bit(nbits, loc)).collect();
+    let ctrl_bit_positions: Vec<usize> = ctrl_locs
+        .iter()
+        .map(|&loc| loc_to_bit(nbits, loc))
+        .collect();
 
     let mut locked_positions = ctrl_bit_positions;
     locked_positions.extend_from_slice(&target_bits);
@@ -289,7 +295,9 @@ pub fn instruct_nq(
             target_bits
                 .iter()
                 .enumerate()
-                .fold(0usize, |acc, (idx, &bit)| acc | (((config >> idx) & 1) << bit))
+                .fold(0usize, |acc, (idx, &bit)| {
+                    acc | (((config >> idx) & 1) << bit)
+                })
         })
         .collect();
 

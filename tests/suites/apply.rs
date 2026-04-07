@@ -5,9 +5,9 @@ use num_complex::Complex64;
 use std::f64::consts::{FRAC_1_SQRT_2, PI};
 
 use yao_rs::apply::{apply, apply_inplace};
-use yao_rs::register::ArrayReg;
 use yao_rs::circuit::{Circuit, CircuitElement, PositionedGate, control, put};
 use yao_rs::gate::Gate;
+use yao_rs::register::ArrayReg;
 use yao_rs::state::State;
 
 const ATOL: f64 = 1e-10;
@@ -240,9 +240,7 @@ fn test_arrayreg_apply_inplace_custom_three_qubit_gate() {
 
     assert_eq!(
         reg.state_vec(),
-        &[
-            zero, zero, zero, zero, zero, zero, zero, one,
-        ]
+        &[zero, zero, zero, zero, zero, zero, zero, one,]
     );
 }
 

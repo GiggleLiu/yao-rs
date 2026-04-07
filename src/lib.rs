@@ -2,9 +2,9 @@ pub mod apply;
 pub mod bitutils;
 pub mod circuit;
 
+pub mod density_matrix;
 pub mod easybuild;
 pub mod einsum;
-pub mod density_matrix;
 pub mod expect;
 pub mod gate;
 pub mod index;
@@ -40,7 +40,8 @@ pub use gate::Gate;
 pub use index::{insert_index, iter_basis, iter_basis_fixed, linear_to_indices, mixed_radix_index};
 pub use json::{circuit_from_json, circuit_to_json};
 pub use measure::{
-    collapse_to, measure, measure_and_collapse, measure_remove, measure_reset, probs,
+    MeasureResult, PostProcess, collapse_to, measure, measure_and_collapse, measure_remove,
+    measure_reset, measure_with_postprocess, probs,
 };
 pub use noise::NoiseChannel;
 pub use operator::{Op, OperatorPolynomial, OperatorString, op_matrix};

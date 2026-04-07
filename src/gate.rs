@@ -87,11 +87,7 @@ impl Gate {
                     power *= 2;
                     n += 1;
                 }
-                assert_eq!(
-                    power, dim,
-                    "Matrix dimension {} is not a power of 2",
-                    dim
-                );
+                assert_eq!(power, dim, "Matrix dimension {} is not a power of 2", dim);
                 n
             }
             _ => 1,

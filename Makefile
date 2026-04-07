@@ -4,6 +4,13 @@
 CARGO ?= cargo
 DOC_PORT ?= 3001
 DOC_HOST ?= 127.0.0.1
+TORCH_LIB_DIR ?=
+
+TORCH_ENV :=
+ifneq ($(strip $(TORCH_LIB_DIR)),)
+TORCH_ENV += LIBTORCH_USE_PYTORCH=1 LIBTORCH_BYPASS_VERSION_CHECK=1
+TORCH_ENV += DYLD_LIBRARY_PATH=$(TORCH_LIB_DIR) DYLD_FALLBACK_LIBRARY_PATH=$(TORCH_LIB_DIR)
+endif
 
 help:
 	@printf "Rust targets:\n"
@@ -43,10 +50,10 @@ fmt-check:
 	$(CARGO) fmt -- --check
 
 clippy:
-	$(CARGO) clippy --workspace --all-targets --all-features -- -D warnings
+	$(TORCH_ENV) $(CARGO) clippy --workspace --all-targets --all-features -- -D warnings
 
 test:
-	$(CARGO) test --workspace --all-features
+	$(TORCH_ENV) $(CARGO) test --workspace --all-features
 
 check-all: fmt-check clippy test
 	@echo "All checks passed."

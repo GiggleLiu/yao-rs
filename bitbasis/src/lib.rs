@@ -4,4 +4,4 @@ pub mod iterate_control;
 
 pub use bit_ops::*;
 pub use bitstr::BitStr;
-pub use iterate_control::{controller, group_shift, itercontrol, IterControl};
+pub use iterate_control::{IterControl, controller, group_shift, itercontrol};

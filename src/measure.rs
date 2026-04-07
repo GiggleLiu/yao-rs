@@ -121,12 +121,15 @@ fn marginal_probs_state(state: &State, locs: &[usize]) -> Vec<f64> {
 }
 
 fn marginal_probs_qubits(state: &[Complex64], locs: &[usize]) -> Vec<f64> {
+    let nbits = state.len().trailing_zeros() as usize;
     let mut prob_vec = vec![0.0; 1usize << locs.len()];
 
     for (basis, amp) in state.iter().enumerate() {
         let mut marginal_idx = 0usize;
         for (idx, &loc) in locs.iter().enumerate() {
-            marginal_idx |= ((basis >> loc) & 1) << idx;
+            let bit = logical_loc_to_bit(nbits, loc);
+            let out_bit = locs.len() - 1 - idx;
+            marginal_idx |= ((basis >> bit) & 1) << out_bit;
         }
         prob_vec[marginal_idx] += amp.norm_sqr();
     }
@@ -135,13 +138,16 @@ fn marginal_probs_qubits(state: &[Complex64], locs: &[usize]) -> Vec<f64> {
 }
 
 fn marginal_probs_density_matrix(dm: &DensityMatrix, locs: &[usize]) -> Vec<f64> {
-    let dim = 1usize << dm.nbits();
+    let nbits = dm.nbits();
+    let dim = 1usize << nbits;
     let mut prob_vec = vec![0.0; 1usize << locs.len()];
 
     for basis in 0..dim {
         let mut marginal_idx = 0usize;
         for (idx, &loc) in locs.iter().enumerate() {
-            marginal_idx |= ((basis >> loc) & 1) << idx;
+            let bit = logical_loc_to_bit(nbits, loc);
+            let out_bit = locs.len() - 1 - idx;
+            marginal_idx |= ((basis >> bit) & 1) << out_bit;
         }
         prob_vec[marginal_idx] += dm.state_data()[basis * dim + basis].re.max(0.0);
     }
@@ -152,9 +158,16 @@ fn marginal_probs_density_matrix(dm: &DensityMatrix, locs: &[usize]) -> Vec<f64>
 fn validate_measure_locs(nbits: usize, locs: &[usize]) {
     let mut seen = std::collections::BTreeSet::new();
     for &loc in locs {
-        assert!(loc < nbits, "measurement location {loc} is out of range for {nbits} qubits");
+        assert!(
+            loc < nbits,
+            "measurement location {loc} is out of range for {nbits} qubits"
+        );
         assert!(seen.insert(loc), "duplicate measurement location {loc}");
     }
+}
+
+fn logical_loc_to_bit(nbits: usize, loc: usize) -> usize {
+    nbits - 1 - loc
 }
 
 /// Sample an index from a probability distribution.
@@ -171,7 +184,9 @@ fn sample_from_probs(probs: &[f64], rng: &mut impl Rng) -> usize {
 }
 
 fn decode_outcome_bits(outcome_idx: usize, nbits: usize) -> Vec<usize> {
-    (0..nbits).map(|idx| (outcome_idx >> idx) & 1).collect()
+    (0..nbits)
+        .map(|idx| (outcome_idx >> (nbits - 1 - idx)) & 1)
+        .collect()
 }
 
 fn collapse_qubits_to(state: &mut [Complex64], locs: &[usize], values: &[usize]) {
@@ -181,12 +196,13 @@ fn collapse_qubits_to(state: &mut [Complex64], locs: &[usize], values: &[usize])
         "locs and values must have the same length"
     );
 
+    let nbits = state.len().trailing_zeros() as usize;
     let mut norm_sq = 0.0;
     for (basis, amp) in state.iter_mut().enumerate() {
         let matches = locs
             .iter()
             .zip(values.iter())
-            .all(|(&loc, &value)| ((basis >> loc) & 1) == value);
+            .all(|(&loc, &value)| ((basis >> logical_loc_to_bit(nbits, loc)) & 1) == value);
         if matches {
             norm_sq += amp.norm_sqr();
         } else {
@@ -208,10 +224,11 @@ fn reset_qubits_to(state: &mut [Complex64], locs: &[usize], from: &[usize], rese
         return;
     }
 
+    let nbits = state.len().trailing_zeros() as usize;
     let mut swap_mask = 0usize;
     for (idx, &loc) in locs.iter().enumerate() {
         if from[idx] != to_bits[idx] {
-            swap_mask |= 1usize << loc;
+            swap_mask |= 1usize << logical_loc_to_bit(nbits, loc);
         }
     }
 
@@ -219,7 +236,7 @@ fn reset_qubits_to(state: &mut [Complex64], locs: &[usize], from: &[usize], rese
         let matches_from = locs
             .iter()
             .zip(from.iter())
-            .all(|(&loc, &value)| ((basis >> loc) & 1) == value);
+            .all(|(&loc, &value)| ((basis >> logical_loc_to_bit(nbits, loc)) & 1) == value);
         if !matches_from {
             continue;
         }
@@ -232,7 +249,9 @@ fn reset_qubits_to(state: &mut [Complex64], locs: &[usize], from: &[usize], rese
 }
 
 fn remove_measured_qubits(reg: &ArrayReg, locs: &[usize]) -> ArrayReg {
-    let kept_locs: Vec<usize> = (0..reg.nqubits()).filter(|loc| !locs.contains(loc)).collect();
+    let kept_locs: Vec<usize> = (0..reg.nqubits())
+        .filter(|loc| !locs.contains(loc))
+        .collect();
     let mut new_state = vec![Complex64::new(0.0, 0.0); 1usize << kept_locs.len()];
 
     for (basis, amp) in reg.state_vec().iter().enumerate() {
@@ -242,7 +261,9 @@ fn remove_measured_qubits(reg: &ArrayReg, locs: &[usize]) -> ArrayReg {
 
         let mut new_basis = 0usize;
         for (idx, &loc) in kept_locs.iter().enumerate() {
-            new_basis |= ((basis >> loc) & 1) << idx;
+            let bit = logical_loc_to_bit(reg.nqubits(), loc);
+            let out_bit = kept_locs.len() - 1 - idx;
+            new_basis |= ((basis >> bit) & 1) << out_bit;
         }
         new_state[new_basis] += *amp;
     }

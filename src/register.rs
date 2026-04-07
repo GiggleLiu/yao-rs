@@ -97,7 +97,11 @@ impl ArrayReg {
     }
 
     pub fn norm(&self) -> f64 {
-        self.state.iter().map(|amp| amp.norm_sqr()).sum::<f64>().sqrt()
+        self.state
+            .iter()
+            .map(|amp| amp.norm_sqr())
+            .sum::<f64>()
+            .sqrt()
     }
 
     pub fn normalize(&mut self) {
@@ -176,14 +180,8 @@ mod tests {
 
     #[test]
     fn test_fidelity_orthogonal() {
-        let r0 = ArrayReg::from_vec(
-            1,
-            vec![Complex64::new(1.0, 0.0), Complex64::new(0.0, 0.0)],
-        );
-        let r1 = ArrayReg::from_vec(
-            1,
-            vec![Complex64::new(0.0, 0.0), Complex64::new(1.0, 0.0)],
-        );
+        let r0 = ArrayReg::from_vec(1, vec![Complex64::new(1.0, 0.0), Complex64::new(0.0, 0.0)]);
+        let r1 = ArrayReg::from_vec(1, vec![Complex64::new(0.0, 0.0), Complex64::new(1.0, 0.0)]);
         assert_abs_diff_eq!(r0.fidelity(&r1), 0.0, epsilon = 1e-12);
     }
 }

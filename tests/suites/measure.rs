@@ -8,11 +8,11 @@ use yao_rs::apply::apply;
 use yao_rs::circuit::{Circuit, control, put};
 use yao_rs::gate::Gate;
 use yao_rs::measure::{
-    MeasureResult, PostProcess, collapse_to, measure, measure_and_collapse,
-    measure_remove, measure_reset, measure_with_postprocess, probs,
+    MeasureResult, PostProcess, collapse_to, measure, measure_and_collapse, measure_remove,
+    measure_reset, measure_with_postprocess, probs,
 };
-use yao_rs::{ArrayReg, DensityMatrix};
 use yao_rs::state::State;
+use yao_rs::{ArrayReg, DensityMatrix};
 
 fn approx_eq(a: f64, b: f64) -> bool {
     (a - b).abs() < 1e-10
@@ -717,15 +717,31 @@ fn test_probs_arrayreg_supports_marginals() {
 }
 
 #[test]
+fn test_probs_arrayreg_uses_circuit_qubit_ordering() {
+    let reg = ArrayReg::from_vec(
+        3,
+        vec![
+            Complex64::new(0.0, 0.0),
+            Complex64::new(0.0, 0.0),
+            Complex64::new(0.0, 0.0),
+            Complex64::new(0.0, 0.0),
+            Complex64::new(1.0, 0.0),
+            Complex64::new(0.0, 0.0),
+            Complex64::new(0.0, 0.0),
+            Complex64::new(0.0, 0.0),
+        ],
+    );
+
+    let p = probs(&reg, Some(&[0]));
+    assert_eq!(p.len(), 2);
+    assert!(approx_eq(p[0], 0.0));
+    assert!(approx_eq(p[1], 1.0));
+}
+
+#[test]
 fn test_probs_density_matrix_uses_diagonal_distribution() {
-    let r0 = ArrayReg::from_vec(
-        1,
-        vec![Complex64::new(1.0, 0.0), Complex64::new(0.0, 0.0)],
-    );
-    let r1 = ArrayReg::from_vec(
-        1,
-        vec![Complex64::new(0.0, 0.0), Complex64::new(1.0, 0.0)],
-    );
+    let r0 = ArrayReg::from_vec(1, vec![Complex64::new(1.0, 0.0), Complex64::new(0.0, 0.0)]);
+    let r1 = ArrayReg::from_vec(1, vec![Complex64::new(0.0, 0.0), Complex64::new(1.0, 0.0)]);
     let dm = DensityMatrix::mixed(&[0.25, 0.75], &[r0, r1]);
 
     let p = probs(&dm, None);
@@ -740,8 +756,7 @@ fn test_measure_with_postprocess_no_postprocess_preserves_arrayreg() {
     let before = reg.clone();
     let mut rng = rand::rngs::StdRng::seed_from_u64(42);
 
-    let result =
-        measure_with_postprocess(&mut reg, &[0], PostProcess::NoPostProcess, &mut rng);
+    let result = measure_with_postprocess(&mut reg, &[0], PostProcess::NoPostProcess, &mut rng);
 
     match result {
         MeasureResult::Value(bits) => assert!(bits == vec![0] || bits == vec![1]),

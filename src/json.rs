@@ -232,7 +232,6 @@ pub fn circuit_from_json(json: &str) -> Result<Circuit, String> {
         serde_json::from_str(json).map_err(|e| format!("JSON parse error: {}", e))?;
 
     let num_qubits = circuit_json.num_qubits;
-    let dims = vec![2; num_qubits];
 
     let mut elements = Vec::new();
     for ej in circuit_json.elements {
@@ -246,7 +245,7 @@ pub fn circuit_from_json(json: &str) -> Result<Circuit, String> {
         elements.push(element);
     }
 
-    Circuit::new(dims, elements).map_err(|e| format!("Circuit validation error: {}", e))
+    Circuit::qubits(num_qubits, elements).map_err(|e| format!("Circuit validation error: {}", e))
 }
 
 #[cfg(test)]

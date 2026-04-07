@@ -4,9 +4,9 @@ use num_complex::Complex64;
 use crate::circuit::{Circuit, CircuitElement, PositionedGate};
 use crate::gate::Gate;
 use crate::instruct::{instruct_controlled, instruct_diagonal, instruct_single};
-use crate::register::ArrayReg;
 #[cfg(feature = "parallel")]
 use crate::instruct::{instruct_diagonal_parallel, instruct_single_parallel};
+use crate::register::ArrayReg;
 
 /// Threshold for switching to parallel execution (2^14 = 16384 amplitudes).
 /// Below this threshold, the overhead of Rayon is not worth it.
@@ -229,11 +229,7 @@ fn apply_state_inplace(circuit: &Circuit, state: &mut State) {
     }
 }
 
-fn dispatch_arrayreg_gate(
-    nbits: usize,
-    state: &mut [Complex64],
-    pg: &PositionedGate,
-) {
+fn dispatch_arrayreg_gate(nbits: usize, state: &mut [Complex64], pg: &PositionedGate) {
     let has_controls = !pg.control_locs.is_empty();
     let ctrl_locs = &pg.control_locs;
     let ctrl_bits: Vec<usize> = pg
@@ -285,7 +281,12 @@ fn dispatch_arrayreg_gate(
         }
         gate if gate.is_diagonal() && pg.target_locs.len() == 2 => {
             let matrix = gate.matrix();
-            let diag = [matrix[[0, 0]], matrix[[1, 1]], matrix[[2, 2]], matrix[[3, 3]]];
+            let diag = [
+                matrix[[0, 0]],
+                matrix[[1, 1]],
+                matrix[[2, 2]],
+                matrix[[3, 3]],
+            ];
             if has_controls {
                 crate::instruct_qubit::instruct_2q_diag_controlled(
                     state,

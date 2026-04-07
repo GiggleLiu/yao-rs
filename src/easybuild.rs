@@ -66,7 +66,7 @@ pub fn qft_circuit(n: usize) -> Circuit {
         }
     }
 
-    Circuit::new(vec![2; n], elements).unwrap()
+    Circuit::qubits(n, elements).unwrap()
 }
 
 /// General single-qubit gate: Rz(theta3) * Ry(theta2) * Rz(theta1), positioned on `qubit`.
@@ -159,7 +159,7 @@ pub fn variational_circuit(n: usize, nlayer: usize, pairs: &[(usize, usize)]) ->
         }
     }
 
-    Circuit::new(vec![2; n], elements).unwrap()
+    Circuit::qubits(n, elements).unwrap()
 }
 
 /// Hadamard test circuit. N+1 qubits (qubit 0 = ancilla).
@@ -184,7 +184,7 @@ pub fn hadamard_test_circuit(unitary: Gate, phi: f64) -> Circuit {
     // H on ancilla
     elements.push(put(vec![0], Gate::H));
 
-    Circuit::new(vec![2; n_total], elements).unwrap()
+    Circuit::qubits(n_total, elements).unwrap()
 }
 
 /// Swap test circuit. nstate*nbit+1 qubits (qubit 0 = ancilla).
@@ -214,7 +214,7 @@ pub fn swap_test_circuit(nbit: usize, nstate: usize, phi: f64) -> Circuit {
     // H on ancilla
     elements.push(put(vec![0], Gate::H));
 
-    Circuit::new(vec![2; n_total], elements).unwrap()
+    Circuit::qubits(n_total, elements).unwrap()
 }
 
 /// Phase estimation circuit. n_reg + n_b qubits.
@@ -274,7 +274,7 @@ pub fn phase_estimation_circuit(unitary: Gate, n_reg: usize, n_b: usize) -> Circ
         elements.push(put(vec![i, n_reg - 1 - i], Gate::SWAP));
     }
 
-    Circuit::new(vec![2; n_total], elements).unwrap()
+    Circuit::qubits(n_total, elements).unwrap()
 }
 
 /// Helper: multiply two complex matrices of given dimension.
@@ -412,7 +412,7 @@ pub fn rand_supremacy2d(nx: usize, ny: usize, depth: usize, rng: &mut impl Rng) 
         }
     }
 
-    Circuit::new(vec![2; n], elements).unwrap()
+    Circuit::qubits(n, elements).unwrap()
 }
 
 /// Pick a random single-qubit gate for the supremacy circuit.
@@ -621,7 +621,7 @@ pub fn rand_google53(depth: usize, nbits: usize, rng: &mut impl Rng) -> Circuit 
         }
     }
 
-    Circuit::new(vec![2; n], elements).unwrap()
+    Circuit::qubits(n, elements).unwrap()
 }
 
 #[cfg(test)]
