@@ -11,8 +11,8 @@ use yao_rs::einsum::{circuit_to_einsum, circuit_to_expectation, circuit_to_overl
 use yao_rs::gate::Gate;
 use yao_rs::operator::{Op, OperatorPolynomial};
 use yao_rs::{
-    apply, circuit::control, circuit::put, circuit_to_einsum_with_boundary, easybuild::qft_circuit,
-    state::State,
+    ArrayReg, apply, circuit::control, circuit::put, circuit_to_einsum_with_boundary,
+    easybuild::qft_circuit,
 };
 
 /// Helper to create a simple CircuitElement gate with no controls.
@@ -534,14 +534,14 @@ fn test_boundary_matches_apply() {
     )
     .unwrap();
 
-    let state = State::zero_state(&[2, 2]);
-    let result_state = apply(&circuit, &state);
+    let reg = ArrayReg::zero_state(2);
+    let result_state = apply(&circuit, &reg);
 
     let tn = circuit_to_einsum_with_boundary(&circuit, &[0, 1]);
     let result = common::contract_tn(&tn);
 
     // <00|Bell> = amplitude of |00> = 1/sqrt(2)
-    let expected = result_state.data[0]; // first element of flat state
+    let expected = result_state.state_vec()[0]; // first element of flat state
     assert!(common::approx_eq(result[[]], expected, 1e-10));
 }
 
@@ -553,20 +553,20 @@ fn test_boundary_open_legs() {
     let tn = circuit_to_einsum_with_boundary(&circuit, &[]);
     let result = common::contract_tn(&tn);
 
-    let state = State::zero_state(&[2, 2]);
-    let expected = apply(&circuit, &state);
+    let reg = ArrayReg::zero_state(2);
+    let expected = apply(&circuit, &reg);
 
-    // result shape is [2, 2], expected.data is flat [4]
-    assert_eq!(result.len(), expected.data.len());
+    // result shape is [2, 2], expected.state_vec() is flat [4]
+    assert_eq!(result.len(), expected.state_vec().len());
     for flat_idx in 0..4 {
         let i = flat_idx / 2;
         let j = flat_idx % 2;
         assert!(
-            common::approx_eq(result[[i, j]], expected.data[flat_idx], 1e-10),
+            common::approx_eq(result[[i, j]], expected.state_vec()[flat_idx], 1e-10),
             "Mismatch at flat_idx {}: got {:?}, expected {:?}",
             flat_idx,
             result[[i, j]],
-            expected.data[flat_idx]
+            expected.state_vec()[flat_idx]
         );
     }
 }
@@ -964,6 +964,11 @@ fn test_einsum_ground_truth() {
     let mut tested = 0;
     let mut skipped = 0;
     for case in &data.cases {
+        // Skip qudit (non-qubit) cases — ArrayReg only supports d=2
+        if !case.dims.iter().all(|&d| d == 2) {
+            skipped += 1;
+            continue;
+        }
         // Skip cases that would be too large for naive contraction
         let total_dim: usize = case.dims.iter().product();
         if total_dim > 256 {
@@ -971,11 +976,11 @@ fn test_einsum_ground_truth() {
             continue;
         }
         let circuit = common::circuit_from_case(case);
-        let input_state = State::zero_state(&case.dims);
+        let input_reg = ArrayReg::zero_state(case.dims.len());
         let tn = circuit_to_einsum(&circuit);
-        let result = common::naive_contract(&tn, &input_state);
+        let result = common::naive_contract(&tn, &input_reg);
         let expected = common::state_from_json(&case.output_state_re, &case.output_state_im);
-        common::assert_states_close(&result, &expected);
+        common::assert_states_close(result.as_slice().unwrap(), &expected);
         tested += 1;
     }
     assert!(

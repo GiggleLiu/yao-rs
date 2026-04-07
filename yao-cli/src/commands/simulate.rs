@@ -2,7 +2,7 @@ use crate::output::OutputConfig;
 use crate::state_io;
 use anyhow::Result;
 use std::io::{BufWriter, IsTerminal};
-use yao_rs::{State, apply};
+use yao_rs::{ArrayReg, apply};
 
 pub fn simulate(circuit_path: &str, input_path: Option<&str>, out: &OutputConfig) -> Result<()> {
     let circuit = super::load_circuit(circuit_path)?;
@@ -10,7 +10,7 @@ pub fn simulate(circuit_path: &str, input_path: Option<&str>, out: &OutputConfig
     let input_state = if let Some(path) = input_path {
         state_io::read_state(path)?
     } else {
-        State::zero_state(&circuit.dims)
+        ArrayReg::zero_state(circuit.nbits)
     };
 
     let result = apply(&circuit, &input_state);

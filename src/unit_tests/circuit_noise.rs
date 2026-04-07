@@ -23,16 +23,16 @@ fn test_circuit_channel_loc_validation() {
 #[test]
 fn test_apply_skips_channels() {
     use crate::circuit::channel;
-    use crate::{State, apply};
+    use crate::{ArrayReg, apply};
 
     let elements = vec![
         put(vec![0], Gate::X),
         channel(vec![0], NoiseChannel::BitFlip { p: 0.1 }),
     ];
     let circuit = Circuit::new(vec![2], elements).unwrap();
-    let state = State::zero_state(&[2]);
-    let result = apply(&circuit, &state);
+    let reg = ArrayReg::zero_state(1);
+    let result = apply(&circuit, &reg);
     // Channel is skipped; only X is applied: |0⟩ → |1⟩
-    assert!((result.data[0].norm() - 0.0).abs() < 1e-10);
-    assert!((result.data[1].norm() - 1.0).abs() < 1e-10);
+    assert!((result.state_vec()[0].norm() - 0.0).abs() < 1e-10);
+    assert!((result.state_vec()[1].norm() - 1.0).abs() < 1e-10);
 }

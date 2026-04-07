@@ -1,10 +1,9 @@
 use anyhow::{Context, bail};
-use ndarray::Array1;
 use num_complex::Complex64;
 use serde::{Deserialize, Serialize};
 use std::io::{BufRead, BufReader, Write};
 use std::path::Path;
-use yao_rs::State;
+use yao_rs::ArrayReg;
 
 const FORMAT_VERSION: &str = "yao-state-v1";
 
@@ -17,26 +16,27 @@ struct StateHeader {
     dtype: String,
 }
 
-pub fn write_state(state: &State, path: &Path) -> anyhow::Result<()> {
+pub fn write_state(reg: &ArrayReg, path: &Path) -> anyhow::Result<()> {
     let file = std::fs::File::create(path)
         .with_context(|| format!("Failed to create {}", path.display()))?;
     let mut writer = std::io::BufWriter::new(file);
-    write_state_to_writer(state, &mut writer)
+    write_state_to_writer(reg, &mut writer)
 }
 
-pub fn write_state_to_writer(state: &State, writer: &mut impl Write) -> anyhow::Result<()> {
+pub fn write_state_to_writer(reg: &ArrayReg, writer: &mut impl Write) -> anyhow::Result<()> {
+    let nbits = reg.nqubits();
     let header = StateHeader {
         format: FORMAT_VERSION.to_string(),
-        num_qubits: state.dims.len(),
-        dims: state.dims.clone(),
-        num_elements: state.data.len(),
+        num_qubits: nbits,
+        dims: vec![2; nbits],
+        num_elements: reg.state_vec().len(),
         dtype: "complex128".to_string(),
     };
     let header_json = serde_json::to_string(&header).context("Failed to serialize header")?;
     writer.write_all(header_json.as_bytes())?;
     writer.write_all(b"\n")?;
 
-    for &amplitude in &state.data {
+    for &amplitude in reg.state_vec() {
         writer.write_all(&amplitude.re.to_le_bytes())?;
         writer.write_all(&amplitude.im.to_le_bytes())?;
     }
@@ -44,14 +44,14 @@ pub fn write_state_to_writer(state: &State, writer: &mut impl Write) -> anyhow::
     Ok(())
 }
 
-pub fn read_state_from_file(path: &Path) -> anyhow::Result<State> {
+pub fn read_state_from_file(path: &Path) -> anyhow::Result<ArrayReg> {
     let file =
         std::fs::File::open(path).with_context(|| format!("Failed to open {}", path.display()))?;
     let mut reader = BufReader::new(file);
     read_state_from_reader(&mut reader)
 }
 
-pub fn read_state_from_reader(reader: &mut impl BufRead) -> anyhow::Result<State> {
+pub fn read_state_from_reader(reader: &mut impl BufRead) -> anyhow::Result<ArrayReg> {
     let mut header_line = String::new();
     reader
         .read_line(&mut header_line)
@@ -81,6 +81,13 @@ pub fn read_state_from_reader(reader: &mut impl BufRead) -> anyhow::Result<State
         );
     }
 
+    if !header.dims.iter().all(|&d| d == 2) {
+        bail!(
+            "Only qubit (d=2) states are supported, got dims {:?}",
+            header.dims
+        );
+    }
+
     let expected_bytes = header.num_elements * 16;
     let mut buf = vec![0u8; expected_bytes];
     reader
@@ -96,10 +103,10 @@ pub fn read_state_from_reader(reader: &mut impl BufRead) -> anyhow::Result<State
         })
         .collect();
 
-    Ok(State::new(header.dims, Array1::from(data)))
+    Ok(ArrayReg::from_vec(header.num_qubits, data))
 }
 
-pub fn read_state(path: &str) -> anyhow::Result<State> {
+pub fn read_state(path: &str) -> anyhow::Result<ArrayReg> {
     if path == "-" {
         let stdin = std::io::stdin();
         let mut reader = BufReader::new(stdin.lock());
@@ -115,25 +122,26 @@ mod tests {
 
     #[test]
     fn test_state_round_trip_file() {
-        let dims = vec![2, 2];
-        let data = Array1::from(vec![
-            Complex64::new(0.5, 0.0),
-            Complex64::new(0.0, 0.5),
-            Complex64::new(0.5, 0.0),
-            Complex64::new(0.0, -0.5),
-        ]);
-        let state = State::new(dims.clone(), data.clone());
+        let reg = ArrayReg::from_vec(
+            2,
+            vec![
+                Complex64::new(0.5, 0.0),
+                Complex64::new(0.0, 0.5),
+                Complex64::new(0.5, 0.0),
+                Complex64::new(0.0, -0.5),
+            ],
+        );
 
         let dir = std::env::temp_dir().join("yao_test_state_io");
         std::fs::create_dir_all(&dir).unwrap();
         let path = dir.join("test_state.bin");
 
-        write_state(&state, &path).unwrap();
+        write_state(&reg, &path).unwrap();
         let loaded = read_state_from_file(&path).unwrap();
 
-        assert_eq!(loaded.dims, dims);
-        assert_eq!(loaded.data.len(), data.len());
-        for (a, b) in loaded.data.iter().zip(data.iter()) {
+        assert_eq!(loaded.nqubits(), 2);
+        assert_eq!(loaded.state_vec().len(), 4);
+        for (a, b) in loaded.state_vec().iter().zip(reg.state_vec().iter()) {
             assert!((a - b).norm() < 1e-12);
         }
 
@@ -142,23 +150,21 @@ mod tests {
 
     #[test]
     fn test_state_round_trip_bytes() {
-        let dims = vec![2, 2, 2];
-        let state = State::zero_state(&dims);
+        let reg = ArrayReg::zero_state(3);
 
         let mut buf = Vec::new();
-        write_state_to_writer(&state, &mut buf).unwrap();
+        write_state_to_writer(&reg, &mut buf).unwrap();
 
         let loaded = read_state_from_reader(&mut &buf[..]).unwrap();
-        assert_eq!(loaded.dims, dims);
-        assert_eq!(loaded.data.len(), 8);
-        for (a, b) in loaded.data.iter().zip(state.data.iter()) {
+        assert_eq!(loaded.nqubits(), 3);
+        assert_eq!(loaded.state_vec().len(), 8);
+        for (a, b) in loaded.state_vec().iter().zip(reg.state_vec().iter()) {
             assert!((a - b).norm() < 1e-12);
         }
     }
 
     #[test]
     fn test_rejects_mismatched_dims_and_num_elements() {
-        // Craft a header where num_elements doesn't match dims product
         let header_json = serde_json::json!({
             "format": "yao-state-v1",
             "num_qubits": 2,
@@ -169,7 +175,6 @@ mod tests {
         let mut buf = Vec::new();
         buf.extend_from_slice(header_json.to_string().as_bytes());
         buf.push(b'\n');
-        // Append some dummy data
         buf.extend_from_slice(&[0u8; 64]);
 
         let result = read_state_from_reader(&mut &buf[..]);

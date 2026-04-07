@@ -1,9 +1,7 @@
-use ndarray::Array1;
 use num_complex::Complex64;
 use rand::Rng;
 
 use crate::circuit::Circuit;
-use crate::state::State;
 
 /// Core register interface shared by pure and mixed-state registers.
 pub trait Register {
@@ -67,21 +65,6 @@ impl ArrayReg {
     pub fn from_vec(nbits: usize, state: Vec<Complex64>) -> Self {
         assert_eq!(state.len(), 1usize << nbits);
         Self { nbits, state }
-    }
-
-    pub fn from_state(state: &State) -> Self {
-        assert!(
-            state.dims.iter().all(|&dim| dim == 2),
-            "ArrayReg requires a qubit-only State"
-        );
-        Self {
-            nbits: state.dims.len(),
-            state: state.data.to_vec(),
-        }
-    }
-
-    pub fn to_state(&self) -> State {
-        State::new(vec![2; self.nbits], Array1::from(self.state.clone()))
     }
 
     pub fn nqubits(&self) -> usize {

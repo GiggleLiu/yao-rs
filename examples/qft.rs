@@ -21,7 +21,7 @@
 
 use std::f64::consts::PI;
 use yao_rs::circuit::PositionedGate;
-use yao_rs::{Circuit, CircuitElement, Gate, State, apply, circuit_to_einsum, control, put};
+use yao_rs::{ArrayReg, Circuit, CircuitElement, Gate, apply, circuit_to_einsum, control, put};
 
 /// Build an n-qubit QFT circuit (textbook version with bit-reversal SWAPs).
 ///
@@ -67,15 +67,15 @@ fn main() {
     );
 
     // Apply QFT to |0000⟩ — should give uniform superposition
-    let state = State::zero_state(&vec![2; n]);
-    let result = apply(&circuit, &state);
+    let reg = ArrayReg::zero_state(n);
+    let result = apply(&circuit, &reg);
     println!("\nQFT|0000⟩ (should be uniform superposition):");
-    let total_dim = result.total_dim();
+    let total_dim = result.state_vec().len();
     let expected_amp = 1.0 / (total_dim as f64).sqrt();
     println!("  Expected amplitude: {:.6}", expected_amp);
     println!("  First few amplitudes:");
     for i in 0..total_dim.min(8) {
-        let amp = result.data[i];
+        let amp = result.state_vec()[i];
         println!(
             "    |{:0width$b}⟩: {:.6} + {:.6}i",
             i,
@@ -85,12 +85,12 @@ fn main() {
         );
     }
 
-    // Apply QFT to |0001⟩ — should give phases e^(2πi k/2^n)
-    let state1 = State::product_state(&vec![2; n], &[0, 0, 0, 1]);
-    let result1 = apply(&circuit, &state1);
+    // Apply QFT to |0001⟩ — should have phase progression
+    let reg1 = ArrayReg::product_state(bitbasis::BitStr::<4>::new(0b0001));
+    let result1 = apply(&circuit, &reg1);
     println!("\nQFT|0001⟩ (should have phase progression):");
     for i in 0..total_dim.min(8) {
-        let amp = result1.data[i];
+        let amp = result1.state_vec()[i];
         println!(
             "    |{:0width$b}⟩: {:.6} + {:.6}i  (|amp|={:.6})",
             i,

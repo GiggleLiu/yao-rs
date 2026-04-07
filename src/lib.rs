@@ -1,5 +1,4 @@
 pub mod apply;
-pub mod bitutils;
 pub mod circuit;
 
 pub mod density_matrix;
@@ -7,15 +6,12 @@ pub mod easybuild;
 pub mod einsum;
 pub mod expect;
 pub mod gate;
-pub mod index;
-pub mod instruct;
 pub mod instruct_qubit;
 pub mod json;
 pub mod measure;
 pub mod noise;
 pub mod operator;
 pub mod register;
-pub mod state;
 pub mod tensors;
 #[cfg(feature = "torch")]
 pub mod torch_contractor;
@@ -37,15 +33,10 @@ pub use einsum::{
 };
 pub use expect::{expect_arrayreg, expect_dm};
 pub use gate::Gate;
-pub use index::{insert_index, iter_basis, iter_basis_fixed, linear_to_indices, mixed_radix_index};
 pub use json::{circuit_from_json, circuit_to_json};
-pub use measure::{
-    MeasureResult, PostProcess, collapse_to, measure, measure_and_collapse, measure_remove,
-    measure_reset, measure_with_postprocess, probs,
-};
+pub use measure::{MeasureResult, PostProcess, measure_with_postprocess, probs};
 pub use noise::NoiseChannel;
 pub use operator::{Op, OperatorPolynomial, OperatorString, op_matrix};
 pub use register::{ArrayReg, Register};
-pub use state::State;
 #[cfg(feature = "torch")]
 pub use torch_contractor::contract;

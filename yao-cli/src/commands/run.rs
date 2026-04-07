@@ -2,7 +2,8 @@ use crate::output::OutputConfig;
 use crate::state_io;
 use anyhow::Result;
 use std::io::{BufWriter, IsTerminal};
-use yao_rs::{State, apply};
+use yao_rs::measure::{MeasureResult, PostProcess, measure_with_postprocess};
+use yao_rs::{ArrayReg, apply};
 
 pub fn run(
     circuit_path: &str,
@@ -17,17 +18,30 @@ pub fn run(
     let input_state = if let Some(path) = input_path {
         state_io::read_state(path)?
     } else {
-        State::zero_state(&circuit.dims)
+        ArrayReg::zero_state(circuit.nbits)
     };
 
-    let result = apply(&circuit, &input_state);
+    let mut result = apply(&circuit, &input_state);
+    let nbits = result.nqubits();
 
     if let Some(nshots) = shots {
+        let measure_locs: Vec<usize> = locs.map_or_else(|| (0..nbits).collect(), |l| l.to_vec());
         let mut rng = rand::thread_rng();
-        let outcomes = yao_rs::measure(&result, locs, nshots, &mut rng);
 
-        let (human, json_value) =
-            super::format_measurement(&outcomes, nshots, locs, result.dims.len());
+        let mut outcomes = Vec::with_capacity(nshots);
+        for _ in 0..nshots {
+            match measure_with_postprocess(
+                &mut result,
+                &measure_locs,
+                PostProcess::NoPostProcess,
+                &mut rng,
+            ) {
+                MeasureResult::Value(bits) => outcomes.push(bits),
+                MeasureResult::Removed(_, _) => unreachable!(),
+            }
+        }
+
+        let (human, json_value) = super::format_measurement(&outcomes, nshots, locs, nbits);
 
         out.emit(&human, &json_value)
     } else if let Some(op_str) = op {

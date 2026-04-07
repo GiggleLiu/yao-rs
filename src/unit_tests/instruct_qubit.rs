@@ -418,14 +418,14 @@ fn test_apply_inplace_uses_qubit_path() {
         vec![put(vec![0], Gate::H), control(vec![0], vec![1], Gate::X)],
     )
     .unwrap();
-    let state = apply(&circuit, &State::zero_state(&[2, 2]));
+    let reg = apply(&circuit, &ArrayReg::zero_state(2));
 
     let s = std::f64::consts::FRAC_1_SQRT_2;
     let expected_0 = Complex64::new(s, 0.0);
-    assert!((state.data[0] - expected_0).norm() < 1e-10);
-    assert!(state.data[1].norm() < 1e-10);
-    assert!(state.data[2].norm() < 1e-10);
-    assert!((state.data[3] - expected_0).norm() < 1e-10);
+    assert!((reg.state_vec()[0] - expected_0).norm() < 1e-10);
+    assert!(reg.state_vec()[1].norm() < 1e-10);
+    assert!(reg.state_vec()[2].norm() < 1e-10);
+    assert!((reg.state_vec()[3] - expected_0).norm() < 1e-10);
 }
 
 // ---------- Direct diagonal instruct tests ----------
@@ -523,13 +523,16 @@ fn test_apply_3q_custom_gate() {
         label: "I8".to_string(),
     };
     let circuit = Circuit::new(vec![2, 2, 2], vec![put(vec![0, 1, 2], gate)]).unwrap();
-    let input = State::product_state(&[2, 2, 2], &[1, 0, 1]);
+    // |1,0,1⟩ = basis index 0b101 = 5
+    let mut sv = vec![Complex64::new(0.0, 0.0); 8];
+    sv[5] = Complex64::new(1.0, 0.0);
+    let input = ArrayReg::from_vec(3, sv);
     let output = apply(&circuit, &input);
 
     // Identity should not change the state
     for i in 0..8 {
         assert!(
-            (output.data[i] - input.data[i]).norm() < 1e-10,
+            (output.state_vec()[i] - input.state_vec()[i]).norm() < 1e-10,
             "3q identity gate changed amplitude at index {i}"
         );
     }
