@@ -1,5 +1,6 @@
 pub mod example;
 pub mod expect;
+pub mod fetch;
 #[cfg(feature = "qasm")]
 pub mod fromqasm;
 pub mod inspect;

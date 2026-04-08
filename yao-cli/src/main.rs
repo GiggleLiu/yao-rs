@@ -33,6 +33,7 @@ fn main() -> anyhow::Result<()> {
             | Commands::Run { .. }
             | Commands::Toeinsum { .. }
             | Commands::Example { .. }
+            | Commands::Fetch { .. }
     ) || cfg!(feature = "qasm") && matches!(
         cli.command,
         Commands::Fromqasm { .. } | Commands::Toqasm { .. }
@@ -76,6 +77,7 @@ fn main() -> anyhow::Result<()> {
         Commands::Toqasm { input } => commands::toqasm::toqasm(&input, &out),
         #[cfg(feature = "typst")]
         Commands::Visualize { circuit } => commands::visualize::visualize(&circuit, &out),
+        Commands::Fetch { source, name } => commands::fetch::fetch(&source, &name, &out),
         Commands::Example { name, nqubits } => commands::example::example(&name, nqubits, &out),
         Commands::Completions { shell } => {
             let shell = shell

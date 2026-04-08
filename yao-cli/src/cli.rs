@@ -188,6 +188,25 @@ Examples:
         input: String,
     },
 
+    /// Download benchmark circuits from online repositories
+    #[command(after_help = "\
+Sources: qasmbench
+
+Examples:
+  yao fetch qasmbench list                 # List available circuits
+  yao fetch qasmbench grover               # Download by name (prefix match)
+  yao fetch qasmbench qft_n4 -o qft.qasm   # Save to file
+  yao fetch qasmbench medium/shor_n5        # Medium/large by path
+
+Pipeline:
+  yao fetch qasmbench grover | yao fromqasm - | yao run - --shots 100")]
+    Fetch {
+        /// Source repository (qasmbench)
+        source: String,
+        /// Circuit name or 'list'
+        name: String,
+    },
+
     /// Print example circuit JSON to stdout
     #[command(after_help = "\
 Available examples: bell, ghz, qft
