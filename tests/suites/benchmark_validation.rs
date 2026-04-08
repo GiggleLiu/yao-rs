@@ -6,9 +6,14 @@
 use num_complex::Complex64;
 
 use crate::common::benchmark_data::*;
-use yao_rs::{ArrayReg, Circuit, Gate, apply, control, put};
+use yao_rs::{
+    ArrayReg, Circuit, DensityMatrix, Gate, NoiseChannel, Op, OperatorPolynomial,
+    OperatorString, Register, apply, channel, control, expect_dm, put,
+};
 
 const ATOL_STATE: f64 = 1e-10;
+const ATOL_SCALAR: f64 = 1e-8;
+const ATOL_ENTROPY: f64 = 1e-6;
 
 fn assert_state_close(actual: &[Complex64], expected: &[Complex64], label: &str) {
     assert_eq!(actual.len(), expected.len(), "{label}: length mismatch");
@@ -165,6 +170,174 @@ fn test_qft_analytical() {
                 diff < ATOL_STATE,
                 "QFT analytical/{nq}q[{idx}]: diff={diff}"
             );
+        }
+    }
+}
+
+fn build_noisy_circuit(nq: usize) -> Circuit {
+    use yao_rs::circuit::CircuitElement;
+
+    let mut elements: Vec<CircuitElement> = Vec::new();
+
+    for qubit in 0..nq {
+        elements.push(put(vec![qubit], Gate::H));
+    }
+    for qubit in 0..(nq - 1) {
+        elements.push(control(vec![qubit], vec![qubit + 1], Gate::X));
+    }
+    for qubit in 0..nq {
+        elements.push(channel(
+            vec![qubit],
+            NoiseChannel::Depolarizing { n: 1, p: 0.01 },
+        ));
+    }
+    for qubit in 0..nq {
+        elements.push(put(vec![qubit], Gate::Rz(0.3)));
+    }
+    for qubit in 0..nq {
+        elements.push(channel(
+            vec![qubit],
+            NoiseChannel::AmplitudeDamping {
+                gamma: 0.05,
+                excited_population: 0.0,
+            },
+        ));
+    }
+
+    Circuit::qubits(nq, elements).unwrap()
+}
+
+fn build_ising_hamiltonian(nq: usize) -> OperatorPolynomial {
+    let mut coeffs = Vec::new();
+    let mut strings = Vec::new();
+
+    for idx in 0..(nq - 1) {
+        coeffs.push(Complex64::new(1.0, 0.0));
+        strings.push(OperatorString::new(vec![(idx, Op::Z), (idx + 1, Op::Z)]));
+    }
+    for idx in 0..nq {
+        coeffs.push(Complex64::new(0.5, 0.0));
+        strings.push(OperatorString::new(vec![(idx, Op::X)]));
+    }
+
+    OperatorPolynomial::new(coeffs, strings)
+}
+
+#[test]
+fn test_noisy_dm_trace_and_purity() {
+    let Some(data) = load_noisy_circuit() else {
+        eprintln!("Skipping: noisy_circuit.json not found");
+        return;
+    };
+
+    for nq in 4..=10 {
+        let key = nq.to_string();
+        if let Some(entry) = data.get(&key) {
+            let circuit = build_noisy_circuit(nq);
+            let mut dm = DensityMatrix::from_reg(&ArrayReg::zero_state(nq));
+            dm.apply(&circuit);
+
+            assert!(
+                (dm.trace().re - entry.trace).abs() < 1e-12,
+                "noisy_dm/{nq}q trace: got {}, expected {}",
+                dm.trace().re,
+                entry.trace
+            );
+            assert!(
+                (dm.purity() - entry.purity).abs() < ATOL_SCALAR,
+                "noisy_dm/{nq}q purity: got {}, expected {}",
+                dm.purity(),
+                entry.purity
+            );
+        }
+    }
+}
+
+#[test]
+fn test_noisy_dm_entropy() {
+    let Some(data) = load_noisy_circuit() else {
+        eprintln!("Skipping: noisy_circuit.json not found");
+        return;
+    };
+
+    for nq in 4..=10 {
+        let key = nq.to_string();
+        if let Some(entry) = data.get(&key) {
+            let circuit = build_noisy_circuit(nq);
+            let mut dm = DensityMatrix::from_reg(&ArrayReg::zero_state(nq));
+            dm.apply(&circuit);
+
+            let reduced = dm.partial_tr(&[nq - 1]);
+            let entropy = reduced.von_neumann_entropy();
+            assert!(
+                (entropy - entry.entropy).abs() < ATOL_ENTROPY,
+                "noisy_dm/{nq}q entropy: got {entropy}, expected {}",
+                entry.entropy
+            );
+        }
+    }
+}
+
+#[test]
+fn test_noisy_dm_expectation() {
+    let Some(data) = load_noisy_circuit() else {
+        eprintln!("Skipping: noisy_circuit.json not found");
+        return;
+    };
+
+    for nq in 4..=10 {
+        let key = nq.to_string();
+        if let Some(entry) = data.get(&key) {
+            let circuit = build_noisy_circuit(nq);
+            let mut dm = DensityMatrix::from_reg(&ArrayReg::zero_state(nq));
+            dm.apply(&circuit);
+
+            let h_ising = build_ising_hamiltonian(nq);
+            let exp_val = expect_dm(&dm, &h_ising);
+            assert!(
+                (exp_val.re - entry.expect_ising.re).abs() < ATOL_SCALAR,
+                "noisy_dm/{nq}q expect re: got {}, expected {}",
+                exp_val.re,
+                entry.expect_ising.re
+            );
+            assert!(
+                (exp_val.im - entry.expect_ising.im).abs() < ATOL_SCALAR,
+                "noisy_dm/{nq}q expect im: got {}, expected {}",
+                exp_val.im,
+                entry.expect_ising.im
+            );
+        }
+    }
+}
+
+#[test]
+fn test_noisy_dm_full_and_reduced_matrices() {
+    let Some(data) = load_noisy_circuit() else {
+        eprintln!("Skipping: noisy_circuit.json not found");
+        return;
+    };
+
+    for nq in 4..=6 {
+        let key = nq.to_string();
+        if let Some(entry) = data.get(&key) {
+            let circuit = build_noisy_circuit(nq);
+            let mut dm = DensityMatrix::from_reg(&ArrayReg::zero_state(nq));
+            dm.apply(&circuit);
+
+            if let Some(expected_dm) = entry.density_matrix.as_ref() {
+                let expected = interleaved_to_complex(expected_dm);
+                assert_state_close(dm.state_data(), &expected, &format!("noisy_dm/{nq}q/full"));
+            }
+
+            if let Some(expected_reduced_dm) = entry.reduced_dm.as_ref() {
+                let reduced = dm.partial_tr(&[nq - 1]);
+                let expected = interleaved_to_complex(expected_reduced_dm);
+                assert_state_close(
+                    reduced.state_data(),
+                    &expected,
+                    &format!("noisy_dm/{nq}q/reduced"),
+                );
+            }
         }
     }
 }
