@@ -282,7 +282,7 @@ fn test_to_qasm_parametric() {
     let circuit = Circuit::qubits(1, elements).unwrap();
     let qasm = to_qasm(&circuit).unwrap();
     assert!(qasm.contains("rx(1.5) q[0];"));
-    assert!(qasm.contains("p(0.25) q[0];"));
+    assert!(qasm.contains("u1(0.25) q[0];"));
 }
 
 #[test]
@@ -329,4 +329,69 @@ my_gate q[0];
 "#,
     );
     assert!(result.is_err());
+}
+
+#[test]
+fn test_empty_circuit_preserves_qubit_count() {
+    let result = from_qasm(
+        r#"
+OPENQASM 2.0;
+include "qelib1.inc";
+qreg q[3];
+"#,
+    )
+    .unwrap();
+    assert_eq!(result.circuit.num_sites(), 3);
+    assert_eq!(result.circuit.elements.len(), 0);
+}
+
+#[test]
+fn test_measurements_only_circuit() {
+    let result = from_qasm(
+        r#"
+OPENQASM 2.0;
+include "qelib1.inc";
+qreg q[2];
+creg c[2];
+measure q[0] -> c[0];
+measure q[1] -> c[1];
+"#,
+    )
+    .unwrap();
+    assert_eq!(result.circuit.num_sites(), 2);
+    assert_eq!(result.circuit.elements.len(), 0);
+    assert_eq!(result.measurements.len(), 2);
+}
+
+#[test]
+fn test_no_include_with_primitive_gates() {
+    // Without qelib1.inc, only U and CX primitives are available
+    let result = from_qasm(
+        r#"
+OPENQASM 2.0;
+qreg q[2];
+U(3.14159265358979, 0, 3.14159265358979) q[0];
+CX q[0], q[1];
+"#,
+    )
+    .unwrap();
+    assert_eq!(result.circuit.num_sites(), 2);
+    assert!(result.circuit.elements.len() >= 2);
+}
+
+#[test]
+fn test_export_uses_standard_qelib1_names() {
+    use crate::circuit::{Circuit, control, put};
+    use crate::gate::Gate;
+    let elements = vec![
+        put(vec![0], Gate::Phase(0.5)),
+        control(vec![0], vec![1], Gate::Phase(0.25)),
+    ];
+    let circuit = Circuit::qubits(2, elements).unwrap();
+    let qasm = to_qasm(&circuit).unwrap();
+    // Should use u1/cu1 (standard qelib1.inc) not p/cp
+    assert!(qasm.contains("u1(0.5) q[0];"));
+    assert!(qasm.contains("cu1(0.25) q[0],q[1];"));
+    assert!(!qasm.contains("p("));
+    assert!(!qasm.contains("cp("));
 }

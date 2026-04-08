@@ -26,6 +26,7 @@ use crate::gate::Gate;
 use openqasm::{GenericError, GateWriter, Linearize, ProgramVisitor, Value};
 use std::cell::RefCell;
 use std::f64::consts::PI;
+use std::path::PathBuf;
 use std::rc::Rc;
 
 // ========== Error type ==========
@@ -75,11 +76,11 @@ pub struct QasmResult {
 
 // ========== Import: QASM → Circuit ==========
 
-/// Additional gate definitions not in the crate's bundled qelib1.inc.
-/// These match the extended qelib1.inc from modern Qiskit.
-/// Additional gate definitions not in the crate's bundled qelib1.inc.
-/// These match the extended qelib1.inc from modern Qiskit.
-const EXTRA_GATES: &str = "\
+/// Extra gate definitions appended to the bundled qelib1.inc.
+/// These cover modern Qiskit gates (swap, sx, p, cp, etc.) that
+/// many real-world QASM files use but the crate's bundled qelib1.inc lacks.
+const EXTRA_GATES: &str = "\n\
+// Extended gates (modern Qiskit qelib1.inc)\n\
 gate u(theta,phi,lambda) q { U(theta,phi,lambda) q; }\n\
 gate p(lambda) q { U(0,0,lambda) q; }\n\
 gate swap a,b { cx a,b; cx b,a; cx a,b; }\n\
@@ -93,23 +94,25 @@ gate csx a,b { h b; cp(pi/2) a,b; h b; }\n\
 gate rxx(theta) a,b { u3(pi/2,theta,0) a; h b; cx a,b; u1(-theta) b; cx a,b; h b; u2(-pi,pi-theta) a; }\n\
 gate rzz(theta) a,b { cx a,b; u1(theta) b; cx a,b; }\n";
 
-/// Parse an OpenQASM 2.0 source string into a circuit.
-pub fn from_qasm(source: &str) -> Result<QasmResult, QasmError> {
-    // Inject extra gate definitions after `include "qelib1.inc"` so they can
-    // reference the standard gates (cx, ccx, etc.).
-    let augmented = if source.contains("qelib1.inc") {
-        source.replace(
-            "include \"qelib1.inc\";",
-            &format!("include \"qelib1.inc\";\n{EXTRA_GATES}"),
-        )
-    } else {
-        source.to_string()
-    };
+/// Create a parser whose hardcoded qelib1.inc is extended with modern gates.
+///
+/// Uses `FilePolicy::with_file` to override the bundled qelib1.inc with an
+/// extended version, avoiding brittle string replacement on user source code.
+fn make_parser<'a>(cache: &'a mut openqasm::SourceCache) -> openqasm::Parser<'a> {
+    // The default FilePolicy::filesystem() embeds the original qelib1.inc.
+    // We parse that source, append our extras, and replace the hardcoded file.
+    let mut policy = openqasm::parser::FilePolicy::filesystem();
+    // Append extra gates to the existing hardcoded qelib1.inc
+    if let openqasm::parser::FilePolicy::FileSystem { ref mut hardcoded } = policy {
+        if let Some(base) = hardcoded.get_mut(&PathBuf::from("qelib1.inc")) {
+            base.push_str(EXTRA_GATES);
+        }
+    }
+    openqasm::Parser::new(cache).with_file_policy(policy)
+}
 
-    let mut cache = openqasm::SourceCache::new();
-    let mut parser = openqasm::Parser::new(&mut cache);
-    parser.parse_source(augmented, None::<&str>);
-
+/// Finish parsing, type-check, and linearize to a circuit.
+fn finish_and_linearize(parser: openqasm::Parser<'_>) -> Result<QasmResult, QasmError> {
     let program = parser
         .done()
         .to_errors()
@@ -120,31 +123,68 @@ pub fn from_qasm(source: &str) -> Result<QasmResult, QasmError> {
         .to_errors()
         .map_err(|e| QasmError::Parse(format!("{e}")))?;
 
+    // Count declared qubits from the AST before linearization,
+    // so empty circuits preserve their qubit count.
+    let declared_qubits = count_declared_qubits(&program);
+
     let state = Rc::new(RefCell::new(BuilderState::default()));
     let builder = CircuitBuilder {
         state: Rc::clone(&state),
     };
 
     // depth=100: fully expand all gate definitions to U+CX primitives.
-    // This ensures parameters are properly resolved for all gates.
     let mut linearizer = Linearize::new(builder, 100);
-    linearizer.visit_program(&program).map_err(|e| {
-        QasmError::Linearize(format!("{e}"))
-    })?;
+    linearizer
+        .visit_program(&program)
+        .map_err(|e| QasmError::Linearize(format!("{e}")))?;
 
     let st = state.borrow();
-    let circuit = Circuit::qubits(st.nqubits, st.elements.clone())?;
+    // Use the larger of declared qubits vs initialized qubits
+    // (handles empty circuits with no gates).
+    let nqubits = st.nqubits.max(declared_qubits);
+    let circuit = Circuit::qubits(nqubits, st.elements.clone())?;
     Ok(QasmResult {
         circuit,
         measurements: st.measurements.clone(),
     })
 }
 
+/// Count total declared qubits from qreg declarations in the AST.
+fn count_declared_qubits(program: &openqasm::Program) -> usize {
+    let mut total = 0usize;
+    for decl in &program.decls {
+        if let openqasm::Decl::QReg { ref reg } = **decl {
+            if let Some(size) = reg.index {
+                total += size as usize;
+            } else {
+                total += 1;
+            }
+        }
+    }
+    total
+}
+
+/// Parse an OpenQASM 2.0 source string into a circuit.
+pub fn from_qasm(source: &str) -> Result<QasmResult, QasmError> {
+    let mut cache = openqasm::SourceCache::new();
+    let mut parser = make_parser(&mut cache);
+    parser.parse_source(source.to_string(), None::<&str>);
+    finish_and_linearize(parser)
+}
+
 /// Parse an OpenQASM 2.0 file into a circuit.
+///
+/// Relative `include` paths in the QASM file are resolved from the
+/// file's parent directory.
 pub fn from_qasm_file(path: &str) -> Result<QasmResult, QasmError> {
-    let source = std::fs::read_to_string(path)
-        .map_err(|e| QasmError::Parse(format!("cannot read {path}: {e}")))?;
-    from_qasm(&source)
+    let path = PathBuf::from(path);
+    let source = std::fs::read_to_string(&path)
+        .map_err(|e| QasmError::Parse(format!("cannot read {}: {e}", path.display())))?;
+
+    let mut cache = openqasm::SourceCache::new();
+    let mut parser = make_parser(&mut cache);
+    parser.parse_source(source, Some(&path));
+    finish_and_linearize(parser)
 }
 
 // ========== Internal: GateWriter ==========
@@ -225,7 +265,6 @@ impl GateWriter for CircuitBuilder {
     }
 
     fn write_barrier(&mut self, _regs: &[usize]) -> Result<(), Self::Error> {
-        // Barriers are no-ops for simulation
         Ok(())
     }
 
@@ -235,7 +274,6 @@ impl GateWriter for CircuitBuilder {
     }
 
     fn write_reset(&mut self, _reg: usize) -> Result<(), Self::Error> {
-        // Reset not supported as a circuit element; skip silently
         Ok(())
     }
 
@@ -258,6 +296,9 @@ impl GateWriter for CircuitBuilder {
 // ========== Export: Circuit → QASM ==========
 
 /// Export a circuit as OpenQASM 2.0 source code.
+///
+/// Uses only standard qelib1.inc gate names (`u1` instead of `p`,
+/// `cu1` instead of `cp`) for maximum portability.
 pub fn to_qasm(circuit: &Circuit) -> Result<String, QasmError> {
     let n = circuit.num_sites();
     let mut out = String::new();
@@ -325,7 +366,8 @@ fn uncontrolled_gate_qasm(gate: &Gate, targets: &[usize]) -> Result<String, Qasm
         Gate::T => format!("t {q};\n"),
         Gate::SWAP => format!("swap {q};\n"),
         Gate::SqrtX => format!("sx {q};\n"),
-        Gate::Phase(theta) => format!("p({theta}) {q};\n"),
+        // Use u1 instead of p for standard qelib1.inc compatibility
+        Gate::Phase(theta) => format!("u1({theta}) {q};\n"),
         Gate::Rx(theta) => format!("rx({theta}) {q};\n"),
         Gate::Ry(theta) => format!("ry({theta}) {q};\n"),
         Gate::Rz(theta) => format!("rz({theta}) {q};\n"),
@@ -366,8 +408,9 @@ fn controlled_gate_qasm(
         (Gate::Rx(theta), 1, 1) => format!("crx({theta}) {};\n", all(&[ctrls, targets])),
         (Gate::Ry(theta), 1, 1) => format!("cry({theta}) {};\n", all(&[ctrls, targets])),
         (Gate::Rz(theta), 1, 1) => format!("crz({theta}) {};\n", all(&[ctrls, targets])),
+        // Use cu1 instead of cp for standard qelib1.inc compatibility
         (Gate::Phase(theta), 1, 1) => {
-            format!("cp({theta}) {};\n", all(&[ctrls, targets]))
+            format!("cu1({theta}) {};\n", all(&[ctrls, targets]))
         }
         _ => {
             return Err(QasmError::UnsupportedGate(format!(
