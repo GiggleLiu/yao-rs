@@ -9,7 +9,8 @@ name = "yao"
 path = "src/main.rs"
 
 [features]
-default = []
+default = ["qasm"]
+qasm = ["yao-rs/qasm"]
 typst = ["yao-rs/typst"]
 
 [dependencies]

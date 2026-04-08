@@ -13,6 +13,8 @@ pub mod noise;
 pub mod operator;
 pub mod register;
 pub mod tensors;
+#[cfg(feature = "qasm")]
+pub mod qasm;
 #[cfg(feature = "torch")]
 pub mod torch_contractor;
 #[cfg(feature = "typst")]

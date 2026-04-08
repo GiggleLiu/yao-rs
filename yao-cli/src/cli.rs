@@ -165,6 +165,29 @@ Examples:
         circuit: String,
     },
 
+    /// Convert OpenQASM 2.0 file to circuit JSON
+    #[cfg(feature = "qasm")]
+    #[command(after_help = "\
+Examples:
+  yao fromqasm circuit.qasm
+  yao fromqasm circuit.qasm --output circuit.json
+  yao fromqasm circuit.qasm | yao run - --shots 1024")]
+    Fromqasm {
+        /// QASM file (use - for stdin)
+        input: String,
+    },
+
+    /// Export circuit as OpenQASM 2.0
+    #[cfg(feature = "qasm")]
+    #[command(after_help = "\
+Examples:
+  yao toqasm circuit.json
+  yao example bell | yao toqasm -")]
+    Toqasm {
+        /// Circuit JSON file (use - for stdin)
+        input: String,
+    },
+
     /// Print example circuit JSON to stdout
     #[command(after_help = "\
 Available examples: bell, ghz, qft

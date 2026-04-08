@@ -33,6 +33,9 @@ fn main() -> anyhow::Result<()> {
             | Commands::Run { .. }
             | Commands::Toeinsum { .. }
             | Commands::Example { .. }
+    ) || cfg!(feature = "qasm") && matches!(
+        cli.command,
+        Commands::Fromqasm { .. } | Commands::Toqasm { .. }
     );
 
     let out = OutputConfig {
@@ -67,6 +70,10 @@ fn main() -> anyhow::Result<()> {
         Commands::Probs { input, locs } => commands::probs::probs(&input, locs.as_deref(), &out),
         Commands::Expect { input, op } => commands::expect::expect(&input, &op, &out),
         Commands::Toeinsum { circuit, mode } => commands::toeinsum::toeinsum(&circuit, mode, &out),
+        #[cfg(feature = "qasm")]
+        Commands::Fromqasm { input } => commands::fromqasm::fromqasm(&input, &out),
+        #[cfg(feature = "qasm")]
+        Commands::Toqasm { input } => commands::toqasm::toqasm(&input, &out),
         #[cfg(feature = "typst")]
         Commands::Visualize { circuit } => commands::visualize::visualize(&circuit, &out),
         Commands::Example { name, nqubits } => commands::example::example(&name, nqubits, &out),

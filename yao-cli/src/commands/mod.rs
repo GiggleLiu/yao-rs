@@ -1,11 +1,15 @@
 pub mod example;
 pub mod expect;
+#[cfg(feature = "qasm")]
+pub mod fromqasm;
 pub mod inspect;
 pub mod measure;
 pub mod probs;
 pub mod run;
 pub mod simulate;
 pub mod toeinsum;
+#[cfg(feature = "qasm")]
+pub mod toqasm;
 #[cfg(feature = "typst")]
 pub mod visualize;
 
