@@ -118,97 +118,107 @@ impl DensityMatrix {
             .sum::<f64>()
     }
 
+    fn is_diagonal_matrix(matrix: &Array2<Complex64>) -> bool {
+        (0..matrix.nrows())
+            .all(|row| (0..matrix.ncols()).all(|col| row == col || matrix[[row, col]].norm() < 1e-15))
+    }
+
+    fn conjugated_gate(gate: &crate::gate::Gate) -> crate::gate::Gate {
+        let matrix = gate.matrix().mapv(|value| value.conj());
+        crate::gate::Gate::Custom {
+            matrix,
+            is_diagonal: gate.is_diagonal(),
+            label: "conj".to_string(),
+        }
+    }
+
+    fn apply_left_map(&mut self, circuit: &crate::circuit::Circuit) {
+        let dim = self.dim();
+        for col in 0..dim {
+            let column: Vec<Complex64> = (0..dim).map(|row| self.state[self.idx(row, col)]).collect();
+            let mut reg = ArrayReg::from_vec(self.nbits, column);
+            crate::apply::apply_inplace(circuit, &mut reg);
+            for row in 0..dim {
+                let idx = row * dim + col;
+                self.state[idx] = reg.state[row];
+            }
+        }
+    }
+
+    fn apply_right_map(&mut self, circuit: &crate::circuit::Circuit) {
+        let dim = self.dim();
+        for row in 0..dim {
+            let row_state: Vec<Complex64> = (0..dim).map(|col| self.state[self.idx(row, col)]).collect();
+            let mut reg = ArrayReg::from_vec(self.nbits, row_state);
+            crate::apply::apply_inplace(circuit, &mut reg);
+            for col in 0..dim {
+                let idx = row * dim + col;
+                self.state[idx] = reg.state[col];
+            }
+        }
+    }
+
     /// Apply a single gate as rho -> U rho U†.
     fn apply_gate(&mut self, pg: &crate::circuit::PositionedGate) {
-        let dim = self.dim();
         let single_circuit = crate::circuit::Circuit::qubits(
             self.nbits,
             vec![crate::circuit::CircuitElement::Gate(pg.clone())],
         )
         .unwrap();
+        let conjugated_gate = crate::circuit::PositionedGate::new(
+            Self::conjugated_gate(&pg.gate),
+            pg.target_locs.clone(),
+            pg.control_locs.clone(),
+            pg.control_configs.clone(),
+        );
+        let conjugated_circuit = crate::circuit::Circuit::qubits(
+            self.nbits,
+            vec![crate::circuit::CircuitElement::Gate(conjugated_gate)],
+        )
+        .unwrap();
 
-        let mut columns = Vec::with_capacity(dim);
-        for basis_state in 0..dim {
-            let mut state = vec![Complex64::new(0.0, 0.0); dim];
-            state[basis_state] = Complex64::new(1.0, 0.0);
-            let mut reg = ArrayReg::from_vec(self.nbits, state);
-            crate::apply::apply_inplace(&single_circuit, &mut reg);
-            columns.push(reg.state);
-        }
-
-        let mut transformed = vec![Complex64::new(0.0, 0.0); dim * dim];
-        for row in 0..dim {
-            for col in 0..dim {
-                let mut acc = Complex64::new(0.0, 0.0);
-                for left in 0..dim {
-                    for right in 0..dim {
-                        acc += columns[left][row]
-                            * self.state[left * dim + right]
-                            * columns[right][col].conj();
-                    }
-                }
-                transformed[row * dim + col] = acc;
-            }
-        }
-
-        self.state = transformed;
+        self.apply_left_map(&single_circuit);
+        self.apply_right_map(&conjugated_circuit);
     }
 
     /// Apply a noise channel as rho -> sum_i K_i rho K_i†.
     fn apply_channel(&mut self, channel: &crate::noise::NoiseChannel, locs: &[usize]) {
-        let dim = self.dim();
-        let mut new_state = vec![Complex64::new(0.0, 0.0); dim * dim];
+        let original = self.state.clone();
+        let mut accumulated = vec![Complex64::new(0.0, 0.0); original.len()];
 
         for kraus_op in channel.kraus_operators() {
-            let full_k = self.embed_operator(&kraus_op, locs);
-            for row in 0..dim {
-                for col in 0..dim {
-                    let mut acc = Complex64::new(0.0, 0.0);
-                    for left in 0..dim {
-                        for right in 0..dim {
-                            acc += full_k[row * dim + left]
-                                * self.state[left * dim + right]
-                                * full_k[col * dim + right].conj();
-                        }
-                    }
-                    new_state[row * dim + col] += acc;
-                }
+            let gate = crate::gate::Gate::Custom {
+                matrix: kraus_op.clone(),
+                is_diagonal: Self::is_diagonal_matrix(&kraus_op),
+                label: "kraus".to_string(),
+            };
+            let conjugated = crate::gate::Gate::Custom {
+                matrix: kraus_op.mapv(|value| value.conj()),
+                is_diagonal: Self::is_diagonal_matrix(&kraus_op),
+                label: "kraus_conj".to_string(),
+            };
+            let left_circuit =
+                crate::circuit::Circuit::qubits(self.nbits, vec![crate::circuit::put(locs.to_vec(), gate)])
+                    .unwrap();
+            let right_circuit = crate::circuit::Circuit::qubits(
+                self.nbits,
+                vec![crate::circuit::put(locs.to_vec(), conjugated)],
+            )
+            .unwrap();
+
+            let mut branch = Self {
+                nbits: self.nbits,
+                state: original.clone(),
+            };
+            branch.apply_left_map(&left_circuit);
+            branch.apply_right_map(&right_circuit);
+
+            for (dst, src) in accumulated.iter_mut().zip(branch.state.into_iter()) {
+                *dst += src;
             }
         }
 
-        self.state = new_state;
-    }
-
-    /// Embed a local operator into the full Hilbert space.
-    fn embed_operator(&self, local_op: &Array2<Complex64>, locs: &[usize]) -> Vec<Complex64> {
-        let dim = self.dim();
-        let mut full = vec![Complex64::new(0.0, 0.0); dim * dim];
-
-        for row in 0..dim {
-            for col in 0..dim {
-                let mut matches_outside = true;
-                for qubit in 0..self.nbits {
-                    if !locs.contains(&qubit) && ((row >> qubit) & 1) != ((col >> qubit) & 1) {
-                        matches_outside = false;
-                        break;
-                    }
-                }
-                if !matches_outside {
-                    continue;
-                }
-
-                let mut local_row = 0usize;
-                let mut local_col = 0usize;
-                for (idx, &loc) in locs.iter().enumerate() {
-                    local_row |= ((row >> loc) & 1) << idx;
-                    local_col |= ((col >> loc) & 1) << idx;
-                }
-
-                full[row * dim + col] = local_op[[local_row, local_col]];
-            }
-        }
-
-        full
+        self.state = accumulated;
     }
 }
 
