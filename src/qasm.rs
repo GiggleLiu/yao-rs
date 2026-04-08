@@ -26,7 +26,6 @@ use crate::gate::Gate;
 use openqasm::{GenericError, GateWriter, Linearize, ProgramVisitor, Value};
 use std::cell::RefCell;
 use std::f64::consts::PI;
-use std::path::PathBuf;
 use std::rc::Rc;
 
 // ========== Error type ==========
@@ -104,7 +103,7 @@ fn make_parser<'a>(cache: &'a mut openqasm::SourceCache) -> openqasm::Parser<'a>
     let mut policy = openqasm::parser::FilePolicy::filesystem();
     // Append extra gates to the existing hardcoded qelib1.inc
     if let openqasm::parser::FilePolicy::FileSystem { ref mut hardcoded } = policy {
-        if let Some(base) = hardcoded.get_mut(&PathBuf::from("qelib1.inc")) {
+        if let Some(base) = hardcoded.get_mut(std::path::Path::new("qelib1.inc")) {
             base.push_str(EXTRA_GATES);
         }
     }
@@ -174,16 +173,11 @@ pub fn from_qasm(source: &str) -> Result<QasmResult, QasmError> {
 
 /// Parse an OpenQASM 2.0 file into a circuit.
 ///
-/// Relative `include` paths in the QASM file are resolved from the
-/// file's parent directory.
+/// Include paths are resolved relative to the file's parent directory.
 pub fn from_qasm_file(path: &str) -> Result<QasmResult, QasmError> {
-    let path = PathBuf::from(path);
-    let source = std::fs::read_to_string(&path)
-        .map_err(|e| QasmError::Parse(format!("cannot read {}: {e}", path.display())))?;
-
     let mut cache = openqasm::SourceCache::new();
     let mut parser = make_parser(&mut cache);
-    parser.parse_source(source, Some(&path));
+    parser.parse_file(path);
     finish_and_linearize(parser)
 }
 
@@ -274,7 +268,7 @@ impl GateWriter for CircuitBuilder {
     }
 
     fn write_reset(&mut self, _reg: usize) -> Result<(), Self::Error> {
-        Ok(())
+        Err(QasmError::UnsupportedGate("reset".to_string()))
     }
 
     fn start_conditional(
@@ -297,8 +291,8 @@ impl GateWriter for CircuitBuilder {
 
 /// Export a circuit as OpenQASM 2.0 source code.
 ///
-/// Uses only standard qelib1.inc gate names (`u1` instead of `p`,
-/// `cu1` instead of `cp`) for maximum portability.
+/// Uses only gates from the standard qelib1.inc. Non-standard gates
+/// (SWAP, SqrtX, etc.) are decomposed inline.
 pub fn to_qasm(circuit: &Circuit) -> Result<String, QasmError> {
     let n = circuit.num_sites();
     let mut out = String::new();
@@ -364,13 +358,16 @@ fn uncontrolled_gate_qasm(gate: &Gate, targets: &[usize]) -> Result<String, Qasm
         Gate::H => format!("h {q};\n"),
         Gate::S => format!("s {q};\n"),
         Gate::T => format!("t {q};\n"),
-        Gate::SWAP => format!("swap {q};\n"),
-        Gate::SqrtX => format!("sx {q};\n"),
-        // Use u1 instead of p for standard qelib1.inc compatibility
         Gate::Phase(theta) => format!("u1({theta}) {q};\n"),
         Gate::Rx(theta) => format!("rx({theta}) {q};\n"),
         Gate::Ry(theta) => format!("ry({theta}) {q};\n"),
         Gate::Rz(theta) => format!("rz({theta}) {q};\n"),
+        // Decompose non-standard gates inline
+        Gate::SWAP => {
+            let (a, b) = (targets[0], targets[1]);
+            format!("cx q[{a}],q[{b}];\ncx q[{b}],q[{a}];\ncx q[{a}],q[{b}];\n")
+        }
+        Gate::SqrtX => format!("sdg {q};\nh {q};\nsdg {q};\n"),
         Gate::SqrtY | Gate::SqrtW | Gate::ISWAP | Gate::FSim(_, _) => {
             return Err(QasmError::UnsupportedGate(format!(
                 "{gate} has no standard QASM 2.0 equivalent"
@@ -398,19 +395,43 @@ fn controlled_gate_qasm(
             .join(",")
     };
     let line = match (gate, ctrls.len(), targets.len()) {
+        // Standard qelib1.inc controlled gates
         (Gate::X, 1, 1) => format!("cx {};\n", all(&[ctrls, targets])),
         (Gate::X, 2, 1) => format!("ccx {};\n", all(&[ctrls, targets])),
         (Gate::Y, 1, 1) => format!("cy {};\n", all(&[ctrls, targets])),
         (Gate::Z, 1, 1) => format!("cz {};\n", all(&[ctrls, targets])),
         (Gate::H, 1, 1) => format!("ch {};\n", all(&[ctrls, targets])),
-        (Gate::SWAP, 1, 2) => format!("cswap {};\n", all(&[ctrls, targets])),
-        (Gate::SqrtX, 1, 1) => format!("csx {};\n", all(&[ctrls, targets])),
-        (Gate::Rx(theta), 1, 1) => format!("crx({theta}) {};\n", all(&[ctrls, targets])),
-        (Gate::Ry(theta), 1, 1) => format!("cry({theta}) {};\n", all(&[ctrls, targets])),
         (Gate::Rz(theta), 1, 1) => format!("crz({theta}) {};\n", all(&[ctrls, targets])),
-        // Use cu1 instead of cp for standard qelib1.inc compatibility
-        (Gate::Phase(theta), 1, 1) => {
-            format!("cu1({theta}) {};\n", all(&[ctrls, targets]))
+        (Gate::Phase(theta), 1, 1) => format!("cu1({theta}) {};\n", all(&[ctrls, targets])),
+        // Decompose non-standard controlled gates inline
+        (Gate::Rx(theta), 1, 1) => {
+            let (a, b) = (ctrls[0], targets[0]);
+            format!(
+                "u1({pi2}) q[{b}];\ncx q[{a}],q[{b}];\nu3({nt},0,0) q[{b}];\ncx q[{a}],q[{b}];\nu3({t},{npi2},0) q[{b}];\n",
+                pi2 = PI / 2.0, nt = -theta / 2.0, t = theta / 2.0, npi2 = -PI / 2.0
+            )
+        }
+        (Gate::Ry(theta), 1, 1) => {
+            let (a, b) = (ctrls[0], targets[0]);
+            format!(
+                "ry({ht}) q[{b}];\ncx q[{a}],q[{b}];\nry({nht}) q[{b}];\ncx q[{a}],q[{b}];\n",
+                ht = theta / 2.0, nht = -theta / 2.0
+            )
+        }
+        (Gate::SWAP, 1, 2) => {
+            // cswap a,b,c = cx c,b; ccx a,b,c; cx c,b
+            let (a, b, c) = (ctrls[0], targets[0], targets[1]);
+            format!(
+                "cx q[{c}],q[{b}];\nccx q[{a}],q[{b}],q[{c}];\ncx q[{c}],q[{b}];\n"
+            )
+        }
+        (Gate::SqrtX, 1, 1) => {
+            // csx a,b = h b; cu1(pi/2) a,b; h b
+            let (a, b) = (ctrls[0], targets[0]);
+            format!(
+                "h q[{b}];\ncu1({pi2}) q[{a}],q[{b}];\nh q[{b}];\n",
+                pi2 = PI / 2.0
+            )
         }
         _ => {
             return Err(QasmError::UnsupportedGate(format!(

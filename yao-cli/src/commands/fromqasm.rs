@@ -4,19 +4,16 @@ use std::io::Read;
 use yao_rs::qasm;
 
 pub fn fromqasm(input: &str, out: &OutputConfig) -> Result<()> {
-    let source = if input == "-" {
+    let result = if input == "-" {
         let mut buf = String::new();
         std::io::stdin()
             .read_to_string(&mut buf)
             .context("Failed to read QASM from stdin")?;
-        buf
+        qasm::from_qasm(&buf)
     } else {
-        std::fs::read_to_string(input)
-            .with_context(|| format!("Failed to read QASM file '{input}'"))?
-    };
-
-    let result = qasm::from_qasm(&source)
-        .map_err(|e| anyhow::anyhow!("{e}"))?;
+        qasm::from_qasm_file(input)
+    }
+    .map_err(|e| anyhow::anyhow!("{e}"))?;
 
     if !result.measurements.is_empty() {
         out.info(&format!(

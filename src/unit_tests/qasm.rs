@@ -395,3 +395,65 @@ fn test_export_uses_standard_qelib1_names() {
     assert!(!qasm.contains("p("));
     assert!(!qasm.contains("cp("));
 }
+
+#[test]
+fn test_roundtrip_controlled_gates() {
+    use crate::circuit::{Circuit, control, put};
+    use crate::gate::Gate;
+
+    let elements = vec![
+        put(vec![0], Gate::H),
+        control(vec![0], vec![1], Gate::X),      // cx
+        control(vec![0], vec![1], Gate::Z),      // cz
+        control(vec![0], vec![1], Gate::Rx(1.0)), // crx (decomposed inline)
+        control(vec![0], vec![1], Gate::Ry(0.5)), // cry (decomposed inline)
+        control(vec![0], vec![1], Gate::Rz(0.3)), // crz
+        control(vec![0], vec![1], Gate::Phase(0.7)), // cu1
+        put(vec![0, 1], Gate::SWAP),             // swap (decomposed to 3 cx)
+    ];
+    let circuit = Circuit::qubits(2, elements).unwrap();
+
+    let qasm = to_qasm(&circuit).unwrap();
+    let reimported = from_qasm(&qasm).unwrap();
+
+    let reg = ArrayReg::zero_state(2);
+    let probs1 = crate::measure::probs(&apply(&circuit, &reg), None);
+    let probs2 = crate::measure::probs(&apply(&reimported.circuit, &reg), None);
+
+    // Relaxed epsilon: inline decomposition round-trips through float formatting
+    for (p1, p2) in probs1.iter().zip(probs2.iter()) {
+        assert_abs_diff_eq!(p1, p2, epsilon = 1e-8);
+    }
+}
+
+#[test]
+fn test_export_decomposes_nonstandard_gates() {
+    use crate::circuit::{Circuit, put};
+    use crate::gate::Gate;
+    let circuit = Circuit::qubits(2, vec![
+        put(vec![0, 1], Gate::SWAP),
+        put(vec![0], Gate::SqrtX),
+    ]).unwrap();
+    let qasm = to_qasm(&circuit).unwrap();
+    // SWAP decomposed to 3 CX, SqrtX decomposed to sdg+h+sdg
+    assert!(qasm.contains("cx q[0],q[1]"));
+    assert!(qasm.contains("sdg q[0]"));
+    assert!(qasm.contains("h q[0]"));
+    // Should NOT contain non-standard gate names
+    assert!(!qasm.contains("swap q["));
+    assert!(!qasm.contains("sx q["));
+}
+
+#[test]
+fn test_reset_is_rejected() {
+    let result = from_qasm(
+        r#"
+OPENQASM 2.0;
+include "qelib1.inc";
+qreg q[1];
+x q[0];
+reset q[0];
+"#,
+    );
+    assert!(result.is_err());
+}
