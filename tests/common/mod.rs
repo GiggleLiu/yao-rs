@@ -1,5 +1,7 @@
 //! Shared test utilities for yao-rs integration tests.
 
+pub mod benchmark_data;
+
 use std::collections::HashMap;
 
 use ndarray::{Array1, Array2, ArrayD, IxDyn};
