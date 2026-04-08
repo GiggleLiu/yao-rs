@@ -3,45 +3,15 @@ use anyhow::{Context, Result, bail};
 use std::io::Write;
 use std::process::Command;
 
-/// Known QASMBench circuits organized by scale.
-const QASMBENCH_SMALL: &[(&str, &str)] = &[
-    ("adder_n4", "4-qubit adder"),
-    ("adder_n10", "10-qubit adder"),
-    ("basis_change_n3", "3-qubit basis change"),
-    ("bb84_n8", "8-qubit BB84 protocol"),
-    ("bell_n4", "4-qubit Bell state"),
-    ("cat_state_n4", "4-qubit cat state"),
-    ("deutsch_n2", "2-qubit Deutsch algorithm"),
-    ("dnn_n2", "2-qubit deep neural network"),
-    ("error_correctiond3_n5", "5-qubit error correction"),
-    ("fredkin_n3", "3-qubit Fredkin gate"),
-    ("grover_n2", "2-qubit Grover search"),
-    ("hs4_n4", "4-qubit hidden subgroup"),
-    ("iswap_n2", "2-qubit iSWAP"),
-    ("linearsolver_n3", "3-qubit linear solver"),
-    ("lpn_n5", "5-qubit LPN"),
-    ("pea_n5", "5-qubit phase estimation"),
-    ("qaoa_n3", "3-qubit QAOA"),
-    ("qec_en_n5", "5-qubit QEC encoder"),
-    ("qec_sm_n5", "5-qubit QEC syndrome"),
-    ("qft_n4", "4-qubit QFT"),
-    ("qrng_n4", "4-qubit QRNG"),
-    ("quantumwalks_n2", "2-qubit quantum walk"),
-    ("simon_n6", "6-qubit Simon's algorithm"),
-    ("teleportation_n3", "3-qubit teleportation"),
-    ("toffoli_n3", "3-qubit Toffoli"),
-    ("variational_n4", "4-qubit variational"),
-    ("vqe_n4", "4-qubit VQE"),
-    ("vqe_uccsd_n4", "4-qubit VQE-UCCSD"),
-    ("wstate_n3", "3-qubit W state"),
-];
-
-const QASMBENCH_BASE_URL: &str =
+const QASMBENCH_RAW_URL: &str =
     "https://raw.githubusercontent.com/pnnl/QASMBench/master";
+const QASMBENCH_API_URL: &str =
+    "https://api.github.com/repos/pnnl/QASMBench/contents";
+const SCALES: &[&str] = &["small", "medium", "large"];
 
-pub fn fetch(source: &str, name: &str, out: &OutputConfig) -> Result<()> {
+pub fn fetch(source: &str, name: &str, scale: Option<&str>, out: &OutputConfig) -> Result<()> {
     match source {
-        "qasmbench" => fetch_qasmbench(name, out),
+        "qasmbench" => fetch_qasmbench(name, scale, out),
         _ => bail!(
             "Unknown source: '{source}'\n\n\
              Available sources:\n  \
@@ -53,9 +23,9 @@ pub fn fetch(source: &str, name: &str, out: &OutputConfig) -> Result<()> {
     }
 }
 
-fn fetch_qasmbench(name: &str, out: &OutputConfig) -> Result<()> {
+fn fetch_qasmbench(name: &str, scale: Option<&str>, out: &OutputConfig) -> Result<()> {
     if name == "list" {
-        return list_qasmbench(out);
+        return list_qasmbench(scale, out);
     }
 
     // Support explicit scale/name paths: "small/grover_n2", "medium/shor_n5"
@@ -63,10 +33,11 @@ fn fetch_qasmbench(name: &str, out: &OutputConfig) -> Result<()> {
         let parts: Vec<&str> = name.splitn(2, '/').collect();
         (parts[0].to_string(), parts[1].to_string())
     } else {
+        // Search all scales for a match
         find_qasmbench_circuit(name)?
     };
 
-    let url = format!("{QASMBENCH_BASE_URL}/{scale}/{circuit}/{circuit}.qasm");
+    let url = format!("{QASMBENCH_RAW_URL}/{scale}/{circuit}/{circuit}.qasm");
     out.info(&format!("Fetching {circuit} from QASMBench ({scale})..."));
 
     let qasm = download_url(&url)
@@ -83,53 +54,93 @@ fn fetch_qasmbench(name: &str, out: &OutputConfig) -> Result<()> {
     Ok(())
 }
 
-fn find_qasmbench_circuit(name: &str) -> Result<(String, String)> {
-    // Try exact match
-    for &(dir, _) in QASMBENCH_SMALL {
-        if dir == name {
-            return Ok(("small".to_string(), dir.to_string()));
-        }
-    }
-
-    // Try prefix match (e.g. "grover" matches "grover_n2")
-    let mut matches: Vec<&str> = Vec::new();
-    for &(dir, _) in QASMBENCH_SMALL {
-        if dir.starts_with(name) || dir.starts_with(&format!("{name}_")) {
-            matches.push(dir);
-        }
-    }
-
-    match matches.len() {
-        0 => bail!(
-            "Unknown QASMBench circuit: '{name}'\n\n\
-             Use 'yao fetch qasmbench list' to see available circuits.\n\
-             Or specify scale/name: yao fetch qasmbench medium/shor_n5"
-        ),
-        1 => Ok(("small".to_string(), matches[0].to_string())),
-        _ => bail!(
-            "Ambiguous name '{name}'. Matches:\n  {}\n\nPlease be more specific.",
-            matches.join("\n  ")
-        ),
-    }
+/// Fetch directory listing from GitHub API for a given scale.
+fn list_qasmbench_dirs(scale: &str) -> Result<Vec<String>> {
+    let url = format!("{QASMBENCH_API_URL}/{scale}");
+    let json_str = download_url(&url)?;
+    let entries: Vec<serde_json::Value> = serde_json::from_str(&json_str)
+        .context("Failed to parse GitHub API response")?;
+    let mut dirs: Vec<String> = entries
+        .iter()
+        .filter(|e| e["type"].as_str() == Some("dir"))
+        .filter_map(|e| e["name"].as_str().map(String::from))
+        .collect();
+    dirs.sort();
+    Ok(dirs)
 }
 
-fn list_qasmbench(out: &OutputConfig) -> Result<()> {
+fn find_qasmbench_circuit(name: &str) -> Result<(String, String)> {
+    for &scale in SCALES {
+        let dirs = list_qasmbench_dirs(scale)?;
+
+        // Exact match
+        if dirs.iter().any(|d| d == name) {
+            return Ok((scale.to_string(), name.to_string()));
+        }
+
+        // Prefix match
+        let matches: Vec<&String> = dirs
+            .iter()
+            .filter(|d| d.starts_with(name) || d.starts_with(&format!("{name}_")))
+            .collect();
+
+        match matches.len() {
+            1 => return Ok((scale.to_string(), matches[0].clone())),
+            2.. => {
+                let names: Vec<&str> = matches.iter().map(|s| s.as_str()).collect();
+                bail!(
+                    "Ambiguous name '{name}' in {scale}. Matches:\n  {}\n\nPlease be more specific.",
+                    names.join("\n  ")
+                );
+            }
+            _ => continue,
+        }
+    }
+
+    bail!(
+        "Unknown QASMBench circuit: '{name}'\n\n\
+         Use 'yao fetch qasmbench list' to see all available circuits."
+    )
+}
+
+fn list_qasmbench(filter_scale: Option<&str>, out: &OutputConfig) -> Result<()> {
+    let scales: Vec<&str> = match filter_scale {
+        Some(s) => {
+            if !SCALES.contains(&s) {
+                bail!("Unknown scale '{s}'. Use: small, medium, or large");
+            }
+            vec![s]
+        }
+        None => SCALES.to_vec(),
+    };
+
+    let mut all_circuits: Vec<serde_json::Value> = Vec::new();
+    let mut human = String::new();
+
+    for &scale in &scales {
+        let dirs = list_qasmbench_dirs(scale)?;
+
+        human.push_str(&format!(
+            "QASMBench — {scale} ({} circuits):\n",
+            dirs.len()
+        ));
+        for dir in &dirs {
+            human.push_str(&format!("  {dir}\n"));
+            all_circuits.push(serde_json::json!({"name": dir, "scale": scale}));
+        }
+        human.push('\n');
+    }
+
+    human.push_str("Usage:\n");
+    human.push_str("  yao fetch qasmbench <name>              # auto-detect scale\n");
+    human.push_str("  yao fetch qasmbench small/qft_n4        # explicit scale/name\n");
+    human.push_str("  yao fetch qasmbench grover -o g.qasm    # save to file\n");
+    human.push_str("  yao fetch qasmbench list small           # list only small circuits\n");
+
     let json_value = serde_json::json!({
         "source": "qasmbench",
-        "circuits": QASMBENCH_SMALL.iter().map(|(name, desc)| {
-            serde_json::json!({"name": name, "description": desc})
-        }).collect::<Vec<_>>(),
+        "circuits": all_circuits,
     });
-
-    let mut human = String::from("QASMBench circuits (small, 2-10 qubits):\n\n");
-    for (name, desc) in QASMBENCH_SMALL {
-        human.push_str(&format!("  {name:<30} {desc}\n"));
-    }
-    human.push_str("\nUsage:\n");
-    human.push_str("  yao fetch qasmbench grover              # prefix match → grover_n2\n");
-    human.push_str("  yao fetch qasmbench qft_n4 -o qft.qasm  # save to file\n");
-    human.push_str("  yao fetch qasmbench medium/shor_n5       # medium/large by path\n");
-    human.push_str("  yao fetch qasmbench grover | yao fromqasm - | yao run - --shots 100\n");
 
     out.emit(&human, &json_value)
 }

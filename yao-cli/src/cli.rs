@@ -193,10 +193,11 @@ Examples:
 Sources: qasmbench
 
 Examples:
-  yao fetch qasmbench list                 # List available circuits
-  yao fetch qasmbench grover               # Download by name (prefix match)
+  yao fetch qasmbench list                  # List all circuits (queries GitHub)
+  yao fetch qasmbench list --scale small    # List only small circuits
+  yao fetch qasmbench grover               # Download by name (auto-detect scale)
   yao fetch qasmbench qft_n4 -o qft.qasm   # Save to file
-  yao fetch qasmbench medium/shor_n5        # Medium/large by path
+  yao fetch qasmbench medium/shor_n5        # Explicit scale/name path
 
 Pipeline:
   yao fetch qasmbench grover | yao fromqasm - | yao run - --shots 100")]
@@ -205,6 +206,9 @@ Pipeline:
         source: String,
         /// Circuit name or 'list'
         name: String,
+        /// Filter by scale: small, medium, large (used with 'list')
+        #[arg(long)]
+        scale: Option<String>,
     },
 
     /// Print example circuit JSON to stdout

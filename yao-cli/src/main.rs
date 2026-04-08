@@ -77,7 +77,9 @@ fn main() -> anyhow::Result<()> {
         Commands::Toqasm { input } => commands::toqasm::toqasm(&input, &out),
         #[cfg(feature = "typst")]
         Commands::Visualize { circuit } => commands::visualize::visualize(&circuit, &out),
-        Commands::Fetch { source, name } => commands::fetch::fetch(&source, &name, &out),
+        Commands::Fetch { source, name, scale } => {
+            commands::fetch::fetch(&source, &name, scale.as_deref(), &out)
+        }
         Commands::Example { name, nqubits } => commands::example::example(&name, nqubits, &out),
         Commands::Completions { shell } => {
             let shell = shell
