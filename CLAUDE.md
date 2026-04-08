@@ -67,6 +67,7 @@ Gate → PositionedGate → Circuit → TensorNetwork / ArrayReg
 - `json.rs`: Circuit serialization
 - `einsum.rs`, `tensors.rs`: Tensor network export (supports qudits)
 - `noise.rs`: Noise channel definitions
+- `qasm.rs` (feature-gated): OpenQASM 2.0 import/export via the `openqasm` crate. Import decomposes all gates to U+CX primitives. Export maps Gate variants to standard qelib1.inc names.
 - `torch_contractor.rs` (feature-gated): libtorch-based tensor network contraction via omeco greedy optimizer
 - `typst.rs` (feature-gated): PDF circuit rendering via embedded Typst
 
@@ -87,6 +88,11 @@ yao run circuit.json --shots 1024   # Simulate and measure
 yao run circuit.json --op "Z(0)Z(1)"  # Expectation value
 yao simulate circuit.json | yao probs -   # Pipeline workflow
 yao toeinsum circuit.json      # Export as tensor network
+yao fromqasm circuit.qasm      # Import OpenQASM 2.0 circuit
+yao toqasm circuit.json        # Export circuit as OpenQASM 2.0
+yao fetch qasmbench list       # List QASMBench benchmark circuits
+yao fetch qasmbench grover     # Download circuit (auto-detect scale)
+yao fetch qasmbench grover | yao fromqasm - | yao run - --shots 100
 ```
 
 All commands output human-readable text in a terminal, JSON when piped. Use `--json` to force JSON. Use `-` for stdin input.
@@ -94,6 +100,7 @@ All commands output human-readable text in a terminal, JSON when piped. Use `--j
 ## Feature Flags
 
 - `parallel`: Enable rayon for parallel operations
+- `qasm`: OpenQASM 2.0 import/export (enabled by default in CLI)
 - `torch`: PyTorch tensor contraction via tch
 - `typst`: PDF circuit diagram generation
 

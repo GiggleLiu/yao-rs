@@ -11,6 +11,8 @@ pub mod json;
 pub mod measure;
 pub mod noise;
 pub mod operator;
+#[cfg(feature = "qasm")]
+pub mod qasm;
 pub mod register;
 pub mod tensors;
 #[cfg(feature = "torch")]

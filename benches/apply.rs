@@ -6,7 +6,7 @@
 use criterion::{BenchmarkId, Criterion, black_box, criterion_group, criterion_main};
 use std::f64::consts::PI;
 use yao_rs::circuit::CircuitElement;
-use yao_rs::{Circuit, Gate, State, apply, control, put};
+use yao_rs::{ArrayReg, Circuit, Gate, apply, control, put};
 
 /// Build a circuit with H gates on all qubits.
 fn h_all_circuit(n: usize) -> Circuit {
@@ -74,7 +74,7 @@ fn bench_apply_h_all(c: &mut Criterion) {
 
     for n_qubits in [8, 10, 12, 14, 16] {
         let circuit = h_all_circuit(n_qubits);
-        let state = State::zero_state(&vec![2; n_qubits]);
+        let state = ArrayReg::zero_state(n_qubits);
 
         group.bench_with_input(BenchmarkId::new("new", n_qubits), &n_qubits, |b, _| {
             b.iter(|| apply(black_box(&circuit), black_box(&state)))
@@ -89,7 +89,7 @@ fn bench_apply_qft(c: &mut Criterion) {
 
     for n_qubits in [4, 6, 8, 10, 12] {
         let circuit = qft_circuit(n_qubits);
-        let state = State::zero_state(&vec![2; n_qubits]);
+        let state = ArrayReg::zero_state(n_qubits);
 
         group.bench_with_input(BenchmarkId::new("new", n_qubits), &n_qubits, |b, _| {
             b.iter(|| apply(black_box(&circuit), black_box(&state)))
@@ -104,7 +104,7 @@ fn bench_apply_mixed(c: &mut Criterion) {
 
     for n_qubits in [8, 10, 12, 14, 16] {
         let circuit = mixed_circuit(n_qubits);
-        let state = State::zero_state(&vec![2; n_qubits]);
+        let state = ArrayReg::zero_state(n_qubits);
 
         group.bench_with_input(BenchmarkId::new("new", n_qubits), &n_qubits, |b, _| {
             b.iter(|| apply(black_box(&circuit), black_box(&state)))
@@ -121,7 +121,7 @@ fn bench_scaling(c: &mut Criterion) {
     // Test scaling from 8 to 18 qubits with H gates
     for n_qubits in [8, 10, 12, 14, 16, 18] {
         let circuit = h_all_circuit(n_qubits);
-        let state = State::zero_state(&vec![2; n_qubits]);
+        let state = ArrayReg::zero_state(n_qubits);
 
         group.bench_with_input(BenchmarkId::new("h_gates", n_qubits), &n_qubits, |b, _| {
             b.iter(|| apply(black_box(&circuit), black_box(&state)))

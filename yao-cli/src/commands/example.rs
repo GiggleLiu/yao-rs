@@ -7,9 +7,7 @@ pub fn example(name: &str, nqubits: Option<usize>, out: &OutputConfig) -> Result
         "bell" => bell(nqubits.unwrap_or(2))?,
         "ghz" => ghz(nqubits.unwrap_or(3))?,
         "qft" => qft(nqubits.unwrap_or(4))?,
-        _ => bail!(
-            "Unknown example: '{name}'\n\nAvailable examples: bell, ghz, qft"
-        ),
+        _ => bail!("Unknown example: '{name}'\n\nAvailable examples: bell, ghz, qft"),
     };
     let json_value: serde_json::Value = serde_json::from_str(&circuit_to_json(&circuit))?;
     out.emit(&format!("{circuit}"), &json_value)
@@ -19,10 +17,7 @@ fn bell(n: usize) -> Result<Circuit> {
     if n < 2 {
         bail!("Bell circuit requires at least 2 qubits");
     }
-    let elements = vec![
-        put(vec![0], Gate::H),
-        control(vec![0], vec![1], Gate::X),
-    ];
+    let elements = vec![put(vec![0], Gate::H), control(vec![0], vec![1], Gate::X)];
     Circuit::qubits(n, elements).map_err(|e| anyhow::anyhow!("{e}"))
 }
 

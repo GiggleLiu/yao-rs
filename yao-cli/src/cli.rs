@@ -165,6 +165,52 @@ Examples:
         circuit: String,
     },
 
+    /// Convert OpenQASM 2.0 file to circuit JSON
+    #[cfg(feature = "qasm")]
+    #[command(after_help = "\
+Examples:
+  yao fromqasm circuit.qasm
+  yao fromqasm circuit.qasm --output circuit.json
+  yao fromqasm circuit.qasm | yao run - --shots 1024")]
+    Fromqasm {
+        /// QASM file (use - for stdin)
+        input: String,
+    },
+
+    /// Export circuit as OpenQASM 2.0
+    #[cfg(feature = "qasm")]
+    #[command(after_help = "\
+Examples:
+  yao toqasm circuit.json
+  yao example bell | yao toqasm -")]
+    Toqasm {
+        /// Circuit JSON file (use - for stdin)
+        input: String,
+    },
+
+    /// Download benchmark circuits from online repositories
+    #[command(after_help = "\
+Sources: qasmbench
+
+Examples:
+  yao fetch qasmbench list                  # List all circuits (queries GitHub)
+  yao fetch qasmbench list --scale small    # List only small circuits
+  yao fetch qasmbench grover               # Download by name (auto-detect scale)
+  yao fetch qasmbench qft_n4 -o qft.qasm   # Save to file
+  yao fetch qasmbench medium/shor_n5        # Explicit scale/name path
+
+Pipeline:
+  yao fetch qasmbench grover | yao fromqasm - | yao run - --shots 100")]
+    Fetch {
+        /// Source repository (qasmbench)
+        source: String,
+        /// Circuit name or 'list'
+        name: String,
+        /// Filter by scale: small, medium, large (used with 'list')
+        #[arg(long)]
+        scale: Option<String>,
+    },
+
     /// Print example circuit JSON to stdout
     #[command(after_help = "\
 Available examples: bell, ghz, qft
