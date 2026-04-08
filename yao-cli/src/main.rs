@@ -23,7 +23,7 @@ fn main() -> anyhow::Result<()> {
         }
     };
 
-    let auto_json = matches!(
+    let mut auto_json = matches!(
         cli.command,
         Commands::Inspect { .. }
             | Commands::Simulate { .. }
@@ -34,10 +34,14 @@ fn main() -> anyhow::Result<()> {
             | Commands::Toeinsum { .. }
             | Commands::Example { .. }
             | Commands::Fetch { .. }
-    ) || cfg!(feature = "qasm") && matches!(
-        cli.command,
-        Commands::Fromqasm { .. } | Commands::Toqasm { .. }
     );
+    #[cfg(feature = "qasm")]
+    {
+        auto_json |= matches!(
+            cli.command,
+            Commands::Fromqasm { .. } | Commands::Toqasm { .. }
+        );
+    }
 
     let out = OutputConfig {
         output: cli.output,
@@ -77,9 +81,11 @@ fn main() -> anyhow::Result<()> {
         Commands::Toqasm { input } => commands::toqasm::toqasm(&input, &out),
         #[cfg(feature = "typst")]
         Commands::Visualize { circuit } => commands::visualize::visualize(&circuit, &out),
-        Commands::Fetch { source, name, scale } => {
-            commands::fetch::fetch(&source, &name, scale.as_deref(), &out)
-        }
+        Commands::Fetch {
+            source,
+            name,
+            scale,
+        } => commands::fetch::fetch(&source, &name, scale.as_deref(), &out),
         Commands::Example { name, nqubits } => commands::example::example(&name, nqubits, &out),
         Commands::Completions { shell } => {
             let shell = shell

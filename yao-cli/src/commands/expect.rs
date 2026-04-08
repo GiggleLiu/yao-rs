@@ -49,19 +49,18 @@ pub fn compute_expectation(reg: &ArrayReg, operator: &yao_rs::OperatorPolynomial
                 continue;
             }
 
-            for j in 0..total_dim {
-                let psi_j = state[j];
+            for (j, &psi_j) in state.iter().enumerate().take(total_dim) {
                 if psi_j.norm() < 1e-15 {
                     continue;
                 }
 
                 let mut matrix_elem = Complex64::new(1.0, 0.0);
-                for site in 0..n {
+                for (site, op) in site_ops.iter().enumerate().take(n) {
                     // Extract bit for this site from basis index
                     // Site 0 is MSB: bit = (index >> (n-1-site)) & 1
                     let i_bit = (i >> (n - 1 - site)) & 1;
                     let j_bit = (j >> (n - 1 - site)) & 1;
-                    matrix_elem *= site_ops[site][[i_bit, j_bit]];
+                    matrix_elem *= op[[i_bit, j_bit]];
                 }
 
                 term_val += psi_i_conj * matrix_elem * psi_j;

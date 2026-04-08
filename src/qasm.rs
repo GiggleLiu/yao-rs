@@ -23,7 +23,7 @@
 
 use crate::circuit::{Circuit, CircuitElement, control, put};
 use crate::gate::Gate;
-use openqasm::{GenericError, GateWriter, Linearize, ProgramVisitor, Value};
+use openqasm::{GateWriter, GenericError, Linearize, ProgramVisitor, Value};
 use std::cell::RefCell;
 use std::f64::consts::PI;
 use std::rc::Rc;
@@ -102,10 +102,10 @@ fn make_parser<'a>(cache: &'a mut openqasm::SourceCache) -> openqasm::Parser<'a>
     // We parse that source, append our extras, and replace the hardcoded file.
     let mut policy = openqasm::parser::FilePolicy::filesystem();
     // Append extra gates to the existing hardcoded qelib1.inc
-    if let openqasm::parser::FilePolicy::FileSystem { ref mut hardcoded } = policy {
-        if let Some(base) = hardcoded.get_mut(std::path::Path::new("qelib1.inc")) {
-            base.push_str(EXTRA_GATES);
-        }
+    if let openqasm::parser::FilePolicy::FileSystem { ref mut hardcoded } = policy
+        && let Some(base) = hardcoded.get_mut(std::path::Path::new("qelib1.inc"))
+    {
+        base.push_str(EXTRA_GATES);
     }
     openqasm::Parser::new(cache).with_file_policy(policy)
 }

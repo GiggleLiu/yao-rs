@@ -3,10 +3,8 @@ use anyhow::{Context, Result, bail};
 use std::io::Write;
 use std::process::Command;
 
-const QASMBENCH_RAW_URL: &str =
-    "https://raw.githubusercontent.com/pnnl/QASMBench/master";
-const QASMBENCH_API_URL: &str =
-    "https://api.github.com/repos/pnnl/QASMBench/contents";
+const QASMBENCH_RAW_URL: &str = "https://raw.githubusercontent.com/pnnl/QASMBench/master";
+const QASMBENCH_API_URL: &str = "https://api.github.com/repos/pnnl/QASMBench/contents";
 const SCALES: &[&str] = &["small", "medium", "large"];
 
 pub fn fetch(source: &str, name: &str, scale: Option<&str>, out: &OutputConfig) -> Result<()> {
@@ -58,8 +56,8 @@ fn fetch_qasmbench(name: &str, scale: Option<&str>, out: &OutputConfig) -> Resul
 fn list_qasmbench_dirs(scale: &str) -> Result<Vec<String>> {
     let url = format!("{QASMBENCH_API_URL}/{scale}");
     let json_str = download_url(&url)?;
-    let entries: Vec<serde_json::Value> = serde_json::from_str(&json_str)
-        .context("Failed to parse GitHub API response")?;
+    let entries: Vec<serde_json::Value> =
+        serde_json::from_str(&json_str).context("Failed to parse GitHub API response")?;
     let mut dirs: Vec<String> = entries
         .iter()
         .filter(|e| e["type"].as_str() == Some("dir"))
@@ -120,10 +118,7 @@ fn list_qasmbench(filter_scale: Option<&str>, out: &OutputConfig) -> Result<()> 
     for &scale in &scales {
         let dirs = list_qasmbench_dirs(scale)?;
 
-        human.push_str(&format!(
-            "QASMBench — {scale} ({} circuits):\n",
-            dirs.len()
-        ));
+        human.push_str(&format!("QASMBench — {scale} ({} circuits):\n", dirs.len()));
         for dir in &dirs {
             human.push_str(&format!("  {dir}\n"));
             all_circuits.push(serde_json::json!({"name": dir, "scale": scale}));

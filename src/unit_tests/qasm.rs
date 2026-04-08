@@ -153,10 +153,8 @@ swap q[0], q[1];
     // Verify by comparing with a native yao-rs SWAP circuit.
     use crate::circuit::{Circuit, put};
     use crate::gate::Gate;
-    let native = Circuit::qubits(2, vec![
-        put(vec![0], Gate::X),
-        put(vec![0, 1], Gate::SWAP),
-    ]).unwrap();
+    let native =
+        Circuit::qubits(2, vec![put(vec![0], Gate::X), put(vec![0, 1], Gate::SWAP)]).unwrap();
     let native_probs = {
         let reg = ArrayReg::zero_state(2);
         let out = apply(&native, &reg);
@@ -405,13 +403,13 @@ fn test_roundtrip_controlled_gates() {
 
     let elements = vec![
         put(vec![0], Gate::H),
-        control(vec![0], vec![1], Gate::X),      // cx
-        control(vec![0], vec![1], Gate::Z),      // cz
-        control(vec![0], vec![1], Gate::Rx(1.0)), // crx (decomposed inline)
-        control(vec![0], vec![1], Gate::Ry(0.5)), // cry (decomposed inline)
-        control(vec![0], vec![1], Gate::Rz(0.3)), // crz
+        control(vec![0], vec![1], Gate::X),          // cx
+        control(vec![0], vec![1], Gate::Z),          // cz
+        control(vec![0], vec![1], Gate::Rx(1.0)),    // crx (decomposed inline)
+        control(vec![0], vec![1], Gate::Ry(0.5)),    // cry (decomposed inline)
+        control(vec![0], vec![1], Gate::Rz(0.3)),    // crz
         control(vec![0], vec![1], Gate::Phase(0.7)), // cu1
-        put(vec![0, 1], Gate::SWAP),             // swap (decomposed to 3 cx)
+        put(vec![0, 1], Gate::SWAP),                 // swap (decomposed to 3 cx)
     ];
     let circuit = Circuit::qubits(2, elements).unwrap();
 
@@ -431,11 +429,15 @@ fn test_roundtrip_controlled_gates() {
 fn test_export_uses_extended_gate_names() {
     use crate::circuit::{Circuit, control, put};
     use crate::gate::Gate;
-    let circuit = Circuit::qubits(2, vec![
-        put(vec![0, 1], Gate::SWAP),
-        put(vec![0], Gate::SqrtX),
-        control(vec![0], vec![1], Gate::Rx(1.0)),
-    ]).unwrap();
+    let circuit = Circuit::qubits(
+        2,
+        vec![
+            put(vec![0, 1], Gate::SWAP),
+            put(vec![0], Gate::SqrtX),
+            control(vec![0], vec![1], Gate::Rx(1.0)),
+        ],
+    )
+    .unwrap();
     let qasm = to_qasm(&circuit).unwrap();
     assert!(qasm.contains("swap q[0],q[1];"));
     assert!(qasm.contains("sx q[0];"));
