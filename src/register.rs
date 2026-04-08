@@ -67,6 +67,22 @@ impl ArrayReg {
         Self { nbits, state }
     }
 
+    /// Deterministic benchmark state with amplitudes derived from the basis index.
+    pub fn deterministic_state(nbits: usize) -> Self {
+        let dim = 1usize << nbits;
+        let mut state: Vec<Complex64> = (0..dim)
+            .map(|k| {
+                let kf = k as f64;
+                Complex64::new((0.1 * kf).cos(), (0.2 * kf).sin())
+            })
+            .collect();
+        let norm = state.iter().map(|amp| amp.norm_sqr()).sum::<f64>().sqrt();
+        for amp in &mut state {
+            *amp /= norm;
+        }
+        Self { nbits, state }
+    }
+
     pub fn nqubits(&self) -> usize {
         self.nbits
     }
@@ -166,5 +182,14 @@ mod tests {
         let r0 = ArrayReg::from_vec(1, vec![Complex64::new(1.0, 0.0), Complex64::new(0.0, 0.0)]);
         let r1 = ArrayReg::from_vec(1, vec![Complex64::new(0.0, 0.0), Complex64::new(1.0, 0.0)]);
         assert_abs_diff_eq!(r0.fidelity(&r1), 0.0, epsilon = 1e-12);
+    }
+
+    #[test]
+    fn test_deterministic_state() {
+        let reg = ArrayReg::deterministic_state(4);
+        assert_eq!(reg.nqubits(), 4);
+        assert_eq!(reg.state.len(), 16);
+        assert_abs_diff_eq!(reg.norm(), 1.0, epsilon = 1e-12);
+        assert!((reg.state[0] - reg.state[1]).norm() > 1e-6);
     }
 }
