@@ -90,6 +90,9 @@ yao simulate circuit.json | yao probs -   # Pipeline workflow
 yao toeinsum circuit.json      # Export as tensor network
 yao fromqasm circuit.qasm      # Import OpenQASM 2.0 circuit
 yao toqasm circuit.json        # Export circuit as OpenQASM 2.0
+yao fetch qasmbench list       # List QASMBench benchmark circuits
+yao fetch qasmbench grover     # Download circuit (auto-detect scale)
+yao fetch qasmbench grover | yao fromqasm - | yao run - --shots 100
 ```
 
 All commands output human-readable text in a terminal, JSON when piped. Use `--json` to force JSON. Use `-` for stdin input.
