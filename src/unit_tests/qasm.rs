@@ -278,11 +278,13 @@ fn test_to_qasm_parametric() {
     let elements = vec![
         put(vec![0], Gate::Rx(1.5)),
         put(vec![0], Gate::Phase(0.25)),
+        put(vec![0], Gate::SqrtX),
     ];
     let circuit = Circuit::qubits(1, elements).unwrap();
     let qasm = to_qasm(&circuit).unwrap();
     assert!(qasm.contains("rx(1.5) q[0];"));
     assert!(qasm.contains("u1(0.25) q[0];"));
+    assert!(qasm.contains("sx q[0];"));
 }
 
 #[test]
@@ -420,28 +422,24 @@ fn test_roundtrip_controlled_gates() {
     let probs1 = crate::measure::probs(&apply(&circuit, &reg), None);
     let probs2 = crate::measure::probs(&apply(&reimported.circuit, &reg), None);
 
-    // Relaxed epsilon: inline decomposition round-trips through float formatting
     for (p1, p2) in probs1.iter().zip(probs2.iter()) {
-        assert_abs_diff_eq!(p1, p2, epsilon = 1e-8);
+        assert_abs_diff_eq!(p1, p2, epsilon = 1e-10);
     }
 }
 
 #[test]
-fn test_export_decomposes_nonstandard_gates() {
-    use crate::circuit::{Circuit, put};
+fn test_export_uses_extended_gate_names() {
+    use crate::circuit::{Circuit, control, put};
     use crate::gate::Gate;
     let circuit = Circuit::qubits(2, vec![
         put(vec![0, 1], Gate::SWAP),
         put(vec![0], Gate::SqrtX),
+        control(vec![0], vec![1], Gate::Rx(1.0)),
     ]).unwrap();
     let qasm = to_qasm(&circuit).unwrap();
-    // SWAP decomposed to 3 CX, SqrtX decomposed to sdg+h+sdg
-    assert!(qasm.contains("cx q[0],q[1]"));
-    assert!(qasm.contains("sdg q[0]"));
-    assert!(qasm.contains("h q[0]"));
-    // Should NOT contain non-standard gate names
-    assert!(!qasm.contains("swap q["));
-    assert!(!qasm.contains("sx q["));
+    assert!(qasm.contains("swap q[0],q[1];"));
+    assert!(qasm.contains("sx q[0];"));
+    assert!(qasm.contains("crx(1) q[0],q[1];"));
 }
 
 #[test]

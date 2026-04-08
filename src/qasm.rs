@@ -291,8 +291,8 @@ impl GateWriter for CircuitBuilder {
 
 /// Export a circuit as OpenQASM 2.0 source code.
 ///
-/// Uses only gates from the standard qelib1.inc. Non-standard gates
-/// (SWAP, SqrtX, etc.) are decomposed inline.
+/// Uses the extended qelib1.inc gate set (same as IBM Qiskit).
+/// Gates like swap, sx, crx, cry are emitted directly.
 pub fn to_qasm(circuit: &Circuit) -> Result<String, QasmError> {
     let n = circuit.num_sites();
     let mut out = String::new();
@@ -358,16 +358,12 @@ fn uncontrolled_gate_qasm(gate: &Gate, targets: &[usize]) -> Result<String, Qasm
         Gate::H => format!("h {q};\n"),
         Gate::S => format!("s {q};\n"),
         Gate::T => format!("t {q};\n"),
+        Gate::SWAP => format!("swap {q};\n"),
+        Gate::SqrtX => format!("sx {q};\n"),
         Gate::Phase(theta) => format!("u1({theta}) {q};\n"),
         Gate::Rx(theta) => format!("rx({theta}) {q};\n"),
         Gate::Ry(theta) => format!("ry({theta}) {q};\n"),
         Gate::Rz(theta) => format!("rz({theta}) {q};\n"),
-        // Decompose non-standard gates inline
-        Gate::SWAP => {
-            let (a, b) = (targets[0], targets[1]);
-            format!("cx q[{a}],q[{b}];\ncx q[{b}],q[{a}];\ncx q[{a}],q[{b}];\n")
-        }
-        Gate::SqrtX => format!("sdg {q};\nh {q};\nsdg {q};\n"),
         Gate::SqrtY | Gate::SqrtW | Gate::ISWAP | Gate::FSim(_, _) => {
             return Err(QasmError::UnsupportedGate(format!(
                 "{gate} has no standard QASM 2.0 equivalent"
@@ -395,44 +391,17 @@ fn controlled_gate_qasm(
             .join(",")
     };
     let line = match (gate, ctrls.len(), targets.len()) {
-        // Standard qelib1.inc controlled gates
         (Gate::X, 1, 1) => format!("cx {};\n", all(&[ctrls, targets])),
         (Gate::X, 2, 1) => format!("ccx {};\n", all(&[ctrls, targets])),
         (Gate::Y, 1, 1) => format!("cy {};\n", all(&[ctrls, targets])),
         (Gate::Z, 1, 1) => format!("cz {};\n", all(&[ctrls, targets])),
         (Gate::H, 1, 1) => format!("ch {};\n", all(&[ctrls, targets])),
+        (Gate::SWAP, 1, 2) => format!("cswap {};\n", all(&[ctrls, targets])),
+        (Gate::SqrtX, 1, 1) => format!("csx {};\n", all(&[ctrls, targets])),
+        (Gate::Rx(theta), 1, 1) => format!("crx({theta}) {};\n", all(&[ctrls, targets])),
+        (Gate::Ry(theta), 1, 1) => format!("cry({theta}) {};\n", all(&[ctrls, targets])),
         (Gate::Rz(theta), 1, 1) => format!("crz({theta}) {};\n", all(&[ctrls, targets])),
         (Gate::Phase(theta), 1, 1) => format!("cu1({theta}) {};\n", all(&[ctrls, targets])),
-        // Decompose non-standard controlled gates inline
-        (Gate::Rx(theta), 1, 1) => {
-            let (a, b) = (ctrls[0], targets[0]);
-            format!(
-                "u1({pi2}) q[{b}];\ncx q[{a}],q[{b}];\nu3({nt},0,0) q[{b}];\ncx q[{a}],q[{b}];\nu3({t},{npi2},0) q[{b}];\n",
-                pi2 = PI / 2.0, nt = -theta / 2.0, t = theta / 2.0, npi2 = -PI / 2.0
-            )
-        }
-        (Gate::Ry(theta), 1, 1) => {
-            let (a, b) = (ctrls[0], targets[0]);
-            format!(
-                "ry({ht}) q[{b}];\ncx q[{a}],q[{b}];\nry({nht}) q[{b}];\ncx q[{a}],q[{b}];\n",
-                ht = theta / 2.0, nht = -theta / 2.0
-            )
-        }
-        (Gate::SWAP, 1, 2) => {
-            // cswap a,b,c = cx c,b; ccx a,b,c; cx c,b
-            let (a, b, c) = (ctrls[0], targets[0], targets[1]);
-            format!(
-                "cx q[{c}],q[{b}];\nccx q[{a}],q[{b}],q[{c}];\ncx q[{c}],q[{b}];\n"
-            )
-        }
-        (Gate::SqrtX, 1, 1) => {
-            // csx a,b = h b; cu1(pi/2) a,b; h b
-            let (a, b) = (ctrls[0], targets[0]);
-            format!(
-                "h q[{b}];\ncu1({pi2}) q[{a}],q[{b}];\nh q[{b}];\n",
-                pi2 = PI / 2.0
-            )
-        }
         _ => {
             return Err(QasmError::UnsupportedGate(format!(
                 "controlled {gate} with {} controls has no QASM 2.0 equivalent",
