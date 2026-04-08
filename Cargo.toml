@@ -41,6 +41,18 @@ criterion = { version = "0.5", features = ["html_reports"] }
 name = "apply"
 harness = false
 
+[[bench]]
+name = "gates"
+harness = false
+
+[[bench]]
+name = "qft"
+harness = false
+
+[[bench]]
+name = "density"
+harness = false
+
 [[example]]
 name = "circuit_pdf"
 required-features = ["typst"]
