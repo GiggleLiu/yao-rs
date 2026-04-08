@@ -117,6 +117,99 @@ impl DensityMatrix {
             .map(|value| value * value.ln())
             .sum::<f64>()
     }
+
+    /// Apply a single gate as rho -> U rho U†.
+    fn apply_gate(&mut self, pg: &crate::circuit::PositionedGate) {
+        let dim = self.dim();
+        let single_circuit = crate::circuit::Circuit::qubits(
+            self.nbits,
+            vec![crate::circuit::CircuitElement::Gate(pg.clone())],
+        )
+        .unwrap();
+
+        let mut columns = Vec::with_capacity(dim);
+        for basis_state in 0..dim {
+            let mut state = vec![Complex64::new(0.0, 0.0); dim];
+            state[basis_state] = Complex64::new(1.0, 0.0);
+            let mut reg = ArrayReg::from_vec(self.nbits, state);
+            crate::apply::apply_inplace(&single_circuit, &mut reg);
+            columns.push(reg.state);
+        }
+
+        let mut transformed = vec![Complex64::new(0.0, 0.0); dim * dim];
+        for row in 0..dim {
+            for col in 0..dim {
+                let mut acc = Complex64::new(0.0, 0.0);
+                for left in 0..dim {
+                    for right in 0..dim {
+                        acc += columns[left][row]
+                            * self.state[left * dim + right]
+                            * columns[right][col].conj();
+                    }
+                }
+                transformed[row * dim + col] = acc;
+            }
+        }
+
+        self.state = transformed;
+    }
+
+    /// Apply a noise channel as rho -> sum_i K_i rho K_i†.
+    fn apply_channel(&mut self, channel: &crate::noise::NoiseChannel, locs: &[usize]) {
+        let dim = self.dim();
+        let mut new_state = vec![Complex64::new(0.0, 0.0); dim * dim];
+
+        for kraus_op in channel.kraus_operators() {
+            let full_k = self.embed_operator(&kraus_op, locs);
+            for row in 0..dim {
+                for col in 0..dim {
+                    let mut acc = Complex64::new(0.0, 0.0);
+                    for left in 0..dim {
+                        for right in 0..dim {
+                            acc += full_k[row * dim + left]
+                                * self.state[left * dim + right]
+                                * full_k[col * dim + right].conj();
+                        }
+                    }
+                    new_state[row * dim + col] += acc;
+                }
+            }
+        }
+
+        self.state = new_state;
+    }
+
+    /// Embed a local operator into the full Hilbert space.
+    fn embed_operator(&self, local_op: &Array2<Complex64>, locs: &[usize]) -> Vec<Complex64> {
+        let dim = self.dim();
+        let mut full = vec![Complex64::new(0.0, 0.0); dim * dim];
+
+        for row in 0..dim {
+            for col in 0..dim {
+                let mut matches_outside = true;
+                for qubit in 0..self.nbits {
+                    if !locs.contains(&qubit) && ((row >> qubit) & 1) != ((col >> qubit) & 1) {
+                        matches_outside = false;
+                        break;
+                    }
+                }
+                if !matches_outside {
+                    continue;
+                }
+
+                let mut local_row = 0usize;
+                let mut local_col = 0usize;
+                for (idx, &loc) in locs.iter().enumerate() {
+                    local_row |= ((row >> loc) & 1) << idx;
+                    local_col |= ((col >> loc) & 1) << idx;
+                }
+
+                full[row * dim + col] = local_op[[local_row, local_col]];
+            }
+        }
+
+        full
+    }
 }
 
 fn hermitian_eigenvalues(matrix: &Array2<Complex64>) -> Vec<f64> {
@@ -182,33 +275,15 @@ impl Register for DensityMatrix {
     }
 
     fn apply(&mut self, circuit: &Circuit) {
-        let dim = self.dim();
-        let mut columns = Vec::with_capacity(dim);
+        use crate::circuit::CircuitElement;
 
-        for basis_state in 0..dim {
-            let mut state = vec![Complex64::new(0.0, 0.0); dim];
-            state[basis_state] = Complex64::new(1.0, 0.0);
-            let mut reg = ArrayReg::from_vec(self.nbits, state);
-            crate::apply::apply_inplace(circuit, &mut reg);
-            columns.push(reg.state);
-        }
-
-        let mut transformed = vec![Complex64::new(0.0, 0.0); dim * dim];
-        for row in 0..dim {
-            for col in 0..dim {
-                let mut acc = Complex64::new(0.0, 0.0);
-                for left in 0..dim {
-                    for right in 0..dim {
-                        acc += columns[left][row]
-                            * self.state[left * dim + right]
-                            * columns[right][col].conj();
-                    }
-                }
-                transformed[row * dim + col] = acc;
+        for element in &circuit.elements {
+            match element {
+                CircuitElement::Gate(pg) => self.apply_gate(pg),
+                CircuitElement::Channel(pc) => self.apply_channel(&pc.channel, &pc.locs),
+                CircuitElement::Annotation(_) => {}
             }
         }
-
-        self.state = transformed;
     }
 
     fn state_data(&self) -> &[Complex64] {
@@ -271,5 +346,33 @@ mod tests {
             std::f64::consts::LN_2,
             epsilon = 1e-8
         );
+    }
+
+    #[test]
+    fn test_dm_apply_with_noise_channel() {
+        use crate::circuit::{Circuit, channel, put};
+        use crate::gate::Gate;
+        use crate::noise::NoiseChannel;
+
+        let circ = Circuit::qubits(
+            1,
+            vec![
+                put(vec![0], Gate::H),
+                channel(vec![0], NoiseChannel::BitFlip { p: 0.1 }),
+            ],
+        )
+        .unwrap();
+
+        let mut dm = DensityMatrix::from_reg(&ArrayReg::zero_state(1));
+        dm.apply(&circ);
+        assert_abs_diff_eq!(dm.trace().re, 1.0, epsilon = 1e-12);
+        assert_abs_diff_eq!(dm.purity(), 1.0, epsilon = 1e-10);
+
+        let circ2 =
+            Circuit::qubits(1, vec![channel(vec![0], NoiseChannel::BitFlip { p: 0.5 })]).unwrap();
+        let mut dm2 = DensityMatrix::from_reg(&ArrayReg::zero_state(1));
+        dm2.apply(&circ2);
+        assert_abs_diff_eq!(dm2.trace().re, 1.0, epsilon = 1e-12);
+        assert_abs_diff_eq!(dm2.purity(), 0.5, epsilon = 1e-10);
     }
 }

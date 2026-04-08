@@ -157,10 +157,14 @@ fn test_qft_analytical() {
 
         let amp = 1.0 / (dim as f64).sqrt();
         for idx in 0..dim {
-            let phase = 2.0 * PI * (idx as f64) / (dim as f64);
+            let reversed = idx.reverse_bits() >> (usize::BITS as usize - nq);
+            let phase = 2.0 * PI * (reversed as f64) / (dim as f64);
             let expected = Complex64::new(amp * phase.cos(), amp * phase.sin());
             let diff = (result.state_vec()[idx] - expected).norm();
-            assert!(diff < ATOL_STATE, "QFT analytical/{nq}q[{idx}]: diff={diff}");
+            assert!(
+                diff < ATOL_STATE,
+                "QFT analytical/{nq}q[{idx}]: diff={diff}"
+            );
         }
     }
 }
