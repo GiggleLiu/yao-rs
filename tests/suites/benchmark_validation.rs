@@ -7,8 +7,8 @@ use num_complex::Complex64;
 
 use crate::common::benchmark_data::*;
 use yao_rs::{
-    ArrayReg, Circuit, DensityMatrix, Gate, NoiseChannel, Op, OperatorPolynomial,
-    OperatorString, Register, apply, channel, control, expect_dm, put,
+    ArrayReg, Circuit, DensityMatrix, Gate, NoiseChannel, Op, OperatorPolynomial, OperatorString,
+    Register, apply, channel, control, expect_dm, put,
 };
 
 const ATOL_STATE: f64 = 1e-10;

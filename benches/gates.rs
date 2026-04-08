@@ -1,6 +1,8 @@
 use criterion::{BenchmarkId, Criterion, black_box, criterion_group, criterion_main};
 use yao_rs::{ArrayReg, Circuit, Gate, apply, control, put};
 
+type CircuitBuilder = Box<dyn Fn(usize) -> Circuit>;
+
 fn bench_gates_1q(c: &mut Criterion) {
     let mut group = c.benchmark_group("gates_1q");
     let gates = vec![
@@ -26,7 +28,7 @@ fn bench_gates_1q(c: &mut Criterion) {
 
 fn bench_gates_2q(c: &mut Criterion) {
     let mut group = c.benchmark_group("gates_2q");
-    let gates: Vec<(&str, Box<dyn Fn(usize) -> Circuit>)> = vec![
+    let gates: Vec<(&str, CircuitBuilder)> = vec![
         (
             "CNOT",
             Box::new(|nq| Circuit::qubits(nq, vec![control(vec![2], vec![3], Gate::X)]).unwrap()),

@@ -119,8 +119,9 @@ impl DensityMatrix {
     }
 
     fn is_diagonal_matrix(matrix: &Array2<Complex64>) -> bool {
-        (0..matrix.nrows())
-            .all(|row| (0..matrix.ncols()).all(|col| row == col || matrix[[row, col]].norm() < 1e-15))
+        (0..matrix.nrows()).all(|row| {
+            (0..matrix.ncols()).all(|col| row == col || matrix[[row, col]].norm() < 1e-15)
+        })
     }
 
     fn conjugated_gate(gate: &crate::gate::Gate) -> crate::gate::Gate {
@@ -135,7 +136,8 @@ impl DensityMatrix {
     fn apply_left_map(&mut self, circuit: &crate::circuit::Circuit) {
         let dim = self.dim();
         for col in 0..dim {
-            let column: Vec<Complex64> = (0..dim).map(|row| self.state[self.idx(row, col)]).collect();
+            let column: Vec<Complex64> =
+                (0..dim).map(|row| self.state[self.idx(row, col)]).collect();
             let mut reg = ArrayReg::from_vec(self.nbits, column);
             crate::apply::apply_inplace(circuit, &mut reg);
             for row in 0..dim {
@@ -148,7 +150,8 @@ impl DensityMatrix {
     fn apply_right_map(&mut self, circuit: &crate::circuit::Circuit) {
         let dim = self.dim();
         for row in 0..dim {
-            let row_state: Vec<Complex64> = (0..dim).map(|col| self.state[self.idx(row, col)]).collect();
+            let row_state: Vec<Complex64> =
+                (0..dim).map(|col| self.state[self.idx(row, col)]).collect();
             let mut reg = ArrayReg::from_vec(self.nbits, row_state);
             crate::apply::apply_inplace(circuit, &mut reg);
             for col in 0..dim {
@@ -197,9 +200,11 @@ impl DensityMatrix {
                 is_diagonal: Self::is_diagonal_matrix(&kraus_op),
                 label: "kraus_conj".to_string(),
             };
-            let left_circuit =
-                crate::circuit::Circuit::qubits(self.nbits, vec![crate::circuit::put(locs.to_vec(), gate)])
-                    .unwrap();
+            let left_circuit = crate::circuit::Circuit::qubits(
+                self.nbits,
+                vec![crate::circuit::put(locs.to_vec(), gate)],
+            )
+            .unwrap();
             let right_circuit = crate::circuit::Circuit::qubits(
                 self.nbits,
                 vec![crate::circuit::put(locs.to_vec(), conjugated)],

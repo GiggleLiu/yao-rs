@@ -1,6 +1,8 @@
 use criterion::{BenchmarkId, Criterion, black_box, criterion_group, criterion_main};
 use yao_rs::circuit::CircuitElement;
-use yao_rs::{ArrayReg, Circuit, DensityMatrix, Gate, NoiseChannel, Register, channel, control, put};
+use yao_rs::{
+    ArrayReg, Circuit, DensityMatrix, Gate, NoiseChannel, Register, channel, control, put,
+};
 
 fn build_noisy_circuit(nq: usize) -> Circuit {
     let mut elements: Vec<CircuitElement> = Vec::new();
