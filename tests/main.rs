@@ -2,6 +2,8 @@ mod common;
 
 #[path = "suites/apply.rs"]
 mod apply;
+#[path = "suites/benchmark_validation.rs"]
+mod benchmark_validation;
 #[path = "suites/einsum.rs"]
 mod einsum;
 #[path = "suites/einsum_dm.rs"]
