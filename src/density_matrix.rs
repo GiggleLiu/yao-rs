@@ -228,60 +228,20 @@ impl DensityMatrix {
 }
 
 fn hermitian_eigenvalues(matrix: &Array2<Complex64>) -> Vec<f64> {
-    let mut current = matrix.clone();
-    let n = current.nrows();
-    let max_iter = 256usize;
-    let tolerance = 1e-12;
-
-    for _ in 0..max_iter {
-        let (q, r) = qr_decompose(&current);
-        current = r.dot(&q);
-
-        let mut off_diag_sum = 0.0;
-        for row in 0..n {
-            for col in 0..n {
-                if row != col {
-                    off_diag_sum += current[[row, col]].norm_sqr();
-                }
-            }
-        }
-        let off_diag = off_diag_sum.sqrt();
-        if off_diag < tolerance {
-            break;
-        }
-    }
-
-    (0..n).map(|idx| current[[idx, idx]].re.max(0.0)).collect()
-}
-
-fn qr_decompose(matrix: &Array2<Complex64>) -> (Array2<Complex64>, Array2<Complex64>) {
     let n = matrix.nrows();
-    let mut q = Array2::<Complex64>::zeros((n, n));
-    let mut r = Array2::<Complex64>::zeros((n, n));
-
-    for col in 0..n {
-        let mut v: Vec<Complex64> = (0..n).map(|row| matrix[[row, col]]).collect();
-
-        for prev in 0..col {
-            let coeff: Complex64 = (0..n).map(|row| q[[row, prev]].conj() * v[row]).sum();
-            r[[prev, col]] = coeff;
-            for row in 0..n {
-                v[row] -= coeff * q[[row, prev]];
-            }
-        }
-
-        let norm = v.iter().map(|value| value.norm_sqr()).sum::<f64>().sqrt();
-        if norm <= 1e-15 {
-            continue;
-        }
-
-        r[[col, col]] = Complex64::new(norm, 0.0);
-        for row in 0..n {
-            q[[row, col]] = v[row] / norm;
+    let mut m = faer::Mat::<faer::c64>::zeros(n, n);
+    for i in 0..n {
+        for j in 0..n {
+            m[(i, j)] = faer::c64::new(matrix[[i, j]].re, matrix[[i, j]].im);
         }
     }
 
-    (q, r)
+    m.as_ref()
+        .self_adjoint_eigenvalues(faer::Side::Lower)
+        .expect("eigendecomposition failed")
+        .into_iter()
+        .map(|v| v.max(0.0))
+        .collect()
 }
 
 impl Register for DensityMatrix {

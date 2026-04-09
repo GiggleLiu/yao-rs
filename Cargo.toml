@@ -21,6 +21,7 @@ qasm = ["dep:openqasm"]
 [dependencies]
 bitbasis = { path = "bitbasis" }
 num-complex = { version = "0.4", features = ["serde"] }
+faer = "0.24"
 ndarray = "0.17"
 omeco = "0.2"
 rand = "0.10"
