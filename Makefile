@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help build build-release check fmt fmt-check clippy test check-all clean doc doc-serve doc-open rustdoc example-qft run-plan module-graph cli bench
+.PHONY: help build build-release check fmt fmt-check clippy test check-all clean doc doc-serve doc-open rustdoc example-qft run-plan module-graph cli bench bench-gates bench-qft bench-density bench-julia bench-compare
 
 CARGO ?= cargo
 DOC_PORT ?= 3001
@@ -34,6 +34,8 @@ help:
 	@printf "  bench-gates   Run single-gate benchmarks\n"
 	@printf "  bench-qft     Run QFT circuit benchmarks\n"
 	@printf "  bench-density Run noisy density-matrix benchmarks\n"
+	@printf "  bench-julia   Run Julia (Yao.jl) benchmarks and generate ground truth\n"
+	@printf "  bench-compare Compare Rust vs Julia benchmark timings\n"
 	@printf "\nAutomation:\n"
 	@printf "  run-plan      Execute a plan with Claude autorun\n"
 	@printf "\nCLI:\n"
@@ -93,7 +95,10 @@ cli:
 	$(CARGO) install --path yao-cli
 
 bench: bench-gates bench-qft bench-density
-	@echo "All benchmarks complete. Results in target/criterion/"
+	@echo "All Rust benchmarks complete. Results in target/criterion/"
+
+bench-all: bench-julia bench
+	python3 benchmarks/compare.py
 
 bench-gates:
 	$(CARGO) bench --bench gates
@@ -103,6 +108,12 @@ bench-qft:
 
 bench-density:
 	$(CARGO) bench --bench density
+
+bench-julia:
+	cd benchmarks/julia && julia --project=. -e 'using Pkg; Pkg.instantiate()' && julia --project=. generate_ground_truth.jl
+
+bench-compare:
+	python3 benchmarks/compare.py
 
 clean:
 	$(CARGO) clean

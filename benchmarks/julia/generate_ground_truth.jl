@@ -12,6 +12,10 @@ const STATE_EVALS = 10
 const DENSITY_SAMPLES = 50
 const DENSITY_EVALS = 5
 
+# Only store full state vectors for n ≤ MAX_STATE_QUBITS (larger states are too big for JSON).
+# Timings are stored for all qubit counts.
+const MAX_STATE_QUBITS = 5
+
 # yao-rs uses 0-indexed qubits in MSB-first order, while Yao uses 1-indexed
 # qubits in LSB-first order. This mapping keeps the generated data aligned with
 # the Rust validation tests and existing Julia fixtures in this repository.
@@ -65,7 +69,9 @@ function single_gate_1q_data()
             gate = build_gate(nq)
             result = copy(reg)
             apply!(result, gate)
-            gate_data[string(nq)] = state_to_interleaved(statevec(result))
+            if nq <= MAX_STATE_QUBITS
+                gate_data[string(nq)] = state_to_interleaved(statevec(result))
+            end
 
             bench = @benchmark apply!(copy($reg), $gate) samples=STATE_SAMPLES evals=STATE_EVALS
             gate_timing[string(nq)] = minimum(bench).time
@@ -109,7 +115,9 @@ function single_gate_2q_data()
             gate = build_gate(nq)
             result = copy(reg)
             apply!(result, gate)
-            gate_data[string(nq)] = state_to_interleaved(statevec(result))
+            if nq <= MAX_STATE_QUBITS
+                gate_data[string(nq)] = state_to_interleaved(statevec(result))
+            end
 
             bench = @benchmark apply!(copy($reg), $gate) samples=STATE_SAMPLES evals=STATE_EVALS
             gate_timing[string(nq)] = minimum(bench).time
@@ -135,7 +143,9 @@ function single_gate_multi_data()
         )
         result = copy(reg)
         apply!(result, gate)
-        data["Toffoli"][string(nq)] = state_to_interleaved(statevec(result))
+        if nq <= MAX_STATE_QUBITS
+            data["Toffoli"][string(nq)] = state_to_interleaved(statevec(result))
+        end
 
         bench = @benchmark apply!(copy($reg), $gate) samples=STATE_SAMPLES evals=STATE_EVALS
         timing_data["Toffoli"][string(nq)] = minimum(bench).time
@@ -154,7 +164,9 @@ function qft_data()
         circuit = qft_circuit(nq)
         result = copy(reg)
         apply!(result, circuit)
-        data[string(nq)] = state_to_interleaved(statevec(result))
+        if nq <= MAX_STATE_QUBITS
+            data[string(nq)] = state_to_interleaved(statevec(result))
+        end
 
         bench = @benchmark apply!(copy($reg), $circuit) samples=STATE_SAMPLES evals=STATE_EVALS
         timing_data[string(nq)] = minimum(bench).time
