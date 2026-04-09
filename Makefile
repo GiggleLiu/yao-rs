@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help build build-release check fmt fmt-check clippy test check-all clean doc doc-serve doc-open rustdoc example-qft run-plan module-graph cli
+.PHONY: help build build-release check fmt fmt-check clippy test check-all clean doc doc-serve doc-open rustdoc example-qft run-plan module-graph cli bench
 
 CARGO ?= cargo
 DOC_PORT ?= 3001
@@ -29,6 +29,11 @@ help:
 	@printf "  doc-open      Build and open mdBook in browser\n"
 	@printf "  rustdoc       Build Rust API docs\n"
 	@printf "  module-graph  Generate module graph JSON from rustdoc\n"
+	@printf "\nBenchmarks:\n"
+	@printf "  bench         Run all Criterion benchmarks\n"
+	@printf "  bench-gates   Run single-gate benchmarks\n"
+	@printf "  bench-qft     Run QFT circuit benchmarks\n"
+	@printf "  bench-density Run noisy density-matrix benchmarks\n"
 	@printf "\nAutomation:\n"
 	@printf "  run-plan      Execute a plan with Claude autorun\n"
 	@printf "\nCLI:\n"
@@ -86,6 +91,18 @@ module-graph:  ## Generate module graph JSON from rustdoc
 
 cli:
 	$(CARGO) install --path yao-cli
+
+bench: bench-gates bench-qft bench-density
+	@echo "All benchmarks complete. Results in target/criterion/"
+
+bench-gates:
+	$(CARGO) bench --bench gates
+
+bench-qft:
+	$(CARGO) bench --bench qft
+
+bench-density:
+	$(CARGO) bench --bench density
 
 clean:
 	$(CARGO) clean
