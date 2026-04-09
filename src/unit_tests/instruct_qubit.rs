@@ -480,6 +480,60 @@ fn test_instruct_1q_diag_controlled_cz_via_ctrl() {
 }
 
 #[test]
+fn test_instruct_1q_diag_controlled_active_low() {
+    use crate::instruct_qubit::instruct_1q_diag_controlled;
+
+    let mut state = vec![
+        Complex64::new(1.0, 0.0),
+        Complex64::new(2.0, 0.0),
+        Complex64::new(3.0, 0.0),
+        Complex64::new(4.0, 0.0),
+    ];
+    instruct_1q_diag_controlled(
+        &mut state,
+        2,
+        1,
+        Complex64::new(10.0, 0.0),
+        Complex64::new(20.0, 0.0),
+        &[0],
+        &[0],
+    );
+
+    assert_eq!(state[0], Complex64::new(10.0, 0.0));
+    assert_eq!(state[1], Complex64::new(40.0, 0.0));
+    assert_eq!(state[2], Complex64::new(3.0, 0.0));
+    assert_eq!(state[3], Complex64::new(4.0, 0.0));
+}
+
+#[test]
+fn test_instruct_1q_controlled_active_low() {
+    use crate::instruct_qubit::instruct_1q_controlled;
+
+    let mut state = vec![
+        Complex64::new(1.0, 0.0),
+        Complex64::new(2.0, 0.0),
+        Complex64::new(3.0, 0.0),
+        Complex64::new(4.0, 0.0),
+    ];
+    instruct_1q_controlled(
+        &mut state,
+        2,
+        1,
+        Complex64::new(0.0, 0.0),
+        Complex64::new(1.0, 0.0),
+        Complex64::new(1.0, 0.0),
+        Complex64::new(0.0, 0.0),
+        &[0],
+        &[0],
+    );
+
+    assert_eq!(state[0], Complex64::new(2.0, 0.0));
+    assert_eq!(state[1], Complex64::new(1.0, 0.0));
+    assert_eq!(state[2], Complex64::new(3.0, 0.0));
+    assert_eq!(state[3], Complex64::new(4.0, 0.0));
+}
+
+#[test]
 fn test_instruct_2q_diag_controlled_3q() {
     use crate::instruct_qubit::instruct_2q_diag_controlled;
 

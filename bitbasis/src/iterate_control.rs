@@ -1,21 +1,19 @@
 use crate::bit_ops::{bmask, bmask_range, indicator};
+use smallvec::SmallVec;
 
-/// Maximum number of mask/factor chunks in IterControl.
-/// Covers up to 7 locked positions (e.g., 6-control + 1-target gates).
-const MAX_CHUNKS: usize = 8;
+/// Inline chunk capacity for the common case.
+const INLINE_CHUNKS: usize = 8;
 
 /// Iterator over controlled subspace of bits.
 /// Efficiently enumerates basis states with fixed control bits and free others.
 ///
-/// Uses stack-allocated arrays instead of `Vec` to avoid heap indirection
-/// in the hot loop, and match-based dispatch for common chunk counts
-/// so the compiler can fully unroll.
+/// Uses inline storage for the common case and spills to heap only for
+/// unusually fragmented control layouts.
 pub struct IterControl {
     n: usize,
     base: usize,
-    masks: [usize; MAX_CHUNKS],
-    factors: [usize; MAX_CHUNKS],
-    num_chunks: usize,
+    masks: SmallVec<[usize; INLINE_CHUNKS]>,
+    factors: SmallVec<[usize; INLINE_CHUNKS]>,
     current: usize,
 }
 
@@ -32,9 +30,7 @@ impl IterControl {
 
     #[inline(always)]
     pub fn get(&self, k: usize) -> usize {
-        // Match on chunk count so the compiler can fully unroll common cases.
-        // For QFT (1 control + 1 target = 2 locked bits), num_chunks is typically 2 or 3.
-        match self.num_chunks {
+        match self.masks.len() {
             0 => self.base,
             1 => (k & self.masks[0]) * self.factors[0] + self.base,
             2 => {
@@ -49,11 +45,11 @@ impl IterControl {
                     + self.base
             }
             _ => {
-                let mut out = 0;
-                for i in 0..self.num_chunks {
-                    out += (k & self.masks[i]) * self.factors[i];
+                let mut out = self.base;
+                for (&mask, &factor) in self.masks.iter().zip(self.factors.iter()) {
+                    out += (k & mask) * factor;
                 }
-                out + self.base
+                out
             }
         }
     }
@@ -98,14 +94,13 @@ pub fn itercontrol(nbits: usize, positions: &[usize], bit_configs: &[usize]) -> 
         .fold(0usize, |acc, (&position, _)| acc | indicator(position));
 
     let mut sorted_positions = positions.to_vec();
-    let (masks, factors, num_chunks) = group_shift(nbits, &mut sorted_positions);
+    let (masks, factors) = group_shift(nbits, &mut sorted_positions);
 
     IterControl {
         n: 1usize << (nbits - positions.len()),
         base,
         masks,
         factors,
-        num_chunks,
         current: 0,
     }
 }
@@ -113,25 +108,25 @@ pub fn itercontrol(nbits: usize, positions: &[usize], bit_configs: &[usize]) -> 
 pub fn group_shift(
     nbits: usize,
     positions: &mut [usize],
-) -> ([usize; MAX_CHUNKS], [usize; MAX_CHUNKS], usize) {
+) -> (
+    SmallVec<[usize; INLINE_CHUNKS]>,
+    SmallVec<[usize; INLINE_CHUNKS]>,
+) {
     positions.sort_unstable();
 
-    let mut masks = [0usize; MAX_CHUNKS];
-    let mut factors = [0usize; MAX_CHUNKS];
-    let mut count = 0usize;
-    let positions_1: Vec<usize> = positions.iter().map(|&position| position + 1).collect();
+    let mut masks = SmallVec::<[usize; INLINE_CHUNKS]>::new();
+    let mut factors = SmallVec::<[usize; INLINE_CHUNKS]>::new();
 
     let mut previous = 0usize;
     let mut free_index = 0usize;
 
-    for &position in &positions_1 {
+    for &position in positions.iter() {
+        let position = position + 1;
         assert!(position > previous, "Duplicate position");
         if position != previous + 1 {
-            assert!(count < MAX_CHUNKS, "Too many chunks (max {MAX_CHUNKS})");
-            factors[count] = 1usize << (previous - free_index);
+            factors.push(1usize << (previous - free_index));
             let gap = position - previous - 1;
-            masks[count] = bmask_range(free_index, free_index + gap);
-            count += 1;
+            masks.push(bmask_range(free_index, free_index + gap));
             free_index += gap;
         }
         previous = position;
@@ -139,13 +134,11 @@ pub fn group_shift(
 
     let nfree = nbits - positions.len();
     if free_index != nfree {
-        assert!(count < MAX_CHUNKS, "Too many chunks (max {MAX_CHUNKS})");
-        factors[count] = 1usize << (previous - free_index);
-        masks[count] = bmask_range(free_index, nfree);
-        count += 1;
+        factors.push(1usize << (previous - free_index));
+        masks.push(bmask_range(free_index, nfree));
     }
 
-    (masks, factors, count)
+    (masks, factors)
 }
 
 pub fn controller(cbits: &[usize], cvals: &[usize]) -> impl Fn(usize) -> bool {
@@ -201,6 +194,20 @@ mod tests {
         let ic = itercontrol(2, &[0, 1], &[1, 0]);
         let values: Vec<usize> = ic.collect();
         assert_eq!(values, vec![1]);
+    }
+
+    #[test]
+    fn test_itercontrol_more_than_eight_chunks() {
+        let positions = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18];
+        let bit_configs = [1, 0, 1, 0, 1, 0, 1, 0, 1, 0];
+        let values: Vec<usize> = itercontrol(19, &positions, &bit_configs).collect();
+
+        assert_eq!(values.len(), 1usize << (19 - positions.len()));
+        for basis in values {
+            for (&position, &bit) in positions.iter().zip(bit_configs.iter()) {
+                assert_eq!((basis >> position) & 1, bit);
+            }
+        }
     }
 
     #[test]

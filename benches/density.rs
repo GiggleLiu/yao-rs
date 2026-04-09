@@ -1,8 +1,6 @@
 use criterion::{BenchmarkId, Criterion, black_box, criterion_group, criterion_main};
 use yao_rs::circuit::CircuitElement;
-use yao_rs::{
-    ArrayReg, Circuit, DensityMatrix, Gate, NoiseChannel, Register, channel, control, put,
-};
+use yao_rs::{Circuit, DensityMatrix, Gate, NoiseChannel, Register, channel, control, put};
 
 fn build_noisy_circuit(nq: usize) -> Circuit {
     let mut elements: Vec<CircuitElement> = Vec::new();
@@ -41,9 +39,10 @@ fn bench_noisy_dm(c: &mut Criterion) {
 
     for nq in [4, 6, 8, 10] {
         let circuit = build_noisy_circuit(nq);
+        let template_dm = DensityMatrix::zero_state(nq);
         group.bench_with_input(BenchmarkId::new("noisy_dm", nq), &nq, |b, _| {
             b.iter(|| {
-                let mut dm = DensityMatrix::from_reg(&ArrayReg::zero_state(nq));
+                let mut dm = template_dm.clone();
                 dm.apply(black_box(&circuit));
                 dm
             })

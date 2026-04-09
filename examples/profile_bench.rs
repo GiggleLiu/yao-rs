@@ -89,9 +89,10 @@ fn bench_dm() {
         ));
     }
     let circuit = Circuit::qubits(nq, elements).unwrap();
+    let template_dm = DensityMatrix::zero_state(nq);
 
     for _ in 0..5 {
-        let mut dm = DensityMatrix::from_reg(&ArrayReg::zero_state(nq));
+        let mut dm = template_dm.clone();
         dm.apply(black_box(&circuit));
         black_box(&dm);
     }

@@ -6,6 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 yao-rs is a Rust port of [Yao.jl](https://github.com/QuantumBFS/Yao.jl) focused on quantum circuit description, qubit simulation, and tensor network export. Circuits support qudit dimensions for tensor network export, but state-vector simulation is qubit-only via `ArrayReg`.
 
+## Philosophy
+- **Simple logic, maximum reuse.** Prefer straightforward code with fewer branches (less if-else).
+  Try best to reuse existing logic rather than adding ad hoc special cases.
+- **Root-cause fixes over patches.** When a bug surfaces, trace it to its origin.
+  A fix that prevents a class of bugs is better than one that handles a single case.
+- **Tests over implementation.** Spend more time designing tests than implementing code.
+  Well-designed tests catch bugs early and document intended behavior.
+
 ## Build and Test Commands
 
 ```bash

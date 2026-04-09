@@ -16,6 +16,10 @@ impl DensityMatrix {
         1usize << self.nbits
     }
 
+    pub fn zero_state(nbits: usize) -> Self {
+        Self::from_reg(&ArrayReg::zero_state(nbits))
+    }
+
     pub fn from_reg(reg: &ArrayReg) -> Self {
         let dim = 1usize << reg.nqubits();
         let mut state = vec![Complex64::new(0.0, 0.0); dim * dim];
@@ -278,6 +282,16 @@ mod tests {
         let reg = ArrayReg::zero_state(2);
         let dm = DensityMatrix::from_reg(&reg);
         assert_abs_diff_eq!(dm.trace().re, 1.0, epsilon = 1e-12);
+    }
+
+    #[test]
+    fn test_zero_state_density_matrix() {
+        let dm = DensityMatrix::zero_state(2);
+        assert_eq!(dm.nbits(), 2);
+        assert_eq!(dm.state.len(), 16);
+        assert_abs_diff_eq!(dm.trace().re, 1.0, epsilon = 1e-12);
+        assert_abs_diff_eq!(dm.purity(), 1.0, epsilon = 1e-12);
+        assert_abs_diff_eq!(dm.state[0].re, 1.0, epsilon = 1e-12);
     }
 
     #[test]

@@ -35,6 +35,49 @@ fn u1rows(
     state[j] = c * w + d * v;
 }
 
+#[inline(always)]
+fn for_each_single_control_base(
+    total: usize,
+    target_bit: usize,
+    ctrl_bit: usize,
+    ctrl_val: usize,
+    mut f: impl FnMut(usize),
+) {
+    debug_assert!(ctrl_val <= 1);
+    debug_assert_ne!(target_bit, ctrl_bit);
+
+    if target_bit < ctrl_bit {
+        let low_span = 1usize << target_bit;
+        let middle_iters = 1usize << (ctrl_bit - target_bit - 1);
+        let outer_step = 1usize << (ctrl_bit + 1);
+        let ctrl_offset = ctrl_val << ctrl_bit;
+
+        for outer_base in (0..total).step_by(outer_step) {
+            let ctrl_base = outer_base + ctrl_offset;
+            for middle in 0..middle_iters {
+                let middle_base = ctrl_base + (middle << (target_bit + 1));
+                for low in 0..low_span {
+                    f(middle_base + low);
+                }
+            }
+        }
+    } else {
+        let low_span = 1usize << ctrl_bit;
+        let middle_iters = 1usize << (target_bit - ctrl_bit - 1);
+        let outer_step = 1usize << (target_bit + 1);
+        let ctrl_offset = ctrl_val << ctrl_bit;
+
+        for outer_base in (0..total).step_by(outer_step) {
+            for middle in 0..middle_iters {
+                let middle_base = outer_base + (middle << (ctrl_bit + 1)) + ctrl_offset;
+                for low in 0..low_span {
+                    f(middle_base + low);
+                }
+            }
+        }
+    }
+}
+
 /// X gate: swap amplitudes at |...0...> and |...1...>.
 pub fn instruct_x(state: &mut [Complex64], nbits: usize, loc: usize) {
     let bit = loc_to_bit(nbits, loc);
@@ -58,12 +101,22 @@ pub fn instruct_x_controlled(
 ) {
     let bit = loc_to_bit(nbits, loc);
     let mask = indicator(bit);
+    let dim = 1usize << nbits;
+
+    if ctrl_locs.len() == 1 {
+        let ctrl_bit = loc_to_bit(nbits, ctrl_locs[0]);
+        let ctrl_val = ctrl_bits[0];
+        for_each_single_control_base(dim, bit, ctrl_bit, ctrl_val, |base| {
+            state.swap(base, base + mask);
+        });
+        return;
+    }
+
     let ctrl_bit_positions: Vec<usize> = ctrl_locs
         .iter()
         .map(|&loc| loc_to_bit(nbits, loc))
         .collect();
     let ctrl = controller(&ctrl_bit_positions, ctrl_bits);
-    let dim = 1usize << nbits;
 
     for basis in 0..dim {
         if basis & mask == 0 && ctrl(basis) {
@@ -342,6 +395,16 @@ pub fn instruct_1q_controlled(
 ) {
     let target_bit = loc_to_bit(nbits, loc);
     let step = 1 << target_bit;
+    let total = 1usize << nbits;
+
+    if ctrl_locs.len() == 1 {
+        let ctrl_bit = loc_to_bit(nbits, ctrl_locs[0]);
+        let ctrl_val = ctrl_bits[0];
+        for_each_single_control_base(total, target_bit, ctrl_bit, ctrl_val, |base| {
+            u1rows(state, base, base + step, a, b, c, d);
+        });
+        return;
+    }
 
     // Convert control locs to bit positions
     let ctrl_bit_positions: Vec<usize> = ctrl_locs.iter().map(|&l| loc_to_bit(nbits, l)).collect();
@@ -420,6 +483,17 @@ pub fn instruct_1q_diag_controlled(
 ) {
     let target_bit = loc_to_bit(nbits, loc);
     let step = 1 << target_bit;
+    let total = 1usize << nbits;
+
+    if ctrl_locs.len() == 1 {
+        let ctrl_bit = loc_to_bit(nbits, ctrl_locs[0]);
+        let ctrl_val = ctrl_bits[0];
+        for_each_single_control_base(total, target_bit, ctrl_bit, ctrl_val, |base| {
+            state[base] *= d0;
+            state[base + step] *= d1;
+        });
+        return;
+    }
 
     let ctrl_bit_positions: Vec<usize> = ctrl_locs.iter().map(|&l| loc_to_bit(nbits, l)).collect();
 
