@@ -4,7 +4,7 @@ use crate::circuit::{Circuit, CircuitElement, PositionedGate};
 use crate::gate::Gate;
 use crate::register::ArrayReg;
 
-fn dispatch_arrayreg_gate(nbits: usize, state: &mut [Complex64], pg: &PositionedGate) {
+pub(crate) fn dispatch_arrayreg_gate(nbits: usize, state: &mut [Complex64], pg: &PositionedGate) {
     let has_controls = !pg.control_locs.is_empty();
     let ctrl_locs = &pg.control_locs;
     let ctrl_bits: Vec<usize> = pg

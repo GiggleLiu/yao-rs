@@ -5,6 +5,7 @@ pub fn indicator(k: usize) -> usize {
 }
 
 /// Return mask with bits at all given positions set. 0-indexed.
+#[inline]
 pub fn bmask(positions: &[usize]) -> usize {
     positions.iter().fold(0, |acc, &k| acc | indicator(k))
 }

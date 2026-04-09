@@ -133,93 +133,86 @@ impl DensityMatrix {
         }
     }
 
-    fn apply_left_map(&mut self, circuit: &crate::circuit::Circuit) {
-        let dim = self.dim();
-        for col in 0..dim {
-            let column: Vec<Complex64> =
-                (0..dim).map(|row| self.state[self.idx(row, col)]).collect();
-            let mut reg = ArrayReg::from_vec(self.nbits, column);
-            crate::apply::apply_inplace(circuit, &mut reg);
-            for row in 0..dim {
-                let idx = row * dim + col;
-                self.state[idx] = reg.state[row];
-            }
-        }
-    }
-
-    fn apply_right_map(&mut self, circuit: &crate::circuit::Circuit) {
-        let dim = self.dim();
-        for row in 0..dim {
-            let row_state: Vec<Complex64> =
-                (0..dim).map(|col| self.state[self.idx(row, col)]).collect();
-            let mut reg = ArrayReg::from_vec(self.nbits, row_state);
-            crate::apply::apply_inplace(circuit, &mut reg);
-            for col in 0..dim {
-                let idx = row * dim + col;
-                self.state[idx] = reg.state[col];
-            }
-        }
-    }
-
-    /// Apply a single gate as rho -> U rho U†.
-    fn apply_gate(&mut self, pg: &crate::circuit::PositionedGate) {
-        let single_circuit = crate::circuit::Circuit::qubits(
-            self.nbits,
-            vec![crate::circuit::CircuitElement::Gate(pg.clone())],
+    /// Shift all qubit locations in a gate by `offset` (for vectorized DM evolution).
+    fn shift_gate(
+        pg: &crate::circuit::PositionedGate,
+        offset: usize,
+    ) -> crate::circuit::PositionedGate {
+        crate::circuit::PositionedGate::new(
+            pg.gate.clone(),
+            pg.target_locs.iter().map(|&l| l + offset).collect(),
+            pg.control_locs.iter().map(|&l| l + offset).collect(),
+            pg.control_configs.clone(),
         )
-        .unwrap();
-        let conjugated_gate = crate::circuit::PositionedGate::new(
-            Self::conjugated_gate(&pg.gate),
+    }
+
+    /// Apply a single gate as ρ → U ρ U† using vectorized evolution.
+    ///
+    /// Treats the flattened DM as a 2^(2n)-element state vector where:
+    /// - high n bits = row index (left/ket space)
+    /// - low n bits = column index (right/bra space)
+    ///
+    /// Then ρ → U ρ U† = apply U at qubit `loc`, then conj(U) at qubit `loc + n`.
+    /// Uses the same dispatch_arrayreg_gate as ArrayReg — 2 calls instead of 2*dim.
+    fn apply_gate(&mut self, pg: &crate::circuit::PositionedGate) {
+        let n = self.nbits;
+        let total_bits = 2 * n;
+
+        // Left multiply: U on row-index qubits (positions 0..n-1, no shift needed)
+        crate::apply::dispatch_arrayreg_gate(total_bits, &mut self.state, pg);
+
+        // Right multiply: conj(U) on column-index qubits (shift by n)
+        let conj_gate = Self::conjugated_gate(&pg.gate);
+        let conj_pg = crate::circuit::PositionedGate::new(
+            conj_gate,
             pg.target_locs.clone(),
             pg.control_locs.clone(),
             pg.control_configs.clone(),
         );
-        let conjugated_circuit = crate::circuit::Circuit::qubits(
-            self.nbits,
-            vec![crate::circuit::CircuitElement::Gate(conjugated_gate)],
-        )
-        .unwrap();
-
-        self.apply_left_map(&single_circuit);
-        self.apply_right_map(&conjugated_circuit);
+        let shifted = Self::shift_gate(&conj_pg, n);
+        crate::apply::dispatch_arrayreg_gate(total_bits, &mut self.state, &shifted);
     }
 
-    /// Apply a noise channel as rho -> sum_i K_i rho K_i†.
+    /// Apply a noise channel as ρ → Σ_i K_i ρ K_i† using vectorized evolution.
     fn apply_channel(&mut self, channel: &crate::noise::NoiseChannel, locs: &[usize]) {
+        let n = self.nbits;
+        let total_bits = 2 * n;
         let original = self.state.clone();
         let mut accumulated = vec![Complex64::new(0.0, 0.0); original.len()];
+        let mut branch_state = vec![Complex64::new(0.0, 0.0); original.len()];
 
         for kraus_op in channel.kraus_operators() {
-            let gate = crate::gate::Gate::Custom {
-                matrix: kraus_op.clone(),
-                is_diagonal: Self::is_diagonal_matrix(&kraus_op),
-                label: "kraus".to_string(),
-            };
-            let conjugated = crate::gate::Gate::Custom {
-                matrix: kraus_op.mapv(|value| value.conj()),
-                is_diagonal: Self::is_diagonal_matrix(&kraus_op),
-                label: "kraus_conj".to_string(),
-            };
-            let left_circuit = crate::circuit::Circuit::qubits(
-                self.nbits,
-                vec![crate::circuit::put(locs.to_vec(), gate)],
-            )
-            .unwrap();
-            let right_circuit = crate::circuit::Circuit::qubits(
-                self.nbits,
-                vec![crate::circuit::put(locs.to_vec(), conjugated)],
-            )
-            .unwrap();
+            branch_state.copy_from_slice(&original);
 
-            let mut branch = Self {
-                nbits: self.nbits,
-                state: original.clone(),
-            };
-            branch.apply_left_map(&left_circuit);
-            branch.apply_right_map(&right_circuit);
+            // K_i on row-index qubits (no shift)
+            let pg = crate::circuit::PositionedGate::new(
+                crate::gate::Gate::Custom {
+                    matrix: kraus_op.clone(),
+                    is_diagonal: Self::is_diagonal_matrix(&kraus_op),
+                    label: "kraus".to_string(),
+                },
+                locs.to_vec(),
+                vec![],
+                vec![],
+            );
+            crate::apply::dispatch_arrayreg_gate(total_bits, &mut branch_state, &pg);
 
-            for (dst, src) in accumulated.iter_mut().zip(branch.state.into_iter()) {
-                *dst += src;
+            // conj(K_i) on column-index qubits (shift by n)
+            let conj_pg = crate::circuit::PositionedGate::new(
+                crate::gate::Gate::Custom {
+                    matrix: kraus_op.mapv(|v| v.conj()),
+                    is_diagonal: Self::is_diagonal_matrix(&kraus_op),
+                    label: "kraus_conj".to_string(),
+                },
+                locs.to_vec(),
+                vec![],
+                vec![],
+            );
+            let shifted = Self::shift_gate(&conj_pg, n);
+            crate::apply::dispatch_arrayreg_gate(total_bits, &mut branch_state, &shifted);
+
+            for (dst, src) in accumulated.iter_mut().zip(branch_state.iter()) {
+                *dst += *src;
             }
         }
 
