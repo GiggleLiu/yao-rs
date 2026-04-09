@@ -160,7 +160,7 @@ function qft_data()
 
     for nq in 4:25
         println("  QFT, $nq qubits")
-        reg = product_state(bit"0"^(nq - 1) * bit"1")
+        reg = product_state(nq, 1)
         circuit = qft_circuit(nq)
         result = copy(reg)
         apply!(result, circuit)
@@ -219,7 +219,11 @@ function noisy_dm_data()
         entry["purity"] = sum(abs2, dm_result.state)
 
         reduced = partial_tr(dm_result, [1])
-        entry["entropy"] = von_neumann_entropy(reduced)
+        # Compute von Neumann entropy manually from real eigenvalues
+        # (Yao's von_neumann_entropy can fail on complex matrices)
+        eigs = real.(eigvals(reduced.state))
+        eigs = max.(eigs, 0.0)  # clamp small negatives
+        entry["entropy"] = -sum(p -> p > 1e-15 ? p * log(p) : 0.0, eigs)
 
         h_ising = build_ising_hamiltonian(nq)
         exp_val = expect(h_ising, dm_result)
