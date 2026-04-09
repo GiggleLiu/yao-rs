@@ -21,6 +21,23 @@ const MAX_STATE_QUBITS = 5
 # the Rust validation tests and existing Julia fixtures in this repository.
 yaors_to_yaojl(qubit::Int, nqubits::Int) = nqubits - qubit
 
+# Yao.jl stores state vectors in LSB-first qubit order, yao-rs uses MSB-first.
+# Permute state vector by reversing the bit order of each index.
+function bitreverse_statevec(state::AbstractVector, nqubits::Int)
+    dim = length(state)
+    out = similar(state)
+    for k in 0:(dim - 1)
+        rev = 0
+        tmp = k
+        for _ in 1:nqubits
+            rev = (rev << 1) | (tmp & 1)
+            tmp >>= 1
+        end
+        out[rev + 1] = state[k + 1]
+    end
+    out
+end
+
 function deterministic_state(nqubits::Int)
     dim = 1 << nqubits
     state = ComplexF64[cos(0.1 * k) + sin(0.2 * k) * im for k in 0:(dim - 1)]
@@ -154,14 +171,32 @@ function single_gate_multi_data()
     data, timing_data
 end
 
+function build_yaors_qft(nq::Int)
+    # Mirror yao-rs easybuild::qft_circuit: for qubit i (0-indexed):
+    #   H(i), then controlled-Phase(2pi/2^(j+1)) with control=i+j, target=i
+    # Map through yaors_to_yaojl for Yao.jl qubit indices.
+    blocks = AbstractBlock[]
+    for i in 0:(nq - 1)
+        push!(blocks, put(nq, yaors_to_yaojl(i, nq) => H))
+        for j in 1:(nq - i - 1)
+            theta = 2π / (1 << (j + 1))
+            push!(blocks, control(nq, yaors_to_yaojl(i + j, nq), yaors_to_yaojl(i, nq) => shift(theta)))
+        end
+    end
+    chain(nq, blocks...)
+end
+
 function qft_data()
     data = Dict{String, Any}()
     timing_data = Dict{String, Any}()
 
     for nq in 4:25
         println("  QFT, $nq qubits")
-        reg = product_state(nq, 1)
-        circuit = qft_circuit(nq)
+        # |1> = index 1 set (qubit 0 in yao-rs = LSB)
+        init = zeros(ComplexF64, 1 << nq)
+        init[2] = 1.0  # index 1 (0-indexed)
+        reg = ArrayReg(init)
+        circuit = build_yaors_qft(nq)
         result = copy(reg)
         apply!(result, circuit)
         if nq <= MAX_STATE_QUBITS
