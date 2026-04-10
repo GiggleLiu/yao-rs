@@ -1,3 +1,5 @@
+#[cfg(feature = "omeinsum")]
+pub mod contract;
 pub mod example;
 pub mod expect;
 pub mod fetch;

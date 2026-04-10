@@ -141,6 +141,24 @@ Examples:
         locs: Option<Vec<usize>>,
     },
 
+    /// Contract a circuit's tensor network (no state-vector simulation)
+    #[cfg(feature = "omeinsum")]
+    #[command(after_help = "\
+Examples:
+  yao contract circuit.json
+  yao contract circuit.json --mode overlap
+  yao contract circuit.json --op \"Z(0)Z(1)\"")]
+    Contract {
+        /// Circuit JSON file (use - for stdin)
+        circuit: String,
+        /// Contraction mode: state (full state vector), overlap (⟨0|U|0⟩ scalar)
+        #[arg(long, value_enum, default_value_t = ContractMode::Overlap)]
+        mode: ContractMode,
+        /// Operator expression for expectation value
+        #[arg(long, conflicts_with = "mode", allow_hyphen_values = true)]
+        op: Option<String>,
+    },
+
     /// Export circuit as tensor network (einsum)
     #[command(after_help = "\
 Examples:
@@ -236,6 +254,14 @@ Examples:
         /// Shell to generate completions for (auto-detected if omitted)
         shell: Option<clap_complete::Shell>,
     },
+}
+
+#[derive(Debug, Clone, Copy, ValueEnum)]
+pub enum ContractMode {
+    /// Full state vector output
+    State,
+    /// Scalar overlap ⟨0|U|0⟩
+    Overlap,
 }
 
 #[derive(Debug, Clone, Copy, ValueEnum)]

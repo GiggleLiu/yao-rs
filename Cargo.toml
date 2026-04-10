@@ -1,5 +1,6 @@
 [workspace]
 members = ["yao-cli", "bitbasis"]
+exclude = ["omeinsum-rs"]
 resolver = "2"
 
 [workspace.package]
@@ -15,6 +16,7 @@ edition.workspace = true
 default = []
 parallel = ["rayon"]
 torch = ["tch"]
+omeinsum = ["dep:omeinsum"]
 typst = ["dep:typst-as-lib", "dep:typst-pdf", "dep:typst"]
 qasm = ["dep:openqasm"]
 
@@ -24,6 +26,7 @@ num-complex = { version = "0.4", features = ["serde"] }
 faer = "0.24"
 ndarray = "0.17"
 omeco = "0.2"
+omeinsum = { path = "omeinsum-rs", optional = true }
 rand = "0.10"
 rayon = { version = "1.10", optional = true }
 serde = { version = "1", features = ["derive"] }

@@ -9,9 +9,10 @@ name = "yao"
 path = "src/main.rs"
 
 [features]
-default = ["qasm"]
+default = ["qasm", "omeinsum"]
 qasm = ["yao-rs/qasm"]
 typst = ["yao-rs/typst"]
+omeinsum = ["yao-rs/omeinsum"]
 
 [dependencies]
 yao-rs = { path = "..", default-features = false }

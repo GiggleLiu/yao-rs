@@ -35,6 +35,10 @@ fn main() -> anyhow::Result<()> {
             | Commands::Example { .. }
             | Commands::Fetch { .. }
     );
+    #[cfg(feature = "omeinsum")]
+    {
+        auto_json |= matches!(cli.command, Commands::Contract { .. });
+    }
     #[cfg(feature = "qasm")]
     {
         auto_json |= matches!(
@@ -74,6 +78,10 @@ fn main() -> anyhow::Result<()> {
         }
         Commands::Probs { input, locs } => commands::probs::probs(&input, locs.as_deref(), &out),
         Commands::Expect { input, op } => commands::expect::expect(&input, &op, &out),
+        #[cfg(feature = "omeinsum")]
+        Commands::Contract { circuit, mode, op } => {
+            commands::contract::contract_cmd(&circuit, mode, op.as_deref(), &out)
+        }
         Commands::Toeinsum { circuit, mode } => commands::toeinsum::toeinsum(&circuit, mode, &out),
         #[cfg(feature = "qasm")]
         Commands::Fromqasm { input } => commands::fromqasm::fromqasm(&input, &out),
