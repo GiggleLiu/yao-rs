@@ -1,10 +1,11 @@
 use crate::apply::apply;
 use crate::circuit::{Circuit, control, put};
-use crate::contractor::contract;
+use crate::contractor::{contract, contract_with_tree};
 use crate::einsum::{circuit_to_einsum_with_boundary, circuit_to_overlap};
 use crate::gate::Gate;
 use crate::register::ArrayReg;
 use num_complex::Complex64;
+use omeco::{GreedyMethod, optimize_code};
 
 fn assert_scalar_close(result: &ndarray::ArrayD<Complex64>, expected: Complex64) {
     let val = result.iter().next().unwrap();
@@ -212,4 +213,27 @@ fn test_contract_result_follows_input_convention() {
         !result.is_standard_layout(),
         "result should be column-major (Fortran layout)"
     );
+}
+
+// --- Pre-computed contraction tree test ---
+
+#[test]
+fn test_contract_with_tree() {
+    let circuit = Circuit::new(
+        vec![2, 2],
+        vec![put(vec![0], Gate::H), control(vec![0], vec![1], Gate::X)],
+    )
+    .unwrap();
+    let tn = circuit_to_einsum_with_boundary(&circuit, &[]);
+
+    // Optimize externally
+    let tree = optimize_code(&tn.code, &tn.size_dict, &GreedyMethod::default()).unwrap();
+
+    // Contract with pre-computed tree
+    let result = contract_with_tree(&tn, tree);
+    let s = 1.0 / 2.0_f64.sqrt();
+    assert!((result[[0, 0]] - Complex64::new(s, 0.0)).norm() < 1e-10);
+    assert!((result[[0, 1]] - Complex64::new(0.0, 0.0)).norm() < 1e-10);
+    assert!((result[[1, 0]] - Complex64::new(0.0, 0.0)).norm() < 1e-10);
+    assert!((result[[1, 1]] - Complex64::new(s, 0.0)).norm() < 1e-10);
 }

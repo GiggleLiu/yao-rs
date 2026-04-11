@@ -33,6 +33,26 @@ pub fn contract(tn: &TensorNetwork) -> ArrayD<Complex64> {
     omeinsum_to_ndarray(&result, &iy, &tn.size_dict)
 }
 
+/// Contract a tensor network with a pre-computed contraction tree.
+///
+/// Unlike [`contract`], this skips optimization and uses the provided tree directly.
+pub fn contract_with_tree(
+    tn: &TensorNetwork,
+    tree: omeco::NestedEinsum<usize>,
+) -> ArrayD<Complex64> {
+    let tensors: Vec<Tensor<Complex64, Cpu>> = tn.tensors.iter().map(ndarray_to_omeinsum).collect();
+    let tensor_refs: Vec<&Tensor<Complex64, Cpu>> = tensors.iter().collect();
+
+    let ixs: Vec<Vec<usize>> = tn.code.ixs.clone();
+    let iy: Vec<usize> = tn.code.iy.clone();
+
+    let mut ein = Einsum::new(ixs, iy.clone(), tn.size_dict.clone());
+    ein.set_contraction_tree(tree);
+    let result = ein.execute::<Standard<Complex64>, Complex64, Cpu>(&tensor_refs);
+
+    omeinsum_to_ndarray(&result, &iy, &tn.size_dict)
+}
+
 /// Convert an ndarray `ArrayD<Complex64>` to an omeinsum `Tensor`.
 ///
 /// omeinsum uses column-major (Fortran) order, so we need to
