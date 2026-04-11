@@ -49,6 +49,24 @@ fn main() {
 
 This produces the Bell state (|00> + |11>)/sqrt(2), one of the four maximally entangled two-qubit states. You should see non-zero amplitudes only for the |00> and |11> basis states, each with magnitude 1/sqrt(2).
 
+## Rendering as SVG
+
+Once you have a `Circuit`, you can render it directly with the built-in SVG backend:
+
+```rust
+let svg = circuit.to_svg();
+std::fs::write("bell.svg", svg).unwrap();
+```
+
+If you want a complete end-to-end example with annotations, see [`examples/circuit_svg.rs`](https://github.com/GiggleLiu/yao-rs/blob/main/examples/circuit_svg.rs).
+
+From the CLI, the same workflow is:
+
+```bash
+yao example bell > bell.json
+yao visualize bell.json --output bell.svg
+```
+
 ## Exporting as a Tensor Network
 
 yao-rs can export a circuit as a tensor network using Einstein summation notation. This is useful for analyzing circuit structure or contracting the network with custom strategies:

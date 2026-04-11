@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-yao-rs is a Rust port of [Yao.jl](https://github.com/QuantumBFS/Yao.jl) focused on quantum circuit description, qubit simulation, and tensor network export. Circuits support qudit dimensions for tensor network export, but state-vector simulation is qubit-only via `ArrayReg`.
+yao-rs is a Rust port of [Yao.jl](https://github.com/QuantumBFS/Yao.jl) focused on quantum circuit description, qubit simulation, tensor network export, and built-in SVG circuit rendering. Circuits support qudit dimensions for tensor network export, but state-vector simulation is qubit-only via `ArrayReg`.
 
 ## Philosophy
 - **Simple logic, maximum reuse.** Prefer straightforward code with fewer branches (less if-else).
@@ -104,6 +104,7 @@ yao optimize tn.json           # Optimize contraction order (greedy default)
 yao optimize tn.json --method treesa --ntrials 20  # TreeSA optimizer
 yao contract tn.json           # Contract pre-optimized tensor network
 yao toeinsum circuit.json --mode state | yao optimize - | yao contract -  # Full pipeline
+yao visualize circuit.json --output circuit.svg  # Render a circuit diagram
 yao fromqasm circuit.qasm      # Import OpenQASM 2.0 circuit
 yao toqasm circuit.json        # Export circuit as OpenQASM 2.0
 yao fetch qasmbench list       # List QASMBench benchmark circuits

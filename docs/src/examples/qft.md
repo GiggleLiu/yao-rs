@@ -1,7 +1,7 @@
 # Quantum Fourier Transform
 
 This page walks through the QFT example found in
-[`examples/qft.rs`](https://github.com/Roger-luo/yao-rs/blob/main/examples/qft.rs),
+[`examples/qft.rs`](https://github.com/GiggleLiu/yao-rs/blob/main/examples/qft.rs),
 explaining the algorithm, the circuit construction, and the expected output.
 
 ## The QFT Algorithm
@@ -116,6 +116,19 @@ fn main() {
 
 Output shows the amplitudes for both input states and the tensor network
 structure (number of tensors and labels).
+
+## Circuit Visualization
+
+The same 4-qubit QFT circuit rendered with the built-in SVG backend:
+
+![4-qubit QFT circuit rendered as SVG](../static/qft-4qubit.svg)
+
+You can generate the same diagram from the CLI with:
+
+```bash
+yao example qft --nqubits 4 > qft.json
+yao visualize qft.json --output qft-4qubit.svg
+```
 
 ## Expected Output
 

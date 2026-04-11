@@ -4,7 +4,7 @@ Quantum circuit description and tensor network export in Rust.
 
 ## What is yao-rs?
 
-yao-rs is a library for describing quantum circuits and exporting them as tensor networks. It provides a type-safe circuit construction API with validation, and converts circuits into einsum representations suitable for contraction order optimization via [omeco](https://crates.io/crates/omeco).
+yao-rs is a library for describing quantum circuits, simulating qubit registers, exporting tensor networks, and rendering circuit diagrams as SVG. It provides a type-safe circuit construction API with validation, and converts circuits into einsum representations suitable for contraction order optimization via [omeco](https://crates.io/crates/omeco).
 
 Ported from the Julia library [Yao.jl](https://github.com/QuantumBFS/Yao.jl), focused on the circuit description and tensor network layers.
 
@@ -46,7 +46,8 @@ yao-rs further optimizes by recognizing diagonal gates (Z, S, T, Phase, Rz), whi
 - **Tensor Network Export**: `circuit_to_einsum` with diagonal gate optimization
 - **Contraction Optimization**: Integration with [omeco](https://crates.io/crates/omeco)
 - **State-Vector Simulation**: Direct `apply` for verification
-- **CLI Tool**: `yao` command for simulation, measurement, and tensor export without writing Rust code
+- **SVG Visualization**: `Circuit::to_svg()` and `yao visualize` without an external renderer
+- **CLI Tool**: `yao` command for simulation, measurement, tensor export, and visualization without writing Rust code
 
 ## Example
 
@@ -62,6 +63,9 @@ let circuit = Circuit::new(vec![2, 2], vec![
 // Simulate
 let reg = ArrayReg::zero_state(2);
 let result = apply(&circuit, &reg);
+
+// Render as SVG
+let svg = circuit.to_svg();
 
 // Export as tensor network
 let tn = circuit_to_einsum(&circuit);
