@@ -1,10 +1,7 @@
 //! Native tensor network contractor using omeinsum.
 //!
-//! Enable with the `omeinsum` feature flag:
-//! ```toml
-//! [dependencies]
-//! yao-rs = { version = "0.1", features = ["omeinsum"] }
-//! ```
+//! Enable with the `omeinsum` feature flag. Requires the `omeinsum-rs`
+//! git submodule to be initialized (`git submodule update --init`).
 
 use ndarray::{ArrayD, ShapeBuilder};
 use num_complex::Complex64;
@@ -23,11 +20,7 @@ use crate::einsum::TensorNetwork;
 /// # Returns
 /// The contracted result as an ndarray `ArrayD<Complex64>`.
 pub fn contract(tn: &TensorNetwork) -> ArrayD<Complex64> {
-    let tensors: Vec<Tensor<Complex64, Cpu>> = tn
-        .tensors
-        .iter()
-        .map(ndarray_to_omeinsum)
-        .collect();
+    let tensors: Vec<Tensor<Complex64, Cpu>> = tn.tensors.iter().map(ndarray_to_omeinsum).collect();
     let tensor_refs: Vec<&Tensor<Complex64, Cpu>> = tensors.iter().collect();
 
     let ixs: Vec<Vec<usize>> = tn.code.ixs.clone();
@@ -64,9 +57,10 @@ fn omeinsum_to_ndarray(
         // Scalar result
         ArrayD::from_shape_vec(ndarray::IxDyn(&[]), data).unwrap()
     } else {
-        // omeinsum stores column-major, convert to row-major ndarray
+        // omeinsum stores column-major; build with Fortran layout then
+        // convert to standard (row-major) layout for ndarray consumers.
         let col_major = ArrayD::from_shape_vec(ndarray::IxDyn(&shape).f(), data).unwrap();
-        col_major.into_owned()
+        col_major.as_standard_layout().into_owned()
     }
 }
 

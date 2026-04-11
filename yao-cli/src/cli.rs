@@ -154,8 +154,8 @@ Examples:
         /// Contraction mode: state (full state vector), overlap (⟨0|U|0⟩ scalar)
         #[arg(long, value_enum, default_value_t = ContractMode::Overlap)]
         mode: ContractMode,
-        /// Operator expression for expectation value
-        #[arg(long, conflicts_with = "mode", allow_hyphen_values = true)]
+        /// Operator expression for expectation value (overrides --mode)
+        #[arg(long, allow_hyphen_values = true)]
         op: Option<String>,
     },
 
