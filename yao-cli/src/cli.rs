@@ -163,14 +163,19 @@ Examples:
     #[command(after_help = "\
 Examples:
   yao toeinsum circuit.json
-  yao toeinsum circuit.json --output tn.json
-  yao toeinsum circuit.json --mode dm")]
+  yao toeinsum circuit.json --mode dm
+  yao toeinsum circuit.json --mode overlap
+  yao toeinsum circuit.json --mode state
+  yao toeinsum circuit.json --op \"Z(0)Z(1)\"")]
     Toeinsum {
         /// Circuit JSON file (use - for stdin)
         circuit: String,
-        /// Export mode: pure (default) or dm (density matrix)
+        /// Export mode: pure (default), dm, overlap, or state
         #[arg(long, value_enum, default_value_t = TnMode::Pure)]
         mode: TnMode,
+        /// Operator expression for expectation TN (overrides --mode)
+        #[arg(long, allow_hyphen_values = true)]
+        op: Option<String>,
     },
 
     /// Render circuit diagram as PDF
@@ -270,4 +275,8 @@ pub enum TnMode {
     Pure,
     /// Density-matrix tensor network
     Dm,
+    /// Scalar overlap ⟨0|U|0⟩
+    Overlap,
+    /// State vector with |0⟩ boundary tensors
+    State,
 }

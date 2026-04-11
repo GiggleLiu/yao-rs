@@ -82,7 +82,9 @@ fn main() -> anyhow::Result<()> {
         Commands::Contract { circuit, mode, op } => {
             commands::contract::contract_cmd(&circuit, mode, op.as_deref(), &out)
         }
-        Commands::Toeinsum { circuit, mode } => commands::toeinsum::toeinsum(&circuit, mode, &out),
+        Commands::Toeinsum { circuit, mode, op } => {
+            commands::toeinsum::toeinsum(&circuit, mode, op.as_deref(), &out)
+        }
         #[cfg(feature = "qasm")]
         Commands::Fromqasm { input } => commands::fromqasm::fromqasm(&input, &out),
         #[cfg(feature = "qasm")]
