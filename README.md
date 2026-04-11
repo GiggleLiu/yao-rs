@@ -26,23 +26,6 @@ A Rust port of [Yao.jl](https://github.com/QuantumBFS/Yao.jl) focused on quantum
 
 For library usage, examples, and API details, see the documentation links at the end of this README.
 
-<<<<<<< Updated upstream
-// Apply to |00⟩
-let reg = ArrayReg::zero_state(2);
-let result = apply(&circuit, &reg);
-
-// Render as SVG
-let svg = circuit.to_svg();
-
-// Or export as tensor network
-let tn = circuit_to_einsum(&circuit);
-```
-
-### CLI
-=======
-## CLI
->>>>>>> Stashed changes
-
 ```bash
 # Install
 cargo install --path yao-cli
