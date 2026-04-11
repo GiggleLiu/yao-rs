@@ -124,10 +124,10 @@ fn visualize_writes_svg_in_default_build() {
     write_bell_circuit(&circuit_path);
 
     let visualize = run_yao(&[
-        "--output",
-        svg_path.to_str().unwrap(),
         "visualize",
         circuit_path.to_str().unwrap(),
+        "--output",
+        svg_path.to_str().unwrap(),
     ]);
 
     assert!(visualize.status.success(), "{visualize:?}");
@@ -137,4 +137,45 @@ fn visualize_writes_svg_in_default_build() {
 
     let _ = fs::remove_file(circuit_path);
     let _ = fs::remove_file(svg_path);
+}
+
+#[test]
+fn visualize_requires_output_argument() {
+    let circuit_path = temp_path("yao-visualize-missing-output", "json");
+    write_bell_circuit(&circuit_path);
+
+    let visualize = run_yao(&["visualize", circuit_path.to_str().unwrap()]);
+
+    assert!(!visualize.status.success(), "{visualize:?}");
+    let stderr = String::from_utf8_lossy(&visualize.stderr);
+    assert!(
+        stderr.contains("required") && stderr.contains("output"),
+        "unexpected stderr: {stderr}"
+    );
+
+    let _ = fs::remove_file(circuit_path);
+}
+
+#[test]
+fn visualize_rejects_non_svg_output_extension() {
+    let circuit_path = temp_path("yao-visualize-bad-extension", "json");
+    let pdf_path = temp_path("yao-visualize-bad-extension", "pdf");
+    write_bell_circuit(&circuit_path);
+
+    let visualize = run_yao(&[
+        "visualize",
+        circuit_path.to_str().unwrap(),
+        "--output",
+        pdf_path.to_str().unwrap(),
+    ]);
+
+    assert!(!visualize.status.success(), "{visualize:?}");
+    let stderr = String::from_utf8_lossy(&visualize.stderr);
+    assert!(
+        stderr.contains("Only SVG output is supported"),
+        "unexpected stderr: {stderr}"
+    );
+
+    let _ = fs::remove_file(circuit_path);
+    let _ = fs::remove_file(pdf_path);
 }
