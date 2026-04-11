@@ -141,22 +141,16 @@ Examples:
         locs: Option<Vec<usize>>,
     },
 
-    /// Contract a circuit's tensor network (no state-vector simulation)
+    /// Contract a pre-optimized tensor network
     #[cfg(feature = "omeinsum")]
     #[command(after_help = "\
 Examples:
-  yao contract circuit.json
-  yao contract circuit.json --mode overlap
-  yao contract circuit.json --op \"Z(0)Z(1)\"")]
+  yao toeinsum circuit.json | yao optimize - | yao contract -
+  yao toeinsum circuit.json --mode overlap | yao optimize - | yao contract -
+  yao toeinsum circuit.json --op \"Z(0)Z(1)\" | yao optimize - | yao contract -")]
     Contract {
-        /// Circuit JSON file (use - for stdin)
-        circuit: String,
-        /// Contraction mode: state (full state vector), overlap (⟨0|U|0⟩ scalar)
-        #[arg(long, value_enum, default_value_t = ContractMode::Overlap)]
-        mode: ContractMode,
-        /// Operator expression for expectation value (overrides --mode)
-        #[arg(long, allow_hyphen_values = true)]
-        op: Option<String>,
+        /// Tensor network JSON file with contraction_order (use - for stdin)
+        input: String,
     },
 
     /// Optimize contraction order for a tensor network
@@ -301,14 +295,6 @@ Examples:
         /// Shell to generate completions for (auto-detected if omitted)
         shell: Option<clap_complete::Shell>,
     },
-}
-
-#[derive(Debug, Clone, Copy, ValueEnum)]
-pub enum ContractMode {
-    /// Full state vector output
-    State,
-    /// Scalar overlap ⟨0|U|0⟩
-    Overlap,
 }
 
 #[derive(Debug, Clone, Copy, ValueEnum)]

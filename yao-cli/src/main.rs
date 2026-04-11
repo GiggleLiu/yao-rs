@@ -79,9 +79,7 @@ fn main() -> anyhow::Result<()> {
         Commands::Probs { input, locs } => commands::probs::probs(&input, locs.as_deref(), &out),
         Commands::Expect { input, op } => commands::expect::expect(&input, &op, &out),
         #[cfg(feature = "omeinsum")]
-        Commands::Contract { circuit, mode, op } => {
-            commands::contract::contract_cmd(&circuit, mode, op.as_deref(), &out)
-        }
+        Commands::Contract { input } => commands::contract::contract_cmd(&input, &out),
         #[cfg(feature = "omeinsum")]
         Commands::Optimize {
             input,
