@@ -10,6 +10,10 @@ struct LayoutConfig {
     gate_width: f32,
 }
 
+struct ColumnLayout {
+    center_x: f32,
+}
+
 enum RenderNode {
     Wire {
         y: f32,
@@ -22,6 +26,7 @@ enum RenderNode {
         width: f32,
         height: f32,
         label: String,
+        class: &'static str,
     },
     Text {
         x: f32,
@@ -50,6 +55,9 @@ const CONTROL_RADIUS: f32 = 5.0;
 const TARGET_X_RADIUS: f32 = 12.0;
 const TARGET_X_ARM: f32 = 8.0;
 const SWAP_ARM: f32 = 8.0;
+const LABEL_CHAR_WIDTH: f32 = 7.5;
+const BOX_LABEL_PADDING: f32 = 18.0;
+const COLUMN_GUTTER: f32 = 18.0;
 
 impl Default for LayoutConfig {
     fn default() -> Self {
@@ -65,7 +73,9 @@ impl Default for LayoutConfig {
 
 pub fn to_svg(circuit: &Circuit) -> String {
     let config = LayoutConfig::default();
-    let width = config.left_pad + circuit.elements.len() as f32 * config.col_width + RIGHT_PAD;
+    let columns = layout_columns(circuit, &config);
+    let total_columns_width = columns_width(circuit, &config);
+    let width = config.left_pad + total_columns_width + RIGHT_PAD;
     let height = if circuit.nbits == 0 {
         config.top_pad * 2.0
     } else {
@@ -84,8 +94,8 @@ pub fn to_svg(circuit: &Circuit) -> String {
     }
 
     let mut nodes = Vec::new();
-    for (col, element) in circuit.elements.iter().enumerate() {
-        let x = config.left_pad + col as f32 * config.col_width + config.col_width * 0.5;
+    for (column, element) in columns.iter().zip(&circuit.elements) {
+        let x = column.center_x;
         match element {
             CircuitElement::Gate(pg) => layout_gate(pg, x, &config, &mut nodes),
             CircuitElement::Annotation(pa) => {
@@ -130,13 +140,12 @@ pub fn to_svg(circuit: &Circuit) -> String {
 }
 
 fn layout_gate(pg: &PositionedGate, x: f32, config: &LayoutConfig, nodes: &mut Vec<RenderNode>) {
-    if needs_vertical_connector(pg) {
-        let (min_loc, max_loc) = min_max(pg.all_locs().iter().copied());
+    if let Some((y1, y2)) = connector_span(pg, config) {
         nodes.push(RenderNode::Line {
             x1: x,
-            y1: wire_y(min_loc, config),
+            y1,
             x2: x,
-            y2: wire_y(max_loc, config),
+            y2,
             class: "control-link",
         });
     }
@@ -162,20 +171,21 @@ fn layout_gate(pg: &PositionedGate, x: f32, config: &LayoutConfig, nodes: &mut V
         return;
     }
 
-    let (min_target, max_target) = min_max(pg.target_locs.iter().copied());
-    let top = wire_y(min_target, config) - GATE_HEIGHT * 0.5;
-    let height = GATE_HEIGHT + (max_target - min_target) as f32 * config.row_height;
+    let label = pg.gate.to_string();
+    let box_width = box_width_for_label(&label, config);
+    let (top, height) = gate_box_frame(pg, config);
     nodes.push(RenderNode::GateBox {
-        x: x - config.gate_width * 0.5,
+        x: x - box_width * 0.5,
         y: top,
-        width: config.gate_width,
+        width: box_width,
         height,
-        label: pg.gate.to_string(),
+        label: label.clone(),
+        class: "gate-box",
     });
     nodes.push(RenderNode::Text {
         x,
         y: top + height * 0.5,
-        label: pg.gate.to_string(),
+        label,
         class: "gate-label",
     });
 }
@@ -186,45 +196,21 @@ fn layout_channel(
     config: &LayoutConfig,
     nodes: &mut Vec<RenderNode>,
 ) {
-    let (min_loc, max_loc) = min_max(pc.locs.iter().copied());
-    let top = wire_y(min_loc, config) - GATE_HEIGHT * 0.5;
-    let height = GATE_HEIGHT + (max_loc - min_loc) as f32 * config.row_height;
-    let left = x - config.gate_width * 0.5;
-    let right = x + config.gate_width * 0.5;
-    let bottom = top + height;
-
-    nodes.push(RenderNode::Line {
-        x1: left,
-        y1: top,
-        x2: right,
-        y2: top,
-        class: "channel-box",
-    });
-    nodes.push(RenderNode::Line {
-        x1: left,
-        y1: bottom,
-        x2: right,
-        y2: bottom,
-        class: "channel-box",
-    });
-    nodes.push(RenderNode::Line {
-        x1: left,
-        y1: top,
-        x2: left,
-        y2: bottom,
-        class: "channel-box",
-    });
-    nodes.push(RenderNode::Line {
-        x1: right,
-        y1: top,
-        x2: right,
-        y2: bottom,
+    let label = channel_label(&pc.channel).to_string();
+    let box_width = box_width_for_label(&label, config);
+    let (top, height) = box_frame_for_locs(&pc.locs, config);
+    nodes.push(RenderNode::GateBox {
+        x: x - box_width * 0.5,
+        y: top,
+        width: box_width,
+        height,
+        label: label.clone(),
         class: "channel-box",
     });
     nodes.push(RenderNode::Text {
         x,
         y: top + height * 0.5,
-        label: channel_label(&pc.channel).to_string(),
+        label: label.clone(),
         class: "channel-label",
     });
 }
@@ -269,22 +255,120 @@ fn push_swap_marker(x: f32, y: f32, nodes: &mut Vec<RenderNode>) {
     });
 }
 
-fn needs_vertical_connector(pg: &PositionedGate) -> bool {
-    !pg.control_locs.is_empty() || matches!(pg.gate, Gate::SWAP)
+fn layout_columns(circuit: &Circuit, config: &LayoutConfig) -> Vec<ColumnLayout> {
+    let mut cursor = config.left_pad;
+    let mut columns = Vec::with_capacity(circuit.elements.len());
+
+    for element in &circuit.elements {
+        let width = column_width_for_element(element, config);
+        columns.push(ColumnLayout {
+            center_x: cursor + width * 0.5,
+        });
+        cursor += width;
+    }
+
+    columns
+}
+
+fn columns_width(circuit: &Circuit, config: &LayoutConfig) -> f32 {
+    circuit
+        .elements
+        .iter()
+        .map(|element| column_width_for_element(element, config))
+        .sum()
+}
+
+fn column_width_for_element(element: &CircuitElement, config: &LayoutConfig) -> f32 {
+    match element {
+        CircuitElement::Gate(pg) if is_symbol_only_gate(pg) => config.col_width,
+        CircuitElement::Gate(pg) => {
+            let label = pg.gate.to_string();
+            config
+                .col_width
+                .max(box_width_for_label(&label, config) + COLUMN_GUTTER)
+        }
+        CircuitElement::Annotation(pa) => match &pa.annotation {
+            Annotation::Label(text) => config.col_width.max(text_width(text) + COLUMN_GUTTER),
+        },
+        CircuitElement::Channel(pc) => {
+            let label = channel_label(&pc.channel);
+            config
+                .col_width
+                .max(box_width_for_label(label, config) + COLUMN_GUTTER)
+        }
+    }
+}
+
+fn is_symbol_only_gate(pg: &PositionedGate) -> bool {
+    matches!(pg.gate, Gate::SWAP)
+        || (matches!(pg.gate, Gate::X) && !pg.control_locs.is_empty() && pg.target_locs.len() == 1)
+}
+
+fn connector_span(pg: &PositionedGate, config: &LayoutConfig) -> Option<(f32, f32)> {
+    if pg.control_locs.is_empty() && !matches!(pg.gate, Gate::SWAP) {
+        return None;
+    }
+
+    let mut ys: Vec<f32> = pg
+        .control_locs
+        .iter()
+        .map(|&loc| wire_y(loc, config))
+        .collect();
+    ys.extend(pg.target_locs.iter().map(|&loc| wire_y(loc, config)));
+
+    if pg.target_locs.is_empty() {
+        ys.push(header_center_y(config));
+    }
+
+    let min_y = ys.iter().copied().reduce(f32::min)?;
+    let max_y = ys.iter().copied().reduce(f32::max)?;
+    Some((min_y, max_y))
+}
+
+fn gate_box_frame(pg: &PositionedGate, config: &LayoutConfig) -> (f32, f32) {
+    if let Some((min_target, max_target)) = min_max(pg.target_locs.iter().copied()) {
+        let top = wire_y(min_target, config) - GATE_HEIGHT * 0.5;
+        let height = GATE_HEIGHT + (max_target - min_target) as f32 * config.row_height;
+        (top, height)
+    } else {
+        (header_center_y(config) - GATE_HEIGHT * 0.5, GATE_HEIGHT)
+    }
+}
+
+fn box_frame_for_locs(locs: &[usize], config: &LayoutConfig) -> (f32, f32) {
+    if let Some((min_loc, max_loc)) = min_max(locs.iter().copied()) {
+        let top = wire_y(min_loc, config) - GATE_HEIGHT * 0.5;
+        let height = GATE_HEIGHT + (max_loc - min_loc) as f32 * config.row_height;
+        (top, height)
+    } else {
+        (header_center_y(config) - GATE_HEIGHT * 0.5, GATE_HEIGHT)
+    }
+}
+
+fn box_width_for_label(label: &str, config: &LayoutConfig) -> f32 {
+    config.gate_width.max(text_width(label) + BOX_LABEL_PADDING)
+}
+
+fn text_width(label: &str) -> f32 {
+    label.chars().count() as f32 * LABEL_CHAR_WIDTH
+}
+
+fn header_center_y(config: &LayoutConfig) -> f32 {
+    config.top_pad * 0.5
 }
 
 fn wire_y(site: usize, config: &LayoutConfig) -> f32 {
     config.top_pad + site as f32 * config.row_height
 }
 
-fn min_max<I>(mut locs: I) -> (usize, usize)
+fn min_max<I>(mut locs: I) -> Option<(usize, usize)>
 where
     I: Iterator<Item = usize>,
 {
-    let first = locs.next().expect("layout requires at least one location");
-    locs.fold((first, first), |(min_loc, max_loc), loc| {
+    let first = locs.next()?;
+    Some(locs.fold((first, first), |(min_loc, max_loc), loc| {
         (min_loc.min(loc), max_loc.max(loc))
-    })
+    }))
 }
 
 fn push_node(svg: &mut String, node: &RenderNode) {
@@ -299,8 +383,10 @@ fn push_node(svg: &mut String, node: &RenderNode) {
             width,
             height,
             label,
+            class,
         } => svg.push_str(&format!(
-            r#"<rect class="gate-box" x="{}" y="{}" width="{}" height="{}" rx="6" ry="6" data-label="{}"/>"#,
+            r#"<rect class="{}" x="{}" y="{}" width="{}" height="{}" rx="6" ry="6" data-label="{}"/>"#,
+            class,
             x,
             y,
             width,
