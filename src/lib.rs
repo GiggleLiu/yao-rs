@@ -30,7 +30,7 @@ pub use circuit::{
     channel, control, label, put,
 };
 #[cfg(feature = "omeinsum")]
-pub use contractor::contract as contract_tn;
+pub use contractor::{contract as contract_tn, contract_dm, contract_dm_with_tree};
 pub use density_matrix::{DensityMatrix, density_matrix_from_reg};
 pub use einsum::{
     TensorNetwork, TensorNetworkDM, circuit_to_einsum, circuit_to_einsum_dm,

@@ -1,7 +1,7 @@
 use crate::apply::apply;
 use crate::circuit::{Circuit, control, put};
-use crate::contractor::{contract, contract_with_tree};
-use crate::einsum::{circuit_to_einsum_with_boundary, circuit_to_overlap};
+use crate::contractor::{contract, contract_dm, contract_dm_with_tree, contract_with_tree};
+use crate::einsum::{circuit_to_einsum_dm, circuit_to_einsum_with_boundary, circuit_to_overlap};
 use crate::gate::Gate;
 use crate::register::ArrayReg;
 use num_complex::Complex64;
@@ -236,4 +236,98 @@ fn test_contract_with_tree() {
     assert!((result[[0, 1]] - Complex64::new(0.0, 0.0)).norm() < 1e-10);
     assert!((result[[1, 0]] - Complex64::new(0.0, 0.0)).norm() < 1e-10);
     assert!((result[[1, 1]] - Complex64::new(s, 0.0)).norm() < 1e-10);
+}
+
+// --- Density matrix contraction tests ---
+
+/// Cross-validate DM contraction: contract the DM TN and compare against
+/// the pure-state density matrix |psi><psi|.
+fn cross_validate_dm(circuit: &Circuit) {
+    let tn_dm = circuit_to_einsum_dm(circuit);
+    let dm_result = contract_dm(&tn_dm);
+
+    // Get pure state for reference
+    let reg = apply(circuit, &ArrayReg::zero_state(circuit.nbits));
+    let psi = reg.state_vec();
+    let n = circuit.num_sites();
+
+    // dm_result shape should be [d0, d1, ..., d0, d1, ...] (ket then bra)
+    // Verify tr(rho) = 1
+    let mut trace = Complex64::new(0.0, 0.0);
+    for idx in 0..psi.len() {
+        // Build multi-index for diagonal entry: ket_i = bra_i for all sites
+        let mut multi_idx = vec![0usize; 2 * n];
+        let mut rem = idx;
+        for site in (0..n).rev() {
+            let d = circuit.dims[site];
+            multi_idx[site] = rem % d;
+            multi_idx[n + site] = rem % d;
+            rem /= d;
+        }
+        trace += dm_result[ndarray::IxDyn(&multi_idx)];
+    }
+    assert!(
+        (trace - Complex64::new(1.0, 0.0)).norm() < 1e-10,
+        "tr(rho) should be 1, got {trace}"
+    );
+
+    // Verify rho[i,j] = psi[i] * conj(psi[j])
+    for i in 0..psi.len() {
+        for j in 0..psi.len() {
+            let expected = psi[i] * psi[j].conj();
+            let mut multi_idx = vec![0usize; 2 * n];
+            let mut rem_i = i;
+            let mut rem_j = j;
+            for site in (0..n).rev() {
+                let d = circuit.dims[site];
+                multi_idx[site] = rem_i % d;
+                multi_idx[n + site] = rem_j % d;
+                rem_i /= d;
+                rem_j /= d;
+            }
+            let actual = dm_result[ndarray::IxDyn(&multi_idx)];
+            assert!(
+                (actual - expected).norm() < 1e-10,
+                "rho[{i},{j}] mismatch: expected {expected}, got {actual}"
+            );
+        }
+    }
+}
+
+#[test]
+fn test_contract_dm_identity() {
+    let circuit = Circuit::new(vec![2], vec![]).unwrap();
+    cross_validate_dm(&circuit);
+}
+
+#[test]
+fn test_contract_dm_h_gate() {
+    let circuit = Circuit::new(vec![2], vec![put(vec![0], Gate::H)]).unwrap();
+    cross_validate_dm(&circuit);
+}
+
+#[test]
+fn test_contract_dm_bell_state() {
+    let circuit = Circuit::new(
+        vec![2, 2],
+        vec![put(vec![0], Gate::H), control(vec![0], vec![1], Gate::X)],
+    )
+    .unwrap();
+    cross_validate_dm(&circuit);
+}
+
+#[test]
+fn test_contract_dm_with_tree() {
+    let circuit = Circuit::new(vec![2], vec![put(vec![0], Gate::H)]).unwrap();
+    let tn_dm = circuit_to_einsum_dm(&circuit);
+
+    let tree = optimize_code(&tn_dm.code, &tn_dm.size_dict, &GreedyMethod::default()).unwrap();
+    let dm_result = contract_dm_with_tree(&tn_dm, tree);
+
+    // H|0⟩ = (|0⟩+|1⟩)/sqrt(2), so rho = [[0.5, 0.5], [0.5, 0.5]]
+    let half = Complex64::new(0.5, 0.0);
+    assert!((dm_result[ndarray::IxDyn(&[0, 0])] - half).norm() < 1e-10);
+    assert!((dm_result[ndarray::IxDyn(&[0, 1])] - half).norm() < 1e-10);
+    assert!((dm_result[ndarray::IxDyn(&[1, 0])] - half).norm() < 1e-10);
+    assert!((dm_result[ndarray::IxDyn(&[1, 1])] - half).norm() < 1e-10);
 }

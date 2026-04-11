@@ -2,7 +2,7 @@ use crate::output::OutputConfig;
 use crate::tn_dto::TensorNetworkDto;
 use anyhow::{Result, bail};
 use omeco::json::NestedEinsumTree;
-use omeco::{EinCode, GreedyMethod, TreeSA, optimize_code};
+use omeco::{GreedyMethod, TreeSA, optimize_code};
 
 #[allow(clippy::too_many_arguments)]
 pub fn optimize_cmd(
@@ -23,25 +23,56 @@ pub fn optimize_cmd(
     let mut dto: TensorNetworkDto =
         serde_json::from_str(&json).map_err(|e| anyhow::anyhow!("Failed to parse TN JSON: {e}"))?;
 
-    if dto.mode == "dm" {
-        bail!(
-            "DM mode is not supported by optimize/contract. \
-             Density matrix tensor networks (mode=dm) are not supported. \
-             Use mode=pure, overlap, or state."
-        );
-    }
-
     if dto.contraction_order.is_some() {
         out.info("Warning: replacing existing contraction order");
     }
 
     let tn = dto.to_tensor_network()?;
-    let code = EinCode::new(tn.code.ixs.clone(), tn.code.iy.clone());
+    let tree = run_optimizer(
+        &tn.code,
+        &tn.size_dict,
+        method,
+        alpha,
+        temperature,
+        ntrials,
+        niters,
+        betas,
+        sc_target,
+        tc_weight,
+        sc_weight,
+        rw_weight,
+    )?;
+    dto.contraction_order = Some(NestedEinsumTree::from(&tree));
 
+    let json_value = serde_json::to_value(&dto)?;
+    let human = format!(
+        "Optimized (method={method}):\n  Tensors: {}\n  Labels: {}\n",
+        dto.tensors.len(),
+        dto.size_dict.len(),
+    );
+
+    out.emit(&human, &json_value)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn run_optimizer<L: omeco::Label>(
+    code: &omeco::EinCode<L>,
+    size_dict: &std::collections::HashMap<L, usize>,
+    method: &str,
+    alpha: Option<f64>,
+    temperature: Option<f64>,
+    ntrials: Option<usize>,
+    niters: Option<usize>,
+    betas: Option<&str>,
+    sc_target: Option<f64>,
+    tc_weight: Option<f64>,
+    sc_weight: Option<f64>,
+    rw_weight: Option<f64>,
+) -> Result<omeco::NestedEinsum<L>> {
     let tree = match method {
         "greedy" => {
             let optimizer = GreedyMethod::new(alpha.unwrap_or(0.0), temperature.unwrap_or(0.0));
-            optimize_code(&code, &tn.size_dict, &optimizer)
+            optimize_code(code, size_dict, &optimizer)
         }
         "treesa" => {
             let mut optimizer = TreeSA::default();
@@ -66,22 +97,12 @@ pub fn optimize_cmd(
             if let Some(v) = rw_weight {
                 optimizer.score.rw_weight = v;
             }
-            optimize_code(&code, &tn.size_dict, &optimizer)
+            optimize_code(code, size_dict, &optimizer)
         }
         _ => bail!("Unknown method '{method}': expected 'greedy' or 'treesa'"),
     };
 
-    let tree = tree.ok_or_else(|| anyhow::anyhow!("Optimization produced no contraction tree"))?;
-    dto.contraction_order = Some(NestedEinsumTree::from(&tree));
-
-    let json_value = serde_json::to_value(&dto)?;
-    let human = format!(
-        "Optimized (method={method}):\n  Tensors: {}\n  Labels: {}\n",
-        dto.tensors.len(),
-        dto.size_dict.len(),
-    );
-
-    out.emit(&human, &json_value)
+    tree.ok_or_else(|| anyhow::anyhow!("Optimization produced no contraction tree"))
 }
 
 fn parse_betas(s: &str) -> Result<Vec<f64>> {
@@ -143,12 +164,10 @@ mod tests {
         let mut parsed: TensorNetworkDto = serde_json::from_str(&json).unwrap();
         let tn_back = parsed.to_tensor_network().unwrap();
 
-        let code = EinCode::new(tn_back.code.ixs.clone(), tn_back.code.iy.clone());
-        let tree = optimize_code(&code, &tn_back.size_dict, &GreedyMethod::default());
+        let tree = optimize_code(&tn_back.code, &tn_back.size_dict, &GreedyMethod::default());
         assert!(tree.is_some());
 
-        let tree = tree.unwrap();
-        parsed.contraction_order = Some(NestedEinsumTree::from(&tree));
+        parsed.contraction_order = Some(NestedEinsumTree::from(&tree.unwrap()));
 
         let json2 = serde_json::to_string(&parsed).unwrap();
         assert!(json2.contains("contraction_order"));
@@ -159,7 +178,7 @@ mod tests {
     #[test]
     fn test_parse_betas() {
         let betas = parse_betas("0.01:0.05:0.20").unwrap();
-        assert_eq!(betas.len(), 4); // 0.01, 0.06, 0.11, 0.16
+        assert_eq!(betas.len(), 4);
         assert!((betas[0] - 0.01).abs() < 1e-10);
     }
 
@@ -171,7 +190,7 @@ mod tests {
     }
 
     #[test]
-    fn test_optimize_rejects_density_matrix_mode() {
+    fn test_optimize_accepts_density_matrix_mode() {
         let circuit = Circuit::new(vec![2], vec![put(vec![0], Gate::H)]).unwrap();
         let tn = yao_rs::circuit_to_einsum_dm(&circuit);
         let dto = TensorNetworkDto::from_dm(&tn);
@@ -183,11 +202,11 @@ mod tests {
         let out = OutputConfig {
             output: Some(output_path.clone()),
             quiet: true,
-            json: false,
+            json: true,
             auto_json: false,
         };
 
-        let err = optimize_cmd(
+        optimize_cmd(
             input_path.to_str().unwrap(),
             "greedy",
             None,
@@ -201,12 +220,11 @@ mod tests {
             None,
             &out,
         )
-        .unwrap_err();
+        .unwrap();
 
-        assert!(
-            err.to_string().contains("Density matrix tensor networks"),
-            "unexpected error: {err}"
-        );
+        let optimized: TensorNetworkDto =
+            serde_json::from_str(&fs::read_to_string(&output_path).unwrap()).unwrap();
+        assert!(optimized.contraction_order.is_some());
 
         let _ = fs::remove_file(input_path);
         let _ = fs::remove_file(output_path);

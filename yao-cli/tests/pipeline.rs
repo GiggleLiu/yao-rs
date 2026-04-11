@@ -111,3 +111,67 @@ fn test_contract_rejects_unoptimized_tn() {
         "Error should mention contraction order, got: {stderr}"
     );
 }
+
+#[test]
+fn test_pipeline_density_matrix_mode() {
+    let output = run_pipeline(&["--mode", "dm"]);
+    let data: Vec<serde_json::Value> = serde_json::from_str(&output).unwrap();
+
+    assert_eq!(data.len(), 4);
+
+    let bitstrings: Vec<&str> = data
+        .iter()
+        .map(|e| e["bitstring"].as_str().unwrap())
+        .collect();
+    assert!(bitstrings.contains(&"0000"));
+    assert!(bitstrings.contains(&"0011"));
+    assert!(bitstrings.contains(&"1100"));
+    assert!(bitstrings.contains(&"1111"));
+
+    for entry in data {
+        assert!((entry["re"].as_f64().unwrap() - 0.5).abs() < 1e-10);
+        assert_eq!(entry["im"].as_f64().unwrap(), 0.0);
+    }
+}
+
+#[test]
+fn test_contract_formats_mixed_radix_state_indices() {
+    let tn_json = serde_json::json!({
+        "format": "yao-tn-v1",
+        "mode": "pure",
+        "eincode": {
+            "input_indices": [["0", "1"]],
+            "output_indices": ["0", "1"],
+        },
+        "tensors": [{
+            "shape": [2, 3],
+            "data_re": [0.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+            "data_im": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        }],
+        "size_dict": {
+            "0": 2,
+            "1": 3,
+        },
+        "contraction_order": {
+            "isleaf": true,
+            "tensorindex": 0,
+        },
+    });
+
+    let contract_out = yao()
+        .args(["contract", "-", "--json"])
+        .write_stdin(tn_json.to_string())
+        .output()
+        .expect("failed to run contract");
+
+    assert!(
+        contract_out.status.success(),
+        "contract failed: {}",
+        String::from_utf8_lossy(&contract_out.stderr)
+    );
+
+    let data: Vec<serde_json::Value> = serde_json::from_slice(&contract_out.stdout).unwrap();
+    assert_eq!(data.len(), 1);
+    assert_eq!(data[0]["index"].as_u64(), Some(2));
+    assert_eq!(data[0]["bitstring"].as_str(), Some("02"));
+}
