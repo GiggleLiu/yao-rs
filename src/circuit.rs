@@ -286,6 +286,11 @@ impl Circuit {
         self.dims.iter().product()
     }
 
+    /// Render the circuit as SVG markup.
+    pub fn to_svg(&self) -> String {
+        crate::svg::to_svg(self)
+    }
+
     /// Return the adjoint circuit U†.
     ///
     /// The dagger of a circuit has:

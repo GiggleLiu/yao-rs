@@ -16,6 +16,7 @@ pub mod operator;
 #[cfg(feature = "qasm")]
 pub mod qasm;
 pub mod register;
+pub mod svg;
 pub mod tensors;
 #[cfg(feature = "torch")]
 pub mod torch_contractor;
