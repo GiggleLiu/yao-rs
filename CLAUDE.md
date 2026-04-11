@@ -43,7 +43,7 @@ Gate → PositionedGate → Circuit → TensorNetwork / ArrayReg
 
 - **PositionedGate** (`circuit.rs`): Gate + placement info (`target_locs`, `control_locs`, `control_configs`). Built via `put()` for uncontrolled gates or `control()` for controlled gates.
 
-- **CircuitElement** (`circuit.rs`): Enum wrapping `Gate(PositionedGate)`, `Annotation(PositionedAnnotation)`, or `Channel(PositionedChannel)`. Annotations are visual-only labels (no-op in execution, rendered in PDF diagrams). Channels represent noise (used by density-matrix/tensor-network paths only).
+- **CircuitElement** (`circuit.rs`): Enum wrapping `Gate(PositionedGate)`, `Annotation(PositionedAnnotation)`, or `Channel(PositionedChannel)`. Annotations are visual-only labels (no-op in execution, rendered in SVG diagrams). Channels represent noise (used by density-matrix/tensor-network paths only).
 
 - **Circuit** (`circuit.rs`): Validated sequence of `CircuitElement`s on a register with specified dimensions (`dims: Vec<usize>`). Constructor validates: control sites must be qubits, no overlapping control/target locs, matrix size matches target dimensions.
 
@@ -74,12 +74,11 @@ Gate → PositionedGate → Circuit → TensorNetwork / ArrayReg
 - `operator.rs`: Pauli operators and polynomials for expectation values
 - `json.rs`: Circuit serialization
 - `einsum.rs`, `tensors.rs`: Tensor network export (supports qudits)
-- `svg.rs`: Built-in SVG circuit renderer for `Circuit::to_svg()`
+- `svg.rs`: Built-in SVG circuit renderer for `Circuit::to_svg()`; annotations are visual-only labels (no-op in execution, rendered in SVG diagrams)
 - `noise.rs`: Noise channel definitions
 - `qasm.rs` (feature-gated): OpenQASM 2.0 import/export via the `openqasm` crate. Import decomposes all gates to U+CX primitives. Export maps Gate variants to standard qelib1.inc names.
 - `contractor.rs` (feature-gated `omeinsum`): Native tensor network contraction via [omeinsum-rs](https://github.com/tensor4all/omeinsum-rs) submodule. Converts `TensorNetwork` ndarray tensors to omeinsum column-major format, contracts with greedy optimization, returns column-major `ArrayD`.
 - `torch_contractor.rs` (feature-gated `torch`): libtorch-based tensor network contraction via omeco greedy optimizer
-- SVG rendering is built in and available through `Circuit::to_svg()`.
 
 ## Test Layout
 
