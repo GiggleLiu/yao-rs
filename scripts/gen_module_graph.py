@@ -30,7 +30,7 @@ CATEGORIES = {
     "easybuild": "higher",
     "operator": "higher",
     "noise": "higher",
-    "typst": "visualization",
+    "svg": "visualization",
 }
 
 

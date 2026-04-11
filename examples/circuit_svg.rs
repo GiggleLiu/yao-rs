@@ -1,11 +1,11 @@
-//! Example: Generate a PDF of a quantum circuit.
+//! Example: Generate an SVG of a quantum circuit.
 //!
 //! This example demonstrates:
 //! - Building circuits with the `put` and `control` builder functions
 //! - Adding label annotations for visual markers in circuit diagrams
-//! - Exporting circuits to PDF using the typst feature
+//! - Exporting circuits to SVG markup
 //!
-//! Run with: cargo run --example circuit_pdf --features typst
+//! Run with: cargo run --example circuit_svg
 
 use yao_rs::{Circuit, Gate, control, label, put};
 
@@ -26,14 +26,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ],
     )?;
 
-    println!("Generating PDF for Bell state circuit with annotations:");
+    println!("Generating SVG for Bell state circuit with annotations:");
     println!("{}", circuit);
 
-    let pdf_bytes = circuit.to_pdf()?;
+    let svg = circuit.to_svg();
 
-    let output_path = "bell_circuit.pdf";
-    std::fs::write(output_path, &pdf_bytes)?;
-    println!("PDF written to {} ({} bytes)", output_path, pdf_bytes.len());
+    let output_path = "bell_circuit.svg";
+    std::fs::write(output_path, &svg)?;
+    println!("SVG written to {} ({} bytes)", output_path, svg.len());
 
     Ok(())
 }

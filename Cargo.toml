@@ -17,7 +17,6 @@ default = []
 parallel = ["rayon"]
 torch = ["tch"]
 omeinsum = ["dep:omeinsum"]
-typst = ["dep:typst-as-lib", "dep:typst-pdf", "dep:typst"]
 qasm = ["dep:openqasm"]
 
 [dependencies]
@@ -33,9 +32,6 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 openqasm = { version = "0.1", optional = true }
 tch = { version = "0.18", optional = true }
-typst = { version = "0.14", optional = true }
-typst-as-lib = { version = "0.15", optional = true, features = ["packages", "typst-kit-fonts", "ureq"] }
-typst-pdf = { version = "0.14", optional = true }
 
 [dev-dependencies]
 approx = "0.5"
@@ -58,5 +54,4 @@ name = "density"
 harness = false
 
 [[example]]
-name = "circuit_pdf"
-required-features = ["typst"]
+name = "circuit_svg"
