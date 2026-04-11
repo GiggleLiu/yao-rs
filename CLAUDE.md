@@ -74,11 +74,12 @@ Gate → PositionedGate → Circuit → TensorNetwork / ArrayReg
 - `operator.rs`: Pauli operators and polynomials for expectation values
 - `json.rs`: Circuit serialization
 - `einsum.rs`, `tensors.rs`: Tensor network export (supports qudits)
+- `svg.rs`: Built-in SVG circuit renderer for `Circuit::to_svg()`
 - `noise.rs`: Noise channel definitions
 - `qasm.rs` (feature-gated): OpenQASM 2.0 import/export via the `openqasm` crate. Import decomposes all gates to U+CX primitives. Export maps Gate variants to standard qelib1.inc names.
 - `contractor.rs` (feature-gated `omeinsum`): Native tensor network contraction via [omeinsum-rs](https://github.com/tensor4all/omeinsum-rs) submodule. Converts `TensorNetwork` ndarray tensors to omeinsum column-major format, contracts with greedy optimization, returns column-major `ArrayD`.
 - `torch_contractor.rs` (feature-gated `torch`): libtorch-based tensor network contraction via omeco greedy optimizer
-- `typst.rs` (feature-gated `typst`): PDF circuit rendering via embedded Typst
+- SVG rendering is built in and available through `Circuit::to_svg()`.
 
 ## Test Layout
 
@@ -123,7 +124,6 @@ All commands output human-readable text in a terminal, JSON when piped. Use `--j
 - `parallel`: Enable rayon for parallel operations
 - `qasm`: OpenQASM 2.0 import/export (enabled by default in CLI)
 - `torch`: PyTorch tensor contraction via tch (requires libtorch)
-- `typst`: PDF circuit diagram generation
 
 ## Claude Skills
 

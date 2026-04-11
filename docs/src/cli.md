@@ -266,13 +266,13 @@ Available examples: `bell`, `ghz`, `qft`.
 
 ### `yao visualize`
 
-Render a circuit diagram as PDF.
+Render a circuit diagram as SVG.
 
 ```bash
-yao visualize circuit.json --output circuit.pdf
+yao visualize circuit.json --output circuit.svg
 ```
 
-The `--output` flag is required. Only PDF output is supported.
+The `--output` flag is required. Only SVG output is supported.
 
 ### `yao completions`
 
@@ -495,5 +495,5 @@ yao fetch qasmbench grover | yao fromqasm - | yao run - --shots 100
 ### Circuit visualization
 
 ```bash
-yao visualize circuit.json --output circuit.pdf
+yao visualize circuit.json --output circuit.svg
 ```
