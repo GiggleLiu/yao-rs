@@ -124,10 +124,10 @@ fn visualize_writes_svg_in_default_build() {
     write_bell_circuit(&circuit_path);
 
     let visualize = run_yao(&[
-        "visualize",
-        circuit_path.to_str().unwrap(),
         "--output",
         svg_path.to_str().unwrap(),
+        "visualize",
+        circuit_path.to_str().unwrap(),
     ]);
 
     assert!(visualize.status.success(), "{visualize:?}");
@@ -163,10 +163,10 @@ fn visualize_rejects_non_svg_output_extension() {
     write_bell_circuit(&circuit_path);
 
     let visualize = run_yao(&[
-        "visualize",
-        circuit_path.to_str().unwrap(),
         "--output",
         pdf_path.to_str().unwrap(),
+        "visualize",
+        circuit_path.to_str().unwrap(),
     ]);
 
     assert!(!visualize.status.success(), "{visualize:?}");

@@ -23,6 +23,15 @@ fn main() -> anyhow::Result<()> {
         }
     };
 
+    if matches!(cli.command, Commands::Visualize { .. }) && cli.output.is_none() {
+        Cli::command()
+            .error(
+                clap::error::ErrorKind::MissingRequiredArgument,
+                "--output is required for visualize (e.g. --output circuit.svg)",
+            )
+            .exit();
+    }
+
     let mut auto_json = matches!(
         cli.command,
         Commands::Inspect { .. }
@@ -117,9 +126,7 @@ fn main() -> anyhow::Result<()> {
         Commands::Fromqasm { input } => commands::fromqasm::fromqasm(&input, &out),
         #[cfg(feature = "qasm")]
         Commands::Toqasm { input } => commands::toqasm::toqasm(&input, &out),
-        Commands::Visualize { circuit, output } => {
-            commands::visualize::visualize(&circuit, &output, &out)
-        }
+        Commands::Visualize { circuit } => commands::visualize::visualize(&circuit, &out),
         Commands::Fetch {
             source,
             name,

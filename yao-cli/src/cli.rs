@@ -224,9 +224,6 @@ Examples:
     Visualize {
         /// Circuit JSON file
         circuit: String,
-        /// SVG output file path
-        #[arg(long, short)]
-        output: PathBuf,
     },
 
     /// Convert OpenQASM 2.0 file to circuit JSON
