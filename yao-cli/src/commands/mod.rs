@@ -1,6 +1,8 @@
 #[cfg(feature = "omeinsum")]
 pub mod contract;
 pub mod example;
+#[cfg(feature = "omeinsum")]
+pub mod optimize;
 pub mod expect;
 pub mod fetch;
 #[cfg(feature = "qasm")]
@@ -35,6 +37,19 @@ pub fn load_circuit(path: &str) -> anyhow::Result<Circuit> {
     };
 
     yao_rs::circuit_from_json(&json).map_err(|e| anyhow!("Failed to parse circuit: {e}"))
+}
+
+pub fn load_stdin_or_file(path: &str) -> anyhow::Result<String> {
+    if path == "-" {
+        let mut buf = String::new();
+        std::io::stdin()
+            .read_to_string(&mut buf)
+            .context("Failed to read from stdin")?;
+        Ok(buf)
+    } else {
+        std::fs::read_to_string(path)
+            .with_context(|| format!("Failed to read '{path}'"))
+    }
 }
 
 pub fn format_measurement(

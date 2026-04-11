@@ -37,7 +37,7 @@ fn main() -> anyhow::Result<()> {
     );
     #[cfg(feature = "omeinsum")]
     {
-        auto_json |= matches!(cli.command, Commands::Contract { .. });
+        auto_json |= matches!(cli.command, Commands::Contract { .. } | Commands::Optimize { .. });
     }
     #[cfg(feature = "qasm")]
     {
@@ -82,6 +82,33 @@ fn main() -> anyhow::Result<()> {
         Commands::Contract { circuit, mode, op } => {
             commands::contract::contract_cmd(&circuit, mode, op.as_deref(), &out)
         }
+        #[cfg(feature = "omeinsum")]
+        Commands::Optimize {
+            input,
+            method,
+            alpha,
+            temperature,
+            ntrials,
+            niters,
+            betas,
+            sc_target,
+            tc_weight,
+            sc_weight,
+            rw_weight,
+        } => commands::optimize::optimize_cmd(
+            &input,
+            &method,
+            alpha,
+            temperature,
+            ntrials,
+            niters,
+            betas.as_deref(),
+            sc_target,
+            tc_weight,
+            sc_weight,
+            rw_weight,
+            &out,
+        ),
         Commands::Toeinsum { circuit, mode, op } => {
             commands::toeinsum::toeinsum(&circuit, mode, op.as_deref(), &out)
         }
