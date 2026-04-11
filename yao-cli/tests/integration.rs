@@ -116,3 +116,25 @@ fn inspect_and_toeinsum_emit_expected_json() {
 
     let _ = fs::remove_file(circuit_path);
 }
+
+#[test]
+fn visualize_writes_svg_in_default_build() {
+    let circuit_path = temp_path("yao-visualize", "json");
+    let svg_path = temp_path("yao-visualize", "svg");
+    write_bell_circuit(&circuit_path);
+
+    let visualize = run_yao(&[
+        "--output",
+        svg_path.to_str().unwrap(),
+        "visualize",
+        circuit_path.to_str().unwrap(),
+    ]);
+
+    assert!(visualize.status.success(), "{visualize:?}");
+    let svg = fs::read_to_string(&svg_path).unwrap();
+    assert!(svg.starts_with("<svg"));
+    assert!(svg.contains("</svg>"));
+
+    let _ = fs::remove_file(circuit_path);
+    let _ = fs::remove_file(svg_path);
+}

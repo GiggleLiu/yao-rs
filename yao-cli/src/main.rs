@@ -117,7 +117,6 @@ fn main() -> anyhow::Result<()> {
         Commands::Fromqasm { input } => commands::fromqasm::fromqasm(&input, &out),
         #[cfg(feature = "qasm")]
         Commands::Toqasm { input } => commands::toqasm::toqasm(&input, &out),
-        #[cfg(feature = "typst")]
         Commands::Visualize { circuit } => commands::visualize::visualize(&circuit, &out),
         Commands::Fetch {
             source,

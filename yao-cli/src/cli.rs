@@ -217,11 +217,10 @@ Examples:
         op: Option<String>,
     },
 
-    /// Render circuit diagram as PDF
-    #[cfg(feature = "typst")]
+    /// Render circuit diagram as SVG
     #[command(after_help = "\
 Examples:
-  yao visualize circuit.json --output circuit.pdf")]
+  yao visualize circuit.json --output circuit.svg")]
     Visualize {
         /// Circuit JSON file
         circuit: String,
