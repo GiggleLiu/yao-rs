@@ -57,10 +57,8 @@ fn omeinsum_to_ndarray(
         // Scalar result
         ArrayD::from_shape_vec(ndarray::IxDyn(&[]), data).unwrap()
     } else {
-        // omeinsum stores column-major; build with Fortran layout then
-        // convert to standard (row-major) layout for ndarray consumers.
-        let col_major = ArrayD::from_shape_vec(ndarray::IxDyn(&shape).f(), data).unwrap();
-        col_major.as_standard_layout().into_owned()
+        // omeinsum stores column-major; return column-major ndarray
+        ArrayD::from_shape_vec(ndarray::IxDyn(&shape).f(), data).unwrap()
     }
 }
 

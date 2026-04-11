@@ -199,7 +199,8 @@ fn test_contract_mixed_gates() {
 // --- Layout correctness test ---
 
 #[test]
-fn test_contract_result_is_standard_layout() {
+fn test_contract_result_follows_input_convention() {
+    // Output should be column-major (Fortran layout), matching the input convention
     let circuit = Circuit::new(
         vec![2, 2],
         vec![put(vec![0], Gate::H), control(vec![0], vec![1], Gate::X)],
@@ -208,7 +209,7 @@ fn test_contract_result_is_standard_layout() {
     let tn = circuit_to_einsum_with_boundary(&circuit, &[]);
     let result = contract(&tn);
     assert!(
-        result.is_standard_layout(),
-        "result must be row-major (C layout)"
+        !result.is_standard_layout(),
+        "result should be column-major (Fortran layout)"
     );
 }
