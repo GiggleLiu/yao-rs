@@ -287,6 +287,9 @@ impl Circuit {
     }
 
     /// Render the circuit as SVG markup.
+    ///
+    /// This currently forwards to the minimal Task 1 SVG renderer, which emits
+    /// a valid shell with one wire and the first gate label only.
     pub fn to_svg(&self) -> String {
         crate::svg::to_svg(self)
     }

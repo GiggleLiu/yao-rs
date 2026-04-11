@@ -5,9 +5,12 @@ use crate::gate::Gate;
 fn renders_basic_h_gate_to_svg() {
     let circuit = Circuit::new(vec![2], vec![put(vec![0], Gate::H)]).unwrap();
 
-    let svg = crate::svg::to_svg(&circuit);
+    let svg = circuit.to_svg();
 
     assert!(svg.starts_with("<svg"));
+    assert!(svg.contains("<line "));
     assert!(svg.contains(">H</text>"));
     assert!(svg.contains("viewBox="));
+    assert!(svg.ends_with("</svg>"));
+    assert_eq!(svg, crate::svg::to_svg(&circuit));
 }

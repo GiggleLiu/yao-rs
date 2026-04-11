@@ -1,5 +1,10 @@
 use crate::circuit::{Circuit, CircuitElement};
 
+/// Render a circuit as a minimal SVG.
+///
+/// This Task 1 implementation only emits a valid SVG shell with one wire and
+/// the first gate label it encounters. Later tasks will expand layout and
+/// placement-aware rendering.
 pub fn to_svg(circuit: &Circuit) -> String {
     let width = 120;
     let height = 40;
