@@ -53,7 +53,7 @@ Gate → PositionedGate → Circuit → TensorNetwork / ArrayReg
 
 1. **Direct simulation** (`apply.rs`, `instruct_qubit.rs`): Qubit state-vector simulation via `apply(&circuit, &reg)` / `apply_inplace(&circuit, &mut reg)`. Uses bit-manipulation-based instruct functions from the `bitbasis` crate for zero-allocation hot loops. Dispatches by gate type: X fast-path, SWAP fast-path, 1q/2q diagonal, 1q/2q general, nq fallback.
 
-2. **Tensor network export** (`einsum.rs`, `tensors.rs`): Convert circuit to einsum via `circuit_to_einsum()`. Returns `TensorNetwork` with `EinCode<usize>` (from omeco crate), tensors, and size dictionary. Supports arbitrary qudit dimensions. Diagonal gates without controls share input/output legs (optimization).
+2. **Tensor network export & contraction** (`einsum.rs`, `tensors.rs`, `contractor.rs`): Convert circuit to einsum via `circuit_to_einsum()`. Returns `TensorNetwork` with `EinCode<usize>` (from omeco crate), tensors, and size dictionary. Supports arbitrary qudit dimensions. Diagonal gates without controls share input/output legs (optimization). Native contraction via `omeinsum` submodule (`contractor.rs`, feature-gated).
 
 ### Key Design Patterns
 
@@ -76,8 +76,9 @@ Gate → PositionedGate → Circuit → TensorNetwork / ArrayReg
 - `einsum.rs`, `tensors.rs`: Tensor network export (supports qudits)
 - `noise.rs`: Noise channel definitions
 - `qasm.rs` (feature-gated): OpenQASM 2.0 import/export via the `openqasm` crate. Import decomposes all gates to U+CX primitives. Export maps Gate variants to standard qelib1.inc names.
-- `torch_contractor.rs` (feature-gated): libtorch-based tensor network contraction via omeco greedy optimizer
-- `typst.rs` (feature-gated): PDF circuit rendering via embedded Typst
+- `contractor.rs` (feature-gated `omeinsum`): Native tensor network contraction via [omeinsum-rs](https://github.com/tensor4all/omeinsum-rs) submodule. Converts `TensorNetwork` ndarray tensors to omeinsum column-major format, contracts with greedy optimization, returns column-major `ArrayD`.
+- `torch_contractor.rs` (feature-gated `torch`): libtorch-based tensor network contraction via omeco greedy optimizer
+- `typst.rs` (feature-gated `typst`): PDF circuit rendering via embedded Typst
 
 ## Test Layout
 
@@ -96,6 +97,9 @@ yao run circuit.json --shots 1024   # Simulate and measure
 yao run circuit.json --op "Z(0)Z(1)"  # Expectation value
 yao simulate circuit.json | yao probs -   # Pipeline workflow
 yao toeinsum circuit.json      # Export as tensor network
+yao contract circuit.json      # Contract tensor network (⟨0|U|0⟩ overlap)
+yao contract circuit.json --mode state   # Contract to full state vector
+yao contract circuit.json --op "Z(0)Z(1)"  # Expectation via contraction
 yao fromqasm circuit.qasm      # Import OpenQASM 2.0 circuit
 yao toqasm circuit.json        # Export circuit as OpenQASM 2.0
 yao fetch qasmbench list       # List QASMBench benchmark circuits
@@ -105,11 +109,16 @@ yao fetch qasmbench grover | yao fromqasm - | yao run - --shots 100
 
 All commands output human-readable text in a terminal, JSON when piped. Use `--json` to force JSON. Use `-` for stdin input.
 
+## Submodules
+
+- **`omeinsum-rs/`**: [omeinsum-rs](https://github.com/tensor4all/omeinsum-rs) — native Rust tensor network contraction. Initialize with `git submodule update --init`. Required for the `omeinsum` feature.
+
 ## Feature Flags
 
+- `omeinsum`: Native tensor network contraction via omeinsum (enabled by default in CLI, requires submodule)
 - `parallel`: Enable rayon for parallel operations
 - `qasm`: OpenQASM 2.0 import/export (enabled by default in CLI)
-- `torch`: PyTorch tensor contraction via tch
+- `torch`: PyTorch tensor contraction via tch (requires libtorch)
 - `typst`: PDF circuit diagram generation
 
 ## Claude Skills
