@@ -159,14 +159,110 @@ Export a circuit as a tensor network in einsum format.
 yao toeinsum circuit.json
 yao toeinsum circuit.json --output tn.json
 yao toeinsum circuit.json --mode dm
+yao toeinsum circuit.json --mode overlap
+yao toeinsum circuit.json --mode state
+yao toeinsum circuit.json --op "Z(0)Z(1)"
 ```
 
 | Option | Description |
 |--------|-------------|
-| `--mode <pure\|dm>` | Export mode: `pure` (default) or `dm` (density matrix) |
+| `--mode <pure\|dm\|overlap\|state>` | Export mode: `pure` (default), `dm` (density matrix), `overlap` (scalar ⟨0\|U\|0⟩), or `state` (state vector with \|0⟩ boundary tensors) |
+| `--op <expr>` | Operator expression for expectation value TN (overrides `--mode`) |
 | `--output <file>` | Save tensor network JSON to file |
 
 See [Tensor Network JSON Format](#tensor-network-json-format) below for the output schema.
+
+### `yao optimize`
+
+Optimize contraction order for a tensor network. Requires the `omeinsum` feature.
+
+```bash
+yao optimize tn.json
+yao optimize tn.json --method treesa --ntrials 20
+yao toeinsum circuit.json --mode overlap | yao optimize -
+```
+
+| Option | Description |
+|--------|-------------|
+| `--method <greedy\|treesa>` | Optimization method (default: `greedy`) |
+| `--alpha <f64>` | [greedy] Output-vs-input size balance weight (default: 0.0) |
+| `--temperature <f64>` | [greedy] Temperature for stochastic selection; 0 = deterministic (default: 0.0) |
+| `--ntrials <N>` | [treesa] Number of independent SA trials (default: 10) |
+| `--niters <N>` | [treesa] Iterations per temperature level (default: 50) |
+| `--betas <start:step:stop>` | [treesa] Inverse temperature schedule (default: "0.01:0.05:15.0") |
+| `--sc-target <f64>` | [treesa] Space complexity target threshold (default: 20.0) |
+| `--tc-weight <f64>` | [treesa] Time complexity weight (default: 1.0) |
+| `--sc-weight <f64>` | [treesa] Space complexity weight (default: 1.0) |
+| `--rw-weight <f64>` | [treesa] Read-write complexity weight (default: 0.0) |
+
+Adds a `contraction_order` field to the TN JSON, ready for `yao contract`.
+
+### `yao contract`
+
+Contract a pre-optimized tensor network. Requires the `omeinsum` feature. Input must have a `contraction_order` field (produced by `yao optimize`).
+
+```bash
+yao toeinsum circuit.json | yao optimize - | yao contract -
+yao toeinsum circuit.json --mode overlap | yao optimize - | yao contract -
+yao toeinsum circuit.json --op "Z(0)Z(1)" | yao optimize - | yao contract -
+```
+
+### `yao fromqasm`
+
+Convert an OpenQASM 2.0 file to circuit JSON. Requires the `qasm` feature.
+
+```bash
+yao fromqasm circuit.qasm
+yao fromqasm circuit.qasm --output circuit.json
+yao fromqasm circuit.qasm | yao run - --shots 1024
+```
+
+### `yao toqasm`
+
+Export a circuit as OpenQASM 2.0. Requires the `qasm` feature.
+
+```bash
+yao toqasm circuit.json
+yao example bell | yao toqasm -
+```
+
+### `yao fetch`
+
+Download benchmark circuits from online repositories.
+
+```bash
+yao fetch qasmbench list                  # List all circuits
+yao fetch qasmbench list --scale small    # List only small circuits
+yao fetch qasmbench grover               # Download by name (auto-detect scale)
+yao fetch qasmbench qft_n4 -o qft.qasm   # Save to file
+yao fetch qasmbench medium/shor_n5        # Explicit scale/name path
+```
+
+| Option | Description |
+|--------|-------------|
+| `--scale <small\|medium\|large>` | Filter by scale (used with `list`) |
+
+Pipeline example:
+
+```bash
+yao fetch qasmbench grover | yao fromqasm - | yao run - --shots 100
+```
+
+### `yao example`
+
+Print example circuit JSON to stdout.
+
+```bash
+yao example bell
+yao example bell > bell.json
+yao example qft --nqubits 6
+```
+
+Available examples: `bell`, `ghz`, `qft`.
+
+| Option | Description |
+|--------|-------------|
+| `--nqubits <N>` | Number of qubits (default: 2 for bell, 3 for ghz, 4 for qft) |
 
 ### `yao visualize`
 
