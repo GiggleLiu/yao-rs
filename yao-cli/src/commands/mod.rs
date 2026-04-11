@@ -1,14 +1,14 @@
 #[cfg(feature = "omeinsum")]
 pub mod contract;
 pub mod example;
-#[cfg(feature = "omeinsum")]
-pub mod optimize;
 pub mod expect;
 pub mod fetch;
 #[cfg(feature = "qasm")]
 pub mod fromqasm;
 pub mod inspect;
 pub mod measure;
+#[cfg(feature = "omeinsum")]
+pub mod optimize;
 pub mod probs;
 pub mod run;
 pub mod simulate;
@@ -47,8 +47,7 @@ pub fn load_stdin_or_file(path: &str) -> anyhow::Result<String> {
             .context("Failed to read from stdin")?;
         Ok(buf)
     } else {
-        std::fs::read_to_string(path)
-            .with_context(|| format!("Failed to read '{path}'"))
+        std::fs::read_to_string(path).with_context(|| format!("Failed to read '{path}'"))
     }
 }
 

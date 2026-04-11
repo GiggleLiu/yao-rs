@@ -1,7 +1,7 @@
 use ndarray::ArrayD;
 use num_complex::Complex64;
-use omeco::json::NestedEinsumTree;
 use omeco::EinCode;
+use omeco::json::NestedEinsumTree;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use yao_rs::{TensorNetwork, TensorNetworkDM};

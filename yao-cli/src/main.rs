@@ -37,7 +37,10 @@ fn main() -> anyhow::Result<()> {
     );
     #[cfg(feature = "omeinsum")]
     {
-        auto_json |= matches!(cli.command, Commands::Contract { .. } | Commands::Optimize { .. });
+        auto_json |= matches!(
+            cli.command,
+            Commands::Contract { .. } | Commands::Optimize { .. }
+        );
     }
     #[cfg(feature = "qasm")]
     {

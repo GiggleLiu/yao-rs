@@ -1,8 +1,8 @@
 use crate::output::OutputConfig;
 use crate::tn_dto::TensorNetworkDto;
 use anyhow::{Result, bail};
-use omeco::{EinCode, GreedyMethod, TreeSA, optimize_code};
 use omeco::json::NestedEinsumTree;
+use omeco::{EinCode, GreedyMethod, TreeSA, optimize_code};
 
 #[allow(clippy::too_many_arguments)]
 pub fn optimize_cmd(
@@ -32,21 +32,32 @@ pub fn optimize_cmd(
 
     let tree = match method {
         "greedy" => {
-            let optimizer = GreedyMethod::new(
-                alpha.unwrap_or(0.0),
-                temperature.unwrap_or(0.0),
-            );
+            let optimizer = GreedyMethod::new(alpha.unwrap_or(0.0), temperature.unwrap_or(0.0));
             optimize_code(&code, &tn.size_dict, &optimizer)
         }
         "treesa" => {
             let mut optimizer = TreeSA::default();
-            if let Some(v) = ntrials { optimizer.ntrials = v; }
-            if let Some(v) = niters { optimizer.niters = v; }
-            if let Some(s) = betas { optimizer.betas = parse_betas(s)?; }
-            if let Some(v) = sc_target { optimizer.score.sc_target = v; }
-            if let Some(v) = tc_weight { optimizer.score.tc_weight = v; }
-            if let Some(v) = sc_weight { optimizer.score.sc_weight = v; }
-            if let Some(v) = rw_weight { optimizer.score.rw_weight = v; }
+            if let Some(v) = ntrials {
+                optimizer.ntrials = v;
+            }
+            if let Some(v) = niters {
+                optimizer.niters = v;
+            }
+            if let Some(s) = betas {
+                optimizer.betas = parse_betas(s)?;
+            }
+            if let Some(v) = sc_target {
+                optimizer.score.sc_target = v;
+            }
+            if let Some(v) = tc_weight {
+                optimizer.score.tc_weight = v;
+            }
+            if let Some(v) = sc_weight {
+                optimizer.score.sc_weight = v;
+            }
+            if let Some(v) = rw_weight {
+                optimizer.score.rw_weight = v;
+            }
             optimize_code(&code, &tn.size_dict, &optimizer)
         }
         _ => bail!("Unknown method '{method}': expected 'greedy' or 'treesa'"),
@@ -70,9 +81,15 @@ fn parse_betas(s: &str) -> Result<Vec<f64>> {
     if parts.len() != 3 {
         bail!("Invalid betas '{s}': expected 'start:step:stop'");
     }
-    let start: f64 = parts[0].parse().map_err(|_| anyhow::anyhow!("Invalid betas start"))?;
-    let step: f64 = parts[1].parse().map_err(|_| anyhow::anyhow!("Invalid betas step"))?;
-    let stop: f64 = parts[2].parse().map_err(|_| anyhow::anyhow!("Invalid betas stop"))?;
+    let start: f64 = parts[0]
+        .parse()
+        .map_err(|_| anyhow::anyhow!("Invalid betas start"))?;
+    let step: f64 = parts[1]
+        .parse()
+        .map_err(|_| anyhow::anyhow!("Invalid betas step"))?;
+    let stop: f64 = parts[2]
+        .parse()
+        .map_err(|_| anyhow::anyhow!("Invalid betas stop"))?;
     if step <= 0.0 {
         bail!("Betas step must be positive");
     }

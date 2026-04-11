@@ -7,8 +7,8 @@ use yao_rs::contractor::contract_with_tree;
 
 pub fn contract_cmd(input_path: &str, out: &OutputConfig) -> Result<()> {
     let json = super::load_stdin_or_file(input_path)?;
-    let dto: TensorNetworkDto = serde_json::from_str(&json)
-        .map_err(|e| anyhow::anyhow!("Failed to parse TN JSON: {e}"))?;
+    let dto: TensorNetworkDto =
+        serde_json::from_str(&json).map_err(|e| anyhow::anyhow!("Failed to parse TN JSON: {e}"))?;
 
     let tree_json: NestedEinsumTree<usize> = dto
         .contraction_order
