@@ -23,6 +23,14 @@ pub fn optimize_cmd(
     let mut dto: TensorNetworkDto =
         serde_json::from_str(&json).map_err(|e| anyhow::anyhow!("Failed to parse TN JSON: {e}"))?;
 
+    if dto.mode == "dm" {
+        bail!(
+            "DM mode is not supported by optimize/contract. \
+             Density matrix tensor networks (mode=dm) are not supported. \
+             Use mode=pure, overlap, or state."
+        );
+    }
+
     if dto.contraction_order.is_some() {
         out.info("Warning: replacing existing contraction order");
     }
@@ -108,7 +116,17 @@ fn parse_betas(s: &str) -> Result<Vec<f64>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::fs;
+    use std::path::PathBuf;
     use yao_rs::{Circuit, Gate, circuit_to_einsum, put};
+
+    fn temp_path(prefix: &str) -> PathBuf {
+        std::env::temp_dir().join(format!(
+            "yao-cli-{prefix}-{}-{}.json",
+            std::process::id(),
+            rand::random::<u64>()
+        ))
+    }
 
     #[test]
     fn test_optimize_adds_contraction_order() {
@@ -150,5 +168,47 @@ mod tests {
         assert!(parse_betas("1:2").is_err());
         assert!(parse_betas("1:-1:5").is_err());
         assert!(parse_betas("5:1:1").is_err());
+    }
+
+    #[test]
+    fn test_optimize_rejects_density_matrix_mode() {
+        let circuit = Circuit::new(vec![2], vec![put(vec![0], Gate::H)]).unwrap();
+        let tn = yao_rs::circuit_to_einsum_dm(&circuit);
+        let dto = TensorNetworkDto::from_dm(&tn);
+
+        let input_path = temp_path("optimize-dm-input");
+        let output_path = temp_path("optimize-dm-output");
+        fs::write(&input_path, serde_json::to_string(&dto).unwrap()).unwrap();
+
+        let out = OutputConfig {
+            output: Some(output_path.clone()),
+            quiet: true,
+            json: false,
+            auto_json: false,
+        };
+
+        let err = optimize_cmd(
+            input_path.to_str().unwrap(),
+            "greedy",
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            &out,
+        )
+        .unwrap_err();
+
+        assert!(
+            err.to_string().contains("Density matrix tensor networks"),
+            "unexpected error: {err}"
+        );
+
+        let _ = fs::remove_file(input_path);
+        let _ = fs::remove_file(output_path);
     }
 }

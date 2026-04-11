@@ -5,6 +5,20 @@ use omeco::NestedEinsum;
 use omeco::json::NestedEinsumTree;
 use yao_rs::contractor::contract_with_tree;
 
+fn index_to_mixed_radix(idx: usize, dims: &[usize]) -> String {
+    let mut idx = idx;
+    let mut digits = vec![0usize; dims.len()];
+    for d in (0..dims.len()).rev() {
+        digits[d] = idx % dims[d];
+        idx /= dims[d];
+    }
+    digits
+        .iter()
+        .map(|digit| digit.to_string())
+        .collect::<Vec<_>>()
+        .join("")
+}
+
 pub fn contract_cmd(input_path: &str, out: &OutputConfig) -> Result<()> {
     let json = super::load_stdin_or_file(input_path)?;
     let dto: TensorNetworkDto =
@@ -27,6 +41,17 @@ pub fn contract_cmd(input_path: &str, out: &OutputConfig) -> Result<()> {
     let result = contract_with_tree(&tn, tree);
 
     let num_open_legs = dto.eincode.output_indices.len();
+    let dims: Vec<usize> = dto
+        .eincode
+        .output_indices
+        .iter()
+        .map(|label| {
+            dto.size_dict.get(label).copied().ok_or_else(|| {
+                anyhow::anyhow!("Missing size_dict entry for output label '{label}'")
+            })
+        })
+        .collect::<Result<_>>()?;
+    let all_binary = dims.iter().all(|&d| d == 2);
 
     if result.ndim() == 0 || result.len() == 1 {
         // Scalar result (overlap or expectation)
@@ -48,7 +73,11 @@ pub fn contract_cmd(input_path: &str, out: &OutputConfig) -> Result<()> {
             .enumerate()
             .filter(|(_, c)| c.norm() > 1e-15)
             .map(|(i, c)| {
-                let bitstr = format!("{:0>width$b}", i, width = num_open_legs);
+                let bitstr = if all_binary {
+                    format!("{:0>width$b}", i, width = num_open_legs)
+                } else {
+                    index_to_mixed_radix(i, &dims)
+                };
                 serde_json::json!({
                     "index": i,
                     "bitstring": bitstr,
@@ -73,5 +102,16 @@ pub fn contract_cmd(input_path: &str, out: &OutputConfig) -> Result<()> {
             .join("\n");
         let json_value = serde_json::json!(data);
         out.emit(&format!("State vector:\n{human}\n"), &json_value)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_index_to_mixed_radix_formats_non_binary_digits() {
+        assert_eq!(index_to_mixed_radix(5, &[2, 3]), "12");
+        assert_eq!(index_to_mixed_radix(1, &[3, 4]), "01");
     }
 }
