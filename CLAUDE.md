@@ -96,10 +96,14 @@ yao inspect circuit.json       # Display circuit info
 yao run circuit.json --shots 1024   # Simulate and measure
 yao run circuit.json --op "Z(0)Z(1)"  # Expectation value
 yao simulate circuit.json | yao probs -   # Pipeline workflow
-yao toeinsum circuit.json      # Export as tensor network
-yao contract circuit.json      # Contract tensor network (⟨0|U|0⟩ overlap)
-yao contract circuit.json --mode state   # Contract to full state vector
-yao contract circuit.json --op "Z(0)Z(1)"  # Expectation via contraction
+yao toeinsum circuit.json      # Export as tensor network (pure state)
+yao toeinsum circuit.json --mode overlap  # Overlap ⟨0|U|0⟩ TN
+yao toeinsum circuit.json --mode state    # State vector TN with |0⟩ boundary
+yao toeinsum circuit.json --op "Z(0)Z(1)" # Expectation value TN
+yao optimize tn.json           # Optimize contraction order (greedy default)
+yao optimize tn.json --method treesa --ntrials 20  # TreeSA optimizer
+yao contract tn.json           # Contract pre-optimized tensor network
+yao toeinsum circuit.json --mode state | yao optimize - | yao contract -  # Full pipeline
 yao fromqasm circuit.qasm      # Import OpenQASM 2.0 circuit
 yao toqasm circuit.json        # Export circuit as OpenQASM 2.0
 yao fetch qasmbench list       # List QASMBench benchmark circuits

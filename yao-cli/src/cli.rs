@@ -18,6 +18,9 @@ Pipeline (no intermediate files):
   yao simulate circuit.json | yao measure - --shots 1024
   yao simulate circuit.json | yao probs -
 
+Tensor network pipeline:
+  yao toeinsum circuit.json --mode state | yao optimize - | yao contract -
+
 Use `yao <command> --help` for detailed usage of each command.
 
 Enable tab completion:
