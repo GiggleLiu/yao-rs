@@ -17,31 +17,16 @@ A Rust port of [Yao.jl](https://github.com/QuantumBFS/Yao.jl) focused on quantum
 - **SVG circuit rendering** via `Circuit::to_svg()` and `yao visualize`
 - **CLI tool** (`yao`) for simulation, measurement, tensor export, and visualization from the command line
 
-## Quick Start
+## Overview
 
-### Library
+`yao-rs` is split into two main surfaces:
 
-```rust
-use yao_rs::{Gate, Circuit, ArrayReg, put, control, apply, circuit_to_einsum};
+- The `yao-rs` library for circuit construction, simulation, tensor network export, and SVG rendering
+- The `yao` CLI for running the same workflows from the terminal without writing Rust
 
-// Build a Bell circuit: H on qubit 0, then CNOT(0→1)
-let circuit = Circuit::new(vec![2, 2], vec![
-    put(vec![0], Gate::H),
-    control(vec![0], vec![1], Gate::X),
-]).unwrap();
+For library usage, examples, and API details, see the documentation links at the end of this README.
 
-// Apply to |00⟩
-let reg = ArrayReg::zero_state(2);
-let result = apply(&circuit, &reg);
-
-// Render as SVG
-let svg = circuit.to_svg();
-
-// Or export as tensor network
-let tn = circuit_to_einsum(&circuit);
-```
-
-### CLI
+## CLI
 
 ```bash
 # Install
@@ -61,10 +46,33 @@ yao visualize bell.json --output bell.svg
 
 # Pipeline: simulate then get probabilities
 yao simulate bell.json | yao probs -
-
-# Export as tensor network
-yao toeinsum bell.json --output tn.json
 ```
+
+The CLI also includes a tensor-network workflow by default:
+
+```bash
+# Export a circuit as a tensor network
+yao toeinsum bell.json --output bell-tn.json
+
+# Optimize contraction order
+yao optimize bell-tn.json --output bell-tn-opt.json
+
+# Contract the optimized tensor network
+yao contract bell-tn-opt.json
+
+# Full pipeline with no intermediate files
+yao toeinsum bell.json --mode state | yao optimize - | yao contract -
+
+# Overlap / expectation-style workflows
+yao toeinsum bell.json --mode overlap | yao optimize - | yao contract -
+yao toeinsum bell.json --op "Z(0)Z(1)" | yao optimize - | yao contract -
+```
+
+Other CLI capabilities include:
+
+- `yao inspect` for circuit structure inspection
+- `yao fromqasm` / `yao toqasm` for OpenQASM 2.0 conversion
+- `yao fetch qasmbench ...` for benchmark circuit downloads
 
 ## Documentation
 
