@@ -98,10 +98,33 @@ pub fn format_expectation(op_str: &str, value: Complex64) -> (String, serde_json
     });
 
     let human = if value.im.abs() < 1e-10 {
-        format!("<op> = {:.10}", value.re)
+        format!("<{op_str}> = {:.10}", value.re)
     } else {
-        format!("<op> = {:.10} + {:.10}i", value.re, value.im)
+        format!("<{op_str}> = {:.10} + {:.10}i", value.re, value.im)
     };
 
     (human, json_value)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use num_complex::Complex64;
+
+    #[test]
+    fn test_format_expectation_shows_operator_name() {
+        let (human, _json) = format_expectation("Z(0)Z(1)", Complex64::new(1.0, 0.0));
+        assert!(
+            human.contains("Z(0)Z(1)"),
+            "Expected operator name in output, got: {human}"
+        );
+        assert!(!human.contains("<op>"), "Should not contain literal <op>");
+    }
+
+    #[test]
+    fn test_format_expectation_complex_value() {
+        let (human, _json) = format_expectation("X(0)", Complex64::new(0.5, 0.3));
+        assert!(human.contains("X(0)"));
+        assert!(human.contains("0.3")); // imaginary part shown
+    }
 }
