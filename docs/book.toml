@@ -10,6 +10,7 @@ build-dir = "book"
 [output.html]
 default-theme = "rust"
 preferred-dark-theme = "coal"
+mathjax-support = true
 git-repository-url = "https://github.com/QuantumBFS/yao-rs"
 edit-url-template = "https://github.com/QuantumBFS/yao-rs/edit/main/docs/src/{path}"
 additional-css = ["src/static/module-graph.css"]

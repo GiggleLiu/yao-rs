@@ -10,6 +10,7 @@
 - [Circuits](./circuits.md)
 - [Quantum Registers](./states.md)
 - [Tensor Networks](./tensor-networks.md)
+- [Circuit JSON Conventions](./conventions.md)
 
 # Examples
 
