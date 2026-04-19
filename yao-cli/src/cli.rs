@@ -169,31 +169,31 @@ Examples:
         /// Optimization method: greedy (default) or treesa
         #[arg(long, default_value = "greedy")]
         method: String,
-        /// [greedy] Weight for output-vs-input size balance (default: 0.0)
+        /// \[greedy\] Weight for output-vs-input size balance (default: 0.0)
         #[arg(long)]
         alpha: Option<f64>,
-        /// [greedy] Temperature for stochastic selection; 0 = deterministic (default: 0.0)
+        /// \[greedy\] Temperature for stochastic selection; 0 = deterministic (default: 0.0)
         #[arg(long)]
         temperature: Option<f64>,
-        /// [treesa] Number of independent SA trials (default: 10)
+        /// \[treesa\] Number of independent SA trials (default: 10)
         #[arg(long)]
         ntrials: Option<usize>,
-        /// [treesa] Iterations per temperature level (default: 50)
+        /// \[treesa\] Iterations per temperature level (default: 50)
         #[arg(long)]
         niters: Option<usize>,
-        /// [treesa] Inverse temperature schedule as "start:step:stop" (default: "0.01:0.05:15.0")
+        /// \[treesa\] Inverse temperature schedule as "start:step:stop" (default: "0.01:0.05:15.0")
         #[arg(long)]
         betas: Option<String>,
-        /// [treesa] Space complexity target threshold (default: 20.0)
+        /// \[treesa\] Space complexity target threshold (default: 20.0)
         #[arg(long)]
         sc_target: Option<f64>,
-        /// [treesa] Time complexity weight (default: 1.0)
+        /// \[treesa\] Time complexity weight (default: 1.0)
         #[arg(long)]
         tc_weight: Option<f64>,
-        /// [treesa] Space complexity weight (default: 1.0)
+        /// \[treesa\] Space complexity weight (default: 1.0)
         #[arg(long)]
         sc_weight: Option<f64>,
-        /// [treesa] Read-write complexity weight (default: 0.0)
+        /// \[treesa\] Read-write complexity weight (default: 0.0)
         #[arg(long)]
         rw_weight: Option<f64>,
     },

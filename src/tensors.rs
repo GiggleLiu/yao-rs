@@ -136,7 +136,7 @@ fn build_controlled_matrix(pg: &PositionedGate, dims: &[usize]) -> Array2<Comple
 }
 
 /// Compute the trigger index from control configurations and control dimensions.
-/// Uses row-major indexing: config[0]*d1*d2*... + config[1]*d2*... + ...
+/// Uses row-major indexing: `config[0]*d1*d2*... + config[1]*d2*... + ...`
 fn compute_trigger_index(control_configs: &[bool], ctrl_dims: &[usize]) -> usize {
     let n = control_configs.len();
     let mut index = 0usize;

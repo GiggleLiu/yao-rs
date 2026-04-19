@@ -5,7 +5,7 @@
 //! # Overview
 //!
 //! - [`probs`] - Get probability distribution over computational basis
-//! - [`measure_with_postprocess`] - Measure an [`ArrayReg`](crate::register::ArrayReg)
+//! - [`measure_with_postprocess`] - Measure an [`ArrayReg`]
 //!   with post-processing
 
 use num_complex::Complex64;
@@ -22,7 +22,7 @@ pub enum PostProcess {
     RemoveMeasured,
 }
 
-/// Result of measuring an [`ArrayReg`](crate::register::ArrayReg).
+/// Result of measuring an [`ArrayReg`].
 #[derive(Clone, Debug)]
 pub enum MeasureResult {
     Value(Vec<usize>),
@@ -239,7 +239,7 @@ fn remove_measured_qubits(reg: &ArrayReg, locs: &[usize]) -> ArrayReg {
     new_reg
 }
 
-/// Measure an [`ArrayReg`](crate::register::ArrayReg) with optional post-processing.
+/// Measure an [`ArrayReg`] with optional post-processing.
 pub fn measure_with_postprocess(
     reg: &mut ArrayReg,
     locs: &[usize],

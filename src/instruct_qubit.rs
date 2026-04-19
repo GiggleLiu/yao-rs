@@ -16,7 +16,7 @@ fn loc_to_bit(nbits: usize, loc: usize) -> usize {
     nbits - 1 - loc
 }
 
-/// Apply 2x2 unitary [[a,b],[c,d]] to amplitudes at indices i and j.
+/// Apply 2x2 unitary `[[a,b],[c,d]]` to amplitudes at indices i and j.
 ///
 /// Julia: `u1rows!(state, i, j, a, b, c, d)` from utils.jl:110-116
 #[inline]
