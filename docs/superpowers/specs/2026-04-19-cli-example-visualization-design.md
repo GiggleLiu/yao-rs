@@ -27,8 +27,8 @@ Use a layered visualization model:
 2. **Circuit Gallery** gives YaoPlots-like visual parity.
    Each supported circuit has an SVG thumbnail and an expandable full render.
 
-3. **Results Dashboard** shows the algorithm outcome.
-   Probability distributions, expectation values, and later training curves are shown as the primary result evidence.
+3. **Generated Results** show the algorithm outcome.
+   Probability distributions, expectation values, and later training curves are rendered from generated data as the primary result evidence.
 
 The bash generator is the reproducibility contract: if the docs show a circuit or result, a bash command must regenerate it.
 
@@ -58,12 +58,12 @@ Generated examples:
 
 ## Documentation Structure
 
-Update or extend `docs/src/examples/catalog.md` as the main index, and add a dedicated mdBook page for the generated visualization report.
+Update or extend `docs/src/examples/catalog.md` as the main index, and add a dedicated mdBook page for a generated visualization report. This page should be designed for mdBook, not copied from the browser companion prototype.
 
 Recommended files:
 
 - `docs/src/examples/catalog.md`: concise index, coverage table, and links.
-- `docs/src/examples/cli-visualization.md`: static documentation version of the visual companion page.
+- `docs/src/examples/cli-visualization.md`: documentation-native visualization page with copy-paste commands, generated SVGs, and generated result summaries.
 - `docs/src/examples/generated/`: checked-in SVG and small JSON or Markdown summaries if generated artifacts should be browsable in published docs.
 
 Recommended page sections:
@@ -71,41 +71,64 @@ Recommended page sections:
 1. **Overview**
    State that CLI examples are reproducible bash workflows, not just prose snippets.
 
-2. **Trace Table**
+2. **Copy-Paste Reproduction Commands**
+   Every example should show the exact commands a reader can run. Prefer short shell blocks over prose-only descriptions. The commands should include both one-shot script usage and artifact-generation usage where applicable.
+
+   Example shape:
+
+   ```bash
+   YAO_BIN=target/debug/yao bash examples/cli/bernstein_vazirani.sh 1011
+   YAO_BIN=target/debug/yao bash examples/cli/generate_artifacts.sh /tmp/yao-cli-examples
+   ```
+
+3. **Trace Table**
    Columns:
    - Example
    - Upstream source
-   - Bash command
+   - Copy-paste command
    - Generated circuit artifact
    - Visualization artifact
-   - Result evidence
+   - Generated result artifact
    - Coverage status
 
-3. **Circuit Gallery**
-   Small SVG thumbnails for examples where circuit structure is central.
+4. **Circuit Gallery**
+   Small SVG thumbnails from generated data for examples where circuit structure is central.
    QFT, phase estimation, Grover, QAOA, and QCBM should be visible first.
 
-4. **Results Dashboard**
-   Compact plots or tables for distributions and expectations.
+5. **Generated Results**
+   Compact plots or tables sourced from generated result JSON, not hand-entered numbers.
    For probability distributions, show significant states first and avoid dumping all zero entries.
+   For expectation values, show the command and result side by side.
 
-5. **Deferred Coverage**
+6. **Deferred Coverage**
    Keep explicit notes for examples that need future capabilities, such as VQE, full QCBM training, QuGAN, HHL, Shor arithmetic oracles, and Hamiltonian/time-evolution workflows.
 
-## Promoting Visual Companion Pages
+## mdBook Visualization Page
 
-The browser companion pages are good design prototypes, but they are session artifacts under `.superpowers/brainstorm`. Do not publish those files directly.
+The browser companion pages are useful design prototypes, but they are session artifacts under `.superpowers/brainstorm`. Do not publish those files directly and do not try to recreate the companion UI exactly.
 
-Instead, translate the approved design into normal mdBook documentation:
+Instead, build a normal mdBook page that makes the generated data useful:
 
-- preserve the same three-layer structure: trace, circuit gallery, and result dashboard;
+- preserve the same conceptual layers: commands, trace, circuit gallery, and generated results;
+- show all reproduction commands as copy-paste shell blocks;
 - use checked-in SVG outputs for circuit thumbnails;
 - use Markdown tables for the reproducibility trace;
-- use compact Markdown tables or lightweight inline HTML for probability and expectation summaries;
-- link each example back to the bash command that regenerates it;
+- use generated JSON summaries to populate probability and expectation tables;
+- link every displayed SVG or result summary back to the bash command that regenerates it;
 - keep the styling compatible with mdBook instead of depending on the visual companion frame CSS or JavaScript.
 
-The docs page should be static and reviewable in git. The companion remains a design tool, while mdBook becomes the published documentation surface.
+The docs page should be static and reviewable in git. It should feel like documentation with embedded visual evidence, not like a standalone dashboard app.
+
+## Generated Data Use
+
+Generated data should be first-class documentation input:
+
+- SVG files become embedded circuit figures.
+- Result JSON files become compact summaries in Markdown tables.
+- Circuit JSON files are linked as downloadable or inspectable artifacts.
+- A manifest records each example name, source, command, generated files, and key evidence.
+
+The documentation should avoid manual transcription where possible. If a result value appears in `cli-visualization.md`, it should come from generated data or a checked-in generated summary.
 
 ## Bash Artifact Generator
 
