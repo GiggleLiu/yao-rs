@@ -298,6 +298,7 @@ fn cli_visualization_docs_reference_commands_and_generated_artifacts() {
     let page = fs::read_to_string(&page_path).unwrap();
     let page_dir = page_path.parent().unwrap();
 
+    assert!(page.contains("# CLI Example Visualization"));
     assert!(page.contains(
         "YAO_BIN=target/debug/yao bash examples/cli/generate_artifacts.sh docs/src/examples/generated"
     ));
@@ -311,10 +312,21 @@ fn cli_visualization_docs_reference_commands_and_generated_artifacts() {
     assert!(page.contains("generated/svg/qft4.svg"));
     assert!(page.contains("generated/results/grover-marked-5-probs.json"));
     assert!(page.contains("generated/manifest.md"));
+    assert!(page.contains("0.9453"));
+    assert!(page.contains("0.3074"));
+    assert!(page.contains("static zero-parameter"));
     assert!(
         repo_root
             .join("docs/src/examples/generated/manifest.md")
             .exists()
+    );
+
+    let manifest =
+        fs::read_to_string(repo_root.join("docs/src/examples/generated/manifest.md")).unwrap();
+    assert!(manifest.contains("# Generated CLI Example Artifacts"));
+    assert!(manifest.contains("[qft4.svg](./svg/qft4.svg)"));
+    assert!(
+        manifest.contains("[grover-marked-5-probs.json](./results/grover-marked-5-probs.json)")
     );
 
     let mut rest = page.as_str();

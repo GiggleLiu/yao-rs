@@ -86,17 +86,18 @@ tree.
 ## Generated Results
 
 The generated result JSON files are useful for checking the output distribution
-or expectation associated with each example:
+or expectation associated with each example. The table includes the key evidence
+visible in each result file.
 
-| Example | Result |
-|---------|--------|
-| Bell | [`generated/results/bell-probs.json`](./generated/results/bell-probs.json) |
-| GHZ 4 | [`generated/results/ghz4-probs.json`](./generated/results/ghz4-probs.json) |
-| QFT 4 | [`generated/results/qft4-probs.json`](./generated/results/qft4-probs.json) |
-| Phase estimation Z | [`generated/results/phase-estimation-z-probs.json`](./generated/results/phase-estimation-z-probs.json) |
-| Hadamard test Z | [`generated/results/hadamard-test-z-probs.json`](./generated/results/hadamard-test-z-probs.json) |
-| Swap test | [`generated/results/swap-test-probs.json`](./generated/results/swap-test-probs.json) |
-| Bernstein-Vazirani 1011 | [`generated/results/bernstein-vazirani-1011-probs.json`](./generated/results/bernstein-vazirani-1011-probs.json) |
-| Grover marked state 5 | [`generated/results/grover-marked-5-probs.json`](./generated/results/grover-marked-5-probs.json) |
-| QAOA MaxCut line-4 depth 2 | [`generated/results/qaoa-maxcut-line4-depth2-expect.json`](./generated/results/qaoa-maxcut-line4-depth2-expect.json) |
-| QCBM static depth 2 | [`generated/results/qcbm-static-depth2-probs.json`](./generated/results/qcbm-static-depth2-probs.json) |
+| Example | Result | Key evidence |
+|---------|--------|--------------|
+| Bell | [`generated/results/bell-probs.json`](./generated/results/bell-probs.json) | States `00` and `11` each have probability `0.5`. |
+| GHZ 4 | [`generated/results/ghz4-probs.json`](./generated/results/ghz4-probs.json) | States `0000` and `1111` each have probability `0.5`. |
+| QFT 4 | [`generated/results/qft4-probs.json`](./generated/results/qft4-probs.json) | Uniform 16-state distribution with probability `0.0625` per state. |
+| Phase estimation Z | [`generated/results/phase-estimation-z-probs.json`](./generated/results/phase-estimation-z-probs.json) | State `11` / index `3` has probability `1.0`. |
+| Hadamard test Z | [`generated/results/hadamard-test-z-probs.json`](./generated/results/hadamard-test-z-probs.json) | Minimal Z Hadamard-test circuit intentionally matches the phase-estimation Z demo. |
+| Swap test | [`generated/results/swap-test-probs.json`](./generated/results/swap-test-probs.json) | Nonzero states are `001`, `010`, `101`, and `110`, each with probability `0.25`. |
+| Bernstein-Vazirani 1011 | [`generated/results/bernstein-vazirani-1011-probs.json`](./generated/results/bernstein-vazirani-1011-probs.json) | Secret state `1011` / index `11` has probability `1.0`. |
+| Grover marked state 5 | [`generated/results/grover-marked-5-probs.json`](./generated/results/grover-marked-5-probs.json) | Marked state `101` / index `5` has probability about `0.9453`. |
+| QAOA MaxCut line-4 depth 2 | [`generated/results/qaoa-maxcut-line4-depth2-expect.json`](./generated/results/qaoa-maxcut-line4-depth2-expect.json) | `Z(0)Z(1)` expectation real part is about `0.3074`. |
+| QCBM static depth 2 | [`generated/results/qcbm-static-depth2-probs.json`](./generated/results/qcbm-static-depth2-probs.json) | static zero-parameter demo; not full training. |
