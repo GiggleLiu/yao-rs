@@ -2,8 +2,7 @@ use crate::output::OutputConfig;
 use anyhow::{Result, bail};
 use yao_rs::{Circuit, Gate, circuit_to_json, control, put};
 
-const SUPPORTED_EXAMPLES: &str =
-    "bell, ghz, qft, phase-estimation, hadamard-test, swap-test, bernstein-vazirani, grover, qaoa-maxcut, qcbm";
+const SUPPORTED_EXAMPLES: &str = "bell, ghz, qft, phase-estimation, hadamard-test, swap-test, bernstein-vazirani, grover, qaoa-maxcut, qcbm";
 
 #[derive(Debug, Default, Clone)]
 pub struct ExampleOptions {
@@ -92,9 +91,7 @@ fn preset_unitary(name: Option<&str>, phase: Option<f64>) -> Result<Gate> {
         "z" => Ok(Gate::Z),
         "x" => Ok(Gate::X),
         "t" => Ok(Gate::T),
-        "phase" => Ok(Gate::Phase(
-            phase.unwrap_or(std::f64::consts::PI / 4.0),
-        )),
+        "phase" => Ok(Gate::Phase(phase.unwrap_or(std::f64::consts::PI / 4.0))),
         other => bail!("Unknown unitary preset: '{other}' (available: z, x, t, phase)"),
     }
 }

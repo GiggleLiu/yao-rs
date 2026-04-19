@@ -244,8 +244,7 @@ pub fn marked_state_grover_circuit(n: usize, marked: usize, iterations: usize) -
 pub fn grover_auto_iterations(n: usize, marked_count: usize) -> usize {
     assert!(marked_count > 0, "marked_count must be positive");
     let dim = 1usize << n;
-    ((std::f64::consts::PI / 4.0) * ((dim as f64) / (marked_count as f64)).sqrt()).round()
-        as usize
+    ((std::f64::consts::PI / 4.0) * ((dim as f64) / (marked_count as f64)).sqrt()).round() as usize
 }
 
 /// Build a static QAOA MaxCut ansatz.

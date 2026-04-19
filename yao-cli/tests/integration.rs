@@ -181,7 +181,10 @@ fn example_swap_test_rejects_one_state() {
     ]);
     assert!(!output.status.success(), "{output:?}");
     let stderr = String::from_utf8_lossy(&output.stderr);
-    assert!(stderr.contains("swap-test requires --nstates >= 2"), "{stderr}");
+    assert!(
+        stderr.contains("swap-test requires --nstates >= 2"),
+        "{stderr}"
+    );
 }
 
 #[test]
@@ -240,7 +243,13 @@ fn example_qaoa_maxcut_uses_line4_preset() {
 #[test]
 fn example_qcbm_builds_variational_ansatz() {
     let json = run_yao_json(&[
-        "--json", "example", "qcbm", "--nqubits", "6", "--depth", "2",
+        "--json",
+        "example",
+        "qcbm",
+        "--nqubits",
+        "6",
+        "--depth",
+        "2",
     ]);
     assert_eq!(json["num_qubits"].as_u64().unwrap(), 6);
     assert!(json["elements"].as_array().unwrap().len() > 20);
