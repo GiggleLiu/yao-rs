@@ -199,7 +199,7 @@ It follows the documentation pattern of preparing phase kickback, applying the
 inverse Fourier readout, and checking the measured phase register.
 
 ```bash
-YAO_BIN=target/debug/yao bash examples/cli/phase_estimation_z.sh
+YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/phase_estimation_z.sh
 python3 examples/cli/plot_results.py docs/src/examples/generated/results docs/src/examples/generated/plots
 ```
 
@@ -218,7 +218,7 @@ uses controlled phase behavior, and reads out the resulting two-qubit
 probabilities.
 
 ```bash
-YAO_BIN=target/debug/yao bash examples/cli/hadamard_test_z.sh
+YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/hadamard_test_z.sh
 python3 examples/cli/plot_results.py docs/src/examples/generated/results docs/src/examples/generated/plots
 ```
 
@@ -235,7 +235,7 @@ pattern. This static CLI version is useful for checking the circuit shape and
 the probability distribution produced by the controlled swaps.
 
 ```bash
-YAO_BIN=target/debug/yao bash examples/cli/swap_test.sh
+YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/swap_test.sh
 python3 examples/cli/plot_results.py docs/src/examples/generated/results docs/src/examples/generated/plots
 ```
 
@@ -251,7 +251,7 @@ oracle-like phase pattern. After the final Hadamards, the input register returns
 the secret directly in the probability distribution.
 
 ```bash
-YAO_BIN=target/debug/yao bash examples/cli/bernstein_vazirani.sh 1011
+YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/bernstein_vazirani.sh 1011
 python3 examples/cli/plot_results.py docs/src/examples/generated/results docs/src/examples/generated/plots
 ```
 
@@ -270,7 +270,7 @@ three-qubit search space. The script marks basis index `5`, which is binary
 state `101`, and applies two Grover iterations.
 
 ```bash
-YAO_BIN=target/debug/yao bash examples/cli/grover_marked_state.sh 5
+YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/grover_marked_state.sh 5
 python3 examples/cli/plot_results.py docs/src/examples/generated/results docs/src/examples/generated/plots
 ```
 
@@ -289,7 +289,7 @@ the `Z(0)Z(1)` expectation. The script uses fixed parameters; it does not run a
 classical optimizer.
 
 ```bash
-YAO_BIN=target/debug/yao bash examples/cli/qaoa_maxcut_line4.sh 2
+YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/qaoa_maxcut_line4.sh 2
 python3 examples/cli/plot_results.py docs/src/examples/generated/results docs/src/examples/generated/plots
 ```
 
@@ -308,7 +308,7 @@ borrows the layered circuit shape used in QCBM examples, but it is intentionally
 not full training and does not fit a data distribution.
 
 ```bash
-YAO_BIN=target/debug/yao bash examples/cli/qcbm_static.sh 2
+YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/qcbm_static.sh 2
 python3 examples/cli/plot_results.py docs/src/examples/generated/results docs/src/examples/generated/plots
 ```
 
