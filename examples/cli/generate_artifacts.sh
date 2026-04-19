@@ -36,7 +36,7 @@ run_script grover_marked_state.sh 5
 run_script qaoa_maxcut_line4.sh 2
 run_script qcbm_static.sh 2
 
-python3 "$SCRIPT_DIR/plot_results.py" "$out/results" "$out/plots"
+python3 "$REPO_ROOT/scripts/plot_cli_results.py" "$out/results" "$out/plots"
 
 cat > "$out/manifest.md" <<'MANIFEST'
 # Generated CLI Example Artifacts
@@ -49,13 +49,13 @@ Regenerate these artifacts from the repository root:
 ```bash
 cargo build -p yao-cli --no-default-features
 YAO_BIN=target/debug/yao bash examples/cli/generate_artifacts.sh docs/src/examples/generated
-python3 examples/cli/plot_results.py docs/src/examples/generated/results docs/src/examples/generated/plots
+python3 scripts/plot_cli_results.py docs/src/examples/generated/results docs/src/examples/generated/plots
 ```
 
 Built-in sources use `target/debug/yao example ...` directly. Script sources
 use `YAO_BIN=target/debug/yao bash examples/cli/...` so the shell workflows run
 against the freshly built CLI. The generator also invokes
-`python3 examples/cli/plot_results.py docs/src/examples/generated/results docs/src/examples/generated/plots`
+`python3 scripts/plot_cli_results.py docs/src/examples/generated/results docs/src/examples/generated/plots`
 to render the result plots from the generated JSON.
 
 | Example | Source | Command | Circuit | SVG | Result | Plot | Evidence |

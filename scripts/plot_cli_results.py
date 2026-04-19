@@ -11,7 +11,7 @@ from xml.sax.saxutils import escape
 
 
 def usage() -> int:
-    print("usage: python3 examples/cli/plot_results.py <results-dir> <plots-dir>", file=sys.stderr)
+    print("usage: python3 scripts/plot_cli_results.py <results-dir> <plots-dir>", file=sys.stderr)
     return 2
 
 

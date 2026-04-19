@@ -6,16 +6,16 @@ This page maps Yao.jl documentation and QuAlgorithmZoo.jl examples to yao-rs CLI
 
 | Example | Source | Command | Notes |
 |---------|--------|---------|-------|
-| Bell | yao-rs starter example | `yao example bell` | Produces a 2-qubit Bell circuit. |
-| GHZ | Yao docs GHZ | `yao example ghz --nqubits 5` | Produces GHZ entanglement. |
-| QFT | Yao docs QFT | `yao example qft --nqubits 6` | Matches Yao EasyBuild QFT without final swaps. |
-| Phase estimation | Yao docs / QuAlgorithmZoo | `bash examples/cli/phase_estimation_z.sh` | Builds a small Z-eigenphase circuit in bash and runs `yao simulate | yao probs`. |
-| Hadamard test | QuAlgorithmZoo README | `bash examples/cli/hadamard_test_z.sh` | Builds a Z Hadamard-test circuit in bash and runs `yao simulate | yao probs`. |
-| Swap test | QuAlgorithmZoo README | `bash examples/cli/swap_test.sh` | Builds a one-qubit swap test in bash and runs `yao simulate | yao probs`. |
-| Bernstein-Vazirani | QuAlgorithmZoo | `bash examples/cli/bernstein_vazirani.sh 1011` | Builds the phase-oracle circuit in bash; probability concentrates on the secret. |
-| Grover | QuAlgorithmZoo | `bash examples/cli/grover_marked_state.sh 5` | Builds a 3-qubit marked-state Grover circuit in bash using primitive gates. |
-| QAOA MaxCut | QuAlgorithmZoo | `bash examples/cli/qaoa_maxcut_line4.sh 2` | Builds a static line-graph ansatz in bash and evaluates `Z(0)Z(1)`. |
-| QCBM | Yao docs / QuAlgorithmZoo | `bash examples/cli/qcbm_static.sh 2` | Builds a static variational ansatz in bash and emits probabilities; no training. |
+| [Bell State](./cli/bell.md) | yao-rs starter example | `yao example bell` | Produces a 2-qubit Bell circuit. |
+| [GHZ 4](./cli/ghz4.md) | Yao docs GHZ | `yao example ghz --nqubits 4` | Produces GHZ entanglement. |
+| [QFT 4](./cli/qft4.md) | Yao docs QFT | `yao example qft --nqubits 4` | Builds the CLI QFT ladder and generated visualization. |
+| [Phase Estimation Z](./cli/phase-estimation-z.md) | Yao docs / QuAlgorithmZoo | `bash examples/cli/phase_estimation_z.sh` | Builds a small Z-eigenphase circuit in bash and runs `yao simulate | yao probs`. |
+| [Hadamard Test Z](./cli/hadamard-test-z.md) | QuAlgorithmZoo README | `bash examples/cli/hadamard_test_z.sh` | Builds a Z Hadamard-test circuit in bash and runs `yao simulate | yao probs`. |
+| [Swap Test](./cli/swap-test.md) | QuAlgorithmZoo README | `bash examples/cli/swap_test.sh` | Builds a one-qubit swap test in bash and runs `yao simulate | yao probs`. |
+| [Bernstein-Vazirani 1011](./cli/bernstein-vazirani-1011.md) | QuAlgorithmZoo | `bash examples/cli/bernstein_vazirani.sh 1011` | Builds the phase-oracle circuit in bash; probability concentrates on the secret. |
+| [Grover Marked State 5](./cli/grover-marked-5.md) | QuAlgorithmZoo | `bash examples/cli/grover_marked_state.sh 5` | Builds a 3-qubit marked-state Grover circuit in bash using primitive gates. |
+| [QAOA MaxCut Line-4 Depth 2](./cli/qaoa-maxcut-line4-depth2.md) | QuAlgorithmZoo | `bash examples/cli/qaoa_maxcut_line4.sh 2` | Builds a static line-graph ansatz in bash and evaluates `Z(0)Z(1)`. |
+| [QCBM Static Depth 2](./cli/qcbm-static-depth2.md) | Yao docs / QuAlgorithmZoo | `bash examples/cli/qcbm_static.sh 2` | Builds a static variational ansatz in bash and emits probabilities; no training. |
 
 ## Typical Workflows
 
@@ -28,8 +28,8 @@ bash examples/cli/qaoa_maxcut_line4.sh 1
 
 ## Generated Visualization
 
-For copy-paste commands, generated circuit SVGs, and generated result
-summaries, see [CLI Example Visualization](./cli-visualization.md).
+For copy-paste commands, generated circuit SVGs, generated plots, and generated
+result summaries, see [CLI Example Visualization](./cli-visualization.md).
 
 ## Deferred Coverage
 
