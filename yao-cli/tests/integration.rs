@@ -291,7 +291,8 @@ fn cli_artifact_generator_writes_manifest_svg_and_results() {
     assert!(qft_svg.starts_with("<svg"));
     assert!(qft_svg.contains("</svg>"));
 
-    let grover_plot = fs::read_to_string(output_dir.join("plots/grover-marked-5-probs.svg")).unwrap();
+    let grover_plot =
+        fs::read_to_string(output_dir.join("plots/grover-marked-5-probs.svg")).unwrap();
     assert!(grover_plot.starts_with("<svg"));
     assert!(grover_plot.contains("grover-marked-5"));
     assert!(grover_plot.contains("0.9453"));
@@ -391,7 +392,10 @@ fn cli_visualization_docs_reference_commands_and_generated_artifacts() {
         "### QAOA MaxCut Line-4 Depth 2",
         "### QCBM Static Depth 2",
     ] {
-        assert!(page.contains(heading), "missing walkthrough heading {heading}");
+        assert!(
+            page.contains(heading),
+            "missing walkthrough heading {heading}"
+        );
     }
     assert!(page.contains("0.9453"));
     assert!(page.contains("0.3074"));
