@@ -58,6 +58,17 @@ fn run_cli_script_json(script: &str) -> Value {
     serde_json::from_slice(&output.stdout).unwrap()
 }
 
+fn run_cli_script_with_artifact_dir(script: &str, artifact_dir: &Path) -> Output {
+    let repo_root = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
+    Command::new("bash")
+        .arg(script)
+        .current_dir(repo_root)
+        .env("YAO_BIN", env!("CARGO_BIN_EXE_yao"))
+        .env("YAO_ARTIFACT_DIR", artifact_dir)
+        .output()
+        .unwrap()
+}
+
 fn temp_dir_path(prefix: &str) -> PathBuf {
     let unique = SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -232,6 +243,21 @@ fn cli_script_qcbm_static_outputs_distribution() {
 }
 
 #[test]
+fn cli_script_artifact_mode_keeps_stdout_json_only() {
+    let artifact_dir = temp_dir_path("yao-cli-script-artifacts");
+    let output = run_cli_script_with_artifact_dir("examples/cli/hadamard_test_z.sh", &artifact_dir);
+    assert!(output.status.success(), "{output:?}");
+
+    let stdout = String::from_utf8(output.stdout).unwrap();
+    assert!(!stdout.contains("SVG written"), "{stdout}");
+    let json: Value = serde_json::from_str(&stdout).unwrap();
+    assert_eq!(json["probabilities"].as_array().unwrap().len(), 4);
+    assert!(artifact_dir.join("svg/hadamard-test-z.svg").exists());
+
+    let _ = fs::remove_dir_all(artifact_dir);
+}
+
+#[test]
 fn cli_artifact_generator_writes_manifest_svg_and_results() {
     let output_dir = temp_dir_path("yao-cli-artifacts");
     let output = run_cli_artifact_generator(&output_dir);
@@ -259,6 +285,21 @@ fn cli_artifact_generator_writes_manifest_svg_and_results() {
     .unwrap();
     let probabilities = grover_result["probabilities"].as_array().unwrap();
     assert!(probabilities[5].as_f64().unwrap() > 0.9);
+
+    let _ = fs::remove_dir_all(output_dir);
+}
+
+#[test]
+fn cli_artifact_generator_removes_stale_generated_files() {
+    let output_dir = temp_dir_path("yao-cli-stale-artifacts");
+    let stale_circuit = output_dir.join("circuits/stale.json");
+    fs::create_dir_all(stale_circuit.parent().unwrap()).unwrap();
+    fs::write(&stale_circuit, "{}").unwrap();
+
+    let output = run_cli_artifact_generator(&output_dir);
+    assert!(output.status.success(), "{output:?}");
+    assert!(!stale_circuit.exists());
+    assert!(output_dir.join("circuits/bell.json").exists());
 
     let _ = fs::remove_dir_all(output_dir);
 }

@@ -75,7 +75,7 @@ write_artifacts() {
   [ -n "$dir" ] || return 0
   prepare_artifact_dirs
   cp "$circuit" "$dir/circuits/$name.json"
-  "$YAO_BIN" visualize "$circuit" --output "$dir/svg/$name.svg"
+  "$YAO_BIN" visualize "$circuit" --output "$dir/svg/$name.svg" >&2
   cp "$result_file" "$dir/results/$(basename "$result_file")"
 }
 

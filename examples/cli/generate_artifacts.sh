@@ -6,6 +6,8 @@ REPO_ROOT="$(cd -- "$SCRIPT_DIR/../.." && pwd)"
 source "$SCRIPT_DIR/lib.sh"
 
 out="${1:-$REPO_ROOT/docs/src/examples/generated}"
+rm -rf "$out/circuits" "$out/results" "$out/svg"
+rm -f "$out/manifest.md"
 mkdir -p "$out/circuits" "$out/results" "$out/svg"
 
 run_builtin_probs() {
