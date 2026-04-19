@@ -7,7 +7,8 @@ Cargo.lock
 scripts/Manifest.toml
 .worktrees/
 docs/plans/*.md
-docs/superpowers/
+docs/superpowers/*
+!docs/superpowers/.gitignore
 docs/test-reports/
 Manifest.toml
 benchmarks/data/
