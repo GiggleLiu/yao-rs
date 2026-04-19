@@ -7,6 +7,7 @@ mod tn_dto;
 
 use clap::{CommandFactory, Parser};
 use cli::{Cli, Commands};
+use commands::example::ExampleOptions;
 use output::OutputConfig;
 
 fn main() -> anyhow::Result<()> {
@@ -132,7 +133,32 @@ fn main() -> anyhow::Result<()> {
             name,
             scale,
         } => commands::fetch::fetch(&source, &name, scale.as_deref(), &out),
-        Commands::Example { name, nqubits } => commands::example::example(&name, nqubits, &out),
+        Commands::Example {
+            name,
+            nqubits,
+            preset,
+            secret,
+            marked,
+            iterations,
+            depth,
+            phase,
+            nqubits_per_state,
+            nstates,
+        } => commands::example::example(
+            &name,
+            ExampleOptions {
+                nqubits,
+                preset,
+                secret,
+                marked,
+                iterations,
+                depth,
+                phase,
+                nqubits_per_state,
+                nstates,
+            },
+            &out,
+        ),
         Commands::Completions { shell } => {
             let shell = shell
                 .or_else(clap_complete::Shell::from_env)

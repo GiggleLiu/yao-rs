@@ -2,11 +2,24 @@ use crate::output::OutputConfig;
 use anyhow::{Result, bail};
 use yao_rs::{Circuit, Gate, circuit_to_json, control, put};
 
-pub fn example(name: &str, nqubits: Option<usize>, out: &OutputConfig) -> Result<()> {
+#[derive(Debug, Default, Clone)]
+pub struct ExampleOptions {
+    pub nqubits: Option<usize>,
+    pub preset: Option<String>,
+    pub secret: Option<String>,
+    pub marked: Option<usize>,
+    pub iterations: Option<String>,
+    pub depth: Option<usize>,
+    pub phase: Option<f64>,
+    pub nqubits_per_state: Option<usize>,
+    pub nstates: Option<usize>,
+}
+
+pub fn example(name: &str, opts: ExampleOptions, out: &OutputConfig) -> Result<()> {
     let circuit = match name {
-        "bell" => bell(nqubits.unwrap_or(2))?,
-        "ghz" => ghz(nqubits.unwrap_or(3))?,
-        "qft" => qft(nqubits.unwrap_or(4))?,
+        "bell" => bell(opts.nqubits.unwrap_or(2))?,
+        "ghz" => ghz(opts.nqubits.unwrap_or(3))?,
+        "qft" => qft(opts.nqubits.unwrap_or(4))?,
         _ => bail!("Unknown example: '{name}'\n\nAvailable examples: bell, ghz, qft"),
     };
     let json_value: serde_json::Value = serde_json::from_str(&circuit_to_json(&circuit))?;

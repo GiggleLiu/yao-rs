@@ -34,6 +34,12 @@ fn run_yao(args: &[&str]) -> Output {
         .unwrap()
 }
 
+fn run_yao_json(args: &[&str]) -> Value {
+    let output = run_yao(args);
+    assert!(output.status.success(), "{output:?}");
+    serde_json::from_slice(&output.stdout).unwrap()
+}
+
 fn run_yao_with_stdin(args: &[&str], input: &[u8]) -> Output {
     let mut child = Command::new(env!("CARGO_BIN_EXE_yao"))
         .args(args)
@@ -115,6 +121,22 @@ fn inspect_and_toeinsum_emit_expected_json() {
     assert_eq!(toeinsum_json["tensors"].as_array().unwrap().len(), 2);
 
     let _ = fs::remove_file(circuit_path);
+}
+
+#[test]
+fn example_phase_estimation_accepts_preset_and_register_size() {
+    let json = run_yao_json(&[
+        "--json",
+        "example",
+        "phase-estimation",
+        "--nqubits",
+        "3",
+        "--preset",
+        "z",
+    ]);
+
+    assert_eq!(json["num_qubits"].as_u64().unwrap(), 4);
+    assert!(json["elements"].as_array().unwrap().len() > 3);
 }
 
 #[test]

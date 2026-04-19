@@ -274,18 +274,45 @@ Pipeline:
 
     /// Print example circuit JSON to stdout
     #[command(after_help = "\
-Available examples: bell, ghz, qft
+Available examples: bell, ghz, qft, phase-estimation, hadamard-test, swap-test,
+  bernstein-vazirani, grover, qaoa-maxcut, qcbm
 
 Examples:
   yao example bell
   yao example bell > bell.json
-  yao example qft --nqubits 6")]
+  yao example qft --nqubits 6
+  yao example phase-estimation --nqubits 3 --preset z")]
     Example {
-        /// Example name: bell, ghz, qft
+        /// Example name: bell, ghz, qft, phase-estimation, hadamard-test, swap-test,
+        /// bernstein-vazirani, grover, qaoa-maxcut, qcbm
         name: String,
-        /// Number of qubits (default: 2 for bell, 3 for ghz, 4 for qft)
+        /// Number of qubits or register qubits, depending on the example.
         #[arg(long)]
         nqubits: Option<usize>,
+        /// Preset name for examples that need a small built-in unitary or graph.
+        #[arg(long)]
+        preset: Option<String>,
+        /// Secret bit string for Bernstein-Vazirani, e.g. 10101.
+        #[arg(long)]
+        secret: Option<String>,
+        /// Marked basis-state index for Grover.
+        #[arg(long)]
+        marked: Option<usize>,
+        /// Grover iteration count, or "auto".
+        #[arg(long)]
+        iterations: Option<String>,
+        /// Ansatz depth for QAOA and QCBM.
+        #[arg(long)]
+        depth: Option<usize>,
+        /// Phase parameter for phase-estimation, hadamard-test, and swap-test presets.
+        #[arg(long)]
+        phase: Option<f64>,
+        /// Number of qubits per compared state for swap-test.
+        #[arg(long)]
+        nqubits_per_state: Option<usize>,
+        /// Number of states for swap-test.
+        #[arg(long)]
+        nstates: Option<usize>,
     },
 
     /// Generate shell completion scripts
