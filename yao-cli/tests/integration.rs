@@ -198,6 +198,31 @@ fn example_bernstein_vazirani_accepts_secret() {
 }
 
 #[test]
+fn example_grover_accepts_marked_state() {
+    let json = run_yao_json(&[
+        "--json",
+        "example",
+        "grover",
+        "--nqubits",
+        "3",
+        "--marked",
+        "5",
+        "--iterations",
+        "auto",
+    ]);
+    assert_eq!(json["num_qubits"].as_u64().unwrap(), 3);
+    assert!(json["elements"].as_array().unwrap().len() >= 3);
+}
+
+#[test]
+fn example_grover_rejects_out_of_range_marked_state() {
+    let output = run_yao(&["example", "grover", "--nqubits", "3", "--marked", "8"]);
+    assert!(!output.status.success(), "{output:?}");
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("marked state out of range"), "{stderr}");
+}
+
+#[test]
 fn visualize_writes_svg_in_default_build() {
     let circuit_path = temp_path("yao-visualize", "json");
     let svg_path = temp_path("yao-visualize", "svg");

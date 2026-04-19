@@ -262,6 +262,21 @@ fn test_bernstein_vazirani_recovers_secret() {
     assert_abs_diff_eq!(probabilities[expected], 1.0, epsilon = 1e-10);
 }
 
+#[test]
+fn test_marked_state_grover_amplifies_marked_state() {
+    let n = 3;
+    let marked = 5;
+    let circuit = crate::easybuild::marked_state_grover_circuit(n, marked, 2);
+    let result = apply(&circuit, &ArrayReg::zero_state(n));
+    let probabilities = probs(&result, None);
+
+    assert!(
+        probabilities[marked] > 0.9,
+        "marked probability = {}",
+        probabilities[marked]
+    );
+}
+
 // =============================================================================
 // Random Circuit Builder Tests
 // =============================================================================

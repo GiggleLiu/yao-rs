@@ -187,6 +187,67 @@ pub fn bernstein_vazirani_circuit(secret: &[bool]) -> Circuit {
     Circuit::qubits(n, elements).unwrap()
 }
 
+fn marked_oracle_gate(n: usize, marked: usize) -> Gate {
+    let dim = 1usize << n;
+    let mut matrix = Array2::zeros((dim, dim));
+    for i in 0..dim {
+        matrix[[i, i]] = if i == marked {
+            Complex64::new(-1.0, 0.0)
+        } else {
+            Complex64::new(1.0, 0.0)
+        };
+    }
+    Gate::Custom {
+        matrix,
+        is_diagonal: true,
+        label: format!("Oracle({marked})"),
+    }
+}
+
+fn diffusion_gate(n: usize) -> Gate {
+    let dim = 1usize << n;
+    let fill = 2.0 / dim as f64;
+    let mut matrix = Array2::from_elem((dim, dim), Complex64::new(fill, 0.0));
+    for i in 0..dim {
+        matrix[[i, i]] -= Complex64::new(1.0, 0.0);
+    }
+    Gate::Custom {
+        matrix,
+        is_diagonal: false,
+        label: "Diffusion".to_string(),
+    }
+}
+
+/// Build a marked-basis-state Grover search circuit.
+pub fn marked_state_grover_circuit(n: usize, marked: usize, iterations: usize) -> Circuit {
+    assert!(n > 0, "Grover requires at least one qubit");
+    assert!(
+        n <= 8,
+        "Grover example uses dense custom gates and is limited to 8 qubits"
+    );
+    assert!(marked < (1usize << n), "marked state out of range");
+
+    let targets: Vec<usize> = (0..n).collect();
+    let mut elements: Vec<CircuitElement> = Vec::new();
+
+    for q in 0..n {
+        elements.push(put(vec![q], Gate::H));
+    }
+    for _ in 0..iterations {
+        elements.push(put(targets.clone(), marked_oracle_gate(n, marked)));
+        elements.push(put(targets.clone(), diffusion_gate(n)));
+    }
+
+    Circuit::qubits(n, elements).unwrap()
+}
+
+pub fn grover_auto_iterations(n: usize, marked_count: usize) -> usize {
+    assert!(marked_count > 0, "marked_count must be positive");
+    let dim = 1usize << n;
+    ((std::f64::consts::PI / 4.0) * ((dim as f64) / (marked_count as f64)).sqrt()).round()
+        as usize
+}
+
 /// Hadamard test circuit. N+1 qubits (qubit 0 = ancilla).
 ///
 /// Takes a Custom gate as the unitary.

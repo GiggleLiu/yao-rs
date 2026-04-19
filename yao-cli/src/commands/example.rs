@@ -3,7 +3,7 @@ use anyhow::{Result, bail};
 use yao_rs::{Circuit, Gate, circuit_to_json, control, put};
 
 const SUPPORTED_EXAMPLES: &str =
-    "bell, ghz, qft, phase-estimation, hadamard-test, swap-test, bernstein-vazirani";
+    "bell, ghz, qft, phase-estimation, hadamard-test, swap-test, bernstein-vazirani, grover";
 
 #[derive(Debug, Default, Clone)]
 pub struct ExampleOptions {
@@ -47,6 +47,18 @@ pub fn example(name: &str, opts: ExampleOptions, out: &OutputConfig) -> Result<(
             let secret = parse_secret_bits(opts.secret.as_deref())?;
             yao_rs::easybuild::bernstein_vazirani_circuit(&secret)
         }
+        "grover" => {
+            let n = opts.nqubits.unwrap_or(3);
+            if n == 0 || n > 8 {
+                bail!("grover requires 1 <= --nqubits <= 8");
+            }
+            let marked = opts.marked.unwrap_or((1usize << n) - 1);
+            if marked >= (1usize << n) {
+                bail!("marked state out of range for {n} qubits");
+            }
+            let iterations = grover_iterations(n, opts.iterations.as_deref())?;
+            yao_rs::easybuild::marked_state_grover_circuit(n, marked, iterations)
+        }
         _ => bail!("Unknown example: '{name}'\n\nAvailable examples: {SUPPORTED_EXAMPLES}"),
     };
     let json_value: serde_json::Value = serde_json::from_str(&circuit_to_json(&circuit))?;
@@ -78,6 +90,15 @@ fn parse_secret_bits(secret: Option<&str>) -> Result<Vec<bool>> {
             _ => bail!("secret must contain only 0 and 1"),
         })
         .collect()
+}
+
+fn grover_iterations(n: usize, iterations: Option<&str>) -> Result<usize> {
+    match iterations.unwrap_or("auto") {
+        "auto" => Ok(yao_rs::easybuild::grover_auto_iterations(n, 1)),
+        value => value
+            .parse::<usize>()
+            .map_err(|_| anyhow::anyhow!("--iterations must be a non-negative integer or auto")),
+    }
 }
 
 fn bell(n: usize) -> Result<Circuit> {
