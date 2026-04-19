@@ -343,6 +343,25 @@ fn cli_artifact_generator_writes_manifest_svg_and_results() {
         );
     }
 
+    let repo_root = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
+    for entry in fs::read_dir(output_dir.join("svg")).unwrap() {
+        let generated_path = entry.unwrap().path();
+        let file_name = generated_path.file_name().unwrap();
+        let generated = fs::read_to_string(&generated_path).unwrap();
+        let committed = fs::read_to_string(
+            repo_root
+                .join("docs/src/examples/generated/svg")
+                .join(file_name),
+        )
+        .unwrap();
+        assert_eq!(
+            committed,
+            generated,
+            "stale committed generated SVG: {}",
+            file_name.to_string_lossy()
+        );
+    }
+
     let bell_result = generated_result_json(&output_dir, "bell-probs.json");
     let probabilities = generated_probabilities(&bell_result);
     assert_eq!(probabilities.len(), 4);
