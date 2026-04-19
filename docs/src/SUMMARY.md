@@ -14,6 +14,7 @@
 # Examples
 
 - [Example Catalog](./examples/catalog.md)
+- [CLI Example Visualization](./examples/cli-visualization.md)
 - [Quantum Fourier Transform](./examples/qft.md)
 
 # Reference

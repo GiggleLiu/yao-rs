@@ -290,6 +290,24 @@ fn cli_artifact_generator_writes_manifest_svg_and_results() {
 }
 
 #[test]
+fn cli_visualization_docs_reference_commands_and_generated_artifacts() {
+    let repo_root = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
+    let page_path = repo_root.join("docs/src/examples/cli-visualization.md");
+    let page = fs::read_to_string(page_path).unwrap();
+
+    assert!(page.contains(
+        "YAO_BIN=target/debug/yao bash examples/cli/generate_artifacts.sh docs/src/examples/generated"
+    ));
+    assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/bernstein_vazirani.sh 1011"));
+    assert!(page.contains("generated/svg/qft4.svg"));
+    assert!(page.contains("generated/results/grover-marked-5-probs.json"));
+    assert!(page.contains("generated/manifest.md"));
+
+    let summary = fs::read_to_string(repo_root.join("docs/src/SUMMARY.md")).unwrap();
+    assert!(summary.contains("[CLI Example Visualization](./examples/cli-visualization.md)"));
+}
+
+#[test]
 fn cli_artifact_generator_removes_stale_generated_files() {
     let output_dir = temp_dir_path("yao-cli-stale-artifacts");
     let stale_circuit = output_dir.join("circuits/stale.json");

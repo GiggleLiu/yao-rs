@@ -26,6 +26,11 @@ yao example qft --nqubits 4 | yao visualize - --output qft.svg
 bash examples/cli/qaoa_maxcut_line4.sh 1
 ```
 
+## Generated Visualization
+
+For copy-paste commands, generated circuit SVGs, and generated result
+summaries, see [CLI Example Visualization](./cli-visualization.md).
+
 ## Deferred Coverage
 
 The following examples are tracked by GitHub issues because they require capabilities beyond circuit JSON generation:
