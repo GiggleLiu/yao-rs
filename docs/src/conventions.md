@@ -72,16 +72,24 @@ The `CNOT` gate is not a primitive; it is an `X` with a control.
 For the full Rust-side enum and matrix definitions, see
 [Gates](./gates.md).
 
-## Bit ordering (little-endian)
+## Bit ordering
 
 The basis state labeled by integer `k` is
-\\( \|q_{n-1}\,q_{n-2}\,\dots\,q_1\,q_0\rangle \\) with `q_0` the least
-significant bit. Probability arrays and measurement samples follow the same
-order: `probabilities[5]` on a three-qubit register is the probability of
-\\( \|101\rangle \\), which means \\( q_2=1,\,q_1=0,\,q_0=1 \\).
+\\( \|q_0\,q_1\,\dots\,q_{n-2}\,q_{n-1}\rangle \\) with `q_0` the **most**
+significant bit. To read a basis state from an integer index, write the
+index in binary with enough leading zeros to fill `n` bits; the leftmost
+bit is `q_0`, the next is `q_1`, and so on. Equivalently
+\\( k = \sum_{i=0}^{n-1} q_i \cdot 2^{n-1-i} \\).
 
-This bites everyone once. When a circuit acts on qubit `0` it is acting on
-the *least-significant* qubit in the basis-state label.
+Worked example on three qubits: apply `X` on qubit 0 and `X` on qubit 1,
+starting from \\( \|000\rangle \\). The result is \\( \|110\rangle \\),
+which lives at `probabilities[6]` because \\( 6 = 110_2 \\) reads as
+\\( q_0=1,\,q_1=1,\,q_2=0 \\).
+
+This bites everyone once: when a circuit acts on qubit `0` it is acting on
+the *most-significant* bit of the index, which is the opposite of the
+convention used in Qiskit and several other libraries. Mind the convention
+when porting circuits across frameworks.
 
 ## Result JSON
 

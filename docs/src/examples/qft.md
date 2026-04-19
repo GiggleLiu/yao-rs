@@ -123,14 +123,13 @@ are no final SWAPs.
 
 [Full QFT-4 circuit JSON](./generated/circuits/qft4.json).
 
-> **Bit ordering callout.** The probability array below uses the little-endian
-> convention: `probabilities[k]` is the amplitude-squared of the basis state
-> whose binary label is \\( k \\) read with \\( q_0 \\) as the
-> least-significant bit. Because this circuit omits the reversing SWAPs, the
-> *meaning* of each output wire is the reflected bit relative to the textbook
-> QFT; the little-endian index convention itself is unchanged. See
-> [bit ordering](../conventions.md#bit-ordering-little-endian) for the full
-> rule.
+> **Bit ordering callout.** In yao-rs, qubit 0 is the *most* significant bit
+> of the probability-array index: `probabilities[k]` is the amplitude-squared
+> of the basis state whose binary label is \\( k \\) with \\( q_0 \\) written
+> first (leftmost). Because this circuit omits the reversing SWAPs, the
+> *meaning* of each output wire is reflected relative to the textbook QFT;
+> the index convention itself is unchanged. See
+> [bit ordering](../conventions.md#bit-ordering) for the full rule.
 
 ## Running it
 

@@ -119,12 +119,11 @@ qubit 0:
 visible in the SVG above: one Hadamard, then three controls all rooted at qubit
 0.
 
-> **Bit ordering callout.** The probability arrays below index basis states
-> with qubit 0 as the least-significant bit: `probabilities[k]` is the
-> probability of the basis state whose binary label is \\( k \\) read with
-> \\( q_0 \\) at the right. See
-> [bit ordering](../conventions.md#bit-ordering-little-endian) for the full
-> convention.
+> **Bit ordering callout.** In yao-rs, qubit 0 is the *most* significant
+> bit of the probability-array index: `probabilities[k]` is the probability
+> of the basis state whose binary label, read with enough leading zeros to
+> fill \\( n \\) bits, has \\( q_0 \\) at the left. See
+> [bit ordering](../conventions.md#bit-ordering) for the full convention.
 
 ## Running it
 
@@ -155,8 +154,10 @@ correlated: whichever outcome qubit 0 reports, qubit 1 reports the same bit.
 ![GHZ-4 probabilities](./generated/plots/ghz4-probs.svg)
 
 GHZ-4 has `probabilities[0] = probabilities[15] = 0.5` and every one of the
-fourteen middle entries is exactly zero. Under the little-endian convention,
-index 15 is binary \\( 1111 \\), i.e. \\( |q_3 q_2 q_1 q_0\rangle = |1111\rangle \\).
+fourteen middle entries is exactly zero. Under the yao-rs convention qubit 0
+is the MSB, so index 15 is binary \\( 1111 \\) read as
+\\( |q_0 q_1 q_2 q_3\rangle = |1111\rangle \\) — i.e. all four qubits in
+\\( |1\rangle \\).
 So on measurement the four qubits collapse together: all zeros or all ones, with
 equal probability and no intermediate outcomes.
 

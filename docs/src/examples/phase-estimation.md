@@ -111,13 +111,11 @@ Map each gate back to a step of the general algorithm:
 
 [Full phase-estimation circuit JSON](./generated/circuits/phase-estimation-z.json).
 
-> **Bit ordering callout.** Probability arrays index basis states with
-> qubit 0 as the least-significant bit. On this circuit the ancilla is q0 and
-> the eigenstate register is q1, so in \\( |q_1 q_0\rangle \\) notation the
-> *left* bit is the system register and the *right* bit is the ancilla that
-> carries the answer. See
-> [bit ordering](../conventions.md#bit-ordering-little-endian) for the
-> convention.
+> **Bit ordering callout.** In yao-rs, qubit 0 is the *most* significant bit
+> of the index. On this circuit the ancilla is q0 and the eigenstate register
+> is q1, so in \\( |q_0 q_1\rangle \\) notation the *left* bit is the ancilla
+> that carries the answer and the *right* bit is the system register. See
+> [bit ordering](../conventions.md#bit-ordering) for the convention.
 
 ## Running it
 
@@ -136,7 +134,7 @@ python3 scripts/plot_cli_results.py docs/src/examples/generated/results docs/src
 ![Phase estimation probabilities](./generated/plots/phase-estimation-z-probs.svg)
 
 The probability array is `[0, 0, 0, 1]`. All weight sits on index 3, which in
-little-endian two-qubit notation is \\( |q_1 q_0\rangle = |11\rangle \\): the
+the qubit-0-MSB convention is \\( |q_0 q_1\rangle = |11\rangle \\): the
 ancilla \\( q_0 = 1 \\) and the system register \\( q_1 = 1 \\). Reading the
 two bits separately gives exactly what the algorithm promises.
 

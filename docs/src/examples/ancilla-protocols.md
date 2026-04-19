@@ -85,8 +85,8 @@ distribution obtained by summing out the system register. In the swap-test
 example below, the 8-dimensional probability array has four equal-weight
 entries of \\( 0.25 \\), yet the ancilla marginal cleanly reports
 \\( P(0) = 1/2 \\). In general, one computes the ancilla marginal from the
-full little-endian probability vector by summing over all basis indices
-whose ancilla bit matches the desired outcome.
+full probability vector by summing over all basis indices whose ancilla bit
+matches the desired outcome.
 
 ## The circuits
 
@@ -150,12 +150,12 @@ places the ancilla in \\( |+\rangle \\); the controlled `SWAP` swaps
 \\( A \\) and \\( B \\) when the ancilla is \\( |1\rangle \\); the final
 `H` reads out.
 
-> **Bit ordering callout.** The 8-entry probability array below indexes
-> basis states \\( |q_2 q_1 q_0\rangle \\) with \\( q_0 \\) — the ancilla —
-> as the least-significant bit. The ancilla marginal \\( P(\text{ancilla}=b) \\)
-> is the sum of `probabilities[k]` over the indices \\( k \\) whose lowest
-> bit equals \\( b \\). See
-> [bit ordering](../conventions.md#bit-ordering-little-endian).
+> **Bit ordering callout.** In yao-rs, qubit 0 is the *most* significant bit
+> of the index. The 8-entry probability array below indexes basis states
+> \\( |q_0 q_1 q_2\rangle \\) with \\( q_0 \\) — the ancilla — at the left.
+> Indices \\( 0, 1, 2, 3 \\) are the outcomes with ancilla \\( = 0 \\);
+> indices \\( 4, 5, 6, 7 \\) are the outcomes with ancilla \\( = 1 \\). See
+> [bit ordering](../conventions.md#bit-ordering).
 
 ## Running it
 
@@ -176,7 +176,7 @@ python3 scripts/plot_cli_results.py docs/src/examples/generated/results docs/src
 ![Hadamard test probabilities](./generated/plots/hadamard-test-z-probs.svg)
 
 The probability array is `[0, 0, 0, 1]`: deterministic outcome
-\\( |q_1 q_0\rangle = |11\rangle \\). Split by register: the ancilla
+\\( |q_0 q_1\rangle = |11\rangle \\). Split by register: the ancilla
 \\( q_0 = 1 \\) and the input register \\( q_1 = 1 \\) (unchanged, as the
 eigenstate should be). Apply the Hadamard test identity:
 
@@ -192,8 +192,8 @@ ancilla marginal is sharp.
 The probability array is `[0, 0.25, 0.25, 0, 0, 0.25, 0.25, 0]`. Four
 non-zero entries of equal weight — not the sharp concentration the
 eigenstate Hadamard test produced. Extract the ancilla marginal by summing
-over indices whose LSB is zero. Those indices are \\( 0, 2, 4, 6 \\), with
-probabilities \\( 0, 0.25, 0, 0.25 \\), summing to
+over indices whose top bit (qubit 0) is zero. Those indices are
+\\( 0, 1, 2, 3 \\), with probabilities \\( 0, 0.25, 0.25, 0 \\), summing to
 
 $$ P(\text{ancilla}=0) \;=\; 0.5. $$
 
