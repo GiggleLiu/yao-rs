@@ -331,8 +331,16 @@ fn cli_artifact_generator_writes_manifest_svg_and_results() {
     for result_name in result_names {
         let plot = output_dir.join("plots").join(format!("{result_name}.svg"));
         let svg = fs::read_to_string(&plot).unwrap();
-        assert!(svg.starts_with("<svg"), "invalid plot SVG: {}", plot.display());
-        assert!(svg.contains(&result_name), "plot missing result stem: {}", plot.display());
+        assert!(
+            svg.starts_with("<svg"),
+            "invalid plot SVG: {}",
+            plot.display()
+        );
+        assert!(
+            svg.contains(&result_name),
+            "plot missing result stem: {}",
+            plot.display()
+        );
     }
 
     let bell_result = generated_result_json(&output_dir, "bell-probs.json");
