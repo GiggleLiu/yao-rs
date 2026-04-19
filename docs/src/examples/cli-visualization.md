@@ -33,8 +33,9 @@ target/debug/yao example qft --nqubits 4
 ## Scripted Examples
 
 The algorithm examples below are shell workflows that compose the CLI commands
-for circuit construction, simulation, probability extraction, expectations, and
-visualization:
+for circuit construction, simulation, probability extraction, and expectations.
+Run them directly to emit result JSON to stdout; use the regenerate-all command
+above to refresh the checked-in circuit JSON, SVG, and result artifacts:
 
 ```bash
 YAO_BIN=target/debug/yao bash examples/cli/phase_estimation_z.sh

@@ -15,6 +15,7 @@
 
 - [Example Catalog](./examples/catalog.md)
 - [CLI Example Visualization](./examples/cli-visualization.md)
+  - [Generated CLI Example Artifacts](./examples/generated/manifest.md)
 - [Quantum Fourier Transform](./examples/qft.md)
 
 # Reference

@@ -293,7 +293,8 @@ fn cli_artifact_generator_writes_manifest_svg_and_results() {
 fn cli_visualization_docs_reference_commands_and_generated_artifacts() {
     let repo_root = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
     let page_path = repo_root.join("docs/src/examples/cli-visualization.md");
-    let page = fs::read_to_string(page_path).unwrap();
+    let page = fs::read_to_string(&page_path).unwrap();
+    let page_dir = page_path.parent().unwrap();
 
     assert!(page.contains(
         "YAO_BIN=target/debug/yao bash examples/cli/generate_artifacts.sh docs/src/examples/generated"
@@ -302,9 +303,25 @@ fn cli_visualization_docs_reference_commands_and_generated_artifacts() {
     assert!(page.contains("generated/svg/qft4.svg"));
     assert!(page.contains("generated/results/grover-marked-5-probs.json"));
     assert!(page.contains("generated/manifest.md"));
+    assert!(repo_root
+        .join("docs/src/examples/generated/manifest.md")
+        .exists());
+
+    let mut rest = page.as_str();
+    while let Some(start) = rest.find("](./generated/") {
+        let target_start = start + 2;
+        let target_end = target_start + rest[target_start..].find(')').unwrap();
+        let target = &rest[target_start..target_end];
+        assert!(
+            page_dir.join(target.trim_start_matches("./")).exists(),
+            "missing generated docs link target: {target}"
+        );
+        rest = &rest[target_end + 1..];
+    }
 
     let summary = fs::read_to_string(repo_root.join("docs/src/SUMMARY.md")).unwrap();
     assert!(summary.contains("[CLI Example Visualization](./examples/cli-visualization.md)"));
+    assert!(summary.contains("[Generated CLI Example Artifacts](./examples/generated/manifest.md)"));
 }
 
 #[test]
