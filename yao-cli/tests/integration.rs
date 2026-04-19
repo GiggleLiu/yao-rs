@@ -88,6 +88,23 @@ fn run_cli_artifact_generator(output_dir: &Path) -> Output {
         .unwrap()
 }
 
+fn generated_result_json(output_dir: &Path, result_file: &str) -> Value {
+    serde_json::from_str(&fs::read_to_string(output_dir.join("results").join(result_file)).unwrap())
+        .unwrap()
+}
+
+fn generated_probabilities(json: &Value) -> &[Value] {
+    json["probabilities"].as_array().unwrap()
+}
+
+fn assert_probability(json: &Value, index: usize, expected: f64) {
+    let actual = generated_probabilities(json)[index].as_f64().unwrap();
+    assert!(
+        (actual - expected).abs() < 1e-10,
+        "probability[{index}] = {actual}, expected {expected}"
+    );
+}
+
 #[test]
 fn simulate_measure_probs_and_expect_pipeline() {
     let circuit_path = temp_path("yao-bell", "json");
@@ -274,19 +291,53 @@ fn cli_artifact_generator_writes_manifest_svg_and_results() {
     assert!(qft_svg.starts_with("<svg"));
     assert!(qft_svg.contains("</svg>"));
 
-    let bv_result: Value = serde_json::from_str(
-        &fs::read_to_string(output_dir.join("results/bernstein-vazirani-1011-probs.json")).unwrap(),
-    )
-    .unwrap();
-    let probabilities = bv_result["probabilities"].as_array().unwrap();
-    assert!((probabilities[11].as_f64().unwrap() - 1.0).abs() < 1e-10);
+    let bell_result = generated_result_json(&output_dir, "bell-probs.json");
+    let probabilities = generated_probabilities(&bell_result);
+    assert_eq!(probabilities.len(), 4);
+    assert_probability(&bell_result, 0, 0.5);
+    assert_probability(&bell_result, 3, 0.5);
 
-    let grover_result: Value = serde_json::from_str(
-        &fs::read_to_string(output_dir.join("results/grover-marked-5-probs.json")).unwrap(),
-    )
-    .unwrap();
-    let probabilities = grover_result["probabilities"].as_array().unwrap();
-    assert!(probabilities[5].as_f64().unwrap() > 0.9);
+    let ghz_result = generated_result_json(&output_dir, "ghz4-probs.json");
+    let probabilities = generated_probabilities(&ghz_result);
+    assert_eq!(probabilities.len(), 16);
+    assert_probability(&ghz_result, 0, 0.5);
+    assert_probability(&ghz_result, 15, 0.5);
+
+    let qft_result = generated_result_json(&output_dir, "qft4-probs.json");
+    let probabilities = generated_probabilities(&qft_result);
+    assert_eq!(probabilities.len(), 16);
+    for index in 0..probabilities.len() {
+        assert_probability(&qft_result, index, 0.0625);
+    }
+
+    let phase_result = generated_result_json(&output_dir, "phase-estimation-z-probs.json");
+    assert_probability(&phase_result, 3, 1.0);
+
+    let hadamard_result = generated_result_json(&output_dir, "hadamard-test-z-probs.json");
+    assert_probability(&hadamard_result, 3, 1.0);
+
+    let swap_result = generated_result_json(&output_dir, "swap-test-probs.json");
+    for index in [1, 2, 5, 6] {
+        assert_probability(&swap_result, index, 0.25);
+    }
+
+    let bv_result = generated_result_json(&output_dir, "bernstein-vazirani-1011-probs.json");
+    assert_probability(&bv_result, 11, 1.0);
+
+    let grover_result = generated_result_json(&output_dir, "grover-marked-5-probs.json");
+    assert_probability(&grover_result, 5, 0.9453125);
+
+    let qaoa_result = generated_result_json(&output_dir, "qaoa-maxcut-line4-depth2-expect.json");
+    let qaoa_re = qaoa_result["expectation_value"]["re"].as_f64().unwrap();
+    assert!(
+        (qaoa_re - 0.30738930204770754).abs() < 1e-10,
+        "qaoa expectation re = {qaoa_re}"
+    );
+
+    let qcbm_result = generated_result_json(&output_dir, "qcbm-static-depth2-probs.json");
+    let probabilities = generated_probabilities(&qcbm_result);
+    assert_eq!(probabilities.len(), 64);
+    assert_probability(&qcbm_result, 0, 1.0);
 
     let _ = fs::remove_dir_all(output_dir);
 }
