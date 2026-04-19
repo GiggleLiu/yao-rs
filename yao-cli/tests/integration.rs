@@ -91,7 +91,7 @@ fn run_cli_artifact_generator(output_dir: &Path) -> Output {
 fn run_cli_plotter(results_dir: &Path, plots_dir: &Path) -> Output {
     let repo_root = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
     Command::new("python3")
-        .arg("examples/cli/plot_results.py")
+        .arg("scripts/plot_cli_results.py")
         .arg(results_dir)
         .arg(plots_dir)
         .current_dir(repo_root)
@@ -114,6 +114,98 @@ fn assert_probability(json: &Value, index: usize, expected: f64) {
         (actual - expected).abs() < 1e-10,
         "probability[{index}] = {actual}, expected {expected}"
     );
+}
+
+fn cli_example_pages() -> [(
+    &'static str,
+    &'static str,
+    &'static str,
+    &'static str,
+    &'static str,
+    &'static str,
+); 10] {
+    [
+        (
+            "Bell State",
+            "bell",
+            "bell.svg",
+            "bell-probs.json",
+            "bell-probs.svg",
+            "target/debug/yao example bell",
+        ),
+        (
+            "GHZ 4",
+            "ghz4",
+            "ghz4.svg",
+            "ghz4-probs.json",
+            "ghz4-probs.svg",
+            "target/debug/yao example ghz --nqubits 4",
+        ),
+        (
+            "QFT 4",
+            "qft4",
+            "qft4.svg",
+            "qft4-probs.json",
+            "qft4-probs.svg",
+            "target/debug/yao example qft --nqubits 4",
+        ),
+        (
+            "Phase Estimation Z",
+            "phase-estimation-z",
+            "phase-estimation-z.svg",
+            "phase-estimation-z-probs.json",
+            "phase-estimation-z-probs.svg",
+            "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/phase_estimation_z.sh",
+        ),
+        (
+            "Hadamard Test Z",
+            "hadamard-test-z",
+            "hadamard-test-z.svg",
+            "hadamard-test-z-probs.json",
+            "hadamard-test-z-probs.svg",
+            "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/hadamard_test_z.sh",
+        ),
+        (
+            "Swap Test",
+            "swap-test",
+            "swap-test.svg",
+            "swap-test-probs.json",
+            "swap-test-probs.svg",
+            "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/swap_test.sh",
+        ),
+        (
+            "Bernstein-Vazirani 1011",
+            "bernstein-vazirani-1011",
+            "bernstein-vazirani-1011.svg",
+            "bernstein-vazirani-1011-probs.json",
+            "bernstein-vazirani-1011-probs.svg",
+            "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/bernstein_vazirani.sh 1011",
+        ),
+        (
+            "Grover Marked State 5",
+            "grover-marked-5",
+            "grover-marked-5.svg",
+            "grover-marked-5-probs.json",
+            "grover-marked-5-probs.svg",
+            "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/grover_marked_state.sh 5",
+        ),
+        (
+            "QAOA MaxCut Line-4 Depth 2",
+            "qaoa-maxcut-line4-depth2",
+            "qaoa-maxcut-line4-depth2.svg",
+            "qaoa-maxcut-line4-depth2-expect.json",
+            "qaoa-maxcut-line4-depth2-expect.svg",
+            "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/qaoa_maxcut_line4.sh 2",
+        ),
+        (
+            "QCBM Static Depth 2",
+            "qcbm-static-depth2",
+            "qcbm-static-depth2.svg",
+            "qcbm-static-depth2-probs.json",
+            "qcbm-static-depth2-probs.svg",
+            "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/qcbm_static.sh 2",
+        ),
+    ]
 }
 
 #[test]
@@ -448,7 +540,7 @@ fn cli_visualization_docs_reference_commands_and_generated_artifacts() {
         "YAO_BIN=target/debug/yao bash examples/cli/generate_artifacts.sh docs/src/examples/generated"
     ));
     assert!(page.contains(
-        "python3 examples/cli/plot_results.py docs/src/examples/generated/results docs/src/examples/generated/plots"
+        "python3 scripts/plot_cli_results.py docs/src/examples/generated/results docs/src/examples/generated/plots"
     ));
     assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/phase_estimation_z.sh"));
     assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/hadamard_test_z.sh"));
@@ -482,23 +574,10 @@ fn cli_visualization_docs_reference_commands_and_generated_artifacts() {
     assert!(page.contains("generated/plots/grover-marked-5-probs.svg"));
     assert!(page.contains("generated/results/grover-marked-5-probs.json"));
     assert!(page.contains("generated/manifest.md"));
-    assert!(page.contains("## Walkthroughs"));
-    for heading in [
-        "### Bell State",
-        "### GHZ 4",
-        "### QFT 4",
-        "### Phase Estimation Z",
-        "### Hadamard Test Z",
-        "### Swap Test",
-        "### Bernstein-Vazirani 1011",
-        "### Grover Marked State 5",
-        "### QAOA MaxCut Line-4 Depth 2",
-        "### QCBM Static Depth 2",
-    ] {
-        assert!(
-            page.contains(heading),
-            "missing walkthrough heading {heading}"
-        );
+    assert!(page.contains("## Example Pages"));
+    for (heading, slug, _, _, _, _) in cli_example_pages() {
+        let link = format!("[{heading}](./cli/{slug}.md)");
+        assert!(page.contains(&link), "missing example-page link {link}");
     }
     assert!(page.contains("0.9453"));
     assert!(page.contains("0.3074"));
@@ -512,6 +591,7 @@ fn cli_visualization_docs_reference_commands_and_generated_artifacts() {
     let manifest =
         fs::read_to_string(repo_root.join("docs/src/examples/generated/manifest.md")).unwrap();
     assert!(manifest.contains("# Generated CLI Example Artifacts"));
+    assert!(manifest.contains("python3 scripts/plot_cli_results.py"));
     assert!(manifest.contains("[qft4.svg](./svg/qft4.svg)"));
     assert!(manifest.contains("[grover-marked-5-probs.svg](./plots/grover-marked-5-probs.svg)"));
     assert!(
@@ -535,6 +615,39 @@ fn cli_visualization_docs_reference_commands_and_generated_artifacts() {
     assert!(
         summary.contains("[Generated CLI Example Artifacts](./examples/generated/manifest.md)")
     );
+    for (heading, slug, svg, result, plot, command) in cli_example_pages() {
+        let summary_link = format!("[{heading}](./examples/cli/{slug}.md)");
+        assert!(
+            summary.contains(&summary_link),
+            "missing summary link {summary_link}"
+        );
+
+        let example_path = repo_root.join(format!("docs/src/examples/cli/{slug}.md"));
+        let example_page = fs::read_to_string(&example_path).unwrap();
+        assert!(example_page.contains(&format!("# {heading}")));
+        assert!(example_page.contains(command), "missing command in {slug}");
+        assert!(
+            example_page.contains(
+                "python3 scripts/plot_cli_results.py docs/src/examples/generated/results docs/src/examples/generated/plots"
+            ),
+            "missing Python plot command in {slug}"
+        );
+        assert!(example_page.contains(&format!("../generated/svg/{svg}")));
+        assert!(example_page.contains(&format!("../generated/results/{result}")));
+        assert!(example_page.contains(&format!("../generated/plots/{plot}")));
+        assert!(
+            !example_page.contains("```rust"),
+            "Rust code block found in {slug}"
+        );
+        assert!(
+            !example_page.contains("cargo run --example"),
+            "Rust example command found in {slug}"
+        );
+    }
+    let qft_page = fs::read_to_string(repo_root.join("docs/src/examples/qft.md")).unwrap();
+    assert!(!qft_page.contains("```rust"));
+    assert!(!repo_root.join("examples/cli/plot_results.py").exists());
+    assert!(repo_root.join("scripts/plot_cli_results.py").exists());
 }
 
 #[test]
