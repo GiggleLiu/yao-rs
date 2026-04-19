@@ -13,6 +13,7 @@
 
 # Examples
 
+- [Example Catalog](./examples/catalog.md)
 - [Quantum Fourier Transform](./examples/qft.md)
 
 # Reference
