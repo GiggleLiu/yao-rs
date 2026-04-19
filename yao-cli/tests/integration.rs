@@ -140,6 +140,51 @@ fn example_phase_estimation_accepts_preset_and_register_size() {
 }
 
 #[test]
+fn example_hadamard_test_uses_existing_builder() {
+    let json = run_yao_json(&[
+        "--json",
+        "example",
+        "hadamard-test",
+        "--preset",
+        "z",
+        "--phase",
+        "0.3",
+    ]);
+    assert_eq!(json["num_qubits"].as_u64().unwrap(), 2);
+    assert!(json["elements"].as_array().unwrap().len() >= 4);
+}
+
+#[test]
+fn example_swap_test_uses_existing_builder() {
+    let json = run_yao_json(&[
+        "--json",
+        "example",
+        "swap-test",
+        "--nqubits-per-state",
+        "2",
+        "--nstates",
+        "2",
+    ]);
+    assert_eq!(json["num_qubits"].as_u64().unwrap(), 5);
+    assert!(json["elements"].as_array().unwrap().len() >= 4);
+}
+
+#[test]
+fn example_swap_test_rejects_one_state() {
+    let output = run_yao(&[
+        "example",
+        "swap-test",
+        "--nqubits-per-state",
+        "1",
+        "--nstates",
+        "1",
+    ]);
+    assert!(!output.status.success(), "{output:?}");
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("swap-test requires --nstates >= 2"), "{stderr}");
+}
+
+#[test]
 fn visualize_writes_svg_in_default_build() {
     let circuit_path = temp_path("yao-visualize", "json");
     let svg_path = temp_path("yao-visualize", "svg");

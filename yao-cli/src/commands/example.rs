@@ -2,6 +2,8 @@ use crate::output::OutputConfig;
 use anyhow::{Result, bail};
 use yao_rs::{Circuit, Gate, circuit_to_json, control, put};
 
+const SUPPORTED_EXAMPLES: &str = "bell, ghz, qft, phase-estimation, hadamard-test, swap-test";
+
 #[derive(Debug, Default, Clone)]
 pub struct ExampleOptions {
     pub nqubits: Option<usize>,
@@ -20,10 +22,42 @@ pub fn example(name: &str, opts: ExampleOptions, out: &OutputConfig) -> Result<(
         "bell" => bell(opts.nqubits.unwrap_or(2))?,
         "ghz" => ghz(opts.nqubits.unwrap_or(3))?,
         "qft" => qft(opts.nqubits.unwrap_or(4))?,
-        _ => bail!("Unknown example: '{name}'\n\nAvailable examples: bell, ghz, qft"),
+        "phase-estimation" => {
+            let n_reg = opts.nqubits.unwrap_or(3);
+            let unitary = preset_unitary(opts.preset.as_deref(), opts.phase)?;
+            yao_rs::easybuild::phase_estimation_circuit(unitary, n_reg, 1)
+        }
+        "hadamard-test" => {
+            let unitary = preset_unitary(opts.preset.as_deref(), opts.phase)?;
+            yao_rs::easybuild::hadamard_test_circuit(unitary, opts.phase.unwrap_or(0.0))
+        }
+        "swap-test" => {
+            let nbit = opts.nqubits_per_state.unwrap_or(1);
+            let nstate = opts.nstates.unwrap_or(2);
+            if nbit == 0 {
+                bail!("swap-test requires --nqubits-per-state >= 1");
+            }
+            if nstate < 2 {
+                bail!("swap-test requires --nstates >= 2");
+            }
+            yao_rs::easybuild::swap_test_circuit(nbit, nstate, opts.phase.unwrap_or(0.0))
+        }
+        _ => bail!("Unknown example: '{name}'\n\nAvailable examples: {SUPPORTED_EXAMPLES}"),
     };
     let json_value: serde_json::Value = serde_json::from_str(&circuit_to_json(&circuit))?;
     out.emit(&format!("{circuit}"), &json_value)
+}
+
+fn preset_unitary(name: Option<&str>, phase: Option<f64>) -> Result<Gate> {
+    match name.unwrap_or("z") {
+        "z" => Ok(Gate::Z),
+        "x" => Ok(Gate::X),
+        "t" => Ok(Gate::T),
+        "phase" => Ok(Gate::Phase(
+            phase.unwrap_or(std::f64::consts::PI / 4.0),
+        )),
+        other => bail!("Unknown unitary preset: '{other}' (available: z, x, t, phase)"),
+    }
 }
 
 fn bell(n: usize) -> Result<Circuit> {
