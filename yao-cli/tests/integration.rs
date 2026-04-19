@@ -291,6 +291,17 @@ fn cli_artifact_generator_writes_manifest_svg_and_results() {
     assert!(qft_svg.starts_with("<svg"));
     assert!(qft_svg.contains("</svg>"));
 
+    let grover_plot = fs::read_to_string(output_dir.join("plots/grover-marked-5-probs.svg")).unwrap();
+    assert!(grover_plot.starts_with("<svg"));
+    assert!(grover_plot.contains("grover-marked-5"));
+    assert!(grover_plot.contains("0.9453"));
+
+    let qaoa_plot =
+        fs::read_to_string(output_dir.join("plots/qaoa-maxcut-line4-depth2-expect.svg")).unwrap();
+    assert!(qaoa_plot.starts_with("<svg"));
+    assert!(qaoa_plot.contains("Z(0)Z(1)"));
+    assert!(qaoa_plot.contains("0.3074"));
+
     let bell_result = generated_result_json(&output_dir, "bell-probs.json");
     let probabilities = generated_probabilities(&bell_result);
     assert_eq!(probabilities.len(), 4);
@@ -353,6 +364,9 @@ fn cli_visualization_docs_reference_commands_and_generated_artifacts() {
     assert!(page.contains(
         "YAO_BIN=target/debug/yao bash examples/cli/generate_artifacts.sh docs/src/examples/generated"
     ));
+    assert!(page.contains(
+        "python3 examples/cli/plot_results.py docs/src/examples/generated/results docs/src/examples/generated/plots"
+    ));
     assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/phase_estimation_z.sh"));
     assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/hadamard_test_z.sh"));
     assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/swap_test.sh"));
@@ -361,8 +375,24 @@ fn cli_visualization_docs_reference_commands_and_generated_artifacts() {
     assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/qaoa_maxcut_line4.sh 2"));
     assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/qcbm_static.sh 2"));
     assert!(page.contains("generated/svg/qft4.svg"));
+    assert!(page.contains("generated/plots/grover-marked-5-probs.svg"));
     assert!(page.contains("generated/results/grover-marked-5-probs.json"));
     assert!(page.contains("generated/manifest.md"));
+    assert!(page.contains("## Walkthroughs"));
+    for heading in [
+        "### Bell State",
+        "### GHZ 4",
+        "### QFT 4",
+        "### Phase Estimation Z",
+        "### Hadamard Test Z",
+        "### Swap Test",
+        "### Bernstein-Vazirani 1011",
+        "### Grover Marked State 5",
+        "### QAOA MaxCut Line-4 Depth 2",
+        "### QCBM Static Depth 2",
+    ] {
+        assert!(page.contains(heading), "missing walkthrough heading {heading}");
+    }
     assert!(page.contains("0.9453"));
     assert!(page.contains("0.3074"));
     assert!(page.contains("static zero-parameter"));
@@ -376,6 +406,7 @@ fn cli_visualization_docs_reference_commands_and_generated_artifacts() {
         fs::read_to_string(repo_root.join("docs/src/examples/generated/manifest.md")).unwrap();
     assert!(manifest.contains("# Generated CLI Example Artifacts"));
     assert!(manifest.contains("[qft4.svg](./svg/qft4.svg)"));
+    assert!(manifest.contains("[grover-marked-5-probs.svg](./plots/grover-marked-5-probs.svg)"));
     assert!(
         manifest.contains("[grover-marked-5-probs.json](./results/grover-marked-5-probs.json)")
     );
