@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+YAO_BIN="${YAO_BIN:-yao}"
+tmpdir="$(mktemp -d "${TMPDIR:-/tmp}/yao-phase-estimation.XXXXXX")"
+trap 'rm -rf "$tmpdir"' EXIT
+circuit="$tmpdir/phase-estimation-z.json"
+first=1
+
+append_gate() {
+  local gate="$1"
+  local targets="$2"
+  local params="${3:-}"
+  local controls="${4:-}"
+  if [ "$first" -eq 0 ]; then
+    printf ',\n' >> "$circuit"
+  fi
+  first=0
+  printf '    { "type": "gate", "gate": "%s", "targets": %s' "$gate" "$targets" >> "$circuit"
+  if [ -n "$params" ]; then
+    printf ', "params": [%s]' "$params" >> "$circuit"
+  fi
+  if [ -n "$controls" ]; then
+    printf ', "controls": %s' "$controls" >> "$circuit"
+  fi
+  printf ' }' >> "$circuit"
+}
+
+printf '{\n  "num_qubits": 2,\n  "elements": [\n' > "$circuit"
+append_gate X "[1]"
+append_gate H "[0]"
+append_gate Z "[1]" "" "[0]"
+append_gate H "[0]"
+printf '\n  ]\n}\n' >> "$circuit"
+
+"$YAO_BIN" simulate "$circuit" | "$YAO_BIN" probs -

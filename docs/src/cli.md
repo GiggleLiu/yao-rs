@@ -256,27 +256,15 @@ Print example circuit JSON to stdout.
 yao example bell
 yao example bell > bell.json
 yao example qft --nqubits 6
-yao example phase-estimation --nqubits 3 --preset z
-yao example bernstein-vazirani --secret 1011
-yao example grover --nqubits 3 --marked 5 --iterations auto
-yao example qaoa-maxcut --preset line4 --depth 2
 ```
 
-Available examples: `bell`, `ghz`, `qft`, `phase-estimation`, `hadamard-test`, `swap-test`, `bernstein-vazirani`, `grover`, `qaoa-maxcut`, `qcbm`.
+Available examples: `bell`, `ghz`, `qft`.
 
 | Option | Description |
 |--------|-------------|
-| `--nqubits <N>` | Number of qubits or register qubits, depending on the example |
-| `--preset <NAME>` | Built-in unitary or graph preset (`z`, `x`, `t`, `phase`, `line4`, `triangle`) |
-| `--secret <BITS>` | Secret bit string for Bernstein-Vazirani, such as `1011` |
-| `--marked <INDEX>` | Marked basis-state index for Grover |
-| `--iterations <N\|auto>` | Grover iteration count, or `auto` |
-| `--depth <N>` | Ansatz depth for QAOA and QCBM |
-| `--phase <THETA>` | Phase parameter for phase-estimation, hadamard-test, swap-test, or the `phase` preset |
-| `--nqubits-per-state <N>` | Number of qubits per compared state for swap-test |
-| `--nstates <N>` | Number of compared states for swap-test |
+| `--nqubits <N>` | Number of qubits (default: 2 for bell, 3 for ghz, 4 for qft) |
 
-See the [Example Catalog](./examples/catalog.md) for source mapping and example workflows.
+See the [Example Catalog](./examples/catalog.md) for bash scripts that reproduce algorithm examples through CLI workflows.
 
 ### `yao visualize`
 
