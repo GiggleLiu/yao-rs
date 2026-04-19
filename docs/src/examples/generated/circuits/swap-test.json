@@ -1,0 +1,9 @@
+{
+  "num_qubits": 3,
+  "elements": [
+    { "type": "gate", "gate": "X", "targets": [2] },
+    { "type": "gate", "gate": "H", "targets": [0] },
+    { "type": "gate", "gate": "SWAP", "targets": [1, 2], "controls": [0] },
+    { "type": "gate", "gate": "H", "targets": [0] }
+  ]
+}

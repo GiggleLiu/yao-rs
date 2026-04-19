@@ -1,0 +1,16 @@
+{
+  "num_qubits": 4,
+  "elements": [
+    { "type": "gate", "gate": "H", "targets": [0] },
+    { "type": "gate", "gate": "H", "targets": [1] },
+    { "type": "gate", "gate": "H", "targets": [2] },
+    { "type": "gate", "gate": "H", "targets": [3] },
+    { "type": "gate", "gate": "Z", "targets": [0] },
+    { "type": "gate", "gate": "Z", "targets": [2] },
+    { "type": "gate", "gate": "Z", "targets": [3] },
+    { "type": "gate", "gate": "H", "targets": [0] },
+    { "type": "gate", "gate": "H", "targets": [1] },
+    { "type": "gate", "gate": "H", "targets": [2] },
+    { "type": "gate", "gate": "H", "targets": [3] }
+  ]
+}

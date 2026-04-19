@@ -1,0 +1,9 @@
+{
+  "num_qubits": 2,
+  "elements": [
+    { "type": "gate", "gate": "X", "targets": [1] },
+    { "type": "gate", "gate": "H", "targets": [0] },
+    { "type": "gate", "gate": "Z", "targets": [1], "controls": [0] },
+    { "type": "gate", "gate": "H", "targets": [0] }
+  ]
+}

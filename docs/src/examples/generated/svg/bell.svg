@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 208 104"><style>
+.wire { stroke: #444; stroke-width: 2; }
+.gate-box { fill: #fff; stroke: #111; stroke-width: 2; }
+.channel-box { fill: #fff; stroke: #111; stroke-width: 2; stroke-dasharray: 6 4; }
+.gate-label, .channel-label, .annotation-label { fill: #111; font-family: monospace; text-anchor: middle; dominant-baseline: middle; }
+.annotation-label { dominant-baseline: auto; }
+.control { fill: #111; stroke: #111; stroke-width: 2; }
+.control-open { fill: #fff; stroke: #111; stroke-width: 2; }
+.control-link { stroke: #111; stroke-width: 2; }
+.target-x { fill: none; stroke: #111; stroke-width: 2; }
+.swap-marker { stroke: #111; stroke-width: 2; }
+</style><line class="wire" x1="16" y1="28" x2="192" y2="28"/><line class="wire" x1="16" y1="76" x2="192" y2="76"/><rect class="gate-box" x="47" y="14" width="42" height="28" rx="6" ry="6" data-label="H"/><text class="gate-label" x="68" y="28">H</text><line class="control-link" x1="140" y1="28" x2="140" y2="76"/><circle class="control" cx="140" cy="28" r="5"/><circle class="target-x" cx="140" cy="76" r="12"/><line class="target-x" x1="132" y1="76" x2="148" y2="76"/><line class="target-x" x1="140" y1="68" x2="140" y2="84"/></svg>
