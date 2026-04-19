@@ -3,6 +3,8 @@ use anyhow::{Result, bail};
 use yao_rs::{Circuit, Gate, circuit_to_json, control, put};
 
 const SUPPORTED_EXAMPLES: &str = "bell, ghz, qft, phase-estimation, hadamard-test, swap-test, bernstein-vazirani, grover, qaoa-maxcut, qcbm";
+type WeightedEdge = (usize, usize, f64);
+type QaoaPreset = (usize, Vec<WeightedEdge>);
 
 #[derive(Debug, Default, Clone)]
 pub struct ExampleOptions {
@@ -111,7 +113,7 @@ fn parse_secret_bits(secret: Option<&str>) -> Result<Vec<bool>> {
         .collect()
 }
 
-fn qaoa_preset_edges(preset: Option<&str>) -> Result<(usize, Vec<(usize, usize, f64)>)> {
+fn qaoa_preset_edges(preset: Option<&str>) -> Result<QaoaPreset> {
     match preset.unwrap_or("line4") {
         "line4" => Ok((4, vec![(0, 1, 1.0), (1, 2, 1.0), (2, 3, 1.0)])),
         "triangle" => Ok((3, vec![(0, 1, 1.0), (1, 2, 1.0), (0, 2, 1.0)])),
