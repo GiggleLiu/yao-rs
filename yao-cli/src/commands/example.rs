@@ -3,7 +3,7 @@ use anyhow::{Result, bail};
 use yao_rs::{Circuit, Gate, circuit_to_json, control, put};
 
 const SUPPORTED_EXAMPLES: &str =
-    "bell, ghz, qft, phase-estimation, hadamard-test, swap-test, bernstein-vazirani, grover";
+    "bell, ghz, qft, phase-estimation, hadamard-test, swap-test, bernstein-vazirani, grover, qaoa-maxcut";
 
 #[derive(Debug, Default, Clone)]
 pub struct ExampleOptions {
@@ -59,6 +59,16 @@ pub fn example(name: &str, opts: ExampleOptions, out: &OutputConfig) -> Result<(
             let iterations = grover_iterations(n, opts.iterations.as_deref())?;
             yao_rs::easybuild::marked_state_grover_circuit(n, marked, iterations)
         }
+        "qaoa-maxcut" => {
+            let depth = opts.depth.unwrap_or(1);
+            if depth == 0 {
+                bail!("qaoa-maxcut requires --depth >= 1");
+            }
+            let (n, edges) = qaoa_preset_edges(opts.preset.as_deref())?;
+            let gammas = vec![0.2; depth];
+            let betas = vec![0.3; depth];
+            yao_rs::easybuild::qaoa_maxcut_circuit(n, &edges, &gammas, &betas)
+        }
         _ => bail!("Unknown example: '{name}'\n\nAvailable examples: {SUPPORTED_EXAMPLES}"),
     };
     let json_value: serde_json::Value = serde_json::from_str(&circuit_to_json(&circuit))?;
@@ -90,6 +100,14 @@ fn parse_secret_bits(secret: Option<&str>) -> Result<Vec<bool>> {
             _ => bail!("secret must contain only 0 and 1"),
         })
         .collect()
+}
+
+fn qaoa_preset_edges(preset: Option<&str>) -> Result<(usize, Vec<(usize, usize, f64)>)> {
+    match preset.unwrap_or("line4") {
+        "line4" => Ok((4, vec![(0, 1, 1.0), (1, 2, 1.0), (2, 3, 1.0)])),
+        "triangle" => Ok((3, vec![(0, 1, 1.0), (1, 2, 1.0), (0, 2, 1.0)])),
+        other => bail!("Unknown qaoa-maxcut preset: '{other}' (available: line4, triangle)"),
+    }
 }
 
 fn grover_iterations(n: usize, iterations: Option<&str>) -> Result<usize> {

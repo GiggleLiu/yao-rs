@@ -223,6 +223,21 @@ fn example_grover_rejects_out_of_range_marked_state() {
 }
 
 #[test]
+fn example_qaoa_maxcut_uses_line4_preset() {
+    let json = run_yao_json(&[
+        "--json",
+        "example",
+        "qaoa-maxcut",
+        "--preset",
+        "line4",
+        "--depth",
+        "2",
+    ]);
+    assert_eq!(json["num_qubits"].as_u64().unwrap(), 4);
+    assert!(json["elements"].as_array().unwrap().len() > 10);
+}
+
+#[test]
 fn visualize_writes_svg_in_default_build() {
     let circuit_path = temp_path("yao-visualize", "json");
     let svg_path = temp_path("yao-visualize", "svg");

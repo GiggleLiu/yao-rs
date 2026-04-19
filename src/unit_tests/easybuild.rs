@@ -277,6 +277,16 @@ fn test_marked_state_grover_amplifies_marked_state() {
     );
 }
 
+#[test]
+fn test_qaoa_maxcut_ansatz_builds_and_preserves_norm() {
+    let edges = [(0usize, 1usize, 1.0f64), (1, 2, 1.0), (2, 3, 1.0)];
+    let circuit = crate::easybuild::qaoa_maxcut_circuit(4, &edges, &[0.2], &[0.3]);
+    let result = apply(&circuit, &ArrayReg::zero_state(4));
+
+    assert_eq!(circuit.num_sites(), 4);
+    assert_abs_diff_eq!(result.norm(), 1.0, epsilon = 1e-10);
+}
+
 // =============================================================================
 // Random Circuit Builder Tests
 // =============================================================================

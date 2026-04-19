@@ -248,6 +248,42 @@ pub fn grover_auto_iterations(n: usize, marked_count: usize) -> usize {
         as usize
 }
 
+/// Build a static QAOA MaxCut ansatz.
+///
+/// This emits the circuit only. It does not optimize parameters.
+pub fn qaoa_maxcut_circuit(
+    n: usize,
+    edges: &[(usize, usize, f64)],
+    gammas: &[f64],
+    betas: &[f64],
+) -> Circuit {
+    assert!(n > 0, "QAOA requires at least one qubit");
+    assert_eq!(
+        gammas.len(),
+        betas.len(),
+        "gammas and betas must have equal length"
+    );
+
+    let mut elements: Vec<CircuitElement> = Vec::new();
+    for q in 0..n {
+        elements.push(put(vec![q], Gate::H));
+    }
+
+    for (&gamma, &beta) in gammas.iter().zip(betas.iter()) {
+        for &(u, v, weight) in edges {
+            assert!(u < n && v < n && u != v, "invalid MaxCut edge");
+            elements.push(control(vec![u], vec![v], Gate::X));
+            elements.push(put(vec![v], Gate::Rz(gamma * weight)));
+            elements.push(control(vec![u], vec![v], Gate::X));
+        }
+        for q in 0..n {
+            elements.push(put(vec![q], Gate::Rx(2.0 * beta)));
+        }
+    }
+
+    Circuit::qubits(n, elements).unwrap()
+}
+
 /// Hadamard test circuit. N+1 qubits (qubit 0 = ancilla).
 ///
 /// Takes a Custom gate as the unitary.
