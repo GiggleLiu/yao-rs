@@ -299,7 +299,13 @@ fn cli_visualization_docs_reference_commands_and_generated_artifacts() {
     assert!(page.contains(
         "YAO_BIN=target/debug/yao bash examples/cli/generate_artifacts.sh docs/src/examples/generated"
     ));
+    assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/phase_estimation_z.sh"));
+    assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/hadamard_test_z.sh"));
+    assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/swap_test.sh"));
     assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/bernstein_vazirani.sh 1011"));
+    assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/grover_marked_state.sh 5"));
+    assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/qaoa_maxcut_line4.sh 2"));
+    assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/qcbm_static.sh 2"));
     assert!(page.contains("generated/svg/qft4.svg"));
     assert!(page.contains("generated/results/grover-marked-5-probs.json"));
     assert!(page.contains("generated/manifest.md"));
