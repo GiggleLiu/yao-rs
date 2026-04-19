@@ -14,6 +14,21 @@ struct ColumnLayout {
     center_x: f32,
 }
 
+struct CircuitLayout {
+    elements: Vec<ColumnLayout>,
+    total_width: f32,
+}
+
+struct Frontier {
+    rows: Vec<usize>,
+    header: usize,
+}
+
+struct Occupancy {
+    row_span: Option<(usize, usize)>,
+    header: bool,
+}
+
 enum RenderNode {
     Wire {
         y: f32,
@@ -73,9 +88,8 @@ impl Default for LayoutConfig {
 
 pub fn to_svg(circuit: &Circuit) -> String {
     let config = LayoutConfig::default();
-    let columns = layout_columns(circuit, &config);
-    let total_columns_width = columns_width(circuit, &config);
-    let width = config.left_pad + total_columns_width + RIGHT_PAD;
+    let layout = layout_circuit(circuit, &config);
+    let width = config.left_pad + layout.total_width + RIGHT_PAD;
     let height = if circuit.nbits == 0 {
         config.top_pad * 2.0
     } else {
@@ -94,7 +108,7 @@ pub fn to_svg(circuit: &Circuit) -> String {
     }
 
     let mut nodes = Vec::new();
-    for (column, element) in columns.iter().zip(&circuit.elements) {
+    for (column, element) in layout.elements.iter().zip(&circuit.elements) {
         let x = column.center_x;
         match element {
             CircuitElement::Gate(pg) => layout_gate(pg, x, &config, &mut nodes),
@@ -255,27 +269,101 @@ fn push_swap_marker(x: f32, y: f32, nodes: &mut Vec<RenderNode>) {
     });
 }
 
-fn layout_columns(circuit: &Circuit, config: &LayoutConfig) -> Vec<ColumnLayout> {
-    let mut cursor = config.left_pad;
-    let mut columns = Vec::with_capacity(circuit.elements.len());
+fn layout_circuit(circuit: &Circuit, config: &LayoutConfig) -> CircuitLayout {
+    let mut frontier = Frontier::new(circuit.nbits);
+    let mut assignments = Vec::with_capacity(circuit.elements.len());
+    let mut column_widths = Vec::new();
 
     for element in &circuit.elements {
+        let column = frontier.reserve(occupancy_for_element(circuit.nbits, element));
         let width = column_width_for_element(element, config);
-        columns.push(ColumnLayout {
-            center_x: cursor + width * 0.5,
-        });
-        cursor += width;
+        if column_widths.len() <= column {
+            column_widths.resize(column + 1, 0.0);
+        }
+        column_widths[column] = f32::max(column_widths[column], width);
+        assignments.push(column);
     }
 
-    columns
+    let mut cursor = config.left_pad;
+    let column_centers: Vec<f32> = column_widths
+        .iter()
+        .map(|&width| {
+            let center = cursor + width * 0.5;
+            cursor += width;
+            center
+        })
+        .collect();
+
+    let elements = assignments
+        .into_iter()
+        .map(|column| ColumnLayout {
+            center_x: column_centers[column],
+        })
+        .collect();
+
+    CircuitLayout {
+        elements,
+        total_width: column_widths.iter().sum(),
+    }
 }
 
-fn columns_width(circuit: &Circuit, config: &LayoutConfig) -> f32 {
-    circuit
-        .elements
-        .iter()
-        .map(|element| column_width_for_element(element, config))
-        .sum()
+impl Frontier {
+    fn new(nrows: usize) -> Self {
+        Self {
+            rows: vec![0; nrows],
+            header: 0,
+        }
+    }
+
+    fn reserve(&mut self, occupancy: Occupancy) -> usize {
+        let mut column = if occupancy.header { self.header } else { 0 };
+
+        if let Some((start, end)) = occupancy.row_span {
+            let row_column = self.rows[start..=end]
+                .iter()
+                .copied()
+                .max()
+                .unwrap_or(0);
+            column = column.max(row_column);
+        }
+
+        if occupancy.header {
+            self.header = column + 1;
+        }
+
+        if let Some((start, end)) = occupancy.row_span {
+            for row in &mut self.rows[start..=end] {
+                *row = column + 1;
+            }
+        }
+
+        column
+    }
+}
+
+fn occupancy_for_element(nbits: usize, element: &CircuitElement) -> Occupancy {
+    match element {
+        CircuitElement::Gate(pg) => occupancy_for_locs(nbits, &pg.all_locs(), pg.target_locs.is_empty()),
+        CircuitElement::Annotation(pa) => Occupancy {
+            row_span: Some((pa.loc, pa.loc)),
+            header: false,
+        },
+        CircuitElement::Channel(pc) => occupancy_for_locs(nbits, &pc.locs, pc.locs.is_empty()),
+    }
+}
+
+fn occupancy_for_locs(nbits: usize, locs: &[usize], header: bool) -> Occupancy {
+    if let Some((min_loc, max_loc)) = min_max(locs.iter().copied()) {
+        Occupancy {
+            row_span: Some((min_loc, max_loc)),
+            header,
+        }
+    } else {
+        Occupancy {
+            row_span: (nbits > 0).then_some((0, nbits - 1)),
+            header: true,
+        }
+    }
 }
 
 fn column_width_for_element(element: &CircuitElement, config: &LayoutConfig) -> f32 {
@@ -309,20 +397,45 @@ fn connector_span(pg: &PositionedGate, config: &LayoutConfig) -> Option<(f32, f3
         return None;
     }
 
-    let mut ys: Vec<f32> = pg
-        .control_locs
-        .iter()
-        .map(|&loc| wire_y(loc, config))
-        .collect();
-    ys.extend(pg.target_locs.iter().map(|&loc| wire_y(loc, config)));
-
     if pg.target_locs.is_empty() {
+        let mut ys: Vec<f32> = pg
+            .control_locs
+            .iter()
+            .map(|&loc| wire_y(loc, config))
+            .collect();
         ys.push(header_center_y(config));
+
+        let min_y = ys.iter().copied().reduce(f32::min)?;
+        let max_y = ys.iter().copied().reduce(f32::max)?;
+        return Some((min_y, max_y));
     }
 
-    let min_y = ys.iter().copied().reduce(f32::min)?;
-    let max_y = ys.iter().copied().reduce(f32::max)?;
+    let (min_loc, max_loc) = min_max(pg.all_locs().into_iter())?;
+    let min_y = wire_y(min_loc, config) - connector_endpoint_padding(pg, min_loc);
+    let max_y = wire_y(max_loc, config) + connector_endpoint_padding(pg, max_loc);
     Some((min_y, max_y))
+}
+
+fn connector_endpoint_padding(pg: &PositionedGate, loc: usize) -> f32 {
+    let control_padding = pg
+        .control_locs
+        .contains(&loc)
+        .then_some(CONTROL_RADIUS)
+        .unwrap_or(0.0);
+
+    let target_padding = if pg.target_locs.contains(&loc) {
+        if matches!(pg.gate, Gate::X) && !pg.control_locs.is_empty() && pg.target_locs.len() == 1 {
+            TARGET_X_RADIUS
+        } else if matches!(pg.gate, Gate::SWAP) {
+            SWAP_ARM
+        } else {
+            GATE_HEIGHT * 0.5
+        }
+    } else {
+        0.0
+    };
+
+    f32::max(control_padding, target_padding)
 }
 
 fn gate_box_frame(pg: &PositionedGate, config: &LayoutConfig) -> (f32, f32) {

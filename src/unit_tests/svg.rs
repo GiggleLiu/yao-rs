@@ -123,6 +123,49 @@ fn emits_one_wire_per_site_and_one_gate_box_per_column() {
 }
 
 #[test]
+fn packs_disjoint_gates_into_the_same_column() {
+    let circuit = Circuit::new(
+        vec![2, 2, 2],
+        vec![put(vec![0], Gate::H), put(vec![2], Gate::Z)],
+    )
+    .unwrap();
+    let svg = crate::svg::to_svg(&circuit);
+
+    let h_x = extract_attr_from_tag(&svg, "data-label=\"H\"", "x");
+    let z_x = extract_attr_from_tag(&svg, "data-label=\"Z\"", "x");
+    let viewbox_width = extract_viewbox_width(&svg);
+
+    assert_eq!(h_x, z_x);
+    assert_eq!(viewbox_width, 136.0);
+}
+
+#[test]
+fn keeps_overlapping_gates_in_separate_columns() {
+    let circuit = Circuit::new(vec![2], vec![put(vec![0], Gate::H), put(vec![0], Gate::X)])
+        .unwrap();
+    let svg = crate::svg::to_svg(&circuit);
+
+    let h_x = extract_attr_from_tag(&svg, "data-label=\"H\"", "x");
+    let x_x = extract_attr_from_tag(&svg, "data-label=\"X\"", "x");
+
+    assert!(h_x < x_x);
+}
+
+#[test]
+fn extends_controlled_x_connector_to_marker_edges() {
+    let circuit = Circuit::new(vec![2, 2], vec![control(vec![0], vec![1], Gate::X)]).unwrap();
+    let svg = crate::svg::to_svg(&circuit);
+
+    let link_y1 = extract_attr_from_tag(&svg, "class=\"control-link\"", "y1");
+    let link_y2 = extract_attr_from_tag(&svg, "class=\"control-link\"", "y2");
+    let control_y = extract_attr_from_tag(&svg, "class=\"control\"", "cy");
+    let target_y = extract_attr_from_tag(&svg, "class=\"target-x\"", "cy");
+
+    assert!(link_y1 <= control_y - super::CONTROL_RADIUS);
+    assert!(link_y2 >= target_y + super::TARGET_X_RADIUS);
+}
+
+#[test]
 fn widens_gate_box_and_viewbox_for_long_labels() {
     let circuit = Circuit::new(vec![2], vec![put(vec![0], Gate::Phase(1.2345))]).unwrap();
     let svg = crate::svg::to_svg(&circuit);
