@@ -238,6 +238,15 @@ fn example_qaoa_maxcut_uses_line4_preset() {
 }
 
 #[test]
+fn example_qcbm_builds_variational_ansatz() {
+    let json = run_yao_json(&[
+        "--json", "example", "qcbm", "--nqubits", "6", "--depth", "2",
+    ]);
+    assert_eq!(json["num_qubits"].as_u64().unwrap(), 6);
+    assert!(json["elements"].as_array().unwrap().len() > 20);
+}
+
+#[test]
 fn visualize_writes_svg_in_default_build() {
     let circuit_path = temp_path("yao-visualize", "json");
     let svg_path = temp_path("yao-visualize", "svg");

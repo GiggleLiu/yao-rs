@@ -3,7 +3,7 @@ use anyhow::{Result, bail};
 use yao_rs::{Circuit, Gate, circuit_to_json, control, put};
 
 const SUPPORTED_EXAMPLES: &str =
-    "bell, ghz, qft, phase-estimation, hadamard-test, swap-test, bernstein-vazirani, grover, qaoa-maxcut";
+    "bell, ghz, qft, phase-estimation, hadamard-test, swap-test, bernstein-vazirani, grover, qaoa-maxcut, qcbm";
 
 #[derive(Debug, Default, Clone)]
 pub struct ExampleOptions {
@@ -68,6 +68,18 @@ pub fn example(name: &str, opts: ExampleOptions, out: &OutputConfig) -> Result<(
             let gammas = vec![0.2; depth];
             let betas = vec![0.3; depth];
             yao_rs::easybuild::qaoa_maxcut_circuit(n, &edges, &gammas, &betas)
+        }
+        "qcbm" => {
+            let n = opts.nqubits.unwrap_or(6);
+            let depth = opts.depth.unwrap_or(6);
+            if n == 0 {
+                bail!("qcbm requires --nqubits >= 1");
+            }
+            if depth == 0 {
+                bail!("qcbm requires --depth >= 1");
+            }
+            let pairs = yao_rs::easybuild::pair_ring(n);
+            yao_rs::easybuild::variational_circuit(n, depth, &pairs)
         }
         _ => bail!("Unknown example: '{name}'\n\nAvailable examples: {SUPPORTED_EXAMPLES}"),
     };
