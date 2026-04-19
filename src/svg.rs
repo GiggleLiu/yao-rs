@@ -415,11 +415,11 @@ fn connector_span(pg: &PositionedGate, config: &LayoutConfig) -> Option<(f32, f3
 }
 
 fn connector_endpoint_padding(pg: &PositionedGate, loc: usize) -> f32 {
-    let control_padding = pg
-        .control_locs
-        .contains(&loc)
-        .then_some(CONTROL_RADIUS)
-        .unwrap_or(0.0);
+    let control_padding = if pg.control_locs.contains(&loc) {
+        CONTROL_RADIUS
+    } else {
+        0.0
+    };
 
     let target_padding = if pg.target_locs.contains(&loc) {
         if matches!(pg.gate, Gate::X) && !pg.control_locs.is_empty() && pg.target_locs.len() == 1 {
