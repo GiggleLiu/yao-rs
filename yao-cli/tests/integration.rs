@@ -58,6 +58,25 @@ fn run_cli_script_json(script: &str) -> Value {
     serde_json::from_slice(&output.stdout).unwrap()
 }
 
+fn temp_dir_path(prefix: &str) -> PathBuf {
+    let unique = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_nanos();
+    std::env::temp_dir().join(format!("{prefix}-{unique}"))
+}
+
+fn run_cli_artifact_generator(output_dir: &Path) -> Output {
+    let repo_root = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
+    Command::new("bash")
+        .arg("examples/cli/generate_artifacts.sh")
+        .arg(output_dir)
+        .current_dir(repo_root)
+        .env("YAO_BIN", env!("CARGO_BIN_EXE_yao"))
+        .output()
+        .unwrap()
+}
+
 #[test]
 fn simulate_measure_probs_and_expect_pipeline() {
     let circuit_path = temp_path("yao-bell", "json");
@@ -210,6 +229,38 @@ fn cli_script_qaoa_maxcut_line4_runs() {
 fn cli_script_qcbm_static_outputs_distribution() {
     let json = run_cli_script_json("examples/cli/qcbm_static.sh");
     assert_eq!(json["probabilities"].as_array().unwrap().len(), 64);
+}
+
+#[test]
+fn cli_artifact_generator_writes_manifest_svg_and_results() {
+    let output_dir = temp_dir_path("yao-cli-artifacts");
+    let output = run_cli_artifact_generator(&output_dir);
+    assert!(output.status.success(), "{output:?}");
+
+    let manifest = fs::read_to_string(output_dir.join("manifest.md")).unwrap();
+    assert!(manifest.contains("YAO_BIN=target/debug/yao bash examples/cli/bernstein_vazirani.sh 1011"));
+    assert!(manifest.contains("grover-marked-5"));
+    assert!(manifest.contains("qaoa-maxcut-line4-depth2"));
+
+    let qft_svg = fs::read_to_string(output_dir.join("svg/qft4.svg")).unwrap();
+    assert!(qft_svg.starts_with("<svg"));
+    assert!(qft_svg.contains("</svg>"));
+
+    let bv_result: Value = serde_json::from_str(
+        &fs::read_to_string(output_dir.join("results/bernstein-vazirani-1011-probs.json")).unwrap(),
+    )
+    .unwrap();
+    let probabilities = bv_result["probabilities"].as_array().unwrap();
+    assert!((probabilities[11].as_f64().unwrap() - 1.0).abs() < 1e-10);
+
+    let grover_result: Value = serde_json::from_str(
+        &fs::read_to_string(output_dir.join("results/grover-marked-5-probs.json")).unwrap(),
+    )
+    .unwrap();
+    let probabilities = grover_result["probabilities"].as_array().unwrap();
+    assert!(probabilities[5].as_f64().unwrap() > 0.9);
+
+    let _ = fs::remove_dir_all(output_dir);
 }
 
 #[test]

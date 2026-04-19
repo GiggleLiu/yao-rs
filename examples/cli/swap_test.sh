@@ -15,4 +15,4 @@ append_gate SWAP "[1, 2]" "" "[0]"
 append_gate H "[0]"
 finish_circuit
 
-simulate_probs
+finish_example_probs "swap-test"

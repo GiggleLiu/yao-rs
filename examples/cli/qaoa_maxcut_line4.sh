@@ -32,4 +32,4 @@ for ((layer = 0; layer < depth_value; layer++)); do
 done
 finish_circuit
 
-"$YAO_BIN" run "$circuit" --op "Z(0)Z(1)"
+finish_example_expect "qaoa-maxcut-line4-depth${depth_value}" "Z(0)Z(1)"

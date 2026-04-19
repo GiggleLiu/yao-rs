@@ -61,4 +61,4 @@ for ((i = 0; i < 2; i++)); do
 done
 finish_circuit
 
-simulate_probs
+finish_example_probs "grover-marked-${marked_value}"

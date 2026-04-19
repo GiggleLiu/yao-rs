@@ -56,6 +56,44 @@ finish_circuit() {
   printf '\n  ]\n}\n' >> "$circuit"
 }
 
+artifact_dir() {
+  printf '%s' "${YAO_ARTIFACT_DIR:-}"
+}
+
+prepare_artifact_dirs() {
+  local dir
+  dir="$(artifact_dir)"
+  [ -n "$dir" ] || return 0
+  mkdir -p "$dir/circuits" "$dir/results" "$dir/svg"
+}
+
+write_artifacts() {
+  local name="$1"
+  local result_file="$2"
+  local dir
+  dir="$(artifact_dir)"
+  [ -n "$dir" ] || return 0
+  prepare_artifact_dirs
+  cp "$circuit" "$dir/circuits/$name.json"
+  "$YAO_BIN" visualize "$circuit" --output "$dir/svg/$name.svg"
+  cp "$result_file" "$dir/results/$(basename "$result_file")"
+}
+
+finish_example_probs() {
+  local name="$1"
+  local result_file="${tmpdir:-$(make_example_tmpdir "$name")}/$name-probs.json"
+  "$YAO_BIN" simulate "$circuit" | "$YAO_BIN" probs - | tee "$result_file"
+  write_artifacts "$name" "$result_file"
+}
+
+finish_example_expect() {
+  local name="$1"
+  local op="$2"
+  local result_file="${tmpdir:-$(make_example_tmpdir "$name")}/$name-expect.json"
+  "$YAO_BIN" run "$circuit" --op "$op" | tee "$result_file"
+  write_artifacts "$name" "$result_file"
+}
+
 simulate_probs() {
   "$YAO_BIN" simulate "$circuit" | "$YAO_BIN" probs -
 }

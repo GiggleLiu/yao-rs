@@ -38,4 +38,4 @@ for ((layer = 0; layer <= depth_value; layer++)); do
 done
 finish_circuit
 
-simulate_probs
+finish_example_probs "qcbm-static-depth${depth_value}"

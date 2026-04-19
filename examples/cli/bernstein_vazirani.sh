@@ -28,4 +28,4 @@ for ((q = 0; q < n; q++)); do
 done
 finish_circuit
 
-simulate_probs
+finish_example_probs "bernstein-vazirani-${secret}"
