@@ -25,6 +25,10 @@ The generated artifact index is available in
 
 ## Example Pages
 
+Each page below is a copy-paste walkthrough that rebuilds the CLI, regenerates
+the example data, refreshes the Python-generated plot, and links the committed
+artifacts used by mdBook.
+
 - [Bell State](./cli/bell.md)
 - [GHZ 4](./cli/ghz4.md)
 - [QFT 4](./cli/qft4.md)

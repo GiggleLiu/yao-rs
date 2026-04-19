@@ -20,10 +20,12 @@ This page maps Yao.jl documentation and QuAlgorithmZoo.jl examples to yao-rs CLI
 ## Typical Workflows
 
 ```bash
-bash examples/cli/bernstein_vazirani.sh 1011
-bash examples/cli/grover_marked_state.sh 5
-yao example qft --nqubits 4 | yao visualize - --output qft.svg
-bash examples/cli/qaoa_maxcut_line4.sh 1
+cargo build -p yao-cli --no-default-features
+YAO_BIN=target/debug/yao bash examples/cli/bernstein_vazirani.sh 1011
+YAO_BIN=target/debug/yao bash examples/cli/grover_marked_state.sh 5
+target/debug/yao example qft --nqubits 4 --json --output qft4.json
+target/debug/yao visualize qft4.json --output qft4.svg
+YAO_BIN=target/debug/yao bash examples/cli/qaoa_maxcut_line4.sh 1
 ```
 
 ## Generated Visualization

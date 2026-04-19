@@ -625,12 +625,23 @@ fn cli_visualization_docs_reference_commands_and_generated_artifacts() {
         let example_path = repo_root.join(format!("docs/src/examples/cli/{slug}.md"));
         let example_page = fs::read_to_string(&example_path).unwrap();
         assert!(example_page.contains(&format!("# {heading}")));
+        assert!(example_page.contains("Run from the repository root."));
+        assert!(example_page.contains("## 1. Build the CLI"));
+        assert!(example_page.contains("## 2. Generate the artifacts"));
+        assert!(example_page.contains("## 3. Refresh the plot"));
+        assert!(example_page.contains("## 4. Inspect the generated result"));
         assert!(example_page.contains(command), "missing command in {slug}");
         assert!(
             example_page.contains(
                 "python3 scripts/plot_cli_results.py docs/src/examples/generated/results docs/src/examples/generated/plots"
             ),
             "missing Python plot command in {slug}"
+        );
+        assert!(
+            example_page.contains(&format!(
+                "python3 -m json.tool docs/src/examples/generated/results/{result}"
+            )),
+            "missing generated JSON inspection command in {slug}"
         );
         assert!(example_page.contains(&format!("../generated/svg/{svg}")));
         assert!(example_page.contains(&format!("../generated/results/{result}")));
