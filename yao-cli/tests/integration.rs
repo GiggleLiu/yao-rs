@@ -264,7 +264,9 @@ fn cli_artifact_generator_writes_manifest_svg_and_results() {
     assert!(output.status.success(), "{output:?}");
 
     let manifest = fs::read_to_string(output_dir.join("manifest.md")).unwrap();
-    assert!(manifest.contains("YAO_BIN=target/debug/yao bash examples/cli/bernstein_vazirani.sh 1011"));
+    assert!(
+        manifest.contains("YAO_BIN=target/debug/yao bash examples/cli/bernstein_vazirani.sh 1011")
+    );
     assert!(manifest.contains("grover-marked-5"));
     assert!(manifest.contains("qaoa-maxcut-line4-depth2"));
 
@@ -309,9 +311,11 @@ fn cli_visualization_docs_reference_commands_and_generated_artifacts() {
     assert!(page.contains("generated/svg/qft4.svg"));
     assert!(page.contains("generated/results/grover-marked-5-probs.json"));
     assert!(page.contains("generated/manifest.md"));
-    assert!(repo_root
-        .join("docs/src/examples/generated/manifest.md")
-        .exists());
+    assert!(
+        repo_root
+            .join("docs/src/examples/generated/manifest.md")
+            .exists()
+    );
 
     let mut rest = page.as_str();
     while let Some(start) = rest.find("](./generated/") {
@@ -327,7 +331,9 @@ fn cli_visualization_docs_reference_commands_and_generated_artifacts() {
 
     let summary = fs::read_to_string(repo_root.join("docs/src/SUMMARY.md")).unwrap();
     assert!(summary.contains("[CLI Example Visualization](./examples/cli-visualization.md)"));
-    assert!(summary.contains("[Generated CLI Example Artifacts](./examples/generated/manifest.md)"));
+    assert!(
+        summary.contains("[Generated CLI Example Artifacts](./examples/generated/manifest.md)")
+    );
 }
 
 #[test]
