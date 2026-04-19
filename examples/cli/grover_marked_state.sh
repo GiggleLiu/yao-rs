@@ -1,41 +1,24 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-YAO_BIN="${YAO_BIN:-yao}"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib.sh"
+
 n=3
 marked="${1:-5}"
-if ((marked < 0 || marked >= (1 << n))); then
-  printf 'marked state out of range for %s qubits\n' "$n" >&2
-  exit 2
+require_non_negative_int marked "$marked"
+marked_value=$((10#$marked))
+if ((marked_value >= (1 << n))); then
+  die "marked state out of range for $n qubits"
 fi
 
-tmpdir="$(mktemp -d "${TMPDIR:-/tmp}/yao-grover.XXXXXX")"
+tmpdir="$(make_example_tmpdir grover)"
 trap 'rm -rf "$tmpdir"' EXIT
 circuit="$tmpdir/grover-marked-state.json"
-first=1
-
-append_gate() {
-  local gate="$1"
-  local targets="$2"
-  local params="${3:-}"
-  local controls="${4:-}"
-  if [ "$first" -eq 0 ]; then
-    printf ',\n' >> "$circuit"
-  fi
-  first=0
-  printf '    { "type": "gate", "gate": "%s", "targets": %s' "$gate" "$targets" >> "$circuit"
-  if [ -n "$params" ]; then
-    printf ', "params": [%s]' "$params" >> "$circuit"
-  fi
-  if [ -n "$controls" ]; then
-    printf ', "controls": %s' "$controls" >> "$circuit"
-  fi
-  printf ' }' >> "$circuit"
-}
 
 marked_bit() {
   local q="$1"
-  printf '%s' "$(((marked >> (n - 1 - q)) & 1))"
+  printf '%s' "$(((marked_value >> (n - 1 - q)) & 1))"
 }
 
 oracle() {
@@ -68,7 +51,7 @@ diffusion() {
   done
 }
 
-printf '{\n  "num_qubits": %s,\n  "elements": [\n' "$n" > "$circuit"
+start_circuit "$n"
 for ((q = 0; q < n; q++)); do
   append_gate H "[$q]"
 done
@@ -76,6 +59,6 @@ for ((i = 0; i < 2; i++)); do
   oracle
   diffusion
 done
-printf '\n  ]\n}\n' >> "$circuit"
+finish_circuit
 
-"$YAO_BIN" simulate "$circuit" | "$YAO_BIN" probs -
+simulate_probs
