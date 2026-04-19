@@ -141,8 +141,8 @@ fn packs_disjoint_gates_into_the_same_column() {
 
 #[test]
 fn keeps_overlapping_gates_in_separate_columns() {
-    let circuit = Circuit::new(vec![2], vec![put(vec![0], Gate::H), put(vec![0], Gate::X)])
-        .unwrap();
+    let circuit =
+        Circuit::new(vec![2], vec![put(vec![0], Gate::H), put(vec![0], Gate::X)]).unwrap();
     let svg = crate::svg::to_svg(&circuit);
 
     let h_x = extract_attr_from_tag(&svg, "data-label=\"H\"", "x");

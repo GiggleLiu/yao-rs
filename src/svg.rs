@@ -319,11 +319,7 @@ impl Frontier {
         let mut column = if occupancy.header { self.header } else { 0 };
 
         if let Some((start, end)) = occupancy.row_span {
-            let row_column = self.rows[start..=end]
-                .iter()
-                .copied()
-                .max()
-                .unwrap_or(0);
+            let row_column = self.rows[start..=end].iter().copied().max().unwrap_or(0);
             column = column.max(row_column);
         }
 
@@ -343,7 +339,9 @@ impl Frontier {
 
 fn occupancy_for_element(nbits: usize, element: &CircuitElement) -> Occupancy {
     match element {
-        CircuitElement::Gate(pg) => occupancy_for_locs(nbits, &pg.all_locs(), pg.target_locs.is_empty()),
+        CircuitElement::Gate(pg) => {
+            occupancy_for_locs(nbits, &pg.all_locs(), pg.target_locs.is_empty())
+        }
         CircuitElement::Annotation(pa) => Occupancy {
             row_span: Some((pa.loc, pa.loc)),
             header: false,

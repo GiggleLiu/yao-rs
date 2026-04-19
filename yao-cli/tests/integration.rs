@@ -88,6 +88,17 @@ fn run_cli_artifact_generator(output_dir: &Path) -> Output {
         .unwrap()
 }
 
+fn run_cli_plotter(results_dir: &Path, plots_dir: &Path) -> Output {
+    let repo_root = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
+    Command::new("python3")
+        .arg("examples/cli/plot_results.py")
+        .arg(results_dir)
+        .arg(plots_dir)
+        .current_dir(repo_root)
+        .output()
+        .unwrap()
+}
+
 fn generated_result_json(output_dir: &Path, result_file: &str) -> Value {
     serde_json::from_str(&fs::read_to_string(output_dir.join("results").join(result_file)).unwrap())
         .unwrap()
@@ -303,6 +314,27 @@ fn cli_artifact_generator_writes_manifest_svg_and_results() {
     assert!(qaoa_plot.contains("Z(0)Z(1)"));
     assert!(qaoa_plot.contains("0.3074"));
 
+    let result_names = fs::read_dir(output_dir.join("results"))
+        .unwrap()
+        .map(|entry| {
+            entry
+                .unwrap()
+                .path()
+                .file_stem()
+                .unwrap()
+                .to_string_lossy()
+                .into_owned()
+        })
+        .collect::<Vec<_>>();
+    let plot_count = fs::read_dir(output_dir.join("plots")).unwrap().count();
+    assert_eq!(plot_count, result_names.len());
+    for result_name in result_names {
+        let plot = output_dir.join("plots").join(format!("{result_name}.svg"));
+        let svg = fs::read_to_string(&plot).unwrap();
+        assert!(svg.starts_with("<svg"), "invalid plot SVG: {}", plot.display());
+        assert!(svg.contains(&result_name), "plot missing result stem: {}", plot.display());
+    }
+
     let bell_result = generated_result_json(&output_dir, "bell-probs.json");
     let probabilities = generated_probabilities(&bell_result);
     assert_eq!(probabilities.len(), 4);
@@ -355,6 +387,29 @@ fn cli_artifact_generator_writes_manifest_svg_and_results() {
 }
 
 #[test]
+fn cli_plotter_removes_stale_plot_files() {
+    let output_dir = temp_dir_path("yao-cli-plotter");
+    let results_dir = output_dir.join("results");
+    let plots_dir = output_dir.join("plots");
+    fs::create_dir_all(&results_dir).unwrap();
+    fs::create_dir_all(&plots_dir).unwrap();
+    fs::write(
+        results_dir.join("small-probs.json"),
+        r#"{"num_qubits":1,"probabilities":[1.0,0.0]}"#,
+    )
+    .unwrap();
+    let stale_plot = plots_dir.join("stale.svg");
+    fs::write(&stale_plot, "<svg></svg>").unwrap();
+
+    let output = run_cli_plotter(&results_dir, &plots_dir);
+    assert!(output.status.success(), "{output:?}");
+    assert!(!stale_plot.exists());
+    assert!(plots_dir.join("small-probs.svg").exists());
+
+    let _ = fs::remove_dir_all(output_dir);
+}
+
+#[test]
 fn cli_visualization_docs_reference_commands_and_generated_artifacts() {
     let repo_root = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
     let page_path = repo_root.join("docs/src/examples/cli-visualization.md");
@@ -375,6 +430,27 @@ fn cli_visualization_docs_reference_commands_and_generated_artifacts() {
     assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/grover_marked_state.sh 5"));
     assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/qaoa_maxcut_line4.sh 2"));
     assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/qcbm_static.sh 2"));
+    assert!(page.contains(
+        "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/phase_estimation_z.sh"
+    ));
+    assert!(page.contains(
+        "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/hadamard_test_z.sh"
+    ));
+    assert!(page.contains(
+        "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/swap_test.sh"
+    ));
+    assert!(page.contains(
+        "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/bernstein_vazirani.sh 1011"
+    ));
+    assert!(page.contains(
+        "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/grover_marked_state.sh 5"
+    ));
+    assert!(page.contains(
+        "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/qaoa_maxcut_line4.sh 2"
+    ));
+    assert!(page.contains(
+        "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/qcbm_static.sh 2"
+    ));
     assert!(page.contains("generated/svg/qft4.svg"));
     assert!(page.contains("generated/plots/grover-marked-5-probs.svg"));
     assert!(page.contains("generated/results/grover-marked-5-probs.json"));

@@ -137,6 +137,9 @@ def main(argv: list[str]) -> int:
         return 1
 
     plots_dir.mkdir(parents=True, exist_ok=True)
+    for stale_plot in plots_dir.glob("*.svg"):
+        stale_plot.unlink()
+
     for result_path in sorted(results_dir.glob("*.json")):
         data = json.loads(result_path.read_text(encoding="utf-8"))
         out_path = plots_dir / f"{result_path.stem}.svg"
