@@ -12,9 +12,15 @@ use crate::easybuild::{
     variational_circuit,
 };
 use crate::gate::Gate;
+use crate::measure::probs;
 use crate::register::ArrayReg;
 
 const ATOL: f64 = 1e-10;
+
+fn msb_bits_to_index(bits: &[bool]) -> usize {
+    bits.iter()
+        .fold(0usize, |acc, &bit| (acc << 1) | usize::from(bit))
+}
 
 // =============================================================================
 // Entanglement Layout Tests
@@ -243,6 +249,17 @@ fn test_phase_estimation_circuit() {
         "Output should be normalized, got norm = {}",
         result.norm()
     );
+}
+
+#[test]
+fn test_bernstein_vazirani_recovers_secret() {
+    let secret = [true, false, true, true];
+    let circuit = crate::easybuild::bernstein_vazirani_circuit(&secret);
+    let result = apply(&circuit, &ArrayReg::zero_state(secret.len()));
+    let probabilities = probs(&result, None);
+    let expected = msb_bits_to_index(&secret);
+
+    assert_abs_diff_eq!(probabilities[expected], 1.0, epsilon = 1e-10);
 }
 
 // =============================================================================

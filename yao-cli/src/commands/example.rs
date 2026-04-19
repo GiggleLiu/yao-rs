@@ -2,7 +2,8 @@ use crate::output::OutputConfig;
 use anyhow::{Result, bail};
 use yao_rs::{Circuit, Gate, circuit_to_json, control, put};
 
-const SUPPORTED_EXAMPLES: &str = "bell, ghz, qft, phase-estimation, hadamard-test, swap-test";
+const SUPPORTED_EXAMPLES: &str =
+    "bell, ghz, qft, phase-estimation, hadamard-test, swap-test, bernstein-vazirani";
 
 #[derive(Debug, Default, Clone)]
 pub struct ExampleOptions {
@@ -42,6 +43,10 @@ pub fn example(name: &str, opts: ExampleOptions, out: &OutputConfig) -> Result<(
             }
             yao_rs::easybuild::swap_test_circuit(nbit, nstate, opts.phase.unwrap_or(0.0))
         }
+        "bernstein-vazirani" => {
+            let secret = parse_secret_bits(opts.secret.as_deref())?;
+            yao_rs::easybuild::bernstein_vazirani_circuit(&secret)
+        }
         _ => bail!("Unknown example: '{name}'\n\nAvailable examples: {SUPPORTED_EXAMPLES}"),
     };
     let json_value: serde_json::Value = serde_json::from_str(&circuit_to_json(&circuit))?;
@@ -58,6 +63,21 @@ fn preset_unitary(name: Option<&str>, phase: Option<f64>) -> Result<Gate> {
         )),
         other => bail!("Unknown unitary preset: '{other}' (available: z, x, t, phase)"),
     }
+}
+
+fn parse_secret_bits(secret: Option<&str>) -> Result<Vec<bool>> {
+    let secret = secret.ok_or_else(|| anyhow::anyhow!("bernstein-vazirani requires --secret"))?;
+    if secret.is_empty() {
+        bail!("bernstein-vazirani requires a non-empty --secret");
+    }
+    secret
+        .chars()
+        .map(|ch| match ch {
+            '0' => Ok(false),
+            '1' => Ok(true),
+            _ => bail!("secret must contain only 0 and 1"),
+        })
+        .collect()
 }
 
 fn bell(n: usize) -> Result<Circuit> {

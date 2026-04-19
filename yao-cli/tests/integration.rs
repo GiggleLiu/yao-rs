@@ -185,6 +185,19 @@ fn example_swap_test_rejects_one_state() {
 }
 
 #[test]
+fn example_bernstein_vazirani_accepts_secret() {
+    let json = run_yao_json(&[
+        "--json",
+        "example",
+        "bernstein-vazirani",
+        "--secret",
+        "1011",
+    ]);
+    assert_eq!(json["num_qubits"].as_u64().unwrap(), 4);
+    assert!(json["elements"].as_array().unwrap().len() >= 8);
+}
+
+#[test]
 fn visualize_writes_svg_in_default_build() {
     let circuit_path = temp_path("yao-visualize", "json");
     let svg_path = temp_path("yao-visualize", "svg");

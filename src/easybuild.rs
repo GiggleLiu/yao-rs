@@ -162,6 +162,31 @@ pub fn variational_circuit(n: usize, nlayer: usize, pairs: &[(usize, usize)]) ->
     Circuit::qubits(n, elements).unwrap()
 }
 
+/// Build a Bernstein-Vazirani circuit for a phase oracle defined by `secret`.
+///
+/// The circuit is H on every qubit, Z on each secret bit set to 1, then H on
+/// every qubit. Starting from |0...0>, measurement returns `secret`.
+pub fn bernstein_vazirani_circuit(secret: &[bool]) -> Circuit {
+    assert!(!secret.is_empty(), "secret must not be empty");
+
+    let n = secret.len();
+    let mut elements: Vec<CircuitElement> = Vec::new();
+
+    for q in 0..n {
+        elements.push(put(vec![q], Gate::H));
+    }
+    for (q, &bit) in secret.iter().enumerate() {
+        if bit {
+            elements.push(put(vec![q], Gate::Z));
+        }
+    }
+    for q in 0..n {
+        elements.push(put(vec![q], Gate::H));
+    }
+
+    Circuit::qubits(n, elements).unwrap()
+}
+
 /// Hadamard test circuit. N+1 qubits (qubit 0 = ancilla).
 ///
 /// Takes a Custom gate as the unitary.
