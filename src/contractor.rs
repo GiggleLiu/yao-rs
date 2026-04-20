@@ -1,7 +1,6 @@
 //! Native tensor network contractor using omeinsum.
 //!
-//! Enable with the `omeinsum` feature flag. Requires the `omeinsum-rs`
-//! git submodule to be initialized (`git submodule update --init`).
+//! Enable with the `omeinsum` feature flag.
 
 use std::collections::HashMap;
 
