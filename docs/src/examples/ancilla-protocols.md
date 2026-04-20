@@ -159,8 +159,39 @@ places the ancilla in \\( |+\rangle \\); the controlled `SWAP` swaps
 
 ## Running it
 
-Run from the repository root. This rebuilds the CLI and regenerates every
-artifact embedded on this page:
+**Quick run** — download the circuit JSONs
+([Hadamard test](./generated/circuits/hadamard-test-z.json),
+[swap test](./generated/circuits/swap-test.json)) and simulate each:
+
+```bash
+yao simulate hadamard-test-z.json | yao probs -
+yao simulate swap-test.json | yao probs -
+```
+
+Expected output for Hadamard test (deterministic \\( |11\rangle \\)):
+
+```text
+{
+  "locs": null,
+  "num_qubits": 2,
+  "probabilities": [0.0, 0.0, 0.0, 1.0000000000000004]
+}
+```
+
+Expected output for swap test (four equal non-zero entries of \\( 0.25 \\)):
+
+```text
+{
+  "locs": null,
+  "num_qubits": 3,
+  "probabilities": [
+    0.0, 0.2500000000000001, 0.2500000000000001, 0.0,
+    0.0, 0.2500000000000001, 0.2500000000000001, 0.0
+  ]
+}
+```
+
+**Regenerating this page's artifacts** from the repo root:
 
 ```bash
 cargo build -p yao-cli --no-default-features

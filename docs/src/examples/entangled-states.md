@@ -127,8 +127,49 @@ visible in the SVG above: one Hadamard, then three controls all rooted at qubit
 
 ## Running it
 
-Run from the repository root. This rebuilds the CLI and regenerates every
-artifact embedded on this page:
+**Quick run** (after `cargo install --path yao-cli`, so `yao` is on your PATH):
+
+```bash
+yao example bell | yao simulate - | yao probs -
+```
+
+Expected output:
+
+```text
+{
+  "locs": null,
+  "num_qubits": 2,
+  "probabilities": [
+    0.5000000000000001,
+    0.0,
+    0.0,
+    0.5000000000000001
+  ]
+}
+```
+
+For GHZ-4 the pipeline is the same with `--nqubits 4`:
+
+```bash
+yao example ghz --nqubits 4 | yao simulate - | yao probs -
+```
+
+Expected output (16 entries; only indices 0 and 15 are non-zero):
+
+```text
+{
+  "locs": null,
+  "num_qubits": 4,
+  "probabilities": [
+    0.5000000000000001, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0, 0.5000000000000001
+  ]
+}
+```
+
+**Regenerating this page's artifacts** (SVG diagrams and probability plots), run from the repo root:
 
 ```bash
 cargo build -p yao-cli --no-default-features

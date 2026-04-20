@@ -119,9 +119,31 @@ Map each gate back to a step of the general algorithm:
 
 ## Running it
 
-Run from the repository root. This rebuilds the CLI, regenerates the circuit
-JSON, SVG, and probability JSON via the bundled shell workflow, and refreshes
-the plot:
+**Quick run** — download the
+[phase-estimation circuit JSON](./generated/circuits/phase-estimation-z.json),
+then (with `yao` on PATH):
+
+```bash
+yao simulate phase-estimation-z.json | yao probs -
+```
+
+Expected output:
+
+```text
+{
+  "locs": null,
+  "num_qubits": 2,
+  "probabilities": [
+    0.0,
+    0.0,
+    0.0,
+    1.0000000000000004
+  ]
+}
+```
+
+**Regenerating this page's artifacts** from the repo root (via the bundled
+shell workflow):
 
 ```bash
 cargo build -p yao-cli --no-default-features

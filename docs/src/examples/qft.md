@@ -133,8 +133,28 @@ are no final SWAPs.
 
 ## Running it
 
-Run from the repository root. This rebuilds the CLI and regenerates every
-artifact embedded on this page:
+**Quick run** (after `cargo install --path yao-cli`):
+
+```bash
+yao example qft --nqubits 4 | yao simulate - | yao probs -
+```
+
+Expected output (every one of the 16 entries equal to \\( 1/16 = 0.0625 \\)):
+
+```text
+{
+  "locs": null,
+  "num_qubits": 4,
+  "probabilities": [
+    0.06250000000000003, 0.06250000000000003, 0.06250000000000003, 0.06250000000000003,
+    0.06250000000000003, 0.06250000000000003, 0.06250000000000003, 0.06250000000000003,
+    0.06250000000000003, 0.06250000000000003, 0.06250000000000003, 0.06250000000000003,
+    0.06250000000000003, 0.06250000000000003, 0.06250000000000003, 0.06250000000000003
+  ]
+}
+```
+
+**Regenerating this page's artifacts** from the repo root:
 
 ```bash
 cargo build -p yao-cli --no-default-features
@@ -169,6 +189,74 @@ phase-encoded state of the form
 *collapses* that phase \\( \phi \\) onto a basis state peaked at
 \\( \lfloor \phi \cdot 2^n \rfloor \\). That collapse is precisely phase
 estimation — see [Phase Estimation](./phase-estimation.md).
+
+### Verifying the phase structure
+
+The run above does not actually *verify* the circuit: on the zero input
+every QFT gate after the first Hadamard layer acts on \\( |0\rangle \\)
+branches of their controls and leaves amplitudes untouched, so the same
+uniform distribution would result from \\( H^{\otimes n} \\) alone. To
+check that the controlled-phase ladder has the right rotation angles
+— which is where the \\( O(n^2) \\) non-trivial structure lives — we
+need an input that *requires* the phases to cancel. The canonical choice
+is the uniform superposition \\( |+\rangle^{\otimes n} = H^{\otimes n}|0\rangle^{\otimes n} \\):
+
+$$ \operatorname{QFT}|+\rangle^{\otimes n} \;=\; \frac{1}{2^n}\sum_y \Bigl(\sum_x e^{2\pi i xy / 2^n}\Bigr)\,|y\rangle \;=\; \frac{1}{2^n}\sum_y 2^n\,\delta_{y,0}\,|y\rangle \;=\; |0\rangle^{\otimes n}. $$
+
+The inner sum collapses by orthogonality of \\( 2^n \\)-th roots of
+unity, which is exactly the phase cancellation the controlled-phase
+ladder encodes. On output, every amplitude on \\( y \neq 0 \\) is the
+sum of \\( 2^n \\) unit-modulus complex numbers that must add to zero —
+a sensitive, global condition that breaks if any rotation angle is
+wrong.
+
+A bundled shell workflow prepends an \\( H^{\otimes 4} \\) layer to the
+canonical QFT-4 circuit and runs it from the same CLI pipeline:
+
+```bash
+YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/qft_from_plus.sh 4
+python3 scripts/plot_cli_results.py docs/src/examples/generated/results docs/src/examples/generated/plots
+```
+
+Expected `docs/src/examples/generated/results/qft4-from-plus-probs.json`:
+
+```text
+{
+  "num_qubits": 4,
+  "probabilities": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+}
+```
+
+![QFT-4 from |+⟩⁴ probabilities](./generated/plots/qft4-from-plus-probs.svg)
+
+All sixteen other bins are zero to machine precision. The full-register
+spike at index 0 is the required fingerprint: \\( |+\rangle^{\otimes 4} \\)
+is symmetric under qubit permutation, so the omitted-SWAP convention
+does not change the result — the output is still
+\\( |0\rangle^{\otimes 4} \\), identified by the qubit-0-MSB index 0.
+
+An independent cross-check uses `scripts/reference_simulate.py` on the
+generated JSON:
+
+```bash
+python3 scripts/reference_simulate.py \
+    docs/src/examples/generated/circuits/qft4-from-plus.json --probs | \
+    python3 -c "import json,sys; d=json.load(sys.stdin); print(d['probabilities'][0])"
+```
+
+Expected output:
+
+```text
+0.9999999999999987
+```
+
+The CLI reports `probabilities[0] = 1.0` (rounded at 15 decimals in the
+JSON); the reference returns `0.9999999999999987` — the difference is
+\\( 1.3 \times 10^{-15} \\), inside the drift budget for a sum of
+\\( 16 \\) complex exponentials that must cancel to a single non-zero
+bin. Any mis-rotated controlled-phase gate would push the peak weight
+noticeably below 1 and redistribute mass onto other bins.
 
 ## Variations & next steps
 

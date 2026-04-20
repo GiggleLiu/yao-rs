@@ -1,45 +1,3 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
-SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd -- "$SCRIPT_DIR/../.." && pwd)"
-source "$SCRIPT_DIR/lib.sh"
-
-out="${1:-$REPO_ROOT/docs/src/examples/generated}"
-rm -rf "$out/circuits" "$out/results" "$out/svg" "$out/plots"
-rm -f "$out/manifest.md"
-mkdir -p "$out/circuits" "$out/results" "$out/svg" "$out/plots"
-
-run_builtin_probs() {
-  local name="$1"
-  shift
-  "$YAO_BIN" example "$@" --json --output "$out/circuits/$name.json"
-  "$YAO_BIN" visualize "$out/circuits/$name.json" --output "$out/svg/$name.svg"
-  "$YAO_BIN" simulate "$out/circuits/$name.json" | "$YAO_BIN" probs - > "$out/results/$name-probs.json"
-}
-
-run_script() {
-  local script="$1"
-  shift
-  YAO_ARTIFACT_DIR="$out" YAO_BIN="$YAO_BIN" bash "$SCRIPT_DIR/$script" "$@" >/dev/null
-}
-
-run_builtin_probs bell bell
-run_builtin_probs ghz4 ghz --nqubits 4
-run_builtin_probs qft4 qft --nqubits 4
-
-run_script qft_from_plus.sh 4
-run_script phase_estimation_z.sh
-run_script hadamard_test_z.sh
-run_script swap_test.sh
-run_script bernstein_vazirani.sh 1011
-run_script grover_marked_state.sh 5
-run_script qaoa_maxcut_line4.sh 2
-run_script qcbm_static.sh 2
-
-python3 "$REPO_ROOT/scripts/plot_cli_results.py" "$out/results" "$out/plots"
-
-cat > "$out/manifest.md" <<'MANIFEST'
 # Generated CLI Example Artifacts
 
 This page indexes the generated circuit JSON, SVG diagrams, result JSON, and
@@ -71,4 +29,3 @@ to render the result plots from the generated JSON.
 | grover-marked-5 | Script workflow | `YAO_BIN=target/debug/yao bash examples/cli/grover_marked_state.sh 5` | [grover-marked-5.json](./circuits/grover-marked-5.json) | [grover-marked-5.svg](./svg/grover-marked-5.svg) | [grover-marked-5-probs.json](./results/grover-marked-5-probs.json) | [grover-marked-5-probs.svg](./plots/grover-marked-5-probs.svg) | Marked state `101` / index `5` has probability about `0.9453`. |
 | qaoa-maxcut-line4-depth2 | Script workflow | `YAO_BIN=target/debug/yao bash examples/cli/qaoa_maxcut_line4.sh 2` | [qaoa-maxcut-line4-depth2.json](./circuits/qaoa-maxcut-line4-depth2.json) | [qaoa-maxcut-line4-depth2.svg](./svg/qaoa-maxcut-line4-depth2.svg) | [qaoa-maxcut-line4-depth2-expect.json](./results/qaoa-maxcut-line4-depth2-expect.json) | [qaoa-maxcut-line4-depth2-expect.svg](./plots/qaoa-maxcut-line4-depth2-expect.svg) | `Z(0)Z(1)` expectation real part is about `0.3074`. |
 | qcbm-static-depth2 | Script workflow | `YAO_BIN=target/debug/yao bash examples/cli/qcbm_static.sh 2` | [qcbm-static-depth2.json](./circuits/qcbm-static-depth2.json) | [qcbm-static-depth2.svg](./svg/qcbm-static-depth2.svg) | [qcbm-static-depth2-probs.json](./results/qcbm-static-depth2-probs.json) | [qcbm-static-depth2-probs.svg](./plots/qcbm-static-depth2-probs.svg) | static zero-parameter demo; not full training. |
-MANIFEST

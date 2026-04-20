@@ -137,9 +137,30 @@ The full circuit JSON follows the
 
 ## Running it
 
-Run from the repository root. This rebuilds the CLI, regenerates every
-artifact embedded on this page via the bundled shell workflow, and refreshes
-the plot:
+**Quick run** — download the
+[BV-1011 circuit JSON](./generated/circuits/bernstein-vazirani-1011.json)
+and simulate:
+
+```bash
+yao simulate bernstein-vazirani-1011.json | yao probs -
+```
+
+Expected output (single non-zero entry at index 11, binary `1011`):
+
+```text
+{
+  "locs": null,
+  "num_qubits": 4,
+  "probabilities": [
+    0.0, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0, 1.0000000000000004,
+    0.0, 0.0, 0.0, 0.0
+  ]
+}
+```
+
+**Regenerating this page's artifacts** from the repo root:
 
 ```bash
 cargo build -p yao-cli --no-default-features

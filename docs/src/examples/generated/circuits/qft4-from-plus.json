@@ -1,0 +1,19 @@
+{
+  "num_qubits": 4,
+  "elements": [
+    { "type": "gate", "gate": "H", "targets": [0] },
+    { "type": "gate", "gate": "H", "targets": [1] },
+    { "type": "gate", "gate": "H", "targets": [2] },
+    { "type": "gate", "gate": "H", "targets": [3] },
+    { "type": "gate", "gate": "H", "targets": [0] },
+    { "type": "gate", "gate": "Phase", "targets": [0], "params": [1.5707963267948966], "controls": [1] },
+    { "type": "gate", "gate": "Phase", "targets": [0], "params": [0.7853981633974483], "controls": [2] },
+    { "type": "gate", "gate": "Phase", "targets": [0], "params": [0.3926990816987241], "controls": [3] },
+    { "type": "gate", "gate": "H", "targets": [1] },
+    { "type": "gate", "gate": "Phase", "targets": [1], "params": [1.5707963267948966], "controls": [2] },
+    { "type": "gate", "gate": "Phase", "targets": [1], "params": [0.7853981633974483], "controls": [3] },
+    { "type": "gate", "gate": "H", "targets": [2] },
+    { "type": "gate", "gate": "Phase", "targets": [2], "params": [1.5707963267948966], "controls": [3] },
+    { "type": "gate", "gate": "H", "targets": [3] }
+  ]
+}

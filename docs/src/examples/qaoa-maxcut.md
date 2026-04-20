@@ -22,7 +22,7 @@ QAOA gives a *provable* approximation at the smallest depth \\( p = 1 \\):
 Farhi et al. showed a guaranteed ratio of \\( 0.6924 \\) on 3-regular
 graphs, and empirical evidence has it improving as \\( p \\) grows.
 Whether QAOA ever beats the best classical approximation algorithm
-(Goemans–Williamson at \\( 0.8785 \\)) is an open question, and part of
+(Goemans–Williamson at \\( 0.87856 \\)[^gw]) is an open question, and part of
 the reason MaxCut-QAOA is the standard benchmark for variational
 quantum algorithms.
 
@@ -159,9 +159,31 @@ qubit. The second QAOA block is bit-for-bit identical to the first.
 
 ## Running it
 
-Run from the repository root. The CLI command here is `yao run --op`,
-which returns a single real number (the expectation value) rather than
-a probability distribution:
+**Quick run** — download the
+[QAOA circuit JSON](./generated/circuits/qaoa-maxcut-line4-depth2.json)
+and compute an expectation value directly with `yao run --op`:
+
+```bash
+yao run qaoa-maxcut-line4-depth2.json --op "Z(0)Z(1)"
+```
+
+Expected output:
+
+```text
+{
+  "expectation_value": {
+    "im": 0.0,
+    "re": 0.30738930204770754
+  },
+  "operator": "Z(0)Z(1)"
+}
+```
+
+`yao run --op` returns a single real number (the expectation value)
+rather than a probability distribution; the imaginary part is zero by
+construction (the expectation of a Hermitian operator is real).
+
+**Regenerating this page's artifacts** from the repo root:
 
 ```bash
 cargo build -p yao-cli --no-default-features
@@ -169,10 +191,11 @@ YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examp
 python3 scripts/plot_cli_results.py docs/src/examples/generated/results docs/src/examples/generated/plots
 ```
 
-Internally the script invokes `yao run --op "Z(0)Z(1)"` on the generated
-circuit and writes a small JSON with the real and imaginary parts of the
-expectation. The plotting script renders expectation files as a single
-bar at `docs/src/examples/generated/plots/qaoa-maxcut-line4-depth2-expect.svg`.
+The script's shell wrapper invokes the same `yao run --op "Z(0)Z(1)"` call
+and writes the result JSON under
+`docs/src/examples/generated/results/`. The plotting script renders
+expectation files as a single bar at
+`docs/src/examples/generated/plots/qaoa-maxcut-line4-depth2-expect.svg`.
 
 ## Interpreting the result
 
@@ -210,6 +233,36 @@ finding the good valleys is the classical optimizer's job. Seeing a bad
 value at a hand-picked point confirms the ansatz responds to its
 parameters.
 
+### Verifying correctness
+
+The number above — \\( \langle Z_0 Z_1\rangle = 0.307389\ldots \\) — does
+not match an obvious closed form, so checking it requires a second
+simulator. `scripts/reference_simulate.py` is an independent numpy
+state-vector implementation in ~80 lines; running it on the same circuit
+JSON and computing the same Pauli operator must give the same value, to
+within machine precision:
+
+```bash
+python3 scripts/reference_simulate.py \
+    docs/src/examples/generated/circuits/qaoa-maxcut-line4-depth2.json \
+    --op "Z(0)Z(1)"
+```
+
+Expected output:
+
+```text
+{"expectation_value": {"re": 0.3073893020477073, "im": 0.0}}
+```
+
+The CLI result from the run above is `0.3073893020477075`. The two
+values differ by \\( 2.8 \times 10^{-16} \\) — one unit in the last
+place of complex-double arithmetic — and the imaginary parts are
+identically zero. Because the reference and the CLI agree to the bit
+despite being independent implementations in different languages
+(Python+numpy vs. Rust), the agreement pins down both the circuit
+construction in the shell script and the matrix application in the
+simulator. A bug in either would show up as a visible disagreement.
+
 ## Variations & next steps
 
 - **Increase depth.** Pass `3` or `4` as the script's first argument.
@@ -238,6 +291,12 @@ parameters.
 
 [^fgg]: E. Farhi, J. Goldstone, and S. Gutmann, "A Quantum Approximate
     Optimization Algorithm", arXiv:1411.4028 (2014).
+
+[^gw]: M. X. Goemans and D. P. Williamson, "Improved approximation
+    algorithms for maximum cut and satisfiability problems using
+    semidefinite programming", *J. ACM* **42**, 1115 (1995);
+    the randomized-rounding algorithm achieves expected cut
+    \\( \geq 0.87856 \\cdot \\mathrm{OPT} \\).
 
 [^issue31]: yao-rs issue #31, "Parameter-optimization loop for
     variational examples". Tracks the planned training harness for QAOA

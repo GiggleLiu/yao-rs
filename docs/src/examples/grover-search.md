@@ -169,9 +169,34 @@ bit-for-bit identical. The format follows the
 
 ## Running it
 
-Run from the repository root. This rebuilds the CLI, regenerates every
-artifact embedded on this page via the bundled shell workflow, and
-refreshes the plot:
+**Quick run** — download the
+[Grover-for-5 circuit JSON](./generated/circuits/grover-marked-5.json)
+and simulate:
+
+```bash
+yao simulate grover-marked-5.json | yao probs -
+```
+
+Expected output (peak at index 5, residual \\( 0.0078 \\) elsewhere):
+
+```text
+{
+  "locs": null,
+  "num_qubits": 3,
+  "probabilities": [
+    0.007812500000000005,
+    0.007812500000000016,
+    0.007812500000000016,
+    0.007812500000000005,
+    0.007812500000000009,
+    0.9453125000000014,
+    0.007812500000000002,
+    0.007812500000000002
+  ]
+}
+```
+
+**Regenerating this page's artifacts** from the repo root:
 
 ```bash
 cargo build -p yao-cli --no-default-features
