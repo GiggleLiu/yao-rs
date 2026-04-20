@@ -162,6 +162,127 @@ pub fn variational_circuit(n: usize, nlayer: usize, pairs: &[(usize, usize)]) ->
     Circuit::qubits(n, elements).unwrap()
 }
 
+/// Build a Bernstein-Vazirani circuit for a phase oracle defined by `secret`.
+///
+/// The circuit is H on every qubit, Z on each secret bit set to 1, then H on
+/// every qubit. Starting from |0...0>, measurement returns `secret`.
+pub fn bernstein_vazirani_circuit(secret: &[bool]) -> Circuit {
+    assert!(!secret.is_empty(), "secret must not be empty");
+
+    let n = secret.len();
+    let mut elements: Vec<CircuitElement> = Vec::new();
+
+    for q in 0..n {
+        elements.push(put(vec![q], Gate::H));
+    }
+    for (q, &bit) in secret.iter().enumerate() {
+        if bit {
+            elements.push(put(vec![q], Gate::Z));
+        }
+    }
+    for q in 0..n {
+        elements.push(put(vec![q], Gate::H));
+    }
+
+    Circuit::qubits(n, elements).unwrap()
+}
+
+fn marked_oracle_gate(n: usize, marked: usize) -> Gate {
+    let dim = 1usize << n;
+    let mut matrix = Array2::zeros((dim, dim));
+    for i in 0..dim {
+        matrix[[i, i]] = if i == marked {
+            Complex64::new(-1.0, 0.0)
+        } else {
+            Complex64::new(1.0, 0.0)
+        };
+    }
+    Gate::Custom {
+        matrix,
+        is_diagonal: true,
+        label: format!("Oracle({marked})"),
+    }
+}
+
+fn diffusion_gate(n: usize) -> Gate {
+    let dim = 1usize << n;
+    let fill = 2.0 / dim as f64;
+    let mut matrix = Array2::from_elem((dim, dim), Complex64::new(fill, 0.0));
+    for i in 0..dim {
+        matrix[[i, i]] -= Complex64::new(1.0, 0.0);
+    }
+    Gate::Custom {
+        matrix,
+        is_diagonal: false,
+        label: "Diffusion".to_string(),
+    }
+}
+
+/// Build a marked-basis-state Grover search circuit.
+pub fn marked_state_grover_circuit(n: usize, marked: usize, iterations: usize) -> Circuit {
+    assert!(n > 0, "Grover requires at least one qubit");
+    assert!(
+        n <= 8,
+        "Grover example uses dense custom gates and is limited to 8 qubits"
+    );
+    assert!(marked < (1usize << n), "marked state out of range");
+
+    let targets: Vec<usize> = (0..n).collect();
+    let mut elements: Vec<CircuitElement> = Vec::new();
+
+    for q in 0..n {
+        elements.push(put(vec![q], Gate::H));
+    }
+    for _ in 0..iterations {
+        elements.push(put(targets.clone(), marked_oracle_gate(n, marked)));
+        elements.push(put(targets.clone(), diffusion_gate(n)));
+    }
+
+    Circuit::qubits(n, elements).unwrap()
+}
+
+pub fn grover_auto_iterations(n: usize, marked_count: usize) -> usize {
+    assert!(marked_count > 0, "marked_count must be positive");
+    let dim = 1usize << n;
+    ((std::f64::consts::PI / 4.0) * ((dim as f64) / (marked_count as f64)).sqrt()).round() as usize
+}
+
+/// Build a static QAOA MaxCut ansatz.
+///
+/// This emits the circuit only. It does not optimize parameters.
+pub fn qaoa_maxcut_circuit(
+    n: usize,
+    edges: &[(usize, usize, f64)],
+    gammas: &[f64],
+    betas: &[f64],
+) -> Circuit {
+    assert!(n > 0, "QAOA requires at least one qubit");
+    assert_eq!(
+        gammas.len(),
+        betas.len(),
+        "gammas and betas must have equal length"
+    );
+
+    let mut elements: Vec<CircuitElement> = Vec::new();
+    for q in 0..n {
+        elements.push(put(vec![q], Gate::H));
+    }
+
+    for (&gamma, &beta) in gammas.iter().zip(betas.iter()) {
+        for &(u, v, weight) in edges {
+            assert!(u < n && v < n && u != v, "invalid MaxCut edge");
+            elements.push(control(vec![u], vec![v], Gate::X));
+            elements.push(put(vec![v], Gate::Rz(gamma * weight)));
+            elements.push(control(vec![u], vec![v], Gate::X));
+        }
+        for q in 0..n {
+            elements.push(put(vec![q], Gate::Rx(2.0 * beta)));
+        }
+    }
+
+    Circuit::qubits(n, elements).unwrap()
+}
+
 /// Hadamard test circuit. N+1 qubits (qubit 0 = ancilla).
 ///
 /// Takes a Custom gate as the unitary.

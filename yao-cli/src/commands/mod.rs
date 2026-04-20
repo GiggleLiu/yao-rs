@@ -38,6 +38,7 @@ pub fn load_circuit(path: &str) -> anyhow::Result<Circuit> {
     yao_rs::circuit_from_json(&json).map_err(|e| anyhow!("Failed to parse circuit: {e}"))
 }
 
+#[cfg(feature = "omeinsum")]
 pub fn load_stdin_or_file(path: &str) -> anyhow::Result<String> {
     if path == "-" {
         let mut buf = String::new();

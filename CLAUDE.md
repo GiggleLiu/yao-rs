@@ -77,7 +77,7 @@ Gate → PositionedGate → Circuit → TensorNetwork / ArrayReg
 - `svg.rs`: Built-in SVG circuit renderer for `Circuit::to_svg()`; annotations are visual-only labels (no-op in execution, rendered in SVG diagrams)
 - `noise.rs`: Noise channel definitions
 - `qasm.rs` (feature-gated): OpenQASM 2.0 import/export via the `openqasm` crate. Import decomposes all gates to U+CX primitives. Export maps Gate variants to standard qelib1.inc names.
-- `contractor.rs` (feature-gated `omeinsum`): Native tensor network contraction via [omeinsum-rs](https://github.com/tensor4all/omeinsum-rs) submodule. Converts `TensorNetwork` ndarray tensors to omeinsum column-major format, contracts with greedy optimization, returns column-major `ArrayD`.
+- `contractor.rs` (feature-gated `omeinsum`): Native tensor network contraction via the [omeinsum](https://crates.io/crates/omeinsum) crate. Converts `TensorNetwork` ndarray tensors to omeinsum column-major format, contracts with greedy optimization, returns column-major `ArrayD`.
 - `torch_contractor.rs` (feature-gated `torch`): libtorch-based tensor network contraction via omeco greedy optimizer
 
 ## Test Layout
@@ -114,13 +114,9 @@ yao fetch qasmbench grover | yao fromqasm - | yao run - --shots 100
 
 All commands output human-readable text in a terminal, JSON when piped. Use `--json` to force JSON. Use `-` for stdin input.
 
-## Submodules
-
-- **`omeinsum-rs/`**: [omeinsum-rs](https://github.com/tensor4all/omeinsum-rs) — native Rust tensor network contraction. Initialize with `git submodule update --init`. Required for the `omeinsum` feature.
-
 ## Feature Flags
 
-- `omeinsum`: Native tensor network contraction via omeinsum (enabled by default in CLI, requires submodule)
+- `omeinsum`: Native tensor network contraction via the [omeinsum](https://crates.io/crates/omeinsum) crate (enabled by default in CLI)
 - `parallel`: Enable rayon for parallel operations
 - `qasm`: OpenQASM 2.0 import/export (enabled by default in CLI)
 - `torch`: PyTorch tensor contraction via tch (requires libtorch)

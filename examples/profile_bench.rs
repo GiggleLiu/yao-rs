@@ -107,7 +107,7 @@ fn main() {
         "gate" => bench_single_gate(),
         "qft" => bench_qft(),
         "dm" => bench_dm(),
-        "all" | _ => {
+        _ => {
             bench_single_gate();
             bench_qft();
             bench_dm();

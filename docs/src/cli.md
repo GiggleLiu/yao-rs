@@ -264,6 +264,8 @@ Available examples: `bell`, `ghz`, `qft`.
 |--------|-------------|
 | `--nqubits <N>` | Number of qubits (default: 2 for bell, 3 for ghz, 4 for qft) |
 
+See the [Example Catalog](./examples/catalog.md) for bash scripts that reproduce algorithm examples through CLI workflows.
+
 ### `yao visualize`
 
 Render a circuit diagram as SVG.

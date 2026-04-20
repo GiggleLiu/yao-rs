@@ -32,7 +32,7 @@ fn main() -> anyhow::Result<()> {
             .exit();
     }
 
-    let mut auto_json = matches!(
+    let base_auto_json = matches!(
         cli.command,
         Commands::Inspect { .. }
             | Commands::Simulate { .. }
@@ -45,19 +45,20 @@ fn main() -> anyhow::Result<()> {
             | Commands::Fetch { .. }
     );
     #[cfg(feature = "omeinsum")]
-    {
-        auto_json |= matches!(
-            cli.command,
-            Commands::Contract { .. } | Commands::Optimize { .. }
-        );
-    }
+    let omeinsum_auto_json = matches!(
+        cli.command,
+        Commands::Contract { .. } | Commands::Optimize { .. }
+    );
+    #[cfg(not(feature = "omeinsum"))]
+    let omeinsum_auto_json = false;
     #[cfg(feature = "qasm")]
-    {
-        auto_json |= matches!(
-            cli.command,
-            Commands::Fromqasm { .. } | Commands::Toqasm { .. }
-        );
-    }
+    let qasm_auto_json = matches!(
+        cli.command,
+        Commands::Fromqasm { .. } | Commands::Toqasm { .. }
+    );
+    #[cfg(not(feature = "qasm"))]
+    let qasm_auto_json = false;
+    let auto_json = base_auto_json || omeinsum_auto_json || qasm_auto_json;
 
     let out = OutputConfig {
         output: cli.output,

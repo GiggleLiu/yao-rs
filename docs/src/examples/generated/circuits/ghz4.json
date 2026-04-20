@@ -1,0 +1,51 @@
+{
+  "elements": [
+    {
+      "gate": "H",
+      "targets": [
+        0
+      ],
+      "type": "gate"
+    },
+    {
+      "control_configs": [
+        true
+      ],
+      "controls": [
+        0
+      ],
+      "gate": "X",
+      "targets": [
+        1
+      ],
+      "type": "gate"
+    },
+    {
+      "control_configs": [
+        true
+      ],
+      "controls": [
+        0
+      ],
+      "gate": "X",
+      "targets": [
+        2
+      ],
+      "type": "gate"
+    },
+    {
+      "control_configs": [
+        true
+      ],
+      "controls": [
+        0
+      ],
+      "gate": "X",
+      "targets": [
+        3
+      ],
+      "type": "gate"
+    }
+  ],
+  "num_qubits": 4
+}

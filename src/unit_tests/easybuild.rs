@@ -12,9 +12,15 @@ use crate::easybuild::{
     variational_circuit,
 };
 use crate::gate::Gate;
+use crate::measure::probs;
 use crate::register::ArrayReg;
 
 const ATOL: f64 = 1e-10;
+
+fn msb_bits_to_index(bits: &[bool]) -> usize {
+    bits.iter()
+        .fold(0usize, |acc, &bit| (acc << 1) | usize::from(bit))
+}
 
 // =============================================================================
 // Entanglement Layout Tests
@@ -243,6 +249,42 @@ fn test_phase_estimation_circuit() {
         "Output should be normalized, got norm = {}",
         result.norm()
     );
+}
+
+#[test]
+fn test_bernstein_vazirani_recovers_secret() {
+    let secret = [true, false, true, true];
+    let circuit = crate::easybuild::bernstein_vazirani_circuit(&secret);
+    let result = apply(&circuit, &ArrayReg::zero_state(secret.len()));
+    let probabilities = probs(&result, None);
+    let expected = msb_bits_to_index(&secret);
+
+    assert_abs_diff_eq!(probabilities[expected], 1.0, epsilon = 1e-10);
+}
+
+#[test]
+fn test_marked_state_grover_amplifies_marked_state() {
+    let n = 3;
+    let marked = 5;
+    let circuit = crate::easybuild::marked_state_grover_circuit(n, marked, 2);
+    let result = apply(&circuit, &ArrayReg::zero_state(n));
+    let probabilities = probs(&result, None);
+
+    assert!(
+        probabilities[marked] > 0.9,
+        "marked probability = {}",
+        probabilities[marked]
+    );
+}
+
+#[test]
+fn test_qaoa_maxcut_ansatz_builds_and_preserves_norm() {
+    let edges = [(0usize, 1usize, 1.0f64), (1, 2, 1.0), (2, 3, 1.0)];
+    let circuit = crate::easybuild::qaoa_maxcut_circuit(4, &edges, &[0.2], &[0.3]);
+    let result = apply(&circuit, &ArrayReg::zero_state(4));
+
+    assert_eq!(circuit.num_sites(), 4);
+    assert_abs_diff_eq!(result.norm(), 1.0, epsilon = 1e-10);
 }
 
 // =============================================================================

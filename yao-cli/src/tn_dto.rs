@@ -1,10 +1,14 @@
-use ndarray::ArrayD;
-use num_complex::Complex64;
-use omeco::EinCode;
 use omeco::json::NestedEinsumTree;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use yao_rs::{TensorNetwork, TensorNetworkDM};
+
+#[cfg(any(feature = "omeinsum", test))]
+use ndarray::ArrayD;
+#[cfg(any(feature = "omeinsum", test))]
+use num_complex::Complex64;
+#[cfg(any(feature = "omeinsum", test))]
+use omeco::EinCode;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TensorDto {
@@ -81,6 +85,7 @@ impl TensorNetworkDto {
     ///
     /// Pure-mode labels remain positive; density-matrix mode uses negative labels
     /// for bra legs.
+    #[cfg(any(feature = "omeinsum", test))]
     pub fn to_tensor_network(&self) -> anyhow::Result<TensorNetworkDM> {
         let ixs: Vec<Vec<i32>> = self
             .eincode
@@ -114,6 +119,7 @@ impl TensorNetworkDto {
     }
 }
 
+#[cfg(any(feature = "omeinsum", test))]
 fn reconstruct_tensors(tensor_dtos: &[TensorDto]) -> anyhow::Result<Vec<ArrayD<Complex64>>> {
     tensor_dtos
         .iter()

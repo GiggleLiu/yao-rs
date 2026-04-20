@@ -4,9 +4,10 @@ use anyhow::{Context, Result, anyhow, bail};
 pub fn visualize(circuit_path: &str, out: &OutputConfig) -> Result<()> {
     let circuit = super::load_circuit(circuit_path)?;
 
-    let output_path = out.output.as_ref().ok_or_else(|| {
-        anyhow!("--output is required for visualize (e.g. --output circuit.svg)")
-    })?;
+    let output_path = out
+        .output
+        .as_ref()
+        .ok_or_else(|| anyhow!("--output is required for visualize (e.g. --output circuit.svg)"))?;
 
     let extension = output_path
         .extension()

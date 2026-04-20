@@ -1,5 +1,7 @@
 //! Integration tests for the toeinsum | optimize | contract pipeline.
 
+#![cfg(feature = "omeinsum")]
+
 use assert_cmd::Command;
 
 fn yao() -> Command {

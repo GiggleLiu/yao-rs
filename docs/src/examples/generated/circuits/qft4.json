@@ -1,0 +1,129 @@
+{
+  "elements": [
+    {
+      "gate": "H",
+      "targets": [
+        0
+      ],
+      "type": "gate"
+    },
+    {
+      "control_configs": [
+        true
+      ],
+      "controls": [
+        1
+      ],
+      "gate": "Phase",
+      "params": [
+        1.5707963267948966
+      ],
+      "targets": [
+        0
+      ],
+      "type": "gate"
+    },
+    {
+      "control_configs": [
+        true
+      ],
+      "controls": [
+        2
+      ],
+      "gate": "Phase",
+      "params": [
+        0.7853981633974483
+      ],
+      "targets": [
+        0
+      ],
+      "type": "gate"
+    },
+    {
+      "control_configs": [
+        true
+      ],
+      "controls": [
+        3
+      ],
+      "gate": "Phase",
+      "params": [
+        0.39269908169872414
+      ],
+      "targets": [
+        0
+      ],
+      "type": "gate"
+    },
+    {
+      "gate": "H",
+      "targets": [
+        1
+      ],
+      "type": "gate"
+    },
+    {
+      "control_configs": [
+        true
+      ],
+      "controls": [
+        2
+      ],
+      "gate": "Phase",
+      "params": [
+        1.5707963267948966
+      ],
+      "targets": [
+        1
+      ],
+      "type": "gate"
+    },
+    {
+      "control_configs": [
+        true
+      ],
+      "controls": [
+        3
+      ],
+      "gate": "Phase",
+      "params": [
+        0.7853981633974483
+      ],
+      "targets": [
+        1
+      ],
+      "type": "gate"
+    },
+    {
+      "gate": "H",
+      "targets": [
+        2
+      ],
+      "type": "gate"
+    },
+    {
+      "control_configs": [
+        true
+      ],
+      "controls": [
+        3
+      ],
+      "gate": "Phase",
+      "params": [
+        1.5707963267948966
+      ],
+      "targets": [
+        2
+      ],
+      "type": "gate"
+    },
+    {
+      "gate": "H",
+      "targets": [
+        3
+      ],
+      "type": "gate"
+    }
+  ],
+  "num_qubits": 4
+}
