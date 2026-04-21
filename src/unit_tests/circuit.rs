@@ -916,3 +916,63 @@ fn test_circuit_display_with_label() {
     assert!(s.contains("H @ q[0]"));
     assert!(s.contains("\"step1\" @ q[0]"));
 }
+
+#[test]
+fn circuit_parameters_walk_tree() {
+    use crate::circuit::{Circuit, channel, control, label, put};
+    use crate::gate::Gate;
+    use crate::noise::NoiseChannel;
+
+    let elements = vec![
+        put(vec![0], Gate::H),
+        put(vec![0], Gate::Rx(0.1)),
+        control(vec![0], vec![1], Gate::Ry(0.2)),
+        label(0, "q0"),
+        channel(vec![0], NoiseChannel::BitFlip { p: 0.01 }),
+        put(vec![0, 1], Gate::FSim(0.3, 0.4)),
+    ];
+    let c = Circuit::qubits(2, elements).unwrap();
+    assert_eq!(c.num_params(), 4);
+    assert_eq!(c.parameters(), vec![0.1, 0.2, 0.3, 0.4]);
+}
+
+#[test]
+fn circuit_dispatch_round_trips() {
+    use crate::circuit::{Circuit, control, put};
+    use crate::gate::Gate;
+
+    let mut c = Circuit::qubits(
+        2,
+        vec![
+            put(vec![0], Gate::Rx(0.1)),
+            put(vec![0, 1], Gate::FSim(0.3, 0.4)),
+            control(vec![0], vec![1], Gate::Rz(0.5)),
+        ],
+    )
+    .unwrap();
+    assert_eq!(c.parameters(), vec![0.1, 0.3, 0.4, 0.5]);
+    c.dispatch(&[1.0, 2.0, 3.0, 4.0]);
+    assert_eq!(c.parameters(), vec![1.0, 2.0, 3.0, 4.0]);
+}
+
+#[test]
+#[should_panic(expected = "dispatch length")]
+fn dispatch_rejects_wrong_length() {
+    use crate::circuit::{Circuit, put};
+    use crate::gate::Gate;
+
+    let mut c = Circuit::qubits(1, vec![put(vec![0], Gate::Rx(0.1))]).unwrap();
+    c.dispatch(&[]);
+}
+
+#[test]
+fn circuit_with_no_params_returns_empty() {
+    use crate::circuit::{Circuit, put};
+    use crate::gate::Gate;
+
+    let c = Circuit::qubits(1, vec![put(vec![0], Gate::H)]).unwrap();
+    assert_eq!(c.num_params(), 0);
+    assert!(c.parameters().is_empty());
+    let mut c = c;
+    c.dispatch(&[]);
+}
