@@ -56,9 +56,7 @@ fn get_and_set_params_round_trip() {
     assert_eq!(g.get_params(), vec![0.2, 0.5]);
     g.set_params(&[1.1, 1.3]);
     assert_eq!(g.get_params(), vec![1.1, 1.3]);
-    assert!(
-        matches!(g, Gate::FSim(t, p) if (t - 1.1).abs() < 1e-15 && (p - 1.3).abs() < 1e-15)
-    );
+    assert!(matches!(g, Gate::FSim(t, p) if (t - 1.1).abs() < 1e-15 && (p - 1.3).abs() < 1e-15));
 
     let g = Gate::X;
     assert!(g.get_params().is_empty());
@@ -80,7 +78,8 @@ fn generator_matrix_matches_finite_difference() {
     let i_c = Complex64::new(0.0, 1.0);
     let c0 = Complex64::new(0.0, 0.0);
 
-    let cases: Vec<(Box<dyn Fn(f64) -> Gate>, usize)> = vec![
+    type GateCtor = Box<dyn Fn(f64) -> Gate>;
+    let cases: Vec<(GateCtor, usize)> = vec![
         (Box::new(Gate::Rx), 0),
         (Box::new(Gate::Ry), 0),
         (Box::new(Gate::Rz), 0),

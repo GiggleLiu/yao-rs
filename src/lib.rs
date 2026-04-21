@@ -1,5 +1,5 @@
-pub mod apply;
 pub mod ad;
+pub mod apply;
 pub mod circuit;
 
 #[cfg(feature = "omeinsum")]
@@ -22,8 +22,8 @@ pub mod tensors;
 #[cfg(feature = "torch")]
 pub mod torch_contractor;
 
-pub use apply::{apply, apply_inplace};
 pub use ad::expect_grad;
+pub use apply::{apply, apply_inplace};
 pub use circuit::{
     Annotation, Circuit, CircuitElement, PositionedAnnotation, PositionedChannel, PositionedGate,
     channel, control, label, put,

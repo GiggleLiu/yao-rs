@@ -160,20 +160,17 @@ impl Gate {
         match self {
             Gate::Rx(_) => {
                 let h = c(0.0, -0.5);
-                Array2::from_shape_vec((2, 2), vec![c(0.0, 0.0), h, h, c(0.0, 0.0)])
-                    .unwrap()
+                Array2::from_shape_vec((2, 2), vec![c(0.0, 0.0), h, h, c(0.0, 0.0)]).unwrap()
             }
             Gate::Ry(_) => {
                 let p = c(0.5, 0.0);
                 let n = c(-0.5, 0.0);
-                Array2::from_shape_vec((2, 2), vec![c(0.0, 0.0), n, p, c(0.0, 0.0)])
-                    .unwrap()
+                Array2::from_shape_vec((2, 2), vec![c(0.0, 0.0), n, p, c(0.0, 0.0)]).unwrap()
             }
             Gate::Rz(_) => {
                 let a = c(0.0, -0.5);
                 let b = c(0.0, 0.5);
-                Array2::from_shape_vec((2, 2), vec![a, c(0.0, 0.0), c(0.0, 0.0), b])
-                    .unwrap()
+                Array2::from_shape_vec((2, 2), vec![a, c(0.0, 0.0), c(0.0, 0.0), b]).unwrap()
             }
             Gate::Phase(_) => Array2::from_shape_vec(
                 (2, 2),
