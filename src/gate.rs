@@ -103,6 +103,47 @@ impl Gate {
         }
     }
 
+    /// Number of differentiable parameters for this gate.
+    pub fn num_params(&self) -> usize {
+        match self {
+            Gate::Rx(_) | Gate::Ry(_) | Gate::Rz(_) | Gate::Phase(_) => 1,
+            Gate::FSim(_, _) => 2,
+            _ => 0,
+        }
+    }
+
+    /// Read parameters in canonical order. Empty for non-parametric gates.
+    pub fn get_params(&self) -> Vec<f64> {
+        match self {
+            Gate::Rx(t) | Gate::Ry(t) | Gate::Rz(t) | Gate::Phase(t) => vec![*t],
+            Gate::FSim(theta, phi) => vec![*theta, *phi],
+            _ => Vec::new(),
+        }
+    }
+
+    /// Overwrite parameters in canonical order.
+    ///
+    /// Panics if `vals.len() != self.num_params()`.
+    pub fn set_params(&mut self, vals: &[f64]) {
+        assert_eq!(
+            vals.len(),
+            self.num_params(),
+            "set_params length {} does not match num_params {}",
+            vals.len(),
+            self.num_params()
+        );
+        match self {
+            Gate::Rx(t) | Gate::Ry(t) | Gate::Rz(t) | Gate::Phase(t) => {
+                *t = vals[0];
+            }
+            Gate::FSim(theta, phi) => {
+                *theta = vals[0];
+                *phi = vals[1];
+            }
+            _ => {}
+        }
+    }
+
     /// Return the adjoint (conjugate transpose) of this gate.
     ///
     /// For unitary gates, the adjoint is also the inverse: U† U = I.
@@ -315,3 +356,7 @@ fn conjugate_transpose(m: &Array2<Complex64>) -> Array2<Complex64> {
     }
     result
 }
+
+#[cfg(test)]
+#[path = "unit_tests/gate.rs"]
+mod tests;
