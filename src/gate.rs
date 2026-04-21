@@ -144,6 +144,57 @@ impl Gate {
         }
     }
 
+    /// Return the generator matrix G = (dU/dtheta_i) U^{-1} for parameter index `i`.
+    ///
+    /// For all parametric gates in this crate, G is constant (angle-independent).
+    /// G is applied to the post-gate state during adjoint-mode AD.
+    ///
+    /// Panics if `i >= self.num_params()`.
+    pub fn generator_matrix(&self, i: usize) -> Array2<Complex64> {
+        let c = |r: f64, im: f64| Complex64::new(r, im);
+        assert!(
+            i < self.num_params(),
+            "generator_matrix index {i} out of range (num_params={})",
+            self.num_params()
+        );
+        match self {
+            Gate::Rx(_) => {
+                let h = c(0.0, -0.5);
+                Array2::from_shape_vec((2, 2), vec![c(0.0, 0.0), h, h, c(0.0, 0.0)])
+                    .unwrap()
+            }
+            Gate::Ry(_) => {
+                let p = c(0.5, 0.0);
+                let n = c(-0.5, 0.0);
+                Array2::from_shape_vec((2, 2), vec![c(0.0, 0.0), n, p, c(0.0, 0.0)])
+                    .unwrap()
+            }
+            Gate::Rz(_) => {
+                let a = c(0.0, -0.5);
+                let b = c(0.0, 0.5);
+                Array2::from_shape_vec((2, 2), vec![a, c(0.0, 0.0), c(0.0, 0.0), b])
+                    .unwrap()
+            }
+            Gate::Phase(_) => Array2::from_shape_vec(
+                (2, 2),
+                vec![c(0.0, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(0.0, 1.0)],
+            )
+            .unwrap(),
+            Gate::FSim(_, _) if i == 0 => {
+                let mut m = Array2::<Complex64>::zeros((4, 4));
+                m[[1, 2]] = c(0.0, -1.0);
+                m[[2, 1]] = c(0.0, -1.0);
+                m
+            }
+            Gate::FSim(_, _) => {
+                let mut m = Array2::<Complex64>::zeros((4, 4));
+                m[[3, 3]] = c(0.0, -1.0);
+                m
+            }
+            _ => panic!("generator_matrix called on non-parametric gate {:?}", self),
+        }
+    }
+
     /// Return the adjoint (conjugate transpose) of this gate.
     ///
     /// For unitary gates, the adjoint is also the inverse: U† U = I.
