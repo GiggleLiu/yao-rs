@@ -304,6 +304,51 @@ impl Circuit {
         crate::svg::to_svg(self)
     }
 
+    /// Total number of trainable parameters across all parametric gates.
+    pub fn num_params(&self) -> usize {
+        self.elements
+            .iter()
+            .map(|el| match el {
+                CircuitElement::Gate(pg) => pg.gate.num_params(),
+                _ => 0,
+            })
+            .sum()
+    }
+
+    /// Collect all trainable parameters in canonical (element-order, within-gate-order) order.
+    pub fn parameters(&self) -> Vec<f64> {
+        let mut out = Vec::with_capacity(self.num_params());
+        for el in &self.elements {
+            if let CircuitElement::Gate(pg) = el {
+                out.extend(pg.gate.get_params());
+            }
+        }
+        out
+    }
+
+    /// Overwrite all trainable parameters from `params`.
+    ///
+    /// Panics if `params.len() != self.num_params()`.
+    pub fn dispatch(&mut self, params: &[f64]) {
+        assert_eq!(
+            params.len(),
+            self.num_params(),
+            "dispatch length {} does not match num_params {}",
+            params.len(),
+            self.num_params()
+        );
+        let mut offset = 0usize;
+        for el in &mut self.elements {
+            if let CircuitElement::Gate(pg) = el {
+                let n = pg.gate.num_params();
+                if n > 0 {
+                    pg.gate.set_params(&params[offset..offset + n]);
+                    offset += n;
+                }
+            }
+        }
+    }
+
     /// Return the adjoint circuit U†.
     ///
     /// The dagger of a circuit has:

@@ -103,6 +103,95 @@ impl Gate {
         }
     }
 
+    /// Number of differentiable parameters for this gate.
+    pub fn num_params(&self) -> usize {
+        match self {
+            Gate::Rx(_) | Gate::Ry(_) | Gate::Rz(_) | Gate::Phase(_) => 1,
+            Gate::FSim(_, _) => 2,
+            _ => 0,
+        }
+    }
+
+    /// Read parameters in canonical order. Empty for non-parametric gates.
+    pub fn get_params(&self) -> Vec<f64> {
+        match self {
+            Gate::Rx(t) | Gate::Ry(t) | Gate::Rz(t) | Gate::Phase(t) => vec![*t],
+            Gate::FSim(theta, phi) => vec![*theta, *phi],
+            _ => Vec::new(),
+        }
+    }
+
+    /// Overwrite parameters in canonical order.
+    ///
+    /// Panics if `vals.len() != self.num_params()`.
+    pub fn set_params(&mut self, vals: &[f64]) {
+        assert_eq!(
+            vals.len(),
+            self.num_params(),
+            "set_params length {} does not match num_params {}",
+            vals.len(),
+            self.num_params()
+        );
+        match self {
+            Gate::Rx(t) | Gate::Ry(t) | Gate::Rz(t) | Gate::Phase(t) => {
+                *t = vals[0];
+            }
+            Gate::FSim(theta, phi) => {
+                *theta = vals[0];
+                *phi = vals[1];
+            }
+            _ => {}
+        }
+    }
+
+    /// Return the generator matrix G = (dU/dtheta_i) U^{-1} for parameter index `i`.
+    ///
+    /// For all parametric gates in this crate, G is constant (angle-independent).
+    /// G is applied to the post-gate state during adjoint-mode AD.
+    ///
+    /// Panics if `i >= self.num_params()`.
+    pub fn generator_matrix(&self, i: usize) -> Array2<Complex64> {
+        let c = |r: f64, im: f64| Complex64::new(r, im);
+        assert!(
+            i < self.num_params(),
+            "generator_matrix index {i} out of range (num_params={})",
+            self.num_params()
+        );
+        match self {
+            Gate::Rx(_) => {
+                let h = c(0.0, -0.5);
+                Array2::from_shape_vec((2, 2), vec![c(0.0, 0.0), h, h, c(0.0, 0.0)]).unwrap()
+            }
+            Gate::Ry(_) => {
+                let p = c(0.5, 0.0);
+                let n = c(-0.5, 0.0);
+                Array2::from_shape_vec((2, 2), vec![c(0.0, 0.0), n, p, c(0.0, 0.0)]).unwrap()
+            }
+            Gate::Rz(_) => {
+                let a = c(0.0, -0.5);
+                let b = c(0.0, 0.5);
+                Array2::from_shape_vec((2, 2), vec![a, c(0.0, 0.0), c(0.0, 0.0), b]).unwrap()
+            }
+            Gate::Phase(_) => Array2::from_shape_vec(
+                (2, 2),
+                vec![c(0.0, 0.0), c(0.0, 0.0), c(0.0, 0.0), c(0.0, 1.0)],
+            )
+            .unwrap(),
+            Gate::FSim(_, _) if i == 0 => {
+                let mut m = Array2::<Complex64>::zeros((4, 4));
+                m[[1, 2]] = c(0.0, -1.0);
+                m[[2, 1]] = c(0.0, -1.0);
+                m
+            }
+            Gate::FSim(_, _) => {
+                let mut m = Array2::<Complex64>::zeros((4, 4));
+                m[[3, 3]] = c(0.0, -1.0);
+                m
+            }
+            _ => panic!("generator_matrix called on non-parametric gate {:?}", self),
+        }
+    }
+
     /// Return the adjoint (conjugate transpose) of this gate.
     ///
     /// For unitary gates, the adjoint is also the inverse: U† U = I.
@@ -315,3 +404,7 @@ fn conjugate_transpose(m: &Array2<Complex64>) -> Array2<Complex64> {
     }
     result
 }
+
+#[cfg(test)]
+#[path = "unit_tests/gate.rs"]
+mod tests;

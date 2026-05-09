@@ -19,6 +19,7 @@
 - [Grover Search](./examples/grover-search.md)
 - [QAOA for MaxCut](./examples/qaoa-maxcut.md)
 - [Quantum Circuit Born Machine](./examples/qcbm.md)
+- [Variational Quantum Eigensolver (VQE)](./examples/vqe.md)
 
 # Rust API
 

@@ -1,5 +1,7 @@
 mod common;
 
+#[path = "suites/ad.rs"]
+mod ad;
 #[path = "suites/apply.rs"]
 mod apply;
 #[path = "suites/benchmark_validation.rs"]
