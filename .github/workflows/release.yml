@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  # Create the GitHub release with auto-generated notes
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+
+  # Publish crates to crates.io in dependency order: bitbasis -> yao-rs -> yao-cli
+  publish-crate:
+    name: Publish to crates.io
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Publish bitbasis
+        run: cargo publish --manifest-path bitbasis/Cargo.toml --token ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+      - name: Wait for bitbasis to be indexed
+        run: sleep 45
+
+      - name: Publish yao-rs
+        run: cargo publish --token ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+      - name: Wait for yao-rs to be indexed
+        run: sleep 45
+
+      - name: Publish yao-cli
+        run: cargo publish --manifest-path yao-cli/Cargo.toml --token ${{ secrets.CARGO_REGISTRY_TOKEN }}

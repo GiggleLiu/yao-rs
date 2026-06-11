@@ -2,6 +2,8 @@
 name = "yao-cli"
 version.workspace = true
 edition.workspace = true
+license.workspace = true
+repository.workspace = true
 description = "CLI tool for yao-rs quantum circuit simulation"
 
 [[bin]]
@@ -14,7 +16,7 @@ qasm = ["yao-rs/qasm"]
 omeinsum = ["yao-rs/omeinsum"]
 
 [dependencies]
-yao-rs = { path = "..", default-features = false }
+yao-rs = { path = "..", version = "0.1.0", default-features = false }
 clap = { version = "4", features = ["derive"] }
 clap_complete = "4"
 anyhow = "1"

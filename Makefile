@@ -1,9 +1,12 @@
 .DEFAULT_GOAL := help
-.PHONY: help build build-release check fmt fmt-check clippy test check-all clean doc doc-serve doc-open rustdoc example-qft run-plan module-graph cli bench bench-gates bench-qft bench-density bench-julia bench-compare
+.PHONY: help build build-release check fmt fmt-check clippy test check-all release clean doc doc-serve doc-open rustdoc example-qft run-plan module-graph cli bench bench-gates bench-qft bench-density bench-julia bench-compare
 
 CARGO ?= cargo
 DOC_PORT ?= 3001
 DOC_HOST ?= 127.0.0.1
+
+# Cross-platform sed in-place: macOS needs -i '', Linux needs -i
+SED_I := sed -i$(shell if [ "$$(uname)" = "Darwin" ]; then echo " ''"; fi)
 
 help:
 	@printf "Rust targets:\n"
@@ -15,6 +18,7 @@ help:
 	@printf "  clippy        Run clippy (deny warnings)\n"
 	@printf "  test          Run the test suite\n"
 	@printf "  check-all     Run fmt-check, clippy, and test\n"
+	@printf "  release V=x.y.z  Bump version, tag, and push (CI publishes to crates.io)\n"
 	@printf "  clean         Clean build artifacts\n"
 	@printf "\nDocumentation:\n"
 	@printf "  doc           Build mdBook documentation\n"
@@ -59,6 +63,25 @@ test:
 
 check-all: fmt-check clippy test
 	@echo "All checks passed."
+
+# Release a new version: make release V=0.2.0
+# Bumps the single workspace version + inter-crate dep versions, commits,
+# tags vX.Y.Z, and pushes. The release.yml workflow then publishes
+# bitbasis -> yao-rs -> yao-cli to crates.io and creates a GitHub release.
+release:
+ifndef V
+	$(error Usage: make release V=x.y.z)
+endif
+	@echo "Releasing v$(V)..."
+	$(SED_I) 's/^version = ".*"/version = "$(V)"/' Cargo.toml
+	$(SED_I) 's/bitbasis = { path = "bitbasis", version = "[^"]*"/bitbasis = { path = "bitbasis", version = "$(V)"/' Cargo.toml
+	$(SED_I) 's/yao-rs = { path = "..", version = "[^"]*"/yao-rs = { path = "..", version = "$(V)"/' yao-cli/Cargo.toml
+	$(CARGO) check --workspace
+	git add Cargo.toml yao-cli/Cargo.toml
+	git commit -m "release: v$(V)"
+	git tag -a "v$(V)" -m "Release v$(V)"
+	git push origin HEAD --tags
+	@echo "v$(V) pushed — release.yml will publish to crates.io and create the GitHub release."
 
 doc:
 	mdbook build docs
