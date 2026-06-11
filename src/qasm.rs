@@ -21,8 +21,9 @@
 //! assert!(result.circuit.elements.len() >= 2);
 //! ```
 
-use crate::circuit::{Circuit, CircuitElement, control, put};
+use crate::circuit::{Circuit, CircuitElement, channel, control, put};
 use crate::gate::Gate;
+use crate::noise::NoiseChannel;
 use openqasm::{GateWriter, GenericError, Linearize, ProgramVisitor, Value};
 use std::cell::RefCell;
 use std::f64::consts::PI;
@@ -37,6 +38,8 @@ pub enum QasmError {
     Parse(String),
     /// Gate linearization failed.
     Linearize(String),
+    /// The QASM program uses a construct that yao-rs does not model.
+    Unsupported(String),
     /// A QASM gate has no equivalent in yao-rs.
     UnsupportedGate(String),
     /// Circuit construction failed.
@@ -48,6 +51,7 @@ impl std::fmt::Display for QasmError {
         match self {
             QasmError::Parse(msg) => write!(f, "QASM parse error: {msg}"),
             QasmError::Linearize(msg) => write!(f, "QASM linearize error: {msg}"),
+            QasmError::Unsupported(msg) => write!(f, "unsupported QASM construct: {msg}"),
             QasmError::UnsupportedGate(name) => write!(f, "unsupported QASM gate: {name}"),
             QasmError::Circuit(e) => write!(f, "circuit error: {e}"),
         }
@@ -67,7 +71,7 @@ impl From<crate::circuit::CircuitError> for QasmError {
 /// Result of parsing a QASM file.
 #[derive(Debug)]
 pub struct QasmResult {
-    /// The quantum circuit (gates only — measurements are separate).
+    /// The quantum circuit (gates/channels only — measurements are separate).
     pub circuit: Circuit,
     /// Measurement instructions collected from the QASM source: `(qubit, classical_bit)`.
     pub measurements: Vec<(usize, usize)>,
@@ -90,6 +94,10 @@ gate cp(lambda) a,b { u1(lambda/2) a; cx a,b; u1(-lambda/2) b; cx a,b; u1(lambda
 gate crx(theta) a,b { u1(pi/2) b; cx a,b; u3(-theta/2,0,0) b; cx a,b; u3(theta/2,-pi/2,0) b; }\n\
 gate cry(theta) a,b { ry(theta/2) b; cx a,b; ry(-theta/2) b; cx a,b; }\n\
 gate csx a,b { h b; cp(pi/2) a,b; h b; }\n\
+gate ryy(theta) a,b { rx(pi/2) a; rx(pi/2) b; cx a,b; rz(theta) b; cx a,b; rx(-pi/2) a; rx(-pi/2) b; }\n\
+gate rzx(theta) a,b { h b; cx a,b; rz(theta) b; cx a,b; h b; }\n\
+gate dcx a,b { cx a,b; cx b,a; }\n\
+gate ccz a,b,c { h c; ccx a,b,c; h c; }\n\
 gate rxx(theta) a,b { u3(pi/2,theta,0) a; h b; cx a,b; u1(-theta) b; cx a,b; h b; u2(-pi,pi-theta) a; }\n\
 gate rzz(theta) a,b { cx a,b; u1(theta) b; cx a,b; }\n";
 
@@ -116,6 +124,12 @@ fn finish_and_linearize(parser: openqasm::Parser<'_>) -> Result<QasmResult, Qasm
         .done()
         .to_errors()
         .map_err(|e| QasmError::Parse(format!("{e}")))?;
+
+    if has_classical_conditional(&program) {
+        return Err(QasmError::Unsupported(
+            "classical conditional (if): classical feed-forward is not supported".to_string(),
+        ));
+    }
 
     program
         .type_check()
@@ -163,11 +177,118 @@ fn count_declared_qubits(program: &openqasm::Program) -> usize {
     total
 }
 
+fn has_classical_conditional(program: &openqasm::Program) -> bool {
+    program
+        .decls
+        .iter()
+        .any(|decl| matches!(&**decl, openqasm::Decl::Stmt(stmt) if stmt_is_conditional(stmt)))
+}
+
+fn stmt_is_conditional(stmt: &openqasm::Stmt) -> bool {
+    matches!(stmt, openqasm::Stmt::Conditional { .. })
+}
+
+fn is_identifier_byte(byte: u8) -> bool {
+    byte.is_ascii_alphanumeric() || byte == b'_'
+}
+
+fn normalize_qasm_source(mut source: String) -> String {
+    source = source.replace("\r\n", "\n");
+    if source.is_empty() {
+        source.push(' ');
+    }
+    source
+}
+
+fn expand_float_exponents(src: &str) -> String {
+    let bytes = src.as_bytes();
+    let mut expanded = String::with_capacity(src.len());
+    let mut i = 0usize;
+
+    while i < bytes.len() {
+        if bytes[i] == b'"' {
+            let start = i;
+            i += 1;
+            while i < bytes.len() && bytes[i] != b'"' {
+                i += 1;
+            }
+            if i < bytes.len() {
+                i += 1;
+            }
+            expanded.push_str(&src[start..i]);
+            continue;
+        }
+
+        if bytes[i] == b'/' && i + 1 < bytes.len() && bytes[i + 1] == b'/' {
+            let start = i;
+            i += 2;
+            while i < bytes.len() && bytes[i] != b'\n' {
+                i += 1;
+            }
+            if i < bytes.len() {
+                i += 1;
+            }
+            expanded.push_str(&src[start..i]);
+            continue;
+        }
+
+        if bytes[i].is_ascii_digit() && (i == 0 || !is_identifier_byte(bytes[i - 1])) {
+            let start = i;
+            i += 1;
+            while i < bytes.len() && bytes[i].is_ascii_digit() {
+                i += 1;
+            }
+
+            if i < bytes.len() && bytes[i] == b'.' {
+                let frac_start = i + 1;
+                let mut frac_end = frac_start;
+                while frac_end < bytes.len() && bytes[frac_end].is_ascii_digit() {
+                    frac_end += 1;
+                }
+                if frac_end > frac_start {
+                    i = frac_end;
+                }
+            }
+
+            let mantissa_end = i;
+            if i < bytes.len() && matches!(bytes[i], b'e' | b'E') {
+                let mut exponent_end = i + 1;
+                if exponent_end < bytes.len() && matches!(bytes[exponent_end], b'+' | b'-') {
+                    exponent_end += 1;
+                }
+                let exponent_digits_start = exponent_end;
+                while exponent_end < bytes.len() && bytes[exponent_end].is_ascii_digit() {
+                    exponent_end += 1;
+                }
+
+                let next_is_identifier =
+                    exponent_end < bytes.len() && is_identifier_byte(bytes[exponent_end]);
+                if exponent_end > exponent_digits_start && !next_is_identifier {
+                    let literal = &src[start..exponent_end];
+                    if let Ok(value) = literal.parse::<f64>() {
+                        expanded.push_str(&format!("{value}"));
+                        i = exponent_end;
+                        continue;
+                    }
+                }
+            }
+
+            expanded.push_str(&src[start..mantissa_end]);
+            continue;
+        }
+
+        expanded.push(bytes[i] as char);
+        i += 1;
+    }
+
+    expanded
+}
+
 /// Parse an OpenQASM 2.0 source string into a circuit.
 pub fn from_qasm(source: &str) -> Result<QasmResult, QasmError> {
     let mut cache = openqasm::SourceCache::new();
     let mut parser = make_parser(&mut cache);
-    parser.parse_source(source.to_string(), None::<&str>);
+    parser.parse_source(expand_float_exponents(source), None::<&str>);
     finish_and_linearize(parser)
 }
 
@@ -177,7 +298,9 @@ pub fn from_qasm(source: &str) -> Result<QasmResult, QasmError> {
 pub fn from_qasm_file(path: &str) -> Result<QasmResult, QasmError> {
     let mut cache = openqasm::SourceCache::new();
     let mut parser = make_parser(&mut cache);
-    parser.parse_file(path);
+    let source = std::fs::read_to_string(path).map_err(|e| QasmError::Parse(format!("{e}")))?;
+    let source = normalize_qasm_source(source);
+    parser.parse_source(expand_float_exponents(&source), Some(path));
     finish_and_linearize(parser)
 }
 
@@ -267,8 +390,15 @@ impl GateWriter for CircuitBuilder {
         Ok(())
     }
 
-    fn write_reset(&mut self, _reg: usize) -> Result<(), Self::Error> {
-        Err(QasmError::UnsupportedGate("reset".to_string()))
+    fn write_reset(&mut self, reg: usize) -> Result<(), Self::Error> {
+        // Reset is represented as a deterministic channel. Pure-state `apply`
+        // skips channels today, so this is meaningful on density-matrix and
+        // tensor-network paths while staying consistent with existing semantics.
+        self.state
+            .borrow_mut()
+            .elements
+            .push(channel(vec![reg], NoiseChannel::Reset { p0: 1.0, p1: 0.0 }));
+        Ok(())
     }
 
     fn start_conditional(

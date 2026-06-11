@@ -1,10 +1,83 @@
 use crate::{
-    Circuit, CircuitElement, Gate, circuit_from_json, circuit_to_json, control, label, put,
+    Circuit, CircuitElement, Gate, NoiseChannel, channel, circuit_from_json, circuit_to_json,
+    control, label, put,
 };
 use approx::assert_abs_diff_eq;
 use ndarray::Array2;
 use num_complex::Complex64;
 use std::f64::consts::PI;
+
+#[test]
+fn test_roundtrip_reset_channel() {
+    // Reset is how QASM `reset` imports; it must survive JSON round-trip.
+    let elements = vec![
+        put(vec![0], Gate::X),
+        channel(vec![0], NoiseChannel::Reset { p0: 1.0, p1: 0.0 }),
+    ];
+    let circuit = Circuit::new(vec![2, 2], elements).unwrap();
+    let json = circuit_to_json(&circuit);
+    assert!(json.contains("\"type\": \"channel\""));
+    assert!(json.contains("\"channel\": \"Reset\""));
+    let restored = circuit_from_json(&json).unwrap();
+    assert_eq!(restored.elements.len(), 2);
+    match &restored.elements[1] {
+        CircuitElement::Channel(pc) => {
+            assert_eq!(pc.locs, vec![0]);
+            assert!(matches!(pc.channel, NoiseChannel::Reset { p0, p1 } if p0 == 1.0 && p1 == 0.0));
+        }
+        other => panic!("expected a Channel element, got {other:?}"),
+    }
+}
+
+#[test]
+fn test_roundtrip_scalar_noise_channel() {
+    let elements = vec![channel(
+        vec![1],
+        NoiseChannel::Depolarizing { n: 1, p: 0.05 },
+    )];
+    let circuit = Circuit::new(vec![2, 2], elements).unwrap();
+    let restored = circuit_from_json(&circuit_to_json(&circuit)).unwrap();
+    match &restored.elements[0] {
+        CircuitElement::Channel(pc) => {
+            assert!(matches!(pc.channel, NoiseChannel::Depolarizing { n: 1, p } if p == 0.05));
+        }
+        other => panic!("expected a Channel element, got {other:?}"),
+    }
+}
+
+#[test]
+fn test_roundtrip_matrix_channel() {
+    // Coherent carries a complex matrix; exercise the [re, im] encoding.
+    let m = Array2::from_shape_vec(
+        (2, 2),
+        vec![
+            Complex64::new(0.0, 0.0),
+            Complex64::new(1.0, 0.0),
+            Complex64::new(0.0, -1.0),
+            Complex64::new(0.0, 0.0),
+        ],
+    )
+    .unwrap();
+    let elements = vec![channel(
+        vec![0],
+        NoiseChannel::Coherent { matrix: m.clone() },
+    )];
+    let circuit = Circuit::new(vec![2, 2], elements).unwrap();
+    let restored = circuit_from_json(&circuit_to_json(&circuit)).unwrap();
+    match &restored.elements[0] {
+        CircuitElement::Channel(pc) => match &pc.channel {
+            NoiseChannel::Coherent { matrix } => {
+                assert_eq!(matrix.shape(), m.shape());
+                for (a, b) in matrix.iter().zip(m.iter()) {
+                    assert_abs_diff_eq!(a.re, b.re, epsilon = 1e-12);
+                    assert_abs_diff_eq!(a.im, b.im, epsilon = 1e-12);
+                }
+            }
+            other => panic!("expected Coherent channel, got {other:?}"),
+        },
+        other => panic!("expected a Channel element, got {other:?}"),
+    }
+}
 
 #[test]
 fn test_roundtrip_named_gates() {
