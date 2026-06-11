@@ -71,8 +71,22 @@ const TARGET_X_RADIUS: f32 = 12.0;
 const TARGET_X_ARM: f32 = 8.0;
 const SWAP_ARM: f32 = 8.0;
 const LABEL_CHAR_WIDTH: f32 = 7.5;
+const PARAM_LABEL_CHAR_WIDTH: f32 = 6.0;
 const BOX_LABEL_PADDING: f32 = 18.0;
+const PARAM_BOX_LABEL_PADDING: f32 = 10.0;
 const COLUMN_GUTTER: f32 = 18.0;
+const PARAM_GATE_HEIGHT: f32 = 34.0;
+
+enum GateLabel {
+    Single {
+        label: String,
+    },
+    Parameterized {
+        name: &'static str,
+        parameter: String,
+        full_label: String,
+    },
+}
 
 impl Default for LayoutConfig {
     fn default() -> Self {
@@ -135,7 +149,8 @@ pub fn to_svg(circuit: &Circuit) -> String {
 .wire { stroke: #444; stroke-width: 2; }
 .gate-box { fill: #fff; stroke: #111; stroke-width: 2; }
 .channel-box { fill: #fff; stroke: #111; stroke-width: 2; stroke-dasharray: 6 4; }
-.gate-label, .channel-label, .annotation-label { fill: #111; font-family: monospace; text-anchor: middle; dominant-baseline: middle; }
+.gate-label, .gate-param-label, .channel-label, .annotation-label { fill: #111; font-family: monospace; text-anchor: middle; dominant-baseline: middle; }
+.gate-param-label { fill: #555; font-size: 10px; }
 .annotation-label { dominant-baseline: auto; }
 .control { fill: #111; stroke: #111; stroke-width: 2; }
 .control-open { fill: #fff; stroke: #111; stroke-width: 2; }
@@ -185,23 +200,18 @@ fn layout_gate(pg: &PositionedGate, x: f32, config: &LayoutConfig, nodes: &mut V
         return;
     }
 
-    let label = pg.gate.to_string();
-    let box_width = box_width_for_label(&label, config);
+    let label = svg_gate_label(&pg.gate);
+    let box_width = box_width_for_gate_label(&label, config);
     let (top, height) = gate_box_frame(pg, config);
     nodes.push(RenderNode::GateBox {
         x: x - box_width * 0.5,
         y: top,
         width: box_width,
         height,
-        label: label.clone(),
+        label: label.data_label().to_string(),
         class: "gate-box",
     });
-    nodes.push(RenderNode::Text {
-        x,
-        y: top + height * 0.5,
-        label,
-        class: "gate-label",
-    });
+    push_gate_label(x, top, height, label, nodes);
 }
 
 fn layout_channel(
@@ -368,10 +378,10 @@ fn column_width_for_element(element: &CircuitElement, config: &LayoutConfig) -> 
     match element {
         CircuitElement::Gate(pg) if is_symbol_only_gate(pg) => config.col_width,
         CircuitElement::Gate(pg) => {
-            let label = pg.gate.to_string();
+            let label = svg_gate_label(&pg.gate);
             config
                 .col_width
-                .max(box_width_for_label(&label, config) + COLUMN_GUTTER)
+                .max(box_width_for_gate_label(&label, config) + COLUMN_GUTTER)
         }
         CircuitElement::Annotation(pa) => match &pa.annotation {
             Annotation::Label(text) => config.col_width.max(text_width(text) + COLUMN_GUTTER),
@@ -427,7 +437,7 @@ fn connector_endpoint_padding(pg: &PositionedGate, loc: usize) -> f32 {
         } else if matches!(pg.gate, Gate::SWAP) {
             SWAP_ARM
         } else {
-            GATE_HEIGHT * 0.5
+            gate_height(&pg.gate) * 0.5
         }
     } else {
         0.0
@@ -437,12 +447,13 @@ fn connector_endpoint_padding(pg: &PositionedGate, loc: usize) -> f32 {
 }
 
 fn gate_box_frame(pg: &PositionedGate, config: &LayoutConfig) -> (f32, f32) {
+    let gate_height = gate_height(&pg.gate);
     if let Some((min_target, max_target)) = min_max(pg.target_locs.iter().copied()) {
-        let top = wire_y(min_target, config) - GATE_HEIGHT * 0.5;
-        let height = GATE_HEIGHT + (max_target - min_target) as f32 * config.row_height;
+        let top = wire_y(min_target, config) - gate_height * 0.5;
+        let height = gate_height + (max_target - min_target) as f32 * config.row_height;
         (top, height)
     } else {
-        (header_center_y(config) - GATE_HEIGHT * 0.5, GATE_HEIGHT)
+        (header_center_y(config) - gate_height * 0.5, gate_height)
     }
 }
 
@@ -460,8 +471,95 @@ fn box_width_for_label(label: &str, config: &LayoutConfig) -> f32 {
     config.gate_width.max(text_width(label) + BOX_LABEL_PADDING)
 }
 
+fn box_width_for_gate_label(label: &GateLabel, config: &LayoutConfig) -> f32 {
+    match label {
+        GateLabel::Single { label } => box_width_for_label(label, config),
+        GateLabel::Parameterized {
+            name, parameter, ..
+        } => config
+            .gate_width
+            .max(text_width(name) + BOX_LABEL_PADDING)
+            .max(parameter_width(parameter) + PARAM_BOX_LABEL_PADDING),
+    }
+}
+
 fn text_width(label: &str) -> f32 {
     label.chars().count() as f32 * LABEL_CHAR_WIDTH
+}
+
+fn parameter_width(label: &str) -> f32 {
+    label.chars().count() as f32 * PARAM_LABEL_CHAR_WIDTH
+}
+
+fn gate_height(gate: &Gate) -> f32 {
+    if is_compact_parameterized_gate(gate) {
+        PARAM_GATE_HEIGHT
+    } else {
+        GATE_HEIGHT
+    }
+}
+
+fn svg_gate_label(gate: &Gate) -> GateLabel {
+    match gate {
+        Gate::Phase(theta) => compact_parameterized_gate_label("Phase", *theta, gate),
+        Gate::Rx(theta) => compact_parameterized_gate_label("Rx", *theta, gate),
+        Gate::Ry(theta) => compact_parameterized_gate_label("Ry", *theta, gate),
+        Gate::Rz(theta) => compact_parameterized_gate_label("Rz", *theta, gate),
+        _ => GateLabel::Single {
+            label: gate.to_string(),
+        },
+    }
+}
+
+fn compact_parameterized_gate_label(name: &'static str, theta: f64, gate: &Gate) -> GateLabel {
+    GateLabel::Parameterized {
+        name,
+        parameter: format!("{theta:.2}"),
+        full_label: gate.to_string(),
+    }
+}
+
+fn is_compact_parameterized_gate(gate: &Gate) -> bool {
+    matches!(
+        gate,
+        Gate::Phase(_) | Gate::Rx(_) | Gate::Ry(_) | Gate::Rz(_)
+    )
+}
+
+fn push_gate_label(x: f32, top: f32, height: f32, label: GateLabel, nodes: &mut Vec<RenderNode>) {
+    match label {
+        GateLabel::Single { label } => nodes.push(RenderNode::Text {
+            x,
+            y: top + height * 0.5,
+            label,
+            class: "gate-label",
+        }),
+        GateLabel::Parameterized {
+            name, parameter, ..
+        } => {
+            nodes.push(RenderNode::Text {
+                x,
+                y: top + height * 0.36,
+                label: name.to_string(),
+                class: "gate-label",
+            });
+            nodes.push(RenderNode::Text {
+                x,
+                y: top + height * 0.68,
+                label: parameter,
+                class: "gate-param-label",
+            });
+        }
+    }
+}
+
+impl GateLabel {
+    fn data_label(&self) -> &str {
+        match self {
+            GateLabel::Single { label } => label,
+            GateLabel::Parameterized { full_label, .. } => full_label,
+        }
+    }
 }
 
 fn header_center_y(config: &LayoutConfig) -> f32 {
