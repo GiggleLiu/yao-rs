@@ -1,7 +1,11 @@
 use crate::apply::apply;
-use crate::qasm::{from_qasm, to_qasm};
-use crate::register::ArrayReg;
+use crate::circuit::CircuitElement;
+use crate::density_matrix::DensityMatrix;
+use crate::noise::NoiseChannel;
+use crate::qasm::{QasmError, from_qasm, from_qasm_file, to_qasm};
+use crate::register::{ArrayReg, Register};
 use approx::assert_abs_diff_eq;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 fn probs_from_qasm(qasm: &str) -> Vec<f64> {
     let result = from_qasm(qasm).unwrap();
@@ -445,7 +449,7 @@ fn test_export_uses_extended_gate_names() {
 }
 
 #[test]
-fn test_reset_is_rejected() {
+fn test_reset_imports_as_reset_channel() {
     let result = from_qasm(
         r#"
 OPENQASM 2.0;
@@ -453,6 +457,229 @@ include "qelib1.inc";
 qreg q[1];
 x q[0];
 reset q[0];
+"#,
+    )
+    .unwrap();
+
+    let reset_channels: Vec<_> = result
+        .circuit
+        .elements
+        .iter()
+        .filter(|element| {
+            matches!(
+                element,
+                CircuitElement::Channel(pc)
+                    if pc.locs == vec![0]
+                        && matches!(pc.channel, NoiseChannel::Reset { p0, p1 } if p0 == 1.0 && p1 == 0.0)
+            )
+        })
+        .collect();
+
+    assert_eq!(reset_channels.len(), 1);
+}
+
+#[test]
+fn test_reset_density_matrix_returns_qubit_to_zero() {
+    let result = from_qasm(
+        r#"
+OPENQASM 2.0;
+include "qelib1.inc";
+qreg q[1];
+x q[0];
+reset q[0];
+"#,
+    )
+    .unwrap();
+
+    let mut dm = DensityMatrix::from_reg(&ArrayReg::zero_state(1));
+    dm.apply(&result.circuit);
+
+    let probs = crate::measure::probs(&dm, None);
+    assert_abs_diff_eq!(probs[0], 1.0, epsilon = 1e-10);
+    assert_abs_diff_eq!(probs[1], 0.0, epsilon = 1e-10);
+}
+
+#[test]
+fn test_reset_renders_in_svg() {
+    let result = from_qasm(
+        r#"
+OPENQASM 2.0;
+include "qelib1.inc";
+qreg q[1];
+reset q[0];
+"#,
+    )
+    .unwrap();
+
+    let svg = result.circuit.to_svg();
+    assert!(svg.contains("Reset"));
+}
+
+#[test]
+fn test_scientific_notation_in_u_gate_imports() {
+    let result = from_qasm(
+        r#"
+OPENQASM 2.0;
+include "qelib1.inc";
+qreg q0[1];
+u(0.5,-4.5e-14,-pi) q0[0];
+"#,
+    )
+    .unwrap();
+
+    let rz_angles: Vec<f64> = result
+        .circuit
+        .elements
+        .iter()
+        .filter_map(|element| match element {
+            CircuitElement::Gate(pg) => match &pg.gate {
+                crate::gate::Gate::Rz(theta) => Some(*theta),
+                _ => None,
+            },
+            _ => None,
+        })
+        .collect();
+
+    assert!(
+        rz_angles
+            .iter()
+            .any(|theta| (*theta + 4.5e-14).abs() < 1e-12)
+    );
+}
+
+#[test]
+fn test_scientific_notation_in_rz_imports() {
+    let result = from_qasm(
+        r#"
+OPENQASM 2.0;
+include "qelib1.inc";
+qreg q0[1];
+rz(1e5) q0[0];
+"#,
+    )
+    .unwrap();
+
+    let rz_angle = result
+        .circuit
+        .elements
+        .iter()
+        .find_map(|element| match element {
+            CircuitElement::Gate(pg) => match &pg.gate {
+                crate::gate::Gate::Rz(theta) => Some(*theta),
+                _ => None,
+            },
+            _ => None,
+        })
+        .unwrap();
+
+    assert_abs_diff_eq!(rz_angle, 100000.0, epsilon = 1e-6);
+}
+
+#[test]
+fn test_from_qasm_file_expands_scientific_notation_with_relative_include() {
+    let unique = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_nanos();
+    let temp_dir = std::env::temp_dir().join(format!(
+        "yao-rs-qasm-scientific-{}-{unique}",
+        std::process::id()
+    ));
+    std::fs::create_dir_all(&temp_dir).unwrap();
+
+    let include_path = temp_dir.join("defs.inc");
+    let qasm_path = temp_dir.join("main.qasm");
+    std::fs::write(&include_path, "gate big(theta) q { U(0,0,theta) q; }\n").unwrap();
+    std::fs::write(
+        &qasm_path,
+        "OPENQASM 2.0;\ninclude \"defs.inc\";\nqreg q[1];\nbig(1e5) q[0];\n",
+    )
+    .unwrap();
+
+    let result = from_qasm_file(qasm_path.to_str().unwrap()).unwrap();
+    let rz_angle = result
+        .circuit
+        .elements
+        .iter()
+        .find_map(|element| match element {
+            CircuitElement::Gate(pg) => match &pg.gate {
+                crate::gate::Gate::Rz(theta) => Some(*theta),
+                _ => None,
+            },
+            _ => None,
+        })
+        .unwrap();
+
+    assert_abs_diff_eq!(rz_angle, 100000.0, epsilon = 1e-6);
+
+    let _ = std::fs::remove_dir_all(&temp_dir);
+}
+
+#[test]
+fn test_extra_gate_definitions_import() {
+    let result = from_qasm(
+        r#"
+OPENQASM 2.0;
+include "qelib1.inc";
+qreg q[3];
+ryy(0.5) q[0],q[1];
+rzx(0.25) q[1],q[2];
+dcx q[0],q[1];
+ccz q[0],q[1],q[2];
+"#,
+    )
+    .unwrap();
+
+    assert_eq!(result.circuit.num_sites(), 3);
+    assert!(!result.circuit.elements.is_empty());
+}
+
+#[test]
+fn test_classical_conditional_returns_unsupported_error() {
+    let result = from_qasm(
+        r#"
+OPENQASM 2.0;
+include "qelib1.inc";
+qreg q[2];
+creg c[1];
+measure q[1] -> c[0];
+if (c==1) x q[1];
+"#,
+    );
+    assert!(matches!(
+        result,
+        Err(QasmError::Unsupported(msg))
+            if msg.contains("classical conditional")
+    ));
+}
+
+#[test]
+fn test_64_bit_classical_conditional_returns_unsupported_error() {
+    let result = from_qasm(
+        r#"
+OPENQASM 2.0;
+include "qelib1.inc";
+qreg q[1];
+creg c0[64];
+if(c0==9223372036854775808) x q[0];
+"#,
+    );
+    assert!(matches!(
+        result,
+        Err(QasmError::Unsupported(msg))
+            if msg.contains("classical conditional")
+    ));
+}
+
+#[test]
+fn test_too_large_conditional_literal_returns_error_without_panicking() {
+    let result = from_qasm(
+        r#"
+OPENQASM 2.0;
+include "qelib1.inc";
+qreg q[1];
+creg c0[66];
+if(c0==36893488147419103232) x q[0];
 "#,
     );
     assert!(result.is_err());
