@@ -5,11 +5,16 @@ resolver = "2"
 [workspace.package]
 version = "0.1.0"
 edition = "2024"
+license = "MIT"
+repository = "https://github.com/GiggleLiu/yao-rs"
 
 [package]
 name = "yao-rs"
 version.workspace = true
 edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Quantum circuit simulation, tensor-network export, and SVG rendering — a Rust port of Yao.jl"
 
 [features]
 default = []
@@ -18,7 +23,7 @@ omeinsum = ["dep:omeinsum"]
 qasm = ["dep:openqasm"]
 
 [dependencies]
-bitbasis = { path = "bitbasis" }
+bitbasis = { path = "bitbasis", version = "0.1.0" }
 num-complex = { version = "0.4", features = ["serde"] }
 faer = "0.24"
 ndarray = "0.17"
