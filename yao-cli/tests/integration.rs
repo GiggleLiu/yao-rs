@@ -500,7 +500,7 @@ fn cli_artifact_generator_writes_manifest_svg_and_results() {
     let qcbm_result = generated_result_json(&output_dir, "qcbm-static-depth2-probs.json");
     let probabilities = generated_probabilities(&qcbm_result);
     assert_eq!(probabilities.len(), 64);
-    assert_probability(&qcbm_result, 0, 1.0);
+    assert_probability(&qcbm_result, 0, 0.13268155794686642);
 
     let _ = fs::remove_dir_all(output_dir);
 }

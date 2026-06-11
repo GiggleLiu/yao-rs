@@ -167,13 +167,64 @@ fn extends_controlled_x_connector_to_marker_edges() {
 
 #[test]
 fn widens_gate_box_and_viewbox_for_long_labels() {
-    let circuit = Circuit::new(vec![2], vec![put(vec![0], Gate::Phase(1.2345))]).unwrap();
+    let gate = Gate::Custom {
+        matrix: Array2::from_shape_vec(
+            (2, 2),
+            vec![
+                Complex64::new(1.0, 0.0),
+                Complex64::new(0.0, 0.0),
+                Complex64::new(0.0, 0.0),
+                Complex64::new(1.0, 0.0),
+            ],
+        )
+        .unwrap(),
+        is_diagonal: false,
+        label: "LongCustomLabel".to_string(),
+    };
+    let circuit = Circuit::new(vec![2], vec![put(vec![0], gate)]).unwrap();
     let svg = crate::svg::to_svg(&circuit);
-    let gate_width = extract_attr_from_tag(&svg, "data-label=\"Phase(1.2345)\"", "width");
+    let gate_width = extract_attr_from_tag(&svg, "data-label=\"LongCustomLabel\"", "width");
     let viewbox_width = extract_viewbox_width(&svg);
 
     assert!(gate_width > 42.0);
     assert!(viewbox_width > 136.0);
+}
+
+#[test]
+fn renders_rotation_gate_labels_compactly_with_two_decimals() {
+    let circuit = Circuit::new(vec![2], vec![put(vec![0], Gate::Rx(1.2345))]).unwrap();
+    let svg = crate::svg::to_svg(&circuit);
+    let gate_width = extract_attr_from_tag(&svg, "data-label=\"Rx(1.2345)\"", "width");
+    let viewbox_width = extract_viewbox_width(&svg);
+
+    assert!(svg.contains(">Rx</text>"));
+    assert!(svg.contains(">1.23</text>"));
+    assert!(!svg.contains(">Rx(1.2345)</text>"));
+    assert_eq!(gate_width, 42.0);
+    assert_eq!(viewbox_width, 136.0);
+}
+
+#[test]
+fn renders_negative_rotation_gate_parameters_with_two_decimals() {
+    let circuit = Circuit::new(vec![2], vec![put(vec![0], Gate::Ry(-0.236))]).unwrap();
+    let svg = crate::svg::to_svg(&circuit);
+
+    assert!(svg.contains(">Ry</text>"));
+    assert!(svg.contains(">-0.24</text>"));
+    assert!(!svg.contains(">Ry(-0.2360)</text>"));
+}
+
+#[test]
+fn renders_phase_gate_compactly_without_p_abbreviation() {
+    let circuit = Circuit::new(vec![2], vec![put(vec![0], Gate::Phase(1.2345))]).unwrap();
+    let svg = crate::svg::to_svg(&circuit);
+    let gate_width = extract_attr_from_tag(&svg, "data-label=\"Phase(1.2345)\"", "width");
+
+    assert!(svg.contains(">Phase</text>"));
+    assert!(svg.contains(">1.23</text>"));
+    assert!(!svg.contains(">P</text>"));
+    assert!(!svg.contains(">Phase(1.2345)</text>"));
+    assert!(gate_width < 94.0);
 }
 
 #[test]
