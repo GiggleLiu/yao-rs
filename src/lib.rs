@@ -19,8 +19,6 @@ pub mod qasm;
 pub mod register;
 pub mod svg;
 pub mod tensors;
-#[cfg(feature = "torch")]
-pub mod torch_contractor;
 
 pub use ad::expect_grad;
 pub use apply::{apply, apply_inplace};
@@ -44,5 +42,3 @@ pub use noise::NoiseChannel;
 pub use operator::{Op, OperatorPolynomial, OperatorString, op_matrix};
 pub use register::{ArrayReg, Register};
 pub use svg::to_svg;
-#[cfg(feature = "torch")]
-pub use torch_contractor::contract;

@@ -23,7 +23,6 @@ CATEGORIES = {
     "measure": "simulation",
     "einsum": "tensor",
     "tensors": "tensor",
-    "torch_contractor": "tensor",
     "index": "utility",
     "bitutils": "utility",
     "json": "utility",

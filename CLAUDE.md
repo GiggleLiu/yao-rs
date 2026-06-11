@@ -78,7 +78,6 @@ Gate → PositionedGate → Circuit → TensorNetwork / ArrayReg
 - `noise.rs`: Noise channel definitions
 - `qasm.rs` (feature-gated): OpenQASM 2.0 import/export via the `openqasm` crate. Import decomposes all gates to U+CX primitives. Export maps Gate variants to standard qelib1.inc names.
 - `contractor.rs` (feature-gated `omeinsum`): Native tensor network contraction via the [omeinsum](https://crates.io/crates/omeinsum) crate. Converts `TensorNetwork` ndarray tensors to omeinsum column-major format, contracts with greedy optimization, returns column-major `ArrayD`.
-- `torch_contractor.rs` (feature-gated `torch`): libtorch-based tensor network contraction via omeco greedy optimizer
 
 ## Test Layout
 
@@ -119,7 +118,6 @@ All commands output human-readable text in a terminal, JSON when piped. Use `--j
 - `omeinsum`: Native tensor network contraction via the [omeinsum](https://crates.io/crates/omeinsum) crate (enabled by default in CLI)
 - `parallel`: Enable rayon for parallel operations
 - `qasm`: OpenQASM 2.0 import/export (enabled by default in CLI)
-- `torch`: PyTorch tensor contraction via tch (requires libtorch)
 
 ## Claude Skills
 

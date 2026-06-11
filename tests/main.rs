@@ -16,6 +16,3 @@ mod gate;
 mod integration;
 #[path = "suites/measure.rs"]
 mod measure;
-#[cfg(feature = "torch")]
-#[path = "suites/torch_contractor.rs"]
-mod torch_contractor;
