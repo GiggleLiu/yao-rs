@@ -1,8 +1,45 @@
-use crate::circuit::{Annotation, Circuit, CircuitElement, PositionedAnnotation, PositionedGate};
+use crate::circuit::{
+    Annotation, Circuit, CircuitElement, PositionedAnnotation, PositionedChannel, PositionedGate,
+};
 use crate::gate::Gate;
+use crate::noise::NoiseChannel;
 use ndarray::Array2;
 use num_complex::Complex64;
 use serde::{Deserialize, Serialize};
+
+/// JSON encoding of a complex matrix: rows of `[re, im]` pairs (matches `Custom` gates).
+type MatrixJson = Vec<Vec<[f64; 2]>>;
+
+/// Encode a complex matrix as nested `[re, im]` rows.
+fn complex_matrix_to_json(matrix: &Array2<Complex64>) -> MatrixJson {
+    (0..matrix.nrows())
+        .map(|i| {
+            (0..matrix.ncols())
+                .map(|j| [matrix[[i, j]].re, matrix[[i, j]].im])
+                .collect()
+        })
+        .collect()
+}
+
+/// Decode a complex matrix from nested `[re, im]` rows.
+fn complex_matrix_from_json(data: &[Vec<[f64; 2]>]) -> Result<Array2<Complex64>, String> {
+    let nrows = data.len();
+    if nrows == 0 {
+        return Err("matrix cannot be empty".to_string());
+    }
+    let ncols = data[0].len();
+    let mut elements = Vec::with_capacity(nrows * ncols);
+    for row in data {
+        if row.len() != ncols {
+            return Err("matrix rows must have equal length".to_string());
+        }
+        for &[re, im] in row {
+            elements.push(Complex64::new(re, im));
+        }
+    }
+    Array2::from_shape_vec((nrows, ncols), elements)
+        .map_err(|e| format!("Failed to construct matrix: {e}"))
+}
 
 #[derive(Serialize, Deserialize)]
 struct CircuitJson {
@@ -17,6 +54,164 @@ enum ElementJson {
     Gate(GateJson),
     #[serde(rename = "label")]
     Label { text: String, loc: usize },
+    #[serde(rename = "channel")]
+    Channel {
+        locs: Vec<usize>,
+        #[serde(flatten)]
+        kind: ChannelKind,
+    },
+}
+
+/// Serde mirror of [`NoiseChannel`]: scalar params map directly; matrix-bearing
+/// variants reuse the `[re, im]` matrix encoding used by `Custom` gates.
+#[derive(Serialize, Deserialize)]
+#[serde(tag = "channel")]
+enum ChannelKind {
+    BitFlip {
+        p: f64,
+    },
+    PhaseFlip {
+        p: f64,
+    },
+    Depolarizing {
+        n: usize,
+        p: f64,
+    },
+    PauliChannel {
+        px: f64,
+        py: f64,
+        pz: f64,
+    },
+    Reset {
+        p0: f64,
+        p1: f64,
+    },
+    AmplitudeDamping {
+        gamma: f64,
+        excited_population: f64,
+    },
+    PhaseDamping {
+        gamma: f64,
+    },
+    PhaseAmplitudeDamping {
+        amplitude: f64,
+        phase: f64,
+        excited_population: f64,
+    },
+    ThermalRelaxation {
+        t1: f64,
+        t2: f64,
+        time: f64,
+        excited_population: f64,
+    },
+    Coherent {
+        matrix: MatrixJson,
+    },
+    Custom {
+        kraus_ops: Vec<MatrixJson>,
+    },
+}
+
+impl ChannelKind {
+    fn from_channel(c: &NoiseChannel) -> Self {
+        match c {
+            NoiseChannel::BitFlip { p } => ChannelKind::BitFlip { p: *p },
+            NoiseChannel::PhaseFlip { p } => ChannelKind::PhaseFlip { p: *p },
+            NoiseChannel::Depolarizing { n, p } => ChannelKind::Depolarizing { n: *n, p: *p },
+            NoiseChannel::PauliChannel { px, py, pz } => ChannelKind::PauliChannel {
+                px: *px,
+                py: *py,
+                pz: *pz,
+            },
+            NoiseChannel::Reset { p0, p1 } => ChannelKind::Reset { p0: *p0, p1: *p1 },
+            NoiseChannel::AmplitudeDamping {
+                gamma,
+                excited_population,
+            } => ChannelKind::AmplitudeDamping {
+                gamma: *gamma,
+                excited_population: *excited_population,
+            },
+            NoiseChannel::PhaseDamping { gamma } => ChannelKind::PhaseDamping { gamma: *gamma },
+            NoiseChannel::PhaseAmplitudeDamping {
+                amplitude,
+                phase,
+                excited_population,
+            } => ChannelKind::PhaseAmplitudeDamping {
+                amplitude: *amplitude,
+                phase: *phase,
+                excited_population: *excited_population,
+            },
+            NoiseChannel::ThermalRelaxation {
+                t1,
+                t2,
+                time,
+                excited_population,
+            } => ChannelKind::ThermalRelaxation {
+                t1: *t1,
+                t2: *t2,
+                time: *time,
+                excited_population: *excited_population,
+            },
+            NoiseChannel::Coherent { matrix } => ChannelKind::Coherent {
+                matrix: complex_matrix_to_json(matrix),
+            },
+            NoiseChannel::Custom { kraus_ops } => ChannelKind::Custom {
+                kraus_ops: kraus_ops.iter().map(complex_matrix_to_json).collect(),
+            },
+        }
+    }
+
+    fn into_channel(self) -> Result<NoiseChannel, String> {
+        Ok(match self {
+            ChannelKind::BitFlip { p } => NoiseChannel::BitFlip { p },
+            ChannelKind::PhaseFlip { p } => NoiseChannel::PhaseFlip { p },
+            ChannelKind::Depolarizing { n, p } => NoiseChannel::Depolarizing { n, p },
+            ChannelKind::PauliChannel { px, py, pz } => NoiseChannel::PauliChannel { px, py, pz },
+            ChannelKind::Reset { p0, p1 } => NoiseChannel::Reset { p0, p1 },
+            ChannelKind::AmplitudeDamping {
+                gamma,
+                excited_population,
+            } => NoiseChannel::AmplitudeDamping {
+                gamma,
+                excited_population,
+            },
+            ChannelKind::PhaseDamping { gamma } => NoiseChannel::PhaseDamping { gamma },
+            ChannelKind::PhaseAmplitudeDamping {
+                amplitude,
+                phase,
+                excited_population,
+            } => NoiseChannel::PhaseAmplitudeDamping {
+                amplitude,
+                phase,
+                excited_population,
+            },
+            ChannelKind::ThermalRelaxation {
+                t1,
+                t2,
+                time,
+                excited_population,
+            } => NoiseChannel::ThermalRelaxation {
+                t1,
+                t2,
+                time,
+                excited_population,
+            },
+            ChannelKind::Coherent { matrix } => NoiseChannel::Coherent {
+                matrix: complex_matrix_from_json(&matrix)?,
+            },
+            ChannelKind::Custom { kraus_ops } => {
+                if kraus_ops.is_empty() {
+                    return Err("Custom channel requires at least one Kraus operator".to_string());
+                }
+                NoiseChannel::Custom {
+                    kraus_ops: kraus_ops
+                        .iter()
+                        .map(|m| complex_matrix_from_json(m))
+                        .collect::<Result<Vec<_>, _>>()?,
+                }
+            }
+        })
+    }
 }
 
 #[derive(Serialize, Deserialize)]
@@ -66,24 +261,13 @@ fn positioned_gate_to_json(pg: &PositionedGate) -> GateJson {
             matrix,
             is_diagonal,
             label,
-        } => {
-            let nrows = matrix.nrows();
-            let ncols = matrix.ncols();
-            let mat: Vec<Vec<[f64; 2]>> = (0..nrows)
-                .map(|i| {
-                    (0..ncols)
-                        .map(|j| [matrix[[i, j]].re, matrix[[i, j]].im])
-                        .collect()
-                })
-                .collect();
-            (
-                "Custom".to_string(),
-                None,
-                Some(label.clone()),
-                Some(mat),
-                Some(*is_diagonal),
-            )
-        }
+        } => (
+            "Custom".to_string(),
+            None,
+            Some(label.clone()),
+            Some(complex_matrix_to_json(matrix)),
+            Some(*is_diagonal),
+        ),
     };
 
     let controls = if pg.control_locs.is_empty() {
@@ -112,23 +296,25 @@ fn positioned_gate_to_json(pg: &PositionedGate) -> GateJson {
 
 /// Serialize a Circuit to a pretty-printed JSON string.
 ///
-/// Note: `CircuitElement::Channel` elements are not serialized and will be
-/// silently dropped. A round-trip through `circuit_to_json`/`circuit_from_json`
-/// will lose all noise channels.
+/// All element kinds round-trip through `circuit_to_json`/`circuit_from_json`,
+/// including noise/reset channels (`CircuitElement::Channel`).
 pub fn circuit_to_json(circuit: &Circuit) -> String {
     let num_qubits = circuit.num_sites();
     let elements: Vec<ElementJson> = circuit
         .elements
         .iter()
-        .filter_map(|element| match element {
-            CircuitElement::Gate(pg) => Some(ElementJson::Gate(positioned_gate_to_json(pg))),
+        .map(|element| match element {
+            CircuitElement::Gate(pg) => ElementJson::Gate(positioned_gate_to_json(pg)),
             CircuitElement::Annotation(pa) => match &pa.annotation {
-                Annotation::Label(text) => Some(ElementJson::Label {
+                Annotation::Label(text) => ElementJson::Label {
                     text: text.clone(),
                     loc: pa.loc,
-                }),
+                },
             },
-            CircuitElement::Channel(_) => None,
+            CircuitElement::Channel(pc) => ElementJson::Channel {
+                locs: pc.locs.clone(),
+                kind: ChannelKind::from_channel(&pc.channel),
+            },
         })
         .collect();
 
@@ -190,22 +376,8 @@ fn gate_json_to_element(gj: GateJson) -> Result<CircuitElement, String> {
         }
         "Custom" => {
             let mat_data = gj.matrix.ok_or("Custom gate requires matrix")?;
-            let nrows = mat_data.len();
-            if nrows == 0 {
-                return Err("Custom gate matrix cannot be empty".to_string());
-            }
-            let ncols = mat_data[0].len();
-            let mut elements = Vec::with_capacity(nrows * ncols);
-            for row in &mat_data {
-                if row.len() != ncols {
-                    return Err("Custom gate matrix rows must have equal length".to_string());
-                }
-                for &[re, im] in row {
-                    elements.push(Complex64::new(re, im));
-                }
-            }
-            let matrix = Array2::from_shape_vec((nrows, ncols), elements)
-                .map_err(|e| format!("Failed to construct matrix: {}", e))?;
+            let matrix =
+                complex_matrix_from_json(&mat_data).map_err(|e| format!("Custom gate {e}"))?;
             let is_diagonal = gj.is_diagonal.unwrap_or(false);
             let label = gj.label.unwrap_or_default();
             Gate::Custom {
@@ -240,6 +412,10 @@ pub fn circuit_from_json(json: &str) -> Result<Circuit, String> {
             ElementJson::Label { text, loc } => CircuitElement::Annotation(PositionedAnnotation {
                 annotation: Annotation::Label(text),
                 loc,
+            }),
+            ElementJson::Channel { locs, kind } => CircuitElement::Channel(PositionedChannel {
+                channel: kind.into_channel()?,
+                locs,
             }),
         };
         elements.push(element);
