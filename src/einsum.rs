@@ -23,8 +23,11 @@ pub struct TensorNetwork {
 ///
 /// The algorithm assigns integer labels to tensor legs:
 /// - Labels 0..n-1 are initial state indices for each site
-/// - Non-diagonal gates (or gates with controls) allocate new output labels
-/// - Diagonal gates without controls reuse current labels (no new allocation)
+/// - Non-diagonal gates allocate new output labels
+/// - Diagonal gates reuse current labels (no new allocation). A controlled
+///   gate whose target is diagonal has a diagonal full matrix, so it reuses
+///   labels too (YaoToEinsum `isdiag` semantics); the contraction value is
+///   identical to the dense form, on a strictly easier label hypergraph.
 ///
 /// # Arguments
 /// * `circuit` - The quantum circuit to convert
@@ -59,21 +62,16 @@ pub fn circuit_to_einsum(circuit: &Circuit) -> TensorNetwork {
         // Determine all_locs = control_locs ++ target_locs
         let all_locs = pg.all_locs();
 
-        // Check if gate is diagonal and has no controls
-        let has_controls = !pg.control_locs.is_empty();
-        let is_diagonal = pg.gate.is_diagonal() && !has_controls;
+        // Diagonal (with or without controls): full matrix is diagonal
+        let is_diagonal = pg.gate.is_diagonal();
 
         if is_diagonal {
-            // Diagonal (no controls): tensor legs are just current labels of target sites.
-            // Labels don't change.
-            let tensor_ixs: Vec<usize> = pg
-                .target_locs
-                .iter()
-                .map(|&loc| current_labels[loc])
-                .collect();
+            // Diagonal: tensor legs are the current labels of all involved
+            // sites (controls ++ targets). Labels don't change.
+            let tensor_ixs: Vec<usize> = all_locs.iter().map(|&loc| current_labels[loc]).collect();
             all_ixs.push(tensor_ixs);
         } else {
-            // Non-diagonal (or has controls): allocate new output labels for all involved sites.
+            // Non-diagonal: allocate new output labels for all involved sites.
             // Tensor legs are [new_labels..., current_input_labels...]
             let mut tensor_ixs: Vec<usize> = Vec::new();
 
@@ -182,15 +180,10 @@ pub fn circuit_to_einsum_with_boundary(circuit: &Circuit, final_state: &[usize])
 
         let (tensor, _legs) = gate_to_tensor(pg, &circuit.dims);
         let all_locs = pg.all_locs();
-        let has_controls = !pg.control_locs.is_empty();
-        let is_diagonal = pg.gate.is_diagonal() && !has_controls;
+        let is_diagonal = pg.gate.is_diagonal();
 
         if is_diagonal {
-            let tensor_ixs: Vec<usize> = pg
-                .target_locs
-                .iter()
-                .map(|&loc| current_labels[loc])
-                .collect();
+            let tensor_ixs: Vec<usize> = all_locs.iter().map(|&loc| current_labels[loc]).collect();
             all_ixs.push(tensor_ixs);
         } else {
             let mut tensor_ixs: Vec<usize> = Vec::new();
@@ -305,15 +298,10 @@ pub fn circuit_to_expectation(circuit: &Circuit, operator: &OperatorPolynomial) 
 
         let (tensor, _legs) = gate_to_tensor(pg, &circuit.dims);
         let all_locs = pg.all_locs();
-        let has_controls = !pg.control_locs.is_empty();
-        let is_diagonal = pg.gate.is_diagonal() && !has_controls;
+        let is_diagonal = pg.gate.is_diagonal();
 
         if is_diagonal {
-            let tensor_ixs: Vec<usize> = pg
-                .target_locs
-                .iter()
-                .map(|&loc| current_labels[loc])
-                .collect();
+            let tensor_ixs: Vec<usize> = all_locs.iter().map(|&loc| current_labels[loc]).collect();
             all_ixs.push(tensor_ixs);
         } else {
             let mut tensor_ixs: Vec<usize> = Vec::new();
@@ -433,16 +421,11 @@ pub fn circuit_to_expectation(circuit: &Circuit, operator: &OperatorPolynomial) 
         let conj_tensor = tensor.mapv(|c| c.conj());
 
         let all_locs = pg.all_locs();
-        let has_controls = !pg.control_locs.is_empty();
-        let is_diagonal = pg.gate.is_diagonal() && !has_controls;
+        let is_diagonal = pg.gate.is_diagonal();
 
         if is_diagonal {
             // For diagonal U†: still diagonal, just conjugated values
-            let tensor_ixs: Vec<usize> = pg
-                .target_locs
-                .iter()
-                .map(|&loc| current_labels[loc])
-                .collect();
+            let tensor_ixs: Vec<usize> = all_locs.iter().map(|&loc| current_labels[loc]).collect();
             all_ixs.push(tensor_ixs);
             all_tensors.push(conj_tensor);
         } else {
@@ -554,12 +537,11 @@ pub fn circuit_to_einsum_dm(circuit: &Circuit) -> TensorNetworkDM {
                 let (tensor, _legs) = gate_to_tensor(pg, &circuit.dims);
 
                 let all_locs = pg.all_locs();
-                let has_controls = !pg.control_locs.is_empty();
-                let is_diag = pg.gate.is_diagonal() && !has_controls;
+                let is_diag = pg.gate.is_diagonal();
 
                 if is_diag {
                     // Diagonal: reuse labels, add ket and bra copies
-                    let ket_ixs: Vec<i32> = pg.target_locs.iter().map(|&loc| slots[loc]).collect();
+                    let ket_ixs: Vec<i32> = all_locs.iter().map(|&loc| slots[loc]).collect();
                     all_ixs.push(ket_ixs.clone());
                     all_tensors.push(tensor.clone());
 

@@ -16,39 +16,52 @@ pub enum Leg {
 
 /// Convert a PositionedGate to a tensor and its leg descriptors.
 ///
-/// For non-diagonal gates (or any gate with controls):
+/// For non-diagonal gates (non-diagonal full matrix):
 ///   Shape: (d_ctrl0_out, ..., d_tgtN_out, d_ctrl0_in, ..., d_tgtN_in)
 ///   Legs: [Out(0), ..., Out(n-1), In(0), ..., In(n-1)]
 ///
-/// For diagonal gates without controls:
-///   Shape: (d_tgt0, d_tgt1, ...)
+/// For diagonal gates — with or without controls, since a controlled gate
+/// whose target is diagonal has a diagonal full matrix (controls only select
+/// which diagonal block applies):
+///   Shape: (d_site0, d_site1, ...) over all sites (controls ++ targets)
 ///   Legs: [Diag(0), Diag(1), ...]
+///
+/// The diagonal form is the YaoToEinsum (`isdiag`) semantics: a diagonal
+/// operator is elementwise multiplication along existing indices, so no
+/// fresh labels are needed. Both forms contract to the same value; the
+/// diagonal form yields a strictly easier label hypergraph.
 pub fn gate_to_tensor(pg: &PositionedGate, dims: &[usize]) -> (ArrayD<Complex64>, Vec<Leg>) {
     let all_locs = pg.all_locs();
     let all_dims: Vec<usize> = all_locs.iter().map(|&loc| dims[loc]).collect();
 
     let has_controls = !pg.control_locs.is_empty();
-    let is_diagonal = pg.gate.is_diagonal() && !has_controls;
+    let is_diagonal = pg.gate.is_diagonal();
 
     if is_diagonal {
-        // Diagonal gate without controls: tensor has one leg per target site
-        let target_dims: Vec<usize> = pg.target_locs.iter().map(|&loc| dims[loc]).collect();
-        let mat = pg.gate.matrix();
+        // Diagonal gate: rank-k tensor of the diagonal, one leg per site.
+        // With controls, the full controlled matrix is diagonal too; extract
+        // its diagonal over all sites (controls ++ targets).
+        let (mat, site_dims) = if has_controls {
+            (build_controlled_matrix(pg, dims), all_dims)
+        } else {
+            let target_dims: Vec<usize> = pg.target_locs.iter().map(|&loc| dims[loc]).collect();
+            (pg.gate.matrix(), target_dims)
+        };
 
         // Extract diagonal elements
-        let total_dim: usize = target_dims.iter().product();
+        let total_dim: usize = site_dims.iter().product();
         let mut data = Vec::with_capacity(total_dim);
         for i in 0..total_dim {
             data.push(mat[[i, i]]);
         }
 
-        let shape = IxDyn(&target_dims);
+        let shape = IxDyn(&site_dims);
         let tensor = ArrayD::from_shape_vec(shape, data).unwrap();
-        let legs: Vec<Leg> = (0..target_dims.len()).map(Leg::Diag).collect();
+        let legs: Vec<Leg> = (0..site_dims.len()).map(Leg::Diag).collect();
 
         (tensor, legs)
     } else {
-        // Non-diagonal gate or gate with controls: build full matrix then reshape
+        // Non-diagonal gate: build full matrix then reshape
         let full_matrix = build_controlled_matrix(pg, dims);
         let total_dim: usize = all_dims.iter().product();
         assert_eq!(full_matrix.nrows(), total_dim);

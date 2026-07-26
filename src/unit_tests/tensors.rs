@@ -91,8 +91,8 @@ fn test_cnot_gate() {
 #[test]
 fn test_cz_gate() {
     // CZ = control on site 0, Z on site 1
-    // Even though Z is diagonal, with controls it becomes non-diagonal
-    // Shape: (2, 2, 2, 2)
+    // The full controlled matrix diag(1,1,1,-1) is diagonal, so the gate uses
+    // the diagonal form: shape (2, 2) with legs [Diag(0), Diag(1)]
     let pg = PositionedGate::new(
         Gate::Z,
         vec![1],
@@ -103,25 +103,38 @@ fn test_cz_gate() {
 
     let (tensor, legs) = gate_to_tensor(&pg, &dims);
 
-    assert_eq!(tensor.shape(), &[2, 2, 2, 2]);
-    assert_eq!(legs, vec![Leg::Out(0), Leg::Out(1), Leg::In(0), Leg::In(1)]);
+    assert_eq!(tensor.shape(), &[2, 2]);
+    assert_eq!(legs, vec![Leg::Diag(0), Leg::Diag(1)]);
 
-    // CZ matrix:
-    // ctrl=0: identity => M[0,0]=1, M[1,1]=1
-    // ctrl=1: Z => M[2,2]=1, M[3,3]=-1
-    //
-    // tensor[0,0,0,0] = M[0,0] = 1
-    assert!(approx_eq(tensor[IxDyn(&[0, 0, 0, 0])], c(1.0, 0.0)));
-    // tensor[0,1,0,1] = M[1,1] = 1
-    assert!(approx_eq(tensor[IxDyn(&[0, 1, 0, 1])], c(1.0, 0.0)));
-    // tensor[1,0,1,0] = M[2,2] = 1
-    assert!(approx_eq(tensor[IxDyn(&[1, 0, 1, 0])], c(1.0, 0.0)));
-    // tensor[1,1,1,1] = M[3,3] = -1
-    assert!(approx_eq(tensor[IxDyn(&[1, 1, 1, 1])], c(-1.0, 0.0)));
+    // Diagonal of the CZ matrix, in |ctrl, tgt> order:
+    // M[0,0]=1 (|00>), M[1,1]=1 (|01>), M[2,2]=1 (|10>), M[3,3]=-1 (|11>)
+    assert!(approx_eq(tensor[IxDyn(&[0, 0])], c(1.0, 0.0)));
+    assert!(approx_eq(tensor[IxDyn(&[0, 1])], c(1.0, 0.0)));
+    assert!(approx_eq(tensor[IxDyn(&[1, 0])], c(1.0, 0.0)));
+    assert!(approx_eq(tensor[IxDyn(&[1, 1])], c(-1.0, 0.0)));
+}
 
-    // Off-diagonal should be zero
-    assert!(approx_eq(tensor[IxDyn(&[0, 0, 0, 1])], c(0.0, 0.0)));
-    assert!(approx_eq(tensor[IxDyn(&[1, 0, 1, 1])], c(0.0, 0.0)));
+#[test]
+fn test_controlled_diagonal_trigger_on_zero() {
+    // Controlled-Z with trigger on |0>: full matrix diag(Z, I) = diag(1,-1,1,1),
+    // still diagonal => diagonal tensor form.
+    let pg = PositionedGate::new(
+        Gate::Z,
+        vec![1],
+        vec![0],
+        vec![false], // trigger when control is |0>
+    );
+    let dims = vec![2, 2];
+
+    let (tensor, legs) = gate_to_tensor(&pg, &dims);
+
+    assert_eq!(tensor.shape(), &[2, 2]);
+    assert_eq!(legs, vec![Leg::Diag(0), Leg::Diag(1)]);
+
+    assert!(approx_eq(tensor[IxDyn(&[0, 0])], c(1.0, 0.0)));
+    assert!(approx_eq(tensor[IxDyn(&[0, 1])], c(-1.0, 0.0)));
+    assert!(approx_eq(tensor[IxDyn(&[1, 0])], c(1.0, 0.0)));
+    assert!(approx_eq(tensor[IxDyn(&[1, 1])], c(1.0, 0.0)));
 }
 
 #[test]
