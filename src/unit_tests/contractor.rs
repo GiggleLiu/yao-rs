@@ -74,6 +74,33 @@ fn test_contract_overlap() {
 }
 
 #[test]
+fn test_contract_cz_shared_labels() {
+    // cz uses the diagonal (shared-label) form: rank-2 tensor riding both
+    // current labels, no fresh labels allocated.
+    let circuit = Circuit::new(
+        vec![2, 2],
+        vec![
+            put(vec![0], Gate::H),
+            put(vec![1], Gate::H),
+            control(vec![0], vec![1], Gate::Z),
+        ],
+    )
+    .unwrap();
+    let tn = circuit_to_overlap(&circuit);
+    // 2 initial states + H + H + cz + 2 final states = 7 tensors;
+    // labels 0,1 (initial) + one per H = 4 labels (cz adds none).
+    assert_eq!(tn.tensors.len(), 7);
+    assert_eq!(tn.size_dict.len(), 4);
+    // tensor index 4 is the cz: rank-2 diagonal form
+    let cz = &tn.tensors[4];
+    assert_eq!(cz.shape(), &[2, 2]);
+    assert!((cz[[1, 1]] - Complex64::new(-1.0, 0.0)).norm() < 1e-10);
+    let result = contract(&tn);
+    // <00| (HxH) cz (HxH) |00> = (1/4)(1 + 1 + 1 - 1) = 1/2
+    assert_scalar_close(&result, Complex64::new(0.5, 0.0));
+}
+
+#[test]
 fn test_contract_state_vector() {
     // H|0⟩ = (|0⟩+|1⟩)/√2 — use boundary with no pinned outputs
     let circuit = Circuit::new(vec![2], vec![put(vec![0], Gate::H)]).unwrap();
