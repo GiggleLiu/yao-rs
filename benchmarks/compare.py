@@ -130,6 +130,61 @@ def tensor_memory_rows(directory):
     return rows
 
 
+def trajectory_rows(directory):
+    """Read completed diagnostics and deduplicate repeated timing-process seeds."""
+    import math
+    from collections import defaultdict
+
+    unique = {}
+    files = sorted(Path(directory).glob("*-trajectory-stats.jsonl"))
+    for path in files:
+        for line in path.read_text().splitlines():
+            row = json.loads(line)
+            if row.get("status") != "complete":
+                raise ValueError("Incomplete trajectory diagnostic")
+            stats = row["statistics"]
+            if stats["trajectories"] < 2 or stats["standard_error"] is None:
+                raise ValueError("Trajectory diagnostic needs uncertainty")
+            values = [*stats["mean"], *stats["standard_error"], *row["expected"], *row["error"]]
+            if not all(math.isfinite(x) for x in values) or min(stats["standard_error"]) < 0:
+                raise ValueError("Nonfinite or negative trajectory uncertainty")
+            error = complex(*stats["mean"]) - complex(*row["expected"])
+            if abs(error-complex(*row["error"])) > 1e-14:
+                raise ValueError("Trajectory error disagrees with its mean/reference")
+            key = (stats["threads"], row["id"], stats["trajectories"], stats["seed"])
+            if key in unique and unique[key] != row:
+                raise ValueError("Repeated trajectory seed is not reproducible")
+            unique[key] = row
+    groups = defaultdict(list)
+    for (threads, case, count, seed), row in unique.items():
+        groups[(threads, case, count)].append(row)
+    rows = []
+    for (threads, case, count), samples in sorted(groups.items()):
+        mse = sum(abs(complex(*r["error"]))**2 for r in samples)/len(samples)
+        predicted = sum(sum(x*x for x in r["statistics"]["standard_error"]) for r in samples)/len(samples)
+        rows.append(dict(threads=threads, id=case, trajectories=count, seeds=len(samples),
+                         rmse=math.sqrt(mse), predicted_rms_error=math.sqrt(predicted)))
+    return rows
+
+
+def trajectory_memory_rows(directory):
+    rows = []
+    for path in sorted(Path(directory).glob("memory-trajectory-*.log")):
+        text = path.read_text()
+        records = [json.loads(line) for line in text.splitlines() if line.startswith("{")]
+        completed = [r for r in records if r.get("status") == "complete"]
+        if len(completed) != 1:
+            raise ValueError("Incomplete trajectory memory probe")
+        row = dict(completed[0])
+        phases = {r["phase"]: r for r in records if "phase" in r}
+        phase = phases[row["backend"] + "_execute"]
+        row.update(peak_rss_bytes=peak_rss_bytes(text),
+                   execution_peak_bytes=phase["peak_additional_rust_heap_bytes"],
+                   execution_retained_bytes=phase["retained_additional_rust_heap_bytes"])
+        rows.append(row)
+    return sorted(rows, key=lambda r: (r["backend"], r["qubits"], r["trajectories"], r["threads"]))
+
+
 def evolution_memory_rows(directory):
     """Read phase heap bytes and platform-specific time(1) peak RSS units."""
 
@@ -254,9 +309,10 @@ def backend_report(directory):
         )
     lines += [
         "",
-        "## Tensor and extension phases",
+        "## Trajectory and tensor phases" if metadata.get("suite") == "trajectories" else "## Tensor and extension phases",
         "",
-        "Each row uses the named API boundary. `tenferro_from_arrays` includes conversion, automatic planning, execution and output conversion; `omeinsum` includes its conversion/planning/execution. `tenferro_warm` uses an already prepared plan. Those prototype rows use independent planning policies. Where present, `supported_planning` compiles an existing omeco greedy tree; `supported_warm` runs the supported CPU adapter including ndarray input/output adaptation; `supported_from_arrays` combines those two phases. `omeinsum_fixed_tree` executes the identical tree, including its internal preparation. These supported rows exclude tree search and CPU context creation.",
+        ("Trajectory rows report complete ensembles; `trajectory_prepare` validates/prepares local gates and channels. Tenferro rows report exact expectation-network compilation and warm contraction. Their accuracy and timing boundaries are detailed below." if metadata.get("suite") == "trajectories" else
+"Each row uses the named API boundary. `tenferro_from_arrays` includes conversion, automatic planning, execution and output conversion; `omeinsum` includes its conversion/planning/execution. `tenferro_warm` uses an already prepared plan. Those prototype rows use independent planning policies. Where present, `supported_planning` compiles an existing omeco greedy tree; `supported_warm` runs the supported CPU adapter including ndarray input/output adaptation; `supported_from_arrays` combines those two phases. `omeinsum_fixed_tree` executes the identical tree, including its internal preparation. These supported rows exclude tree search and CPU context creation."),
         "",
         "| Threads | Case | Phase | Median µs | Range of run medians µs |",
         "| --- | --- | --- | ---: | ---: |",
@@ -318,7 +374,7 @@ def backend_report(directory):
             "![Contraction time and memory](slicing-tradeoff.svg)",
             "",
         ]
-    else:
+    elif metadata.get("suite") != "trajectories":
         lines += [
             "## Plots",
             "",
@@ -334,6 +390,51 @@ def backend_report(directory):
                 "![Supported adapter, same contraction tree](supported-costs.svg)",
                 "",
             ]
+    if metadata.get("suite") == "trajectories":
+        import math
+        diagnostics = sorted(directory.glob("*-trajectory-stats.jsonl"))
+        expected_names = {f"{t}t-run{r}-trajectory-stats.jsonl" for t in metadata["threads"] for r in range(1, metadata["runs"]+1)}
+        if {p.name for p in diagnostics} != expected_names:
+            raise ValueError("Missing trajectory diagnostic processes")
+        for path in diagnostics:
+            records = [json.loads(line) for line in path.read_text().splitlines()]
+            if any(r["statistics"]["threads"] != int(path.name.split("t-")[0]) for r in records):
+                raise ValueError("Trajectory diagnostic thread count disagrees with process")
+            keys = {(r["id"], r["statistics"]["trajectories"], r["statistics"]["seed"]) for r in records}
+            expected_keys = {(f"noisy_expectation_{n}", count, seed)
+                             for n in [4, 6, 8] for count in [128, 512, 2048]
+                             for seed in ([19, 7, 42, 73, 101, 137, 211, 307] if n == 6 else [19])}
+            expected_keys |= {(f"product_noise_{n}", count, 19) for n in [12, 16] for count in [64, 256]}
+            if len(records) != len(expected_keys) or keys != expected_keys:
+                raise ValueError("Missing or duplicate trajectory diagnostic workloads")
+        trajectory = trajectory_rows(directory)
+        memory_rows = trajectory_memory_rows(directory)
+        expected_memory = {("trajectory", n, count, t) for n in [4,8,10,12,16] for count in [64,256] for t in [1,4]}
+        expected_memory |= {("density",n,0,1) for n in [4,8,10]}
+        if len(memory_rows) != len(expected_memory) or {(r["backend"],r["qubits"],r["trajectories"],r["threads"]) for r in memory_rows} != expected_memory:
+            raise ValueError("Missing trajectory memory workloads")
+        (directory / "trajectory-statistics.json").write_text(json.dumps(trajectory, indent=2)+"\n")
+        (directory / "trajectory-memory.json").write_text(json.dumps(memory_rows, indent=2)+"\n")
+        lines += ["", "## Trajectory accuracy and time", "",
+            "Exact native/Yao rows above evolve the same density matrix and complex polynomial. Tenferro exact warm rows contract a prepared expectation network; preparation excludes export and greedy order search. Trajectory timings include independent seeded evolution, observable evaluation, streaming moments, worker buffers and (at multiple threads) pool creation; local channel preparation is reported separately. These algorithms have different accuracy, so a timing ratio alone is not a speedup at equal error.", "",
+            "The six-qubit case uses eight independent seeds per sample count; other rows use one. Repeated timing processes with the same seed are deduplicated for accuracy. RMSE combines real and imaginary errors. Predicted RMS error combines their standard errors. Large product-state cases use analytic expectations and are simpler workloads than the entangled exact-density cases.", "",
+            "| Threads | Case | Trajectories | Independent seeds | Ensemble ms | Observed RMSE | Predicted RMS error |",
+            "| --- | --- | ---: | ---: | ---: | ---: | ---: |"]
+        for row in trajectory:
+            timing = lookup.get((row["threads"], row["id"], f"trajectory_{row['trajectories']}"))
+            if timing is None or timing["runs"] != metadata["runs"]:
+                raise ValueError("Missing trajectory timing")
+            assert math.isfinite(row["rmse"])
+            lines.append(f"| {row['threads']} | {row['id']} | {row['trajectories']} | {row['seeds']} | {timing['median_ns']/1e6:.4f} | {row['rmse']:.4e} | {row['predicted_rms_error']:.4e} |")
+        lines += ["", "![Trajectory sampling error versus time](trajectory-error-time.svg)", "",
+            "## Trajectory memory", "",
+            "Twenty trajectory probes and three exact-density probes run in isolation. Heap peaks describe the execution phase beyond live inputs/prepared channels; exact density storage is already live when its execution begins. RSS includes inputs, startup and allocator retention. Diagnostic instrumented times are excluded from timing tables. Qubits 4/8 use entangled fixtures; 10/12/16 use product fixtures. Native density execution is serial.", "",
+            "| Backend | Qubits | Trajectories | Threads | Execution additional heap MiB | Peak RSS MiB |",
+            "| --- | ---: | ---: | ---: | ---: | ---: |"]
+        for row in memory_rows:
+            lines.append(f"| {row['backend']} | {row['qubits']} | {row['trajectories']} | {row['threads']} | {row['execution_peak_bytes']/2**20:.4f} | {row['peak_rss_bytes']/2**20:.3f} |")
+        lines += ["", "![Trajectory state memory and sample count](trajectory-memory.svg)", ""]
+
     memory = evolution_memory_rows(directory)
     if memory:
         (directory / "evolution-memory.json").write_text(

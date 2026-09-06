@@ -321,3 +321,5 @@ pub fn cases() -> Result<Vec<Case>> {
 }
 
 pub mod tensor_memory;
+
+pub mod trajectories;

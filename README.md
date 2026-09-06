@@ -11,7 +11,7 @@ A Rust port of [Yao.jl](https://github.com/QuantumBFS/Yao.jl) focused on quantum
 - **Gate enum** with named qubit gates (X, Y, Z, H, S, T, SWAP, Rx, Ry, Rz) and custom qudit gates
 - **Qudit support** with per-site dimensions for tensor-network export; state simulation is qubit-only
 - **Circuit validation** with controlled gates (qubit-only controls)
-- **Qubit simulation** via `ArrayReg`, plus density-matrix simulation of noise channels
+- **Qubit simulation** via `ArrayReg`, plus exact density-matrix noise and [seeded trajectories](docs/src/trajectories.md) with uncertainty
 - **Differentiable circuits** with expectation gradients, parameter/input-state VJPs and JVPs, shared physical parameters, and tenferro custom losses
 - **Tensor network export** via [omeco](https://crates.io/crates/omeco) for contraction order optimization
 - **Diagonal gate optimization** in tensor networks (shared legs vs input/output legs)

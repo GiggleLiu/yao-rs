@@ -15,7 +15,7 @@ which differentiation and noise workflows are implemented.
 | Tensor-network export | YaoToEinsum | Pure states, overlaps, expectations and density matrices |
 | Diagonal tensor optimization | Yes | Yes |
 | Contraction-order optimization | OMEinsumContractionOrders; slicing in current source | omeco planning/slicing, deterministic slice reduction and byte estimates; reusable tenferro plans and multi-term expectations |
-| Noise channels | Density-matrix channel execution | Kraus channels and density matrices; automatic noisy CLI simulation |
+| Noise channels | Density-matrix channel execution | Exact density matrices and seeded Kraus trajectories with streaming uncertainty; noisy CLI simulation |
 | Measurement / sampling | Register operations and in-circuit measurement blocks | Register operations and CLI sampling |
 | Circuit visualization | YaoPlots | Built-in SVG rendering |
 | Hamiltonian evolution | TimeEvolution and Krylov exponential action | Pauli rotations, Ising/XYZ models, first/second order product formulas with shared physical parameters; Krylov action planned |

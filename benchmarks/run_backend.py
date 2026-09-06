@@ -54,6 +54,17 @@ def collect_criterion():
     return records
 
 
+def measure_trajectory_memory(output, env):
+    timer = ["/usr/bin/time", "-l" if sys.platform == "darwin" else "-v"]
+    for n in [4, 8, 10, 12, 16]:
+        workloads = [("trajectory", count, threads) for count in [64, 256] for threads in [1, 4]]
+        if n <= 10:
+            workloads.append(("density", 0, 1))
+        for backend, count, threads in workloads:
+            run(timer + [str(TARGET / "release/memory"), "trajectories", backend, str(n), str(count), str(threads)],
+                env, output / f"memory-trajectory-{backend}-{n}-{count}-{threads}.log")
+
+
 def measure_tensor_memory(output, env):
     workloads = [("chain", 32, ["unsliced", "fixed_output", "auto"]),
                  ("chain", 128, ["unsliced", "fixed_output"]),
@@ -182,7 +193,7 @@ def main():
     p.add_argument("--max-qubits", type=int, default=24)
     p.add_argument("--julia", default="julia")
     p.add_argument(
-        "--suite", choices=["circuits", "evolution", "circuit-ad", "tensor-memory"], default="circuits"
+        "--suite", choices=["circuits", "evolution", "circuit-ad", "tensor-memory", "trajectories"], default="circuits"
     )
     a = p.parse_args()
     if min(a.threads) < 1 or a.runs < 1 or not 4 <= a.max_qubits <= 24:
@@ -222,6 +233,8 @@ def main():
         run([str(TARGET / "release/ad_cases"), str(cases)], env)
     elif a.suite == "tensor-memory":
         run([str(TARGET / "release/memory_cases"), str(cases)], env)
+    elif a.suite == "trajectories":
+        run([str(TARGET / "release/trajectory_cases"), str(cases)], env)
     run(
         ["cargo", "bench", "--locked", "--manifest-path", str(MANIFEST), "--no-run"],
         env,
@@ -302,6 +315,7 @@ def main():
             prefix = f"{threads}t-run{index + 1}"
             print(prefix, flush=True)
             env["YAO_BENCH_PLAN_LOG"] = str(output / (prefix + "-plans.jsonl"))
+            env["YAO_BENCH_STATS_LOG"] = str(output / (prefix + "-trajectory-stats.jsonl"))
             # Criterion's output directory is shared; remove only previous benchmark results.
             shutil.rmtree(TARGET / "criterion", ignore_errors=True)
             run(
@@ -332,28 +346,31 @@ def main():
                 env,
                 output / (prefix + "-julia.log"),
             )
-    for n in [8, 12, 16]:
+    if a.suite != "trajectories":
+        for n in [8, 12, 16]:
+            for depth in [10, 100]:
+                prefix = f"memory-{n}-{depth}"
+                time_args = ["/usr/bin/time", "-l" if sys.platform == "darwin" else "-v"]
+                run(
+                    time_args + [str(TARGET / "release/memory"), str(n), str(depth)],
+                    env,
+                    output / (prefix + ".log"),
+                )
         for depth in [10, 100]:
-            prefix = f"memory-{n}-{depth}"
             time_args = ["/usr/bin/time", "-l" if sys.platform == "darwin" else "-v"]
             run(
-                time_args + [str(TARGET / "release/memory"), str(n), str(depth)],
+                time_args + [str(TARGET / "release/memory"), "16", str(depth), "nonlinear"],
                 env,
-                output / (prefix + ".log"),
+                output / f"memory-nonlinear-16-{depth}.log",
             )
-    for depth in [10, 100]:
-        time_args = ["/usr/bin/time", "-l" if sys.platform == "darwin" else "-v"]
-        run(
-            time_args + [str(TARGET / "release/memory"), "16", str(depth), "nonlinear"],
-            env,
-            output / f"memory-nonlinear-16-{depth}.log",
-        )
     if a.suite == "evolution":
         measure_evolution_memory(output, env)
     elif a.suite == "circuit-ad":
         measure_circuit_ad_memory(output, env)
     elif a.suite == "tensor-memory":
         measure_tensor_memory(output, env)
+    elif a.suite == "trajectories":
+        measure_trajectory_memory(output, env)
     run(
         [sys.executable, "benchmarks/compare.py", "--backend-results", str(output)], env
     )

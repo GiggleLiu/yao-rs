@@ -1,0 +1,68 @@
+{
+  "records": [
+    {
+      "median_ns": 95187.5,
+      "construction_median_ns": 71041.5,
+      "max_error": 3.091508911360544e-16,
+      "id": "noisy_expectation_4",
+      "samples_ns": [
+        182500.0,
+        94583.0,
+        90792.0,
+        87334.0,
+        91834.0,
+        90958.0,
+        107875.0,
+        104083.0,
+        95792.0,
+        110709.0
+      ],
+      "allocations": 1648,
+      "allocated_bytes": 298800
+    },
+    {
+      "median_ns": 5.1432085e6,
+      "construction_median_ns": 113438.0,
+      "max_error": 3.1234658433439916e-16,
+      "id": "noisy_expectation_6",
+      "samples_ns": [
+        5.162167e6,
+        4.946125e6,
+        5.239958e6,
+        5.092708e6,
+        5.12425e6,
+        5.06775e6,
+        5.051042e6,
+        6.998583e6,
+        9.140875e6,
+        7.985666e6
+      ],
+      "allocations": 7544,
+      "allocated_bytes": 5761808
+    },
+    {
+      "median_ns": 2.6691854e7,
+      "construction_median_ns": 166145.5,
+      "max_error": 6.546139416680338e-17,
+      "id": "noisy_expectation_8",
+      "samples_ns": [
+        2.9886583e7,
+        3.1404083e7,
+        2.6325334e7,
+        2.7732458e7,
+        2.6912792e7,
+        2.5173292e7,
+        2.5970125e7,
+        2.6470916e7,
+        2.6222208e7,
+        2.69475e7
+      ],
+      "allocations": 10027,
+      "allocated_bytes": 109483184
+    }
+  ],
+  "julia": "1.12.4",
+  "blas": "LBTConfig([ILP64] libopenblas64_.dylib)",
+  "threads": 4,
+  "yao": "0.9.3"
+}

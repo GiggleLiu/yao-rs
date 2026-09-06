@@ -81,7 +81,8 @@ Simulate a circuit and output the resulting quantum state. Circuits containing
 noise channels automatically use a density matrix. Noiseless circuits use a
 state vector unless a density-matrix input file is provided. All state-processing
 commands accept both representations. Density matrices require 4^n complex
-entries instead of 2^n; use small circuits or the tensor-network path for noise.
+entries instead of 2^n; use [seeded trajectories](trajectories.md) for streaming
+observable estimates or the tensor-network path for noise.
 
 ```bash
 yao simulate circuit.json --output state.bin
@@ -558,3 +559,15 @@ Tensor expectations support sums, including noisy circuits. Use
 active slice; they are not process RSS caps. Sliced plans use `yao-tn-v2` and are
 validated before contraction. See the
 [memory-control guide](https://giggleliu.github.io/yao-rs/tensor-memory.html).
+
+
+### Trajectory expectation mode
+
+```bash
+yao run noisy.json --trajectories 4096 --op 'Z(0)' --seed 19
+```
+
+This returns the sample mean, componentwise standard error and covariance in a
+`mode: trajectories` result. `--trajectories` requires `--op` and conflicts with
+`--shots`; uncertainty is unavailable with one sample. Build the CLI with
+`--features parallel` to use `--threads N`. See [Noisy Trajectories](trajectories.md).

@@ -45,6 +45,7 @@ jobs:
         run: |
           cargo run --example custom_loss --all-features --locked
           cargo run --example sliced_expectation --all-features --locked
+          cargo run --example noisy_trajectories --all-features --locked
 
   tenferro-probe:
     runs-on: ubuntu-latest

@@ -20,6 +20,34 @@ runner = load("run_backend")
 
 
 class BackendReportTests(unittest.TestCase):
+    def test_trajectory_error_and_unique_seeds(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp)/"1t-run1-trajectory-stats.jsonl"
+            row = dict(status="complete", id="case", expected=[0.5,0.], error=[0.1,0.2],
+                       statistics=dict(trajectories=128, threads=1, seed=19, mean=[0.6,0.2], standard_error=[0.1,0.2]))
+            path.write_text(json.dumps(row)+"\n")
+            (Path(temp)/"1t-run2-trajectory-stats.jsonl").write_text(path.read_text())
+            (result,) = compare.trajectory_rows(temp)
+            self.assertEqual(result["seeds"],1)
+            self.assertAlmostEqual(result["rmse"],0.05**0.5)
+            row["error"]=[0.,0.]
+            path.write_text(json.dumps(row)+"\n")
+            with self.assertRaisesRegex(ValueError,"disagrees"):
+                compare.trajectory_rows(temp)
+
+    def test_trajectory_memory_needs_completion_and_separates_heap(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp)/"memory-trajectory-case.log"
+            phase = dict(phase="trajectory_execute", peak_additional_rust_heap_bytes=128, retained_additional_rust_heap_bytes=0)
+            prefix = json.dumps(phase)+"\n4096 maximum resident set size\n"
+            path.write_text(prefix)
+            with self.assertRaisesRegex(ValueError,"Incomplete trajectory memory"):
+                compare.trajectory_memory_rows(temp)
+            path.write_text(prefix+json.dumps(dict(status="complete",backend="trajectory",qubits=4,trajectories=128,threads=1))+"\n")
+            (row,) = compare.trajectory_memory_rows(temp)
+            self.assertEqual(row["execution_peak_bytes"],128)
+            self.assertEqual(row["peak_rss_bytes"],4096)
+
     def test_tensor_memory_requires_completed_probe_and_keeps_estimates_separate(self):
         with tempfile.TemporaryDirectory() as temp:
             path = Path(temp) / "memory-tensor-tenferro-32-auto.log"

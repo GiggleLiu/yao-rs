@@ -56,6 +56,7 @@ pub mod svg;
 #[cfg(feature = "tenferro")]
 pub mod tenferro;
 pub mod tensors;
+pub mod trajectories;
 
 pub use ad::expect_grad;
 pub use apply::{apply, apply_inplace};

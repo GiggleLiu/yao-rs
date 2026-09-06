@@ -152,3 +152,27 @@ pub fn apply(circuit: &Circuit, reg: &ArrayReg) -> ArrayReg {
     apply_inplace(circuit, &mut result);
     result
 }
+
+/// Shared validation for stochastic and reversible unitary execution.
+pub(crate) fn validate_unitary_gate(n: usize, pg: &PositionedGate) -> Result<(), String> {
+    let mut seen = std::collections::HashSet::new();
+    if pg
+        .target_locs
+        .iter()
+        .chain(&pg.control_locs)
+        .any(|&i| i >= n || !seen.insert(i))
+    {
+        return Err("Unitary gate locations must be distinct and in range".into());
+    }
+    Circuit::qubits(n, vec![CircuitElement::Gate(pg.clone())]).map_err(|e| e.to_string())?;
+    let matrix = pg.gate.matrix();
+    if pg.gate.is_diagonal()
+        && matrix
+            .indexed_iter()
+            .any(|((i, j), &z)| i != j && z != Complex64::new(0., 0.))
+    {
+        return Err("Custom diagonal flag disagrees with matrix".into());
+    }
+    crate::noise::validate_kraus(std::slice::from_ref(&matrix))
+        .map_err(|e| format!("Unitary gate validation: {e}"))
+}

@@ -5,21 +5,30 @@ use crate::operator::{Op, OperatorPolynomial, OperatorString, op_matrix};
 use crate::register::{ArrayReg, Register};
 
 pub fn expect_arrayreg(reg: &ArrayReg, op: &OperatorPolynomial) -> Complex64 {
-    op.iter()
-        .map(|(coeff, opstring)| *coeff * expect_opstring_pure(reg, opstring))
-        .sum()
+    let mut scratch = vec![Complex64::new(0., 0.); reg.state_vec().len()];
+    expect_arrayreg_with_scratch(reg, op, &mut scratch)
 }
 
-fn expect_opstring_pure(reg: &ArrayReg, opstring: &OperatorString) -> Complex64 {
-    let mut state = reg.state_vec().to_vec();
-    for &(loc, op) in opstring.ops() {
-        apply_single_op(&mut state, loc, &op);
-    }
-
-    reg.state_vec()
-        .iter()
-        .zip(state.iter())
-        .map(|(lhs, rhs)| lhs.conj() * rhs)
+/// Reuse a caller-owned state buffer for streaming trajectory observables.
+pub(crate) fn expect_arrayreg_with_scratch(
+    reg: &ArrayReg,
+    op: &OperatorPolynomial,
+    scratch: &mut [Complex64],
+) -> Complex64 {
+    op.iter()
+        .map(|(coeff, word)| {
+            scratch.copy_from_slice(reg.state_vec());
+            for &(loc, op) in word.ops() {
+                apply_single_op(scratch, loc, &op);
+            }
+            let value: Complex64 = reg
+                .state_vec()
+                .iter()
+                .zip(scratch.iter())
+                .map(|(lhs, rhs)| lhs.conj() * rhs)
+                .sum();
+            *coeff * value
+        })
         .sum()
 }
 

@@ -1,0 +1,24 @@
+{"allocated_bytes":11720,"diagnostic_ns":10834,"peak_additional_rust_heap_bytes":8200,"phase":"circuit","retained_additional_rust_heap_bytes":5616}
+{"allocated_bytes":16384,"diagnostic_ns":1041,"peak_additional_rust_heap_bytes":16384,"phase":"input","retained_additional_rust_heap_bytes":16384}
+{"allocated_bytes":20280,"diagnostic_ns":13541,"peak_additional_rust_heap_bytes":9800,"phase":"trajectory_prepare","retained_additional_rust_heap_bytes":2400}
+{"allocated_bytes":374620,"diagnostic_ns":8040084,"peak_additional_rust_heap_bytes":167368,"phase":"trajectory_execute","retained_additional_rust_heap_bytes":34328}
+{"statistics":{"covariance":0.0,"mean":[0.6621694353111611,0.0],"sample_variance":[0.4703080079269315,0.0],"seed":19,"standard_error":[0.042861878819815825,0.0],"threads":4,"trajectories":256}}
+{"backend":"trajectory","mean":[0.6621694353111611,0.0],"note":"Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.","qubits":10,"state_bytes":16384,"status":"complete","threads":4,"trajectories":256}
+        0.00 real         0.01 user         0.00 sys
+             3080192  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                 378  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+                 448  involuntary context switches
+           379833785  instructions retired
+            87488210  cycles elapsed
+             1769856  peak memory footprint

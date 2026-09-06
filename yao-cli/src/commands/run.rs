@@ -11,6 +11,8 @@ pub fn run(
     op: Option<&str>,
     locs: Option<&[usize]>,
     seed: Option<u64>,
+    trajectories: Option<usize>,
+    threads: Option<usize>,
     out: &OutputConfig,
 ) -> Result<()> {
     let circuit = super::load_circuit(circuit_path)?;
@@ -19,6 +21,17 @@ pub fn run(
         circuit_path != "-" || input_path != Some("-"),
         "Circuit and input state cannot both read from stdin"
     );
+    if let Some(count) = trajectories {
+        return super::trajectories::run(
+            circuit,
+            input_path,
+            op,
+            count,
+            seed,
+            threads.unwrap_or(1),
+            out,
+        );
+    }
     let mut result = super::simulation_input(&circuit, input_path)?;
 
     super::validate_locs(circuit.nbits, locs)?;
