@@ -208,6 +208,8 @@ Examples:
         /// \[treesa\] Read-write complexity weight (default: 0.0)
         #[arg(long)]
         rw_weight: Option<f64>,
+        #[command(flatten)]
+        slicing: SliceOptions,
     },
 
     /// Export circuit as tensor network (einsum)
@@ -224,7 +226,7 @@ Examples:
         /// Export mode: pure (default), dm, overlap, or state
         #[arg(long, value_enum, default_value_t = TnMode::Pure)]
         mode: TnMode,
-        /// Operator expression for expectation TN (overrides --mode)
+        /// Operator expression for expectation TN (noise or --mode dm uses density mode)
         #[arg(long, allow_hyphen_values = true)]
         op: Option<String>,
     },
@@ -332,4 +334,23 @@ pub enum ContractionBackend {
     #[cfg(feature = "tenferro")]
     #[cfg_attr(not(feature = "omeinsum"), default)]
     Tenferro,
+}
+
+/// Storage limits refer to estimates in bytes, never a hard process RSS cap.
+#[cfg(any(feature = "omeinsum", feature = "tenferro"))]
+#[derive(Debug, Default, clap::Args)]
+pub struct SliceOptions {
+    /// Fix tensor labels (comma separated); output labels are supported too
+    #[arg(long = "slice", value_delimiter = ',', allow_hyphen_values = true)]
+    pub labels: Vec<i32>,
+    /// Estimated total memory limit in bytes; selects slices with omeco TreeSA
+    /// when no fixed or previously serialized slices are supplied
+    #[arg(long)]
+    pub memory_budget: Option<usize>,
+    /// Extra backend workspace reserve in bytes (default: 0; not measured)
+    #[arg(long)]
+    pub workspace_bytes: Option<usize>,
+    /// Maximum number of slice assignments (default: 1000000)
+    #[arg(long)]
+    pub max_slices: Option<usize>,
 }

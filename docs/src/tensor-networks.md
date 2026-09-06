@@ -162,7 +162,8 @@ layout. Tenferro tensor/runtime types stay behind the adapter.
 
 This is CPU tensor contraction. Native state-vector application and existing
 expectation gradients continue to use their specialized kernels. Device-resident
-GPU execution and tenferro circuit differentiation are subsequent milestones.
+GPU execution remains a subsequent milestone. [Circuit differentiation](differentiation.md)
+and [memory controls with multiple observables](tensor-memory.md) are available.
 The [CPU measurements](https://github.com/GiggleLiu/yao-rs/tree/main/benchmarks/results)
 separate conversion/planning costs from prepared execution; tenferro is not
 universally faster and does not replace the default provider in this release.

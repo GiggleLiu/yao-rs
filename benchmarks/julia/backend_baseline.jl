@@ -8,6 +8,8 @@ function build_circuit(spec)
         if el["type"] == "channel"
             noise = if el["channel"] == "Depolarizing"
                 quantum_channel(DepolarizingError(el["n"], el["p"]))
+            elseif el["channel"] == "BitFlip"
+                quantum_channel(BitFlipError(el["p"]))
             elseif el["channel"] == "AmplitudeDamping"
                 quantum_channel(AmplitudeDampingError(el["gamma"], el["excited_population"]))
             else
@@ -68,11 +70,20 @@ function evaluate(mode, initial, circuit, op)
     if mode == "gradient"
         value,grad=value_gradient(initial,circuit,op)
         return ComplexF64[value;grad]
+    elseif mode in ("expectation", "expectation_dm")
+        return ComplexF64[complex_expectation(mode,initial,circuit,op)]
     elseif mode == "custom_gradient"
         return custom_gradient(initial,circuit,op)
     end
     output=apply!(copy(initial),circuit)
     mode == "density" ? vec(permutedims(output.state)) : vec(statevec(output))
+end
+
+# Preserve complex polynomial values. Yao expect intentionally projects to real.
+# DM formula adapts YaoBlocks blocktools.jl expect without safe_real (Apache-2.0).
+function complex_expectation(mode,initial,circuit,op)
+    out=apply!(copy(initial),circuit)
+    mode == "expectation_dm" ? sum(transpose(out.state).*mat(op)) : sandwich(out,op,out)
 end
 
 function custom_target(n)
@@ -114,12 +125,18 @@ function main()
         initial=if case["initial"] == "deterministic"
             values=ComplexF64[cos(0.1*k)+im*sin(0.2*k) for k in 0:((1<<n)-1)]
             ArrayReg(values/norm(values))
-        elseif mode == "density"
+        elseif mode in ("density", "expectation_dm")
             density_matrix(zero_state(n))
         else
             zero_state(n)
         end
-        op=mode == "custom_gradient" ? custom_target(n) : put(n,n=>Z)
+        op=if haskey(case,"operator")
+            polynomial=case["operator"]
+            paulis=Dict("I"=>I2,"X"=>X,"Y"=>Y,"Z"=>Z)
+            sum(complex(coefficient...)*chain(n,(put(n,n-site=>paulis[name]) for (site,name) in word["ops"])...) for (coefficient,word) in zip(polynomial["coeffs"],polynomial["opstrings"]))
+        else
+            mode == "custom_gradient" ? custom_target(n) : put(n,n=>Z)
+        end
         # Full state/matrix/gradient comparison outside measured closures.
         got=evaluate(mode,initial,circuit,op)
         if mode == "gradient"
@@ -134,6 +151,8 @@ function main()
         # Rust expect_grad includes one forward value calculation and one backward sweep.
         trial=if mode == "gradient"
             @benchmark value_gradient($initial,$circuit,$op) samples=10 evals=1 seconds=0.5
+        elseif mode in ("expectation", "expectation_dm")
+            @benchmark complex_expectation($mode,$initial,$circuit,$op) samples=10 evals=1 seconds=0.5
         elseif mode == "custom_gradient"
             @benchmark custom_gradient($initial,$circuit,$op) samples=10 evals=1 seconds=0.5
         else

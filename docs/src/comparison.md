@@ -14,7 +14,7 @@ which differentiation and noise workflows are implemented.
 | Automatic differentiation | Parameter/state gradients and ChainRules integration | Unitary parameter/input-state VJPs and JVPs; shared physical bindings; custom losses via tenferro |
 | Tensor-network export | YaoToEinsum | Pure states, overlaps, expectations and density matrices |
 | Diagonal tensor optimization | Yes | Yes |
-| Contraction-order optimization | OMEinsumContractionOrders; slicing in current source | omeco planning, omeinsum and tenferro contraction; reusable tenferro plans; slicing not yet exposed |
+| Contraction-order optimization | OMEinsumContractionOrders; slicing in current source | omeco planning/slicing, deterministic slice reduction and byte estimates; reusable tenferro plans and multi-term expectations |
 | Noise channels | Density-matrix channel execution | Kraus channels and density matrices; automatic noisy CLI simulation |
 | Measurement / sampling | Register operations and in-circuit measurement blocks | Register operations and CLI sampling |
 | Circuit visualization | YaoPlots | Built-in SVG rendering |

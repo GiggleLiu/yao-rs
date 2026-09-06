@@ -20,6 +20,22 @@ runner = load("run_backend")
 
 
 class BackendReportTests(unittest.TestCase):
+    def test_tensor_memory_requires_completed_probe_and_keeps_estimates_separate(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "memory-tensor-tenferro-32-auto.log"
+            rows = [dict(dimension=32, mode="auto", backend="tenferro", labels=[0], estimate=dict(estimated_total_bytes=1000)),
+                    dict(phase="matrix_inputs", retained_additional_rust_heap_bytes=500),
+                    dict(phase="slice_execution", peak_additional_rust_heap_bytes=300)]
+            text = "\n".join(json.dumps(r) for r in rows) + "\n4096 maximum resident set size\n"
+            path.write_text(text)
+            with self.assertRaisesRegex(ValueError, "Incomplete tensor memory probe"):
+                compare.tensor_memory_rows(temp)
+            path.write_text(text + '{"status":"complete"}\n')
+            (row,) = compare.tensor_memory_rows(temp)
+            self.assertEqual(row["estimate"]["estimated_total_bytes"], 1000)
+            self.assertEqual(row["peak_rss_bytes"], 4096)
+            self.assertEqual(row["execution_peak_bytes"], 300)
+
     def test_memory_termination_is_not_a_completed_or_timed_result(self):
         import signal
 

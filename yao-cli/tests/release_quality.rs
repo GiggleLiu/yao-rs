@@ -142,9 +142,9 @@ fn invalid_locations_and_operators_are_errors() {
         "out of range",
     );
     failure(
-        &["toeinsum", "-", "--op", "Z(0) + Z(1)"],
+        &["toeinsum", "-", "--op", "Z(0) + Z(2)"],
         &input,
-        "single operator term",
+        "out of range",
     );
 }
 

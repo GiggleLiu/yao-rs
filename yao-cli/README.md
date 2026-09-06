@@ -35,3 +35,11 @@ reproduces sampling within the same binary version.
 
 See the [user guide](https://giggleliu.github.io/yao-rs/cli.html).
 Licensed under MIT.
+
+
+Tensor expectations support sums, including noisy circuits. Use
+`yao optimize tn.json --memory-budget 67108864` for automatic slicing, or
+`--slice=3,-3` for fixed tensor labels. Budgets are estimates in bytes, with one
+active slice; they are not process RSS caps. Sliced plans use `yao-tn-v2` and are
+validated before contraction. See the
+[memory-control guide](https://giggleliu.github.io/yao-rs/tensor-memory.html).

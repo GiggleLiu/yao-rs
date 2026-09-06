@@ -115,6 +115,7 @@ fn main() -> anyhow::Result<()> {
             tc_weight,
             sc_weight,
             rw_weight,
+            slicing,
         } => commands::optimize::optimize_cmd(
             &input,
             &method,
@@ -127,6 +128,7 @@ fn main() -> anyhow::Result<()> {
             tc_weight,
             sc_weight,
             rw_weight,
+            &slicing,
             &out,
         ),
         Commands::Toeinsum { circuit, mode, op } => {

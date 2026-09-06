@@ -22,6 +22,18 @@ fn main() -> Result<()> {
                 dm.apply(&circuit);
                 dm.state
             }
+            "expectation" => vec![yao_rs::expect::expect_arrayreg(
+                &apply(&circuit, &state),
+                case.operator.as_ref().ok_or("missing observable")?,
+            )],
+            "expectation_dm" => {
+                let mut dm = DensityMatrix::from_reg(&state);
+                dm.apply(&circuit);
+                vec![yao_rs::expect::expect_dm(
+                    &dm,
+                    case.operator.as_ref().ok_or("missing observable")?,
+                )]
+            }
             "gradient" => {
                 let op = OperatorPolynomial::single(0, Op::Z, 1.0.into());
                 let (value, grad) = expect_grad(&op, &circuit, &state);

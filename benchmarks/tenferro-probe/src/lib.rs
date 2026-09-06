@@ -295,6 +295,8 @@ mod tests {
 /// Shared workload identity; the serialized circuit is also consumed by Julia.
 #[derive(serde::Deserialize)]
 pub struct Case {
+    #[serde(default)]
+    pub operator: Option<yao_rs::OperatorPolynomial>,
     pub id: String,
     pub mode: String,
     pub tensor: bool,
@@ -317,3 +319,5 @@ pub fn cases() -> Result<Vec<Case>> {
     let path = std::env::var("YAO_BENCH_CASES")?;
     Ok(serde_json::from_str(&std::fs::read_to_string(path)?)?)
 }
+
+pub mod tensor_memory;

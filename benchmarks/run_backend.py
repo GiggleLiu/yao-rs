@@ -54,6 +54,22 @@ def collect_criterion():
     return records
 
 
+def measure_tensor_memory(output, env):
+    workloads = [("chain", 32, ["unsliced", "fixed_output", "auto"]),
+                 ("chain", 128, ["unsliced", "fixed_output"]),
+                 ("chain", 256, ["unsliced", "fixed_output"]),
+                 ("outer", 32, ["unsliced", "fixed_output", "greedy"]),
+                 ("outer", 64, ["unsliced", "fixed_output", "greedy"])]
+    for kind, n, modes in workloads:
+        for mode in modes:
+            for backend in ["tenferro", "omeinsum"]:
+                run(
+                    ["/usr/bin/time", "-l" if sys.platform == "darwin" else "-v",
+                     str(TARGET / "release/memory"), "tensor-memory", backend, str(n), mode, kind],
+                    env, output / f"memory-tensor-{backend}-{kind}-{n}-{mode}.log",
+                )
+
+
 def measure_evolution_memory(output, env):
     """Separate processes: model/circuit construction and native execution heap/RSS."""
     for model in ["ising", "heisenberg"]:
@@ -166,7 +182,7 @@ def main():
     p.add_argument("--max-qubits", type=int, default=24)
     p.add_argument("--julia", default="julia")
     p.add_argument(
-        "--suite", choices=["circuits", "evolution", "circuit-ad"], default="circuits"
+        "--suite", choices=["circuits", "evolution", "circuit-ad", "tensor-memory"], default="circuits"
     )
     a = p.parse_args()
     if min(a.threads) < 1 or a.runs < 1 or not 4 <= a.max_qubits <= 24:
@@ -188,6 +204,7 @@ def main():
             env,
         )
     env["YAO_BENCH_CASES"] = str(cases)
+    env["YAO_BENCH_SUITE"] = a.suite
     build = [
         "cargo",
         "build",
@@ -203,6 +220,8 @@ def main():
         run([str(TARGET / "release/evolution_cases"), str(cases)], env)
     elif a.suite == "circuit-ad":
         run([str(TARGET / "release/ad_cases"), str(cases)], env)
+    elif a.suite == "tensor-memory":
+        run([str(TARGET / "release/memory_cases"), str(cases)], env)
     run(
         ["cargo", "bench", "--locked", "--manifest-path", str(MANIFEST), "--no-run"],
         env,
@@ -231,6 +250,7 @@ def main():
         MANIFEST,
         MANIFEST.with_name("Cargo.lock"),
         ROOT / "Cargo.lock",
+        ROOT / "Cargo.toml",
         ROOT / "benchmarks/julia/backend_baseline.jl",
     ]
     metadata = dict(
@@ -281,6 +301,7 @@ def main():
         for index in range(a.runs):
             prefix = f"{threads}t-run{index + 1}"
             print(prefix, flush=True)
+            env["YAO_BENCH_PLAN_LOG"] = str(output / (prefix + "-plans.jsonl"))
             # Criterion's output directory is shared; remove only previous benchmark results.
             shutil.rmtree(TARGET / "criterion", ignore_errors=True)
             run(
@@ -331,6 +352,8 @@ def main():
         measure_evolution_memory(output, env)
     elif a.suite == "circuit-ad":
         measure_circuit_ad_memory(output, env)
+    elif a.suite == "tensor-memory":
+        measure_tensor_memory(output, env)
     run(
         [sys.executable, "benchmarks/compare.py", "--backend-results", str(output)], env
     )

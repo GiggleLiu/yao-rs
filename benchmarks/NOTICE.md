@@ -5,7 +5,10 @@ The `value_gradient` helper in `julia/backend_baseline.jl` adapts the
 commit `31c7c1333b14b1e89123c511eff5742e7ac24edd`, adding an inner product
 to return the value from the same forward state. The `custom_gradient` helper
 uses the same upstream `apply_back` API with a squared-distance seed and returns
-both state and parameter cotangents. Upstream license:
+both state and parameter cotangents. The density-matrix branch of
+`complex_expectation` adapts `expect` in YaoBlocks `src/blocktools.jl` at the
+same commit, retaining the complex trace instead of applying `safe_real`.
+The pure-state branch calls upstream `sandwich`. Upstream license:
 
 ```text
 Copyright (c) 2019 QuantumBFS

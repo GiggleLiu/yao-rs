@@ -1,9 +1,11 @@
+use crate::cli::SliceOptions;
 use crate::output::OutputConfig;
-use crate::tn_dto::TensorNetworkDto;
+use crate::tn_dto::{SlicePlanDto, TensorNetworkDto};
 use anyhow::{Result, bail};
 use omeco::json::NestedEinsumTree;
 use omeco::{GreedyMethod, TreeSA};
 use yao_rs::contraction_plan::optimize_code;
+use yao_rs::slicing::{SliceBudget, SlicedPlan};
 
 #[allow(clippy::too_many_arguments)]
 pub fn optimize_cmd(
@@ -18,6 +20,7 @@ pub fn optimize_cmd(
     tc_weight: Option<f64>,
     sc_weight: Option<f64>,
     rw_weight: Option<f64>,
+    slicing: &SliceOptions,
     out: &OutputConfig,
 ) -> Result<()> {
     let json = super::load_stdin_or_file(input_path)?;
@@ -43,11 +46,65 @@ pub fn optimize_cmd(
         sc_weight,
         rw_weight,
     )?;
-    dto.contraction_order = Some(NestedEinsumTree::from(&tree));
+    let requested = !slicing.labels.is_empty()
+        || slicing.memory_budget.is_some()
+        || slicing.workspace_bytes.is_some()
+        || slicing.max_slices.is_some()
+        || dto.slice_plan.is_some();
+    let estimate = if requested {
+        let previous = dto.slice_plan.as_ref();
+        let mut budget = previous.map_or_else(SliceBudget::default, |p| p.budget);
+        if let Some(value) = slicing.memory_budget {
+            budget.max_bytes = Some(value);
+        }
+        if let Some(value) = slicing.workspace_bytes {
+            budget.workspace_bytes = value;
+        }
+        if let Some(value) = slicing.max_slices {
+            budget.max_slices = value;
+        }
+        let labels = if slicing.labels.is_empty() {
+            previous.map_or(&[][..], |p| p.labels.as_slice())
+        } else {
+            &slicing.labels
+        };
+        let plan = if labels.is_empty() && budget.max_bytes.is_some() {
+            SlicedPlan::auto(
+                &tn.code,
+                &tn.size_dict,
+                &tree,
+                budget,
+                &omeco::TreeSASlicer::fast(),
+            )
+        } else {
+            SlicedPlan::new(&tn.code, &tn.size_dict, &tree, labels, budget)
+        }
+        .map_err(anyhow::Error::msg)?;
+        dto.format = "yao-tn-v2".into();
+        dto.contraction_order = Some(NestedEinsumTree::from(plan.tree()));
+        dto.slice_plan = Some(SlicePlanDto {
+            labels: plan.slicing().to_vec(),
+            budget,
+            estimate: plan.estimate(),
+        });
+        let e = plan.estimate();
+        format!(
+            "  Slices: {} (one active at a time)\n  Estimated bytes: {} (inputs {}, output {}, worker {}, workspace reserve {})\n  Estimate is not a process RSS guarantee.\n",
+            e.slices,
+            e.estimated_total_bytes,
+            e.input_bytes,
+            e.output_bytes,
+            e.worker_buffer_bytes,
+            e.workspace_reserved_bytes
+        )
+    } else {
+        dto.contraction_order = Some(NestedEinsumTree::from(&tree));
+        String::new()
+    };
 
     let json_value = serde_json::to_value(&dto)?;
     let human = format!(
-        "Optimized (method={method}):\n  Tensors: {}\n  Labels: {}\n",
+        "Optimized (method={method}):\n  Tensors: {}\n  Labels: {}\n{estimate}",
         dto.tensors.len(),
         dto.size_dict.len(),
     );
@@ -229,6 +286,7 @@ mod tests {
             None,
             None,
             None,
+            &SliceOptions::default(),
             &out,
         )
         .unwrap();

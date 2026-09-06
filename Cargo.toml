@@ -79,3 +79,7 @@ required-features = ["optimizer-example"]
 
 [package.metadata.docs.rs]
 all-features = true
+
+[[example]]
+name = "sliced_expectation"
+required-features = ["tenferro"]

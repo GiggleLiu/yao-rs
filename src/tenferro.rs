@@ -303,6 +303,37 @@ impl<'a> InputStorage<'a> {
     }
 }
 
+/// Reusable CPU program plus validated deterministic slice reduction.
+/// No input values or partial slice results are retained between executions.
+pub struct PreparedSlicedContraction<L: Label> {
+    plan: crate::slicing::SlicedPlan<L>,
+    contraction: PreparedContraction,
+}
+
+impl CpuContractor {
+    /// Compile one slice shape once, preserving the plan's contraction tree.
+    pub fn prepare_sliced<L: Label>(
+        &self,
+        plan: &crate::slicing::SlicedPlan<L>,
+    ) -> Result<PreparedSlicedContraction<L>, String> {
+        Ok(PreparedSlicedContraction {
+            contraction: self.prepare(plan.code(), plan.slice_sizes(), Some(plan.tree()))?,
+            plan: plan.clone(),
+        })
+    }
+
+    /// Execute with at most one active slice, then reduce in canonical order.
+    pub fn execute_sliced<L: Label>(
+        &self,
+        prepared: &PreparedSlicedContraction<L>,
+        tensors: &[ArrayD<Complex64>],
+    ) -> Result<ArrayD<Complex64>, String> {
+        prepared.plan.execute_with(tensors, |inputs| {
+            self.execute(&prepared.contraction, inputs)
+        })
+    }
+}
+
 #[cfg(test)]
 #[path = "unit_tests/tenferro.rs"]
 mod tests;

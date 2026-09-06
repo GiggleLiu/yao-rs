@@ -142,3 +142,47 @@ The committed [circuit AD M4 report](results/mac-circuit-ad-cpu-2026-09-07/repor
 contains the six shared gradient cases, three runs at one/four threads, and
 bounded isolated memory probes. See the report for complete versus CPU-limited
 composition runs and the measured overhead of the tenferro circuit operation.
+
+## Polynomial expectations and slicing
+
+```bash
+python3 benchmarks/run_backend.py benchmarks/results/mac-tensor-memory-cpu-2026-09-07 --suite tensor-memory --julia ~/.juliaup/bin/julia
+uv run --with matplotlib benchmarks/plot_slicing.py benchmarks/results/mac-tensor-memory-cpu-2026-09-07
+```
+
+The shared circuit fixtures evaluate five-term complex polynomials at 4/6
+qubits, with and without a bit-flip channel. Native Rust/Yao include state
+copying, circuit execution and the complete expectation. Yao uses `sandwich`
+for pure states and its density-matrix trace formula without real projection;
+the latter constructs the dense operator inside the timed call, matching its
+existing density expectation algorithm. Rust applies each operator string.
+The difference in algorithms is part of the reported workflow cost.
+
+Tensor exports share the circuit tensors across all terms. Export is timed
+separately. Unsliced and term-sliced contractions use the same omeco greedy
+tree; tenferro compilation and warm execution are separate, while omeinsum
+prepares its executor for each call/slice. Context creation and tree search
+are excluded from those execution rows.
+
+Synthetic dense complex128 matrix chains supply a separate time/memory sweep:
+32/128/256 square matrices with a supplied `((A B) C)` path, compared unsliced
+and with one fixed output index. Automatic omeco TreeSA slicing/replanning is
+qualified only at dimension 32; it can require many more assignments. Each
+process records its actual selected execution tree/slices in `*-plans.jsonl`.
+These matrix rows have no native/Yao quantum-simulation counterpart. Never
+extrapolate their ratios to circuit evolution or infer unmeasured automatic
+planner results at larger sizes.
+
+Isolated process logs separate input heap, planning, compilation, execution
+heap and whole-process peak RSS. Each record also includes the static tensor
+estimate, a zero user workspace reserve, and one active slice. Provider scratch,
+compiled graphs and allocator retention can put RSS above the estimate. The
+report rejects incomplete logs instead of presenting them as completed results.
+
+The initial ordinary-chain qualification reduced estimates with little change
+in RSS at those sizes. The suite therefore retains those cases and also includes
+32/64-dimensional **outer-product stress paths**: first form `A[i,j] B[k,l]`,
+then contract `C[j,k]`, producing an `n^4` intermediate. Fixed output slicing
+keeps that order; a separately named greedy unsliced plan demonstrates that
+better planning can avoid the intermediate entirely. This deliberately poor
+supplied path tests memory controls; it is not presented as an optimized baseline.
