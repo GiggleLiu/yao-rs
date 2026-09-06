@@ -9,7 +9,7 @@ which differentiation and noise workflows are implemented.
 | Circuit description (`put`/`control`) | Yes, including reusable composite blocks | Yes, flat validated circuits |
 | Qudit support | Registers and circuits | Tensor-network export; direct state-vector simulation is qubit-only |
 | State-vector simulation | In-place and batched registers | In-place qubit registers |
-| GPU simulation | CuYao | Planned; no supported GPU backend yet |
+| GPU simulation | CuYao | Optional tenferro CUDA complex128 circuits, first-order AD and tensor contraction; explicit transfers and documented operation limits |
 | Symbolic computation | YaoSym | No |
 | Automatic differentiation | Parameter/state gradients and ChainRules integration | Unitary parameter/input-state VJPs and JVPs; shared physical bindings; custom losses via tenferro |
 | Tensor-network export | YaoToEinsum | Pure states, overlaps, expectations and density matrices |
@@ -32,6 +32,8 @@ may not describe every current-source capability. See Yao's
 including controlled gates. `DifferentiableCircuit` adds general output seeds
 and input-state derivatives; `tenferro-ad` composes custom scalar losses.
 Differentiation through noise channels remains outside the supported domain.
+See [CUDA simulation](./cuda.md) for GPU operation coverage, runtime requirements
+and the trace/diagonal gradient limitation in tenferro 0.4.0.
 
 The optional `tenferro` feature provides a supported CPU tensor contractor and
 CLI backend. The fixture under `benchmarks/tenferro-probe` compares it with the

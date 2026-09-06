@@ -287,7 +287,7 @@ def backend_report(directory):
     values = defaultdict(list)
     errors = {}
     approximation_errors = {}
-    for path in sorted(directory.glob("*t-run*-rust.json")):
+    for path in sorted([*directory.glob("*t-run*-rust.json"), *directory.glob("*t-run*-gpu.json")]):
         threads = int(path.name.split("t-", 1)[0])
         for row in json.loads(path.read_text()):
             values[(threads, row["id"], row["backend"])].append(
@@ -319,10 +319,13 @@ def backend_report(directory):
     expected_threads = metadata.get("threads", sorted({t for (t, _, _) in values}))
     for threads in expected_threads:
         for case in expected_cases:
-            for backend in ("native", "julia"):
+            required = ["native", "julia"]
+            if metadata.get("suite") == "cuda":
+                required += ["cuda_resident", "cuda_transfer_inclusive"]
+            for backend in required:
                 count = len(values.get((threads, case, backend), []))
                 if count != metadata["runs"]:
-                    label = "Julia" if backend == "julia" else "native Rust"
+                    label = {"julia": "Julia", "native": "native Rust"}.get(backend, backend)
                     raise ValueError(
                         f"Missing {label} runs for {case} at {threads} threads: {count}/{metadata['runs']}"
                     )
@@ -345,7 +348,7 @@ def backend_report(directory):
     (directory / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
     lookup = {(r["threads"], r["id"], r["backend"]): r for r in summary}
     lines = [
-        "# CPU backend baseline",
+        "# CUDA and CPU comparison" if metadata.get("suite") == "cuda" else "# CPU backend baseline",
         "",
         "Generated from raw Criterion and BenchmarkTools samples in this directory.",
         "",
@@ -580,8 +583,61 @@ def backend_report(directory):
             quantities += [row["execution_peak_bytes"], row["peak_rss_bytes"]]
             lines.append(f"| {row['backend']} | {row['kind']} | {row['dimension']} | {row['mode']} | {e['slices']} | " + " | ".join(f"{x / 1048576:.3f}" for x in quantities) + " |")
         lines.append("")
+    if metadata.get("suite") == "cuda":
+        lines.extend(cuda_report_sections(directory, summary))
     (directory / "report.md").write_text("\n".join(lines))
     return summary
+
+
+def cuda_report_sections(directory, summary):
+    """Require successful full-output qualification before reporting GPU results."""
+    import math
+    import re
+
+    directory = Path(directory)
+    cases = json.loads((directory / "cases.json").read_text())
+    lookup = {(row["id"], row["backend"]): row for row in summary}
+    memory = []
+    lines = ["", "## CUDA execution and transfers", "",
+        "Synchronized resident execution includes host dispatch, allocation and fresh AD leaves, with inputs already on the device. Transfer-inclusive execution additionally uploads every input and downloads complete outputs. Both reuse prepared structure and constants. Context creation and preparation are excluded. CPU native/Yao rows include state copies. CPU tenferro AD uses the reversible custom primitive; GPU AD uses ordinary tensor composition.", "",
+        "| Case | GPU resident ms | GPU transfer-inclusive ms | Native CPU / GPU resident | GPU max output error |",
+        "| --- | ---: | ---: | ---: | ---: |"]
+    for case in cases:
+        text = (directory / f"memory-{case['id']}.log").read_text()
+        if not re.search(r"Exit status:\s*0\s*$", text):
+            raise ValueError(f"GPU qualification process did not exit successfully: {case['id']}")
+        records = [json.loads(line) for line in text.splitlines() if line.startswith("{")]
+        complete = [row for row in records if row.get("status") == "complete"]
+        if len(complete) != 1 or complete[0]["id"] != case["id"]:
+            raise ValueError(f"Missing complete GPU qualification for {case['id']}")
+        record = complete[0]
+        error = max(record["max_error"], record["transfer_max_error"])
+        if not math.isfinite(error) or error > 1e-9:
+            raise ValueError(f"GPU qualification error for {case['id']}: {error}")
+        phases = {row["phase"]: row["device_process_bytes"] for row in records if "phase" in row}
+        if set(phases) != {"context", "prepared", "first_result", "after_repeats"}:
+            raise ValueError(f"Incomplete GPU memory snapshots for {case['id']}")
+        if any(not math.isfinite(value) or value < 0 for value in phases.values()):
+            raise ValueError("Invalid GPU memory snapshot")
+        memory.append({**record, "snapshots": phases, "peak_rss_bytes": peak_rss_bytes(text)})
+        resident = lookup[(case["id"], "cuda_resident")]["median_ns"]
+        transfer = lookup[(case["id"], "cuda_transfer_inclusive")]["median_ns"]
+        native = lookup[(case["id"], "native")]["median_ns"]
+        if any(not math.isfinite(x) or x <= 0 for x in [resident, transfer, native]):
+            raise ValueError("Invalid CUDA comparison timing")
+        lines.append(f"| {case['id']} | {resident / 1e6:.3f} | {transfer / 1e6:.3f} | {native / resident:.3f} | {error:.2e} |")
+    lines += ["", "A CPU/GPU ratio greater than one means this GPU boundary was faster. These are medians of independent process medians; raw confidence intervals and samples are preserved. Transfer-inclusive figures are distinct from a complete setup-inclusive application run.", "",
+        "## Process-cold setup and memory snapshots", "",
+        "One process per case, with the persistent compiler/driver disk caches left in place. Context, preparation plus input uploads, and first synchronized execution are timed separately. NVIDIA process-memory snapshots include context, workspaces and the allocator pool. They are observed snapshots, not exact live tensor bytes or a continuous peak. Host peak RSS is a separate process metric.", "",
+        "| Case | Context ms | Prepare + upload ms | First resident ms | Context GPU MiB | Prepared GPU MiB | First result GPU MiB | After repeats GPU MiB | Host peak MiB |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |"]
+    for row in memory:
+        times = [row[k] / 1e6 for k in ["context_ns", "preparation_upload_ns", "first_resident_ns"]]
+        sizes = [row["snapshots"][k] / 1048576 for k in ["context", "prepared", "first_result", "after_repeats"]]
+        sizes.append(row["peak_rss_bytes"] / 1048576)
+        lines.append(f"| {row['id']} | " + " | ".join(f"{x:.3f}" for x in times + sizes) + " |")
+    (directory / "cuda-qualification.json").write_text(json.dumps(memory, indent=2) + "\n")
+    return lines
 
 
 if __name__ == "__main__":

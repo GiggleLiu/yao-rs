@@ -36,9 +36,9 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def collect_criterion():
+def collect_criterion(directory=None):
     records = []
-    for path in sorted((TARGET / "criterion").glob("**/new/estimates.json")):
+    for path in sorted((directory or TARGET / "criterion").glob("**/new/estimates.json")):
         folder = path.parent
         if not (folder / "benchmark.json").exists():
             continue

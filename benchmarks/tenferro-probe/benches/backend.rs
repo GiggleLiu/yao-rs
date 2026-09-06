@@ -141,7 +141,10 @@ fn backend(c: &mut Criterion) {
                 ] {
                     // A separate CPU-time-bounded process records the 100-layer
                     // composition limit. Keep it out of repeated timing runs.
-                    if composed && dc.num_parameters() > 30 {
+                    if composed
+                        && (dc.num_parameters() > 30
+                            || std::env::var("YAO_BENCH_SUITE").as_deref() == Ok("cuda"))
+                    {
                         continue;
                     }
                     let ctx = yao_rs::tenferro_ad::eager_cpu_runtime(threads).unwrap();
@@ -229,7 +232,10 @@ fn backend(c: &mut Criterion) {
         large_trajectories(c, threads);
         return;
     }
-    if std::env::var("YAO_BENCH_SUITE").as_deref() == Ok("krylov") {
+    if matches!(
+        std::env::var("YAO_BENCH_SUITE").as_deref(),
+        Ok("krylov" | "cuda")
+    ) {
         return;
     }
     for n in [8, 12, 16] {

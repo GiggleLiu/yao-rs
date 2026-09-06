@@ -9,6 +9,8 @@ use tenferro_tensor::{BackendSessionHost, Tensor};
 
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 pub mod circuit_ad;
+#[cfg(feature = "cuda")]
+pub mod cuda;
 pub mod extension;
 
 /// Materialize logical ndarray axes in Fortran order, including strided arrays.

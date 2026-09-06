@@ -17,13 +17,11 @@
 //! # Ok::<(), String>(())
 //! ```
 
+use crate::contraction_plan::{tensor_shape as shape, tensor_shapes};
 use ndarray::{ArrayD, Dimension, IxDyn, ShapeBuilder};
 use num_complex::Complex64;
 use omeco::{EinCode, GreedyMethod, Label, NestedEinsum};
-use std::{
-    borrow::Cow,
-    collections::{HashMap, HashSet},
-};
+use std::{borrow::Cow, collections::HashMap};
 use tenferro_cpu::CpuBackend;
 use tenferro_einsum::{EinsumOptimize, EinsumSubscripts, TraceContextEinsumExt};
 use tenferro_runtime::{
@@ -98,19 +96,9 @@ impl CpuContractor {
         sizes: &HashMap<L, usize>,
         tree: Option<&NestedEinsum<L>>,
     ) -> Result<PreparedContraction, String> {
-        let labels: HashSet<_> = code.ixs.iter().flatten().collect();
-        let mut outputs = HashSet::new();
-        for label in &code.iy {
-            if !labels.contains(label) || !outputs.insert(label) {
-                return Err(format!("Invalid output label {label:?}"));
-            }
-        }
-        let input_shapes = code
-            .ixs
-            .iter()
-            .map(|xs| shape(xs, sizes))
-            .collect::<Result<Vec<_>, _>>()?;
-        let output_shape = shape(&code.iy, sizes)?;
+        let shapes = tensor_shapes(code, sizes)?;
+        let input_shapes = shapes.inputs;
+        let output_shape = shapes.output;
         if let Some(tree) = tree {
             crate::contraction_plan::validate_tree(tree, code)?;
         }
@@ -222,26 +210,6 @@ impl CpuContractor {
             _ => Err("Backend returned an unexpected output type".into()),
         }
     }
-}
-
-fn shape<L: Label>(labels: &[L], sizes: &HashMap<L, usize>) -> Result<Vec<usize>, String> {
-    let shape = labels
-        .iter()
-        .map(|label| {
-            sizes
-                .get(label)
-                .copied()
-                .filter(|&d| d > 0)
-                .ok_or_else(|| format!("Missing or zero dimension for label {label:?}"))
-        })
-        .collect::<Result<Vec<_>, _>>()?;
-    let bytes = shape
-        .iter()
-        .try_fold(size_of::<Complex64>(), |n, &d| n.checked_mul(d));
-    if bytes.is_none_or(|n| n > isize::MAX as usize) {
-        return Err("Tensor shape exceeds addressable complex128 storage".into());
-    }
-    Ok(shape)
 }
 
 fn trace_tree<L: Label>(

@@ -235,3 +235,43 @@ Generate standalone plots with
 The [recorded M4 report](results/mac-krylov-cpu-2026-09-07/report.md) includes
 all 32 cases in six timing processes and all 24 memory probes, with raw
 convergence diagnostics and standalone error/time and memory figures.
+
+## CUDA and same-host CPU comparison
+
+Enable the optional `cuda` feature and configure the runtime described in
+[the CUDA guide](../docs/src/cuda.md). Measurements use complex128 throughout.
+`cuda_cases` produces shared unitary, custom-loss gradient and exact noisy
+fixtures; the existing native/tenferro/omeinsum CPU and Yao runners consume
+those same circuits. CPU tenferro AD uses the reversible custom operation;
+GPU AD uses ordinary tensor composition. The CPU composition feasibility
+microbenchmark is excluded from this suite.
+
+Create an isolated Yao environment from the pinned source, without changing a
+personal Julia environment:
+
+```bash
+git clone https://github.com/QuantumBFS/Yao.jl.git /tmp/yao-cuda-source
+git -C /tmp/yao-cuda-source checkout --detach 31c7c1333b14b1e89123c511eff5742e7ac24edd
+julia --startup-file=no benchmarks/julia/setup_source.jl /tmp/yao-cuda-source /tmp/yao-cuda-env
+CUDA_VISIBLE_DEVICES=0 python3 benchmarks/run_cuda.py /tmp/yao-cuda-results \
+  --julia-project /tmp/yao-cuda-env --yao-source /tmp/yao-cuda-source
+python3 benchmarks/compare.py --backend-results /tmp/yao-cuda-results
+uv run --with matplotlib --with numpy python benchmarks/plot_cuda.py /tmp/yao-cuda-results
+```
+
+Use `--smoke --runs 1` for three small end-to-end qualification cases. The full
+suite runs three independent processes per backend, with one configured CPU
+thread. Select an idle GPU and keep other work off the measured CPU cores.
+`--target` can reuse an existing build directory; Criterion outputs live in the
+new result directory and raw samples are preserved in JSON. Each invocation
+requires a new result directory. `--julia` accepts an explicit Julia executable.
+
+CUDA resident timings synchronize before and after execution, include host
+scheduling, device allocation and fresh AD leaves, and exclude user transfers.
+Transfer-inclusive timings add uploads of every input and full output downloads;
+both reuse prepared constants. Process-cold probes separate context creation,
+preparation plus upload, and first execution, while retaining compiler/driver
+disk caches. NVIDIA process-memory snapshots include allocator retention and
+workspaces and are not continuous peaks. Host RSS is reported separately.
+Metadata records source/lockfile hashes, hardware, runtime paths and the pinned
+Julia environment. Preserve the runtime package versions alongside the report.
