@@ -61,6 +61,7 @@ def main():
     p.add_argument("--runs", type=int, default=3)
     p.add_argument("--max-qubits", type=int, default=24)
     p.add_argument("--julia", default="julia")
+    p.add_argument("--suite", choices=["circuits", "evolution"], default="circuits")
     a = p.parse_args()
     if min(a.threads) < 1 or a.runs < 1 or not 4 <= a.max_qubits <= 24:
         p.error("positive threads/runs and 4..24 qubits required")
@@ -69,16 +70,17 @@ def main():
     env = os.environ.copy()
     env["CARGO_TARGET_DIR"] = str(TARGET)
     cases = output / "cases.json"
-    run(
-        [
-            sys.executable,
-            "benchmarks/generate_cases.py",
-            str(cases),
-            "--max-qubits",
-            str(a.max_qubits),
-        ],
-        env,
-    )
+    if a.suite == "circuits":
+        run(
+            [
+                sys.executable,
+                "benchmarks/generate_cases.py",
+                str(cases),
+                "--max-qubits",
+                str(a.max_qubits),
+            ],
+            env,
+        )
     env["YAO_BENCH_CASES"] = str(cases)
     build = [
         "cargo",
@@ -91,6 +93,8 @@ def main():
         "--benches",
     ]
     run(build, env, output / "build.log")
+    if a.suite == "evolution":
+        run([str(TARGET / "release/evolution_cases"), str(cases)], env)
     run(
         ["cargo", "bench", "--locked", "--manifest-path", str(MANIFEST), "--no-run"],
         env,
@@ -128,6 +132,7 @@ def main():
         cpu=platform.processor(),
         threads=a.threads,
         runs=a.runs,
+        suite=a.suite,
         cases_sha256=sha(cases),
         sources={str(x.relative_to(ROOT)): sha(x) for x in source_paths},
         git_head=subprocess.check_output(

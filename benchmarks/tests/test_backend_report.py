@@ -46,7 +46,11 @@ class BackendReportTests(unittest.TestCase):
                             dict(
                                 threads=threads,
                                 records=[
-                                    dict(id="gate_8", median_ns=500, max_error=1e-14)
+                                    dict(
+                                        id="gate_8", median_ns=500, max_error=1e-14,
+                                        approximation_error=0.01 * run * threads,
+                                        yao_approximation_error=0.02 * run * threads,
+                                    )
                                 ],
                             )
                         )
@@ -60,6 +64,16 @@ class BackendReportTests(unittest.TestCase):
             self.assertEqual(native, {1: 200, 4: 800})
             self.assertIn("2.50", (path / "report.md").read_text())
             self.assertIn("0.62", (path / "report.md").read_text())
+            errors = {
+                (row["threads"], row["backend"]): row["relative_state_error"]
+                for row in summary
+            }
+            self.assertEqual(errors, {
+                (1, "native"): 0.03, (1, "julia"): 0.06,
+                (4, "native"): 0.12, (4, "julia"): 0.24,
+            })
+            self.assertIn("1.00e-14", (path / "report.md").read_text())
+            self.assertIn("evolution-error-time.svg", (path / "report.md").read_text())
 
     def test_missing_baseline_is_an_error(self):
         with tempfile.TemporaryDirectory() as temp:
