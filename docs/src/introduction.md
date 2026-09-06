@@ -78,3 +78,7 @@ println!("Tensors: {}, Labels: {}", tn.tensors.len(), tn.size_dict.len());
 - [CLI Tool](./cli.md) - Use the `yao` command-line tool
 - [Gates](./gates.md) - All gate variants and their properties
 - [Tensor Networks](./tensor-networks.md) - Understand the einsum export
+
+The complete [Rust API reference](./api/yao_rs/index.html) includes optional
+OpenQASM and tensor-contraction APIs. For training parameterized circuits, see
+[Differentiable Simulation](./differentiation.md).

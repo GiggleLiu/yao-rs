@@ -1,6 +1,7 @@
 # Circuit JSON Conventions
 
-Every CLI example in yao-rs consumes and produces JSON documents. This page
+Circuit inputs and most CLI results are JSON. Simulation state files have a
+JSON header followed by binary amplitudes. This page
 documents the schema, the gate names, the bit ordering, and the result
 formats. If you want to write your own circuit from Python, a notebook, or a
 text editor, this is the only page you need.
@@ -24,7 +25,7 @@ A circuit is a JSON object with two fields:
 - `elements`: an ordered array of circuit elements applied left-to-right.
 
 Each element has a `type` field. For CLI examples, `type` is always
-`"gate"`; the `"annotation"` and `"channel"` variants exist for diagram
+`"gate"`; the `"label"` and `"channel"` variants exist for diagram
 labels and noise channels but are not used in the example catalog.
 
 ## Gate elements
@@ -93,7 +94,7 @@ when porting circuits across frameworks.
 
 ## Result JSON
 
-`yao simulate` produces a state vector; `yao probs` post-processes into:
+`yao simulate` produces a binary pure state or density matrix; `yao probs` post-processes into:
 
 ```json
 {"num_qubits": 2, "locs": null, "probabilities": [0.5, 0.0, 0.0, 0.5]}
@@ -102,13 +103,13 @@ when porting circuits across frameworks.
 `yao run --shots N` produces measurement samples:
 
 ```json
-{"num_qubits": 2, "samples": [0, 3, 0, 3, 3, 0, ...]}
+{"num_qubits": 2, "shots": 4, "locs": null, "counts": {"00": 2, "11": 2}, "outcomes": [[0,0], [1,1], [1,1], [0,0]]}
 ```
 
 `yao run --op "..."` produces an expectation value:
 
 ```json
-{"operator": "Z(0)Z(1)", "value": -1.0}
+{"operator": "Z(0)Z(1)", "expectation_value": {"re": 1.0, "im": 0.0}}
 ```
 
 ## Operator syntax
@@ -116,7 +117,10 @@ when porting circuits across frameworks.
 For `yao run --op` and related commands, the operator string is a product
 of single-qubit Paulis. `Z(0)Z(1)` is \\( Z_0 \otimes Z_1 \\) extended by
 identity on every other qubit. Supported single-qubit symbols are `I`,
-`X`, `Y`, `Z`. Real coefficients can be prepended, e.g. `0.5*Z(0)`.
+`X`, `Y`, `Z`, `P0`, `P1`, `Pu`, and `Pd`. Real coefficients can be prepended,
+e.g. `0.5*Z(0)`, and terms can be added or subtracted. A term must use distinct,
+in-range sites. Tensor-network expectation export currently accepts one term;
+`yao run --op` and `yao expect --op` also accept sums.
 
 ## Where to get JSON
 

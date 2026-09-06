@@ -82,6 +82,9 @@ Examples:
         /// Number of measurement shots
         #[arg(long, default_value = "1024")]
         shots: usize,
+        /// Seed for reproducible measurement (within the same version)
+        #[arg(long)]
+        seed: Option<u64>,
         /// Qubit indices for partial measurement (comma-separated)
         #[arg(long, value_delimiter = ',')]
         locs: Option<Vec<usize>>,
@@ -136,11 +139,14 @@ Examples:
         /// Number of measurement shots (mutually exclusive with --op)
         #[arg(long, conflicts_with = "op")]
         shots: Option<usize>,
+        /// Seed for reproducible measurement (within the same version)
+        #[arg(long, requires = "shots")]
+        seed: Option<u64>,
         /// Operator expression for expectation (mutually exclusive with --shots)
         #[arg(long, conflicts_with = "shots", allow_hyphen_values = true)]
         op: Option<String>,
         /// Qubit indices for partial measurement (comma-separated, used with --shots)
-        #[arg(long, value_delimiter = ',')]
+        #[arg(long, value_delimiter = ',', requires = "shots")]
         locs: Option<Vec<usize>>,
     },
 

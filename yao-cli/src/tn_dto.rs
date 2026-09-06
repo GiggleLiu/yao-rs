@@ -87,6 +87,20 @@ impl TensorNetworkDto {
     /// for bra legs.
     #[cfg(any(feature = "omeinsum", test))]
     pub fn to_tensor_network(&self) -> anyhow::Result<TensorNetworkDM> {
+        anyhow::ensure!(
+            self.format == "yao-tn-v1",
+            "Unknown tensor-network format: {}",
+            self.format
+        );
+        anyhow::ensure!(
+            matches!(self.mode.as_str(), "pure" | "dm" | "state" | "overlap"),
+            "Unknown tensor-network mode: {}",
+            self.mode
+        );
+        anyhow::ensure!(
+            self.eincode.input_indices.len() == self.tensors.len(),
+            "Input index count does not match tensor count"
+        );
         let ixs: Vec<Vec<i32>> = self
             .eincode
             .input_indices
@@ -111,6 +125,43 @@ impl TensorNetworkDto {
             .map(|(label, size)| Ok((label.parse::<i32>()?, *size)))
             .collect::<Result<HashMap<_, _>, std::num::ParseIntError>>()?;
 
+        anyhow::ensure!(
+            size_dict.len() == self.size_dict.len(),
+            "Index labels must not alias the same integer"
+        );
+        for (i, (legs, tensor)) in ixs.iter().zip(&self.tensors).enumerate() {
+            anyhow::ensure!(
+                legs.len() == tensor.shape.len(),
+                "Tensor {i} rank does not match its indices"
+            );
+            for (label, &dim) in legs.iter().zip(&tensor.shape) {
+                anyhow::ensure!(
+                    dim > 0 && size_dict.get(label) == Some(&dim),
+                    "Tensor {i} dimension disagrees with size_dict for label {label}"
+                );
+            }
+        }
+        let inputs: std::collections::HashSet<_> = ixs.iter().flatten().collect();
+        let mut outputs = std::collections::HashSet::new();
+        for label in &iy {
+            anyhow::ensure!(
+                inputs.contains(label),
+                "Output label {label} is absent from inputs"
+            );
+            anyhow::ensure!(outputs.insert(label), "Duplicate output label {label}");
+        }
+        if let Some(tree) = &self.contraction_order {
+            let mut visited = std::collections::HashSet::new();
+            let labels = validate_tree(tree, &ixs, &iy, &mut visited)?;
+            anyhow::ensure!(
+                visited.len() == ixs.len(),
+                "Contraction order must use every input exactly once"
+            );
+            anyhow::ensure!(
+                labels == iy,
+                "Contraction order output does not match network output"
+            );
+        }
         Ok(TensorNetworkDM {
             code: EinCode::new(ixs, iy),
             tensors: reconstruct_tensors(&self.tensors)?,
@@ -124,6 +175,27 @@ fn reconstruct_tensors(tensor_dtos: &[TensorDto]) -> anyhow::Result<Vec<ArrayD<C
     tensor_dtos
         .iter()
         .map(|tensor| {
+            anyhow::ensure!(
+                tensor.data_re.len() == tensor.data_im.len(),
+                "Real and imaginary tensor data lengths differ"
+            );
+            anyhow::ensure!(
+                tensor
+                    .data_re
+                    .iter()
+                    .chain(&tensor.data_im)
+                    .all(|x| x.is_finite()),
+                "Tensor entries must be finite"
+            );
+            let len = tensor
+                .shape
+                .iter()
+                .try_fold(1usize, |size, &dim| size.checked_mul(dim))
+                .ok_or_else(|| anyhow::anyhow!("Tensor shape overflows"))?;
+            anyhow::ensure!(
+                len == tensor.data_re.len(),
+                "Tensor shape does not match data length"
+            );
             let data: Vec<Complex64> = tensor
                 .data_re
                 .iter()
@@ -135,6 +207,69 @@ fn reconstruct_tensors(tensor_dtos: &[TensorDto]) -> anyhow::Result<Vec<ArrayD<C
                 .map_err(|e| anyhow::anyhow!("Failed to reconstruct tensor: {e}"))
         })
         .collect()
+}
+
+#[cfg(any(feature = "omeinsum", test))]
+fn validate_tree(
+    tree: &NestedEinsumTree<i32>,
+    inputs: &[Vec<i32>],
+    network_outputs: &[i32],
+    visited: &mut std::collections::HashSet<usize>,
+) -> anyhow::Result<Vec<i32>> {
+    match tree {
+        NestedEinsumTree::Leaf {
+            isleaf,
+            tensor_index,
+        } => {
+            anyhow::ensure!(*isleaf, "Invalid contraction leaf flag");
+            let labels = inputs.get(*tensor_index).ok_or_else(|| {
+                anyhow::anyhow!("Contraction tensor index {tensor_index} is out of range")
+            })?;
+            anyhow::ensure!(
+                visited.insert(*tensor_index),
+                "Contraction order repeats tensor {tensor_index}"
+            );
+            Ok(labels.clone())
+        }
+        NestedEinsumTree::Node { isleaf, args, eins } => {
+            anyhow::ensure!(!isleaf && !args.is_empty(), "Invalid contraction node");
+            anyhow::ensure!(
+                args.len() == eins.ixs.len(),
+                "Contraction node input count mismatch"
+            );
+            let previously_visited = visited.clone();
+            for (arg, expected) in args.iter().zip(&eins.ixs) {
+                anyhow::ensure!(
+                    validate_tree(arg, inputs, network_outputs, visited)? == *expected,
+                    "Contraction node indices disagree with child output"
+                );
+            }
+            let labels: std::collections::HashSet<_> = eins.ixs.iter().flatten().collect();
+            let mut outputs = std::collections::HashSet::new();
+            for label in &eins.iy {
+                anyhow::ensure!(
+                    labels.contains(label) && outputs.insert(label),
+                    "Invalid contraction output label {label}"
+                );
+            }
+            // An index needed outside this subtree cannot be summed away here.
+            let subtree: std::collections::HashSet<_> =
+                visited.difference(&previously_visited).copied().collect();
+            for label in network_outputs.iter().chain(
+                inputs
+                    .iter()
+                    .enumerate()
+                    .filter(|(i, _)| !subtree.contains(i))
+                    .flat_map(|(_, legs)| legs),
+            ) {
+                anyhow::ensure!(
+                    !labels.contains(label) || outputs.contains(label),
+                    "Contraction order eliminates required label {label}"
+                );
+            }
+            Ok(eins.iy.clone())
+        }
+    }
 }
 
 fn tensors_from_network(tensors: &[ndarray::ArrayD<num_complex::Complex64>]) -> Vec<TensorDto> {

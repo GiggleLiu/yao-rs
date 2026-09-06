@@ -119,6 +119,9 @@ fn parse_betas(s: &str) -> Result<Vec<f64>> {
     let stop: f64 = parts[2]
         .parse()
         .map_err(|_| anyhow::anyhow!("Invalid betas stop"))?;
+    if !start.is_finite() || !step.is_finite() || !stop.is_finite() {
+        bail!("Betas values must be finite");
+    }
     if step <= 0.0 {
         bail!("Betas step must be positive");
     }
@@ -126,7 +129,11 @@ fn parse_betas(s: &str) -> Result<Vec<f64>> {
     let mut v = start;
     while v <= stop {
         betas.push(v);
-        v += step;
+        let next = v + step;
+        if next <= v {
+            bail!("Betas step is too small to advance the schedule");
+        }
+        v = next;
     }
     if betas.is_empty() {
         bail!("Betas '{s}' produced an empty schedule");
@@ -187,6 +194,9 @@ mod tests {
         assert!(parse_betas("1:2").is_err());
         assert!(parse_betas("1:-1:5").is_err());
         assert!(parse_betas("5:1:1").is_err());
+        assert!(parse_betas("0:1:inf").is_err());
+        assert!(parse_betas("NaN:1:5").is_err());
+        assert!(parse_betas("1:1e-300:2").is_err());
     }
 
     #[test]

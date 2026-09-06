@@ -14,6 +14,11 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
+readme = "README.md"
+documentation = "https://docs.rs/yao-rs"
+keywords = ["quantum", "simulation", "tensor-network", "autodiff"]
+categories = ["science", "simulation"]
+exclude = [".claude/", "docs/", "scripts/", "benchmarks/", "CLAUDE.md"]
 description = "Quantum circuit simulation, tensor-network export, and SVG rendering — a Rust port of Yao.jl"
 
 [features]
@@ -57,3 +62,6 @@ harness = false
 
 [[example]]
 name = "circuit_svg"
+
+[package.metadata.docs.rs]
+all-features = true

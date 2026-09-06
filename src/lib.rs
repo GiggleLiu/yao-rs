@@ -1,3 +1,30 @@
+//! Quantum circuits, qubit simulation, automatic differentiation, and tensor networks.
+//!
+//! Qubit 0 is the most significant bit of a computational-basis index.
+//!
+//! ```
+//! use yao_rs::{ArrayReg, Circuit, Gate, apply, control, probs, put};
+//! let circuit = Circuit::qubits(2, vec![
+//!     put(vec![0], Gate::H),
+//!     control(vec![0], vec![1], Gate::X),
+//! ]).unwrap();
+//! let p = probs(&apply(&circuit, &ArrayReg::zero_state(2)), None);
+//! assert!((p[0] - 0.5).abs() < 1e-12);
+//! assert!((p[3] - 0.5).abs() < 1e-12);
+//! ```
+//!
+//! Use [`DensityMatrix`] with [`Register::apply`] for noise channels, and
+//! [`expect_grad`] for gradients of unitary, parameterized circuits.
+//! [`Circuit::parameters`] and [`Circuit::dispatch`] provide parameter access.
+//!
+//! # Features
+//! - `qasm`: OpenQASM 2.0 import and export.
+//! - `omeinsum`: native tensor-network contraction.
+//! - `parallel`: Rayon operations.
+//!
+//! All features are optional. Qudit circuits support tensor-network export;
+//! [`ArrayReg`] and [`DensityMatrix`] simulate qubits only.
+
 pub mod ad;
 pub mod apply;
 pub mod circuit;

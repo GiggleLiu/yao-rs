@@ -2,7 +2,19 @@ use anyhow::{Context, anyhow, bail};
 use num_complex::Complex64;
 use yao_rs::{Op, OperatorPolynomial, OperatorString};
 
-pub fn parse_operator(input: &str) -> anyhow::Result<OperatorPolynomial> {
+pub fn parse_operator_for_qubits(
+    input: &str,
+    nqubits: usize,
+) -> anyhow::Result<OperatorPolynomial> {
+    parse_operator_impl(input, Some(nqubits))
+}
+
+#[cfg(test)]
+fn parse_operator(input: &str) -> anyhow::Result<OperatorPolynomial> {
+    parse_operator_impl(input, None)
+}
+
+fn parse_operator_impl(input: &str, nqubits: Option<usize>) -> anyhow::Result<OperatorPolynomial> {
     let input = input.trim();
     if input.is_empty() {
         bail!("Empty operator expression");
@@ -19,6 +31,13 @@ pub fn parse_operator(input: &str) -> anyhow::Result<OperatorPolynomial> {
 
         let (coeff, ops) =
             parse_term(term).with_context(|| format!("Failed to parse term: '{term}'"))?;
+        if let Some(nqubits) = nqubits {
+            for &(site, _) in &ops {
+                if site >= nqubits {
+                    bail!("Operator site {site} is out of range for {nqubits} qubits");
+                }
+            }
+        }
         coeffs.push(coeff);
         opstrings.push(OperatorString::new(ops));
     }
@@ -84,6 +103,9 @@ fn parse_term(term: &str) -> anyhow::Result<(Complex64, Vec<(usize, Op)>)> {
         (Complex64::new(sign, 0.0), ops_str)
     };
 
+    if !coeff.re.is_finite() {
+        bail!("Operator coefficient must be finite");
+    }
     let ops = parse_op_string(ops_str)
         .with_context(|| format!("Failed to parse operator string: '{ops_str}'"))?;
     if ops.is_empty() {
@@ -103,7 +125,7 @@ fn parse_op_string(input: &str) -> anyhow::Result<Vec<(usize, Op)>> {
         if !after_name.starts_with('(') {
             bail!(
                 "Expected '(' after operator name, got: '{}'",
-                &after_name[..after_name.len().min(10)]
+                after_name.chars().take(10).collect::<String>()
             );
         }
 
@@ -117,6 +139,9 @@ fn parse_op_string(input: &str) -> anyhow::Result<Vec<(usize, Op)>> {
             .parse()
             .with_context(|| format!("Invalid site index: '{site_str}'"))?;
 
+        if ops.iter().any(|(previous, _)| *previous == site) {
+            bail!("Duplicate operator site {site}; each term must use distinct sites");
+        }
         ops.push((site, op));
         rest = after_paren[close + 1..].trim();
     }

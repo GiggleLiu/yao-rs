@@ -38,6 +38,7 @@
 - [Gates](./gates.md)
 - [Circuits](./circuits.md)
 - [Quantum Registers](./states.md)
+- [Differentiable Simulation](./differentiation.md)
 - [Tensor Networks](./tensor-networks.md)
 
 # Reference

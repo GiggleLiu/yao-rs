@@ -51,6 +51,69 @@ pub fn load_stdin_or_file(path: &str) -> anyhow::Result<String> {
     }
 }
 
+/// Validate user-provided locations before entering the infallible library API.
+pub fn validate_locs(nqubits: usize, locs: Option<&[usize]>) -> anyhow::Result<()> {
+    let mut seen = std::collections::HashSet::new();
+    for &loc in locs.unwrap_or_default() {
+        anyhow::ensure!(
+            loc < nqubits,
+            "Measurement location {loc} is out of range for {nqubits} qubits"
+        );
+        anyhow::ensure!(seen.insert(loc), "Duplicate measurement location {loc}");
+    }
+    Ok(())
+}
+
+pub fn simulation_input(
+    circuit: &Circuit,
+    input_path: Option<&str>,
+) -> anyhow::Result<crate::state_io::State> {
+    let n = circuit.nbits;
+    let noisy = circuit
+        .elements
+        .iter()
+        .any(|e| matches!(e, yao_rs::CircuitElement::Channel(_)));
+    crate::state_io::checked_elements(n, noisy)?;
+    if let Some(path) = input_path {
+        let reg = crate::state_io::read_state(path)?;
+        anyhow::ensure!(
+            reg.nqubits() == n,
+            "Input state has {} qubits but circuit has {n}",
+            reg.nqubits()
+        );
+        Ok(reg)
+    } else {
+        Ok(crate::state_io::State::Pure(yao_rs::ArrayReg::zero_state(
+            n,
+        )))
+    }
+}
+
+pub fn sample_state(
+    state: &crate::state_io::State,
+    shots: usize,
+    locs: Option<&[usize]>,
+    seed: Option<u64>,
+) -> anyhow::Result<Vec<Vec<usize>>> {
+    use rand::{
+        SeedableRng,
+        distr::{Distribution, weighted::WeightedIndex},
+        rngs::StdRng,
+    };
+    validate_locs(state.nqubits(), locs)?;
+    let probabilities = state.probs(locs);
+    let distribution = WeightedIndex::new(&probabilities)
+        .context("State has no valid probability distribution")?;
+    let mut rng = seed.map_or_else(|| StdRng::from_rng(&mut rand::rng()), StdRng::seed_from_u64);
+    let n = locs.map_or(state.nqubits(), <[usize]>::len);
+    Ok((0..shots)
+        .map(|_| {
+            let outcome = distribution.sample(&mut rng);
+            (0..n).map(|i| (outcome >> (n - 1 - i)) & 1).collect()
+        })
+        .collect())
+}
+
 pub fn format_measurement(
     outcomes: &[Vec<usize>],
     shots: usize,

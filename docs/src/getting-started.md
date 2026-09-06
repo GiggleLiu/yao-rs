@@ -8,23 +8,23 @@ linked from the sidebar.
 
 ## Install the CLI
 
-Clone the repository and build the CLI:
+Install the published CLI with a current stable Rust toolchain:
 
 ```bash
-git clone https://github.com/QuantumBFS/yao-rs.git
+cargo install yao-cli --locked
+yao --help
+```
+
+To install the development version from source:
+
+```bash
+git clone https://github.com/GiggleLiu/yao-rs.git
 cd yao-rs
-cargo build -p yao-cli --release
+cargo install --path yao-cli --locked
 ```
 
-The built binary is `target/release/yao`. Either add it to your `PATH` or
-run it by full path:
-
-```bash
-./target/release/yao --help
-```
-
-All commands below use the bare `yao` name — replace with the full path if
-your `PATH` does not include it.
+Both commands install `yao` into Cargo's binary directory (normally
+`~/.cargo/bin`), which must be on your `PATH`.
 
 ## Your first circuit: Bell state
 
@@ -33,7 +33,7 @@ Ask the CLI for a built-in Bell circuit, render it to SVG, and simulate:
 ```bash
 yao example bell > bell.json
 yao visualize bell.json --output bell.svg
-yao simulate bell.json | yao probs -
+yao simulate bell.json | yao probs - --json
 ```
 
 The `probs` output is:
@@ -64,22 +64,22 @@ Prints the number of qubits and gate counts in a human-readable form. Add
 yao run bell.json --shots 1024
 ```
 
-Returns an array of measurement outcomes. Each sample is an integer whose
-bit pattern encodes a computational-basis state under the qubit-0-MSB
-convention.
+JSON output contains `counts` keyed by bit strings and `outcomes` as arrays
+of measured bits in qubit order. Add `--json` to force JSON in a terminal.
+Use `--seed 42` to repeat a sample sequence with the same binary version.
 
 ## Expectation values
 
 For any Hermitian Pauli product:
 
 ```bash
-yao run bell.json --op "Z(0)Z(1)"
+yao run bell.json --op "Z(0)Z(1)" --json
 ```
 
 Returns:
 
 ```json
-{"operator": "Z(0)Z(1)", "value": 1.0}
+{"operator": "Z(0)Z(1)", "expectation_value": {"re": 1.0, "im": 0.0}}
 ```
 
 See the [Operator syntax](./conventions.md#operator-syntax) section of the

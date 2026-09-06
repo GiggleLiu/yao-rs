@@ -34,6 +34,20 @@ impl DensityMatrix {
         }
     }
 
+    /// Construct a density matrix from row-major entries.
+    ///
+    /// # Panics
+    /// Panics if the qubit count overflows or the number of entries is not 4^n.
+    /// Entries are not normalized or checked for positivity.
+    pub fn from_vec(nbits: usize, state: Vec<Complex64>) -> Self {
+        let exponent = nbits.checked_mul(2).and_then(|n| u32::try_from(n).ok());
+        let len = exponent
+            .and_then(|n| 1usize.checked_shl(n))
+            .expect("density matrix qubit count overflows");
+        assert_eq!(state.len(), len, "density matrix size mismatch");
+        Self { nbits, state }
+    }
+
     pub fn mixed(weights: &[f64], regs: &[ArrayReg]) -> Self {
         assert!(!regs.is_empty());
         assert_eq!(weights.len(), regs.len());
