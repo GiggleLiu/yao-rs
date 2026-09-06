@@ -49,6 +49,9 @@ impl PauliHamiltonian {
     /// Convert a numeric polynomial; each term coefficient is an independent
     /// physical parameter, reused across every product-formula step.
     pub fn new(nqubits: usize, polynomial: &OperatorPolynomial) -> Result<Self, String> {
+        if polynomial.coeffs().len() != polynomial.opstrings().len() {
+            return Err("Hamiltonian coefficient and Pauli-term counts must match".into());
+        }
         let mut coefficients = Vec::with_capacity(polynomial.len());
         let mut terms = Vec::with_capacity(polynomial.len());
         for (index, (coefficient, word)) in polynomial.iter().enumerate() {
@@ -105,6 +108,19 @@ impl PauliHamiltonian {
                 .collect(),
             self.terms.iter().map(|(word, _)| word.clone()).collect(),
         )
+    }
+
+    /// Apply `exp(-i H time)` with adaptive, matrix-free Hermitian Lanczos.
+    /// Returns a vector with [`crate::evolution::EvolutionInfo`] diagnostics.
+    /// This CPU solver does not construct a circuit or a dense Hamiltonian,
+    /// and does not provide parameter derivatives. See [`crate::evolution`].
+    pub fn evolve_krylov(
+        &self,
+        input: &crate::ArrayReg,
+        time: f64,
+        options: crate::evolution::EvolutionOptions,
+    ) -> Result<crate::evolution::EvolutionResult, crate::evolution::EvolutionError> {
+        crate::evolution::evolve_pauli(self, input, time, options)
     }
 
     /// Build `exp(-i H time)` with a fixed positive number of product steps.

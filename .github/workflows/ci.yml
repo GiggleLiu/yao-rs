@@ -46,6 +46,7 @@ jobs:
           cargo run --example custom_loss --all-features --locked
           cargo run --example sliced_expectation --all-features --locked
           cargo run --example noisy_trajectories --all-features --locked
+          cargo run --example krylov_evolution --all-features --locked
 
   tenferro-probe:
     runs-on: ubuntu-latest
@@ -61,6 +62,10 @@ jobs:
       - run: cargo clippy --manifest-path benchmarks/tenferro-probe/Cargo.toml --all-targets --locked -- -D warnings
       - run: cargo test --manifest-path benchmarks/tenferro-probe/Cargo.toml --locked
       - run: python3 -m unittest discover -s benchmarks/tests
+      - name: Krylov benchmark smoke
+        run: |
+          cargo run --manifest-path benchmarks/tenferro-probe/Cargo.toml --locked --bin krylov_cases -- /tmp/krylov-smoke.json --smoke
+          YAO_BENCH_CASES=/tmp/krylov-smoke.json YAO_BENCH_SUITE=krylov cargo bench --manifest-path benchmarks/tenferro-probe/Cargo.toml --locked --profile test --bench backend -- --test
 
   package:
     runs-on: ubuntu-latest

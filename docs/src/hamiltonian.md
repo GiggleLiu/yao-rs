@@ -100,8 +100,77 @@ angles and unaddressable circuit lengths produce errors. Failed dispatch leaves
 the current circuit and physical vector unchanged.
 
 These Jacobians compose with the existing unitary `expect_grad`; they do not
-implement a second general differentiation engine. A later milestone adds
-custom losses and input-state VJPs through tenferro.
+implement a second general differentiation engine. They also compose with
+the custom-loss and input-state VJPs described in the differentiation guide.
+
+## Matrix-free Krylov evolution
+
+Use `evolve_krylov` to request an accuracy tolerance without choosing a product
+formula or constructing a circuit:
+
+```rust
+use yao_rs::{ArrayReg, evolution::EvolutionOptions};
+use yao_rs::hamiltonian::{ising, Boundary};
+let h = ising(12, -0.7, 0.4, Boundary::Open).unwrap();
+let result = h.evolve_krylov(
+    &ArrayReg::zero_state(12), 0.8,
+    EvolutionOptions { rtol: 1e-9, ..Default::default() },
+).unwrap();
+let state = ArrayReg::from_vec(12, result.state);
+assert_eq!(result.info.time_reached, 0.8);
+println!("{} operator applications; error estimate {}",
+    result.info.matvecs, result.info.estimated_error);
+```
+
+The CPU solver applies Pauli sums directly through bit masks. Each adaptive
+step builds at most `krylov_dim` complex basis vectors and diagonalizes a small
+real tridiagonal matrix with the existing faer dependency. Storage grows as
+`O(krylov_dim * 2^n)`, plus state/work buffers and `O(krylov_dim²)` projected
+workspace. There is no full `2^n`-by-`2^n` Hamiltonian. The basis buffers are
+reused across time steps. Identity phases and negative time are preserved;
+zero time, zero vectors, and stationary vectors retain their input exactly.
+
+The tolerance is `atol + rtol * norm(initial)`. Defaults are `atol=1e-12`,
+`rtol=1e-10`, `krylov_dim=30`, and `max_matvecs=10_000`. Diagnostics give the
+accepted time, completed steps, operator applications, largest basis used,
+accumulated error estimate, and requested tolerance. The estimate adds a
+Lanczos truncation bound to the discarded reorthogonalization corrections.
+It does not fully bound floating-point errors in the callback, inner products,
+or eigensolver; very tight tolerances can fail or reach a roundoff floor.
+
+Work exhaustion returns `EvolutionError` with kind `WorkLimit`, and an
+unattainable step returns `PrecisionLimit`. Its optional `partial` field holds
+the last accepted vector and actual `time_reached`. An unfinished basis counts
+against the work limit but never advances that vector. A successful return
+always reaches the requested time. Resuming a partial result requires the
+remaining time and a separately chosen remaining error budget.
+
+`evolution::exponential_action(&input, time, options, callback)` supports other
+complex, matrix-free Hermitian operators, including non-qubit dimensions.
+The callback receives input/output slices and must overwrite every output with
+`H * input`. It must be a fixed linear Hermitian map; subspace checks detect
+some violations but cannot prove this contract for an arbitrary callback.
+Callback errors and nonfinite outputs are explicit failures. Inputs need not
+have unit norm. This solver is CPU-only and provides no automatic derivatives;
+use fixed-step product formulas for the existing tenferro circuit AD path.
+
+### Community references and algorithm choice
+
+Yao's `TimeEvolution` uses KrylovKit. The Rust solver follows the same broad
+Lanczos projection/restart approach, but uses the computable defect bound in
+[Jawecki, Auzinger and Koch, Theorem 1](https://doi.org/10.1007/s10543-019-00771-6)
+for step selection. With residual factors `beta_j`, its truncation estimate is
+`norm(x) * product(beta_1..beta_m) * abs(dt)^m / m!`. Full reorthogonalization
+controls basis drift; logarithmic evaluation avoids factorial/product overflow.
+
+The source reference was
+[KrylovKit v0.10.2, commit 775546b](https://github.com/Jutho/KrylovKit.jl/tree/775546bccc5053193ce72d66725aaabe93b8d6ca),
+licensed MIT. This is an independent implementation; it does not copy its
+phi-function integrator or claim identical stopping criteria. ORMATEX's inspected
+Rust implementation uses real-valued operators and lacks the required returned
+convergence diagnostics. The inspected scirs2 exponential-action interfaces
+also lack the required complex callback/error-control combination. No new
+runtime dependency was adopted for this solver.
 
 ## CPU comparison
 

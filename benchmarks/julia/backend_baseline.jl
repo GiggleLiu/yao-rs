@@ -113,6 +113,24 @@ function exact_evolution(spec, n, initial, time)
     exp(-im*time*h) * vec(statevec(initial))
 end
 
+function pauli_hamiltonian(spec, n)
+    paulis = Dict("I"=>I2, "X"=>X, "Y"=>Y, "Z"=>Z)
+    sum(real(complex(coefficient...))*chain(n,
+        (put(n,n-site=>paulis[op]) for (site,op) in word["ops"])...)
+        for (coefficient,word) in zip(spec["coeffs"],spec["opstrings"]))
+end
+
+# Adapted from Yao TimeEvolution (Apache-2.0; see benchmarks/NOTICE.md).
+# Same callback and solver options, exposing diagnostics
+# outside timing. The real Pauli coefficients establish Hermiticity by construction.
+function qualified_krylov(initial, h, time, tol)
+    a = Yao.YaoBlocks.BlockMap(ComplexF64, h)
+    value, info = Yao.YaoBlocks.exponentiate(a, -im*time, vec(statevec(initial));
+        tol=tol, krylovdim=min(1000,size(a,1)), ishermitian=true, eager=true)
+    Bool(info.converged) || error("Yao Krylov did not converge: $(info.normres)")
+    value, info
+end
+
 function main()
     cases_path, reference_dir, output_path=ARGS
     threads=parse(Int,get(ENV,"YAO_BENCH_THREADS","1"))
@@ -129,6 +147,12 @@ function main()
             density_matrix(zero_state(n))
         else
             zero_state(n)
+        end
+        if mode == "krylov"
+            evolution = case["krylov"]
+            h = pauli_hamiltonian(evolution["hamiltonian"], n)
+            circuit = time_evolve(h, evolution["time"]; tol=evolution["rtol"], check_hermicity=false)
+            construction = @benchmark pauli_hamiltonian($(evolution["hamiltonian"]),$n) samples=10 evals=1 seconds=0.5
         end
         op=if haskey(case,"operator")
             polynomial=case["operator"]
@@ -150,7 +174,8 @@ function main()
         expected=reinterpret(ComplexF64,bytes)
         length(got)==length(expected) || error("output length mismatch")
         err=maximum(abs,got-expected)
-        isapprox(got,expected;atol=1e-10,rtol=1e-10) || error("$(case["id"]): error=$err")
+        agreement = mode == "krylov" ? 10 * case["krylov"]["rtol"] : 1e-10
+        isapprox(got,expected;atol=agreement,rtol=agreement) || error("$(case["id"]): error=$err")
         # Rust expect_grad includes one forward value calculation and one backward sweep.
         trial=if mode == "gradient"
             @benchmark value_gradient($initial,$circuit,$op) samples=10 evals=1 seconds=0.5
@@ -169,6 +194,23 @@ function main()
             exact=exact_evolution(evolution["hamiltonian"],n,initial,evolution["time"])
             record["approximation_error"] = norm(expected-exact)/norm(exact)
             record["yao_approximation_error"] = norm(got-exact)/norm(exact)
+        end
+        if mode == "krylov"
+            evolution = case["krylov"]
+            checked, info = qualified_krylov(initial,h,evolution["time"],evolution["rtol"])
+            norm(checked-got) < 1e-12 || error("Yao public TimeEvolution disagrees with qualified solver")
+            tight, tight_info = qualified_krylov(initial,h,evolution["time"],1e-13)
+            oracle = n <= 8 ? exact_evolution(evolution["hamiltonian"],n,initial,evolution["time"]) : tight
+            rust_tight = reinterpret(ComplexF64,read(joinpath(reference_dir,case["id"]*".tight.bin")))
+            norm(rust_tight-oracle)/norm(oracle) < 1e-11 || error("tight independent evolution references disagree")
+            norm(tight-oracle)/norm(oracle) < 1e-11 || error("tight Yao disagrees with dense oracle")
+            record["approximation_error"] = norm(expected-oracle)/norm(oracle)
+            record["yao_approximation_error"] = norm(got-oracle)/norm(oracle)
+            max(record["approximation_error"],record["yao_approximation_error"]) <= 10 * evolution["rtol"] || error("requested Krylov accuracy not achieved")
+            record["oracle"] = n <= 8 ? "dense exponential" : "KrylovKit tol=1e-13"
+            record["tight_reference_error"] = norm(rust_tight-oracle)/norm(oracle)
+            record["yao_krylov"] = Dict("numops"=>info.numops,"numiter"=>info.numiter,"normres"=>info.normres,"converged"=>info.converged,
+                "oracle_numops"=>tight_info.numops,"oracle_normres"=>tight_info.normres)
         end
         push!(records,record)
         println(case["id"]," error=",err," median_ns=",median(trial).time)

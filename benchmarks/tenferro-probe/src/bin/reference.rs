@@ -16,6 +16,22 @@ fn main() -> Result<()> {
         let circuit = case.circuit()?;
         let state = case.initial(circuit.nbits);
         let output: Vec<C> = match case.mode.as_str() {
+            "krylov" => {
+                let spec = case.krylov.as_ref().ok_or("missing Krylov specification")?;
+                let h = spec.model(circuit.nbits)?;
+                let tight = h.evolve_krylov(
+                    &state,
+                    spec.time,
+                    yao_rs::evolution::EvolutionOptions {
+                        atol: 0.,
+                        rtol: 1e-13,
+                        krylov_dim: 40,
+                        ..Default::default()
+                    },
+                )?;
+                write_output(&directory, &format!("{}.tight", case.id), &tight.state)?;
+                spec.execute(&h, &state)?.state
+            }
             "state" => apply(&circuit, &state).state,
             "density" => {
                 let mut dm = DensityMatrix::from_reg(&state);
@@ -49,13 +65,18 @@ fn main() -> Result<()> {
             }
             _ => return Err("unknown mode".into()),
         };
-        let mut file = BufWriter::new(File::create(
-            Path::new(&directory).join(format!("{}.bin", case.id)),
-        )?);
-        for x in output {
-            file.write_all(&x.re.to_le_bytes())?;
-            file.write_all(&x.im.to_le_bytes())?;
-        }
+        write_output(&directory, &case.id, &output)?;
+    }
+    Ok(())
+}
+
+fn write_output(directory: &str, id: &str, values: &[C]) -> Result<()> {
+    let mut file = BufWriter::new(File::create(
+        Path::new(directory).join(format!("{id}.bin")),
+    )?);
+    for x in values {
+        file.write_all(&x.re.to_le_bytes())?;
+        file.write_all(&x.im.to_le_bytes())?;
     }
     Ok(())
 }

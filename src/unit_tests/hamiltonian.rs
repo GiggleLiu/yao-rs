@@ -237,6 +237,13 @@ fn shared_time_and_model_coupling_gradients_including_zero() {
 
 #[test]
 fn validation_model_conventions_and_large_words() {
+    for json in [
+        r#"{"coeffs":[[1.0,0.0]],"opstrings":[]}"#,
+        r#"{"coeffs":[],"opstrings":[{"ops":[[0,"X"]]}]}"#,
+    ] {
+        let malformed: OperatorPolynomial = serde_json::from_str(json).unwrap();
+        assert!(PauliHamiltonian::new(1, &malformed).is_err());
+    }
     assert_eq!(
         ising(3, 0.7, -0.2, Boundary::Open)
             .unwrap()

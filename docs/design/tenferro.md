@@ -13,8 +13,8 @@ validation targets the NVIDIA A800 host reachable as `ssh gpu`.
 | 3. Hamiltonian evolution | Pauli rotations, model builders, Trotter/Suzuki, physical parameter bindings and convergence tests | Merged [PR #49](https://github.com/GiggleLiu/yao-rs/pull/49) (`a1f24f3`) |
 | 4. Differentiable circuits | Custom losses/input-state VJP, tenferro integration, shared parameters, numerical and memory tests | Merged [PR #50](https://github.com/GiggleLiu/yao-rs/pull/50) (`bd00084`) |
 | 5. Tensor memory / observables | Polynomial expectations, omeco slicing, estimates, versioned plans and budget tests | Merged [PR #51](https://github.com/GiggleLiu/yao-rs/pull/51) (`53897a4`) |
-| 6. Noisy trajectories | Seeded Kraus sampling, uncertainty, exact-density comparisons and memory scaling | Implemented in [PR #52](https://github.com/GiggleLiu/yao-rs/pull/52); CPU report complete |
-| 7. Matrix-free exponential action | Community implementation qualification, error/convergence diagnostics, Yao comparison | Pending |
+| 6. Noisy trajectories | Seeded Kraus sampling, uncertainty, exact-density comparisons and memory scaling | Merged [PR #52](https://github.com/GiggleLiu/yao-rs/pull/52) (`f09b722`) |
+| 7. Matrix-free exponential action | Community implementation qualification, error/convergence diagnostics, Yao comparison | CPU solver implemented; full benchmark report and final validation in progress |
 | 8. GPU execution | Resident tensor/circuit/AD execution, explicit transfers, correctness and timings via `ssh gpu` | Pending |
 
 Reusable subcircuits, batching, measurement/feedforward, symbolic algebra,
@@ -353,3 +353,38 @@ trajectories on that same product fixture use 0.0313 MiB and 2.48 MiB. These
 memory measurements include neither an accuracy equivalence claim nor a
 claim that heap equals process RSS. Parallel overhead slows the four-qubit
 fixture, while benefiting the larger workloads.
+
+
+## Matrix-free Hermitian evolution
+
+`PauliHamiltonian::evolve_krylov` applies Pauli sums through compiled bit masks.
+`evolution::exponential_action` exposes the same CPU solver to fixed, linear,
+Hermitian complex callbacks. Adaptive Lanczos uses twice-modified Gram–Schmidt,
+pairwise reductions, and the existing faer eigensolver on the small real
+tridiagonal projection. No full Hilbert-space square matrix is allocated.
+The basis cap and total operator-application limit bound storage and work.
+
+The local truncation criterion follows Jawecki, Auzinger and Koch,
+[Theorem 1](https://doi.org/10.1007/s10543-019-00771-6), with an added estimate
+for discarded reorthogonalization corrections. The public diagnostics report
+accepted time, work, steps and accumulated estimate; they do not certify all
+floating-point roundoff. Failed convergence returns the last accepted state
+inside an error, never a successful state at the wrong time. Zero/stationary
+inputs, negative time, unnormalized vectors and identity phases are supported.
+There is no derivative through this adaptive solver; fixed product formulas
+remain available for tenferro circuit differentiation.
+
+Community qualification found that the inspected ORMATEX Rust API uses real
+operators and lacks the required returned convergence failure, while the
+inspected scirs2 interfaces lack the required complex callback/error-control
+combination. The implementation is independently written, with KrylovKit
+[v0.10.2 / 775546b](https://github.com/Jutho/KrylovKit.jl/tree/775546bccc5053193ce72d66725aaabe93b8d6ca)
+as a design reference. It is not a translation of KrylovKit's phi-function
+integrator and adds no runtime dependency. See the Hamiltonian guide for the
+algorithm and callback contract.
+
+The new CPU suite compares native adaptive evolution with Yao TimeEvolution,
+reports achieved error independently of nominal tolerance, and retains bounded
+four-qubit product-formula tensor comparisons through tenferro and omeinsum.
+Repeated measurements and their final report are pending at this implementation
+checkpoint; qualification runs are not presented as performance results.

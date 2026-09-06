@@ -296,6 +296,8 @@ mod tests {
 #[derive(serde::Deserialize)]
 pub struct Case {
     #[serde(default)]
+    pub krylov: Option<krylov::Specification>,
+    #[serde(default)]
     pub operator: Option<yao_rs::OperatorPolynomial>,
     pub id: String,
     pub mode: String,
@@ -322,4 +324,5 @@ pub fn cases() -> Result<Vec<Case>> {
 
 pub mod tensor_memory;
 
+pub mod krylov;
 pub mod trajectories;

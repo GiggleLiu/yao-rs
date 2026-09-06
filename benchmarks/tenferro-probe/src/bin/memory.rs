@@ -50,6 +50,9 @@ fn phase<T>(name: &str, f: impl FnOnce() -> T) -> T {
     out
 }
 fn main() -> Result<()> {
+    if std::env::args().nth(1).as_deref() == Some("krylov") {
+        return krylov_memory();
+    }
     if std::env::args().nth(1).as_deref() == Some("trajectories") {
         return trajectory_memory();
     }
@@ -105,6 +108,45 @@ fn main() -> Result<()> {
     println!(
         "{}",
         json!({"qubits":n,"depth":depth,"operation":if nonlinear { "scaled_sin" } else { "conj" },"state_bytes":(1<<n)*16,"note":"Rust allocator instrumentation excludes provider allocations; timings include instrumentation. Not RSS."})
+    );
+    Ok(())
+}
+
+fn krylov_memory() -> Result<()> {
+    use yao_rs::evolution::EvolutionOptions;
+    let model = std::env::args().nth(2).ok_or("expected model")?;
+    let n: usize = std::env::args().nth(3).ok_or("expected qubits")?.parse()?;
+    let k: usize = std::env::args()
+        .nth(4)
+        .ok_or("expected Krylov dimension")?
+        .parse()?;
+    if ![4, 8, 12, 16].contains(&n) || ![8, 20, 40].contains(&k) {
+        return Err("out-of-bounds Krylov memory fixture".into());
+    }
+    let h = phase("model", || yao_tenferro_probe::krylov::model(&model, n))?;
+    let input = phase("state_input", || yao_rs::ArrayReg::zero_state(n));
+    let time = if n == 4 { 0.8 } else { 2.1 };
+    let result = phase("krylov_execute", || {
+        h.evolve_krylov(
+            &input,
+            time,
+            EvolutionOptions {
+                atol: 0.,
+                rtol: 1e-8,
+                krylov_dim: k,
+                ..Default::default()
+            },
+        )
+    })?;
+    let norm_squared: f64 = result.state.iter().map(|z| z.norm_sqr()).sum();
+    if (norm_squared - 1.).abs() > 1e-9 {
+        return Err("Krylov memory norm mismatch".into());
+    }
+    println!(
+        "{}",
+        json!({"status":"complete","model":model,"qubits":n,"krylov_dim":k,
+        "time":time,"rtol":1e-8,"info":result.info,"norm_squared":norm_squared,"state_bytes":(1usize<<n)*16,
+        "note":"Rust heap instrumentation; timings are diagnostic. RSS includes input, startup and allocator retention."})
     );
     Ok(())
 }

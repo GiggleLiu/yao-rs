@@ -60,7 +60,7 @@ Enable `tenferro-ad` for custom-loss circuit differentiation. The optional
 See [differentiation](docs/src/differentiation.md) for cotangent conventions,
 parameter sharing, and CPU execution/retention boundaries.
 
-Pauli Hamiltonians, Ising/Heisenberg models, product-formula evolution and shared
+Pauli Hamiltonians, Ising/Heisenberg models, adaptive matrix-free Krylov evolution, product formulas and shared
 physical parameter gradients are available in the [Hamiltonian guide](docs/src/hamiltonian.md).
 
 ## CLI
