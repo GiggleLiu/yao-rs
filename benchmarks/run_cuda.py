@@ -21,10 +21,11 @@ def main():
     parser.add_argument("--julia-project", type=Path, required=True)
     parser.add_argument("--yao-source", type=Path, required=True)
     parser.add_argument("--runs", type=int, default=3)
+    parser.add_argument("--qualification-timeout", type=int, default=300)
     parser.add_argument("--smoke", action="store_true")
     args = parser.parse_args()
-    if args.runs < 1:
-        parser.error("runs must be positive")
+    if args.runs < 1 or args.qualification_timeout < 1:
+        parser.error("runs and qualification timeout must be positive")
     output, target = args.output.resolve(), args.target.resolve()
     output.mkdir(parents=True, exist_ok=False)
     env = os.environ.copy()
@@ -88,6 +89,7 @@ def main():
     metadata = {
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "suite": "cuda",
+        "qualification_timeout_seconds": args.qualification_timeout,
         "runs": args.runs,
         "threads": [1],
         "precision": "complex128",
@@ -119,6 +121,12 @@ def main():
             ]
         },
         "provider": "tenferro 0.4.0 CUDA/cuTENSOR; CPU faer 1 thread; native serial kernels",
+        "process_niceness": os.getpriority(os.PRIO_PROCESS, 0),
+        "measurement_notes": [
+            "CUDA and CPU tenferro custom-loss cases request parameter and input-state gradients with two targeted pullbacks; native Rust and Yao use their joint reversible pullback.",
+            "GPU resident execution includes fresh device copies for tracked inputs, allocation and host dispatch. Transfers and prepared constants are separate boundaries.",
+            "The host is shared. GPU inventory is captured before measurement, CPU affinity and GPU clocks are not pinned; use run-to-run dispersion when interpreting results.",
+        ],
     }
     (output / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
     shutil.copyfile(
@@ -136,7 +144,15 @@ def main():
     for case in cases:
         print("qualify", case["id"], flush=True)
         run(
-            ["/usr/bin/time", "-v", str(target / "release/cuda_probe"), case["id"]],
+            [
+                "timeout",
+                "--kill-after=10s",
+                f"{args.qualification_timeout}s",
+                "/usr/bin/time",
+                "-v",
+                str(target / "release/cuda_probe"),
+                case["id"],
+            ],
             env,
             output / f"memory-{case['id']}.log",
         )

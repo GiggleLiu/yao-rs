@@ -46,7 +46,7 @@ fn main() -> Result<()> {
             )?;
         }
     }
-    for n in if smoke { vec![2] } else { vec![4, 6, 8] } {
+    for n in if smoke { vec![2] } else { vec![4, 6, 8, 10] } {
         let mut gates = Vec::new();
         for site in 0..n {
             gates.push(put(vec![site], Gate::Ry(0.3 + site as f64 * 0.02)));

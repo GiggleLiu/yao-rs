@@ -157,21 +157,34 @@ impl CudaSimulator {
                 }
             }
             let axes: Vec<_> = pg.target_locs.iter().map(|&site| n - 1 - site).collect();
+            let controls: Vec<_> = pg
+                .control_locs
+                .iter()
+                .zip(&pg.control_configs)
+                .map(|(&site, &value)| (n - 1 - site, value))
+                .collect();
+            // tenferro's column-major dot_general puts batch axes last.
             let mut order = axes.clone();
-            order.extend((0..n).filter(|axis| !axes.contains(axis)));
+            order.extend(
+                (0..n).filter(|axis| {
+                    !axes.contains(axis) && !controls.iter().any(|&(c, _)| c == *axis)
+                }),
+            );
+            order.extend(controls.iter().map(|&(axis, _)| axis));
             let permutation = (0..n)
                 .map(|axis| order.iter().position(|&i| i == axis).unwrap())
                 .collect();
+            let identity = if controls.is_empty() {
+                None
+            } else {
+                Some(self.matrix(&Array2::<C>::eye(1usize << axes.len()))?)
+            };
             gates.push(DeviceGate {
                 factors,
                 axes,
                 permutation,
-                controls: pg
-                    .control_locs
-                    .iter()
-                    .zip(&pg.control_configs)
-                    .map(|(&site, &value)| (n - 1 - site, value))
-                    .collect(),
+                identity,
+                controls,
             });
         }
         Ok(CudaCircuit {
@@ -243,6 +256,7 @@ struct DeviceGate {
     axes: Vec<usize>,
     permutation: Vec<usize>,
     controls: Vec<(usize, bool)>,
+    identity: Option<EagerTensor>,
 }
 
 enum MatrixFactor {
@@ -353,36 +367,46 @@ impl CudaCircuit {
                     )
                     .map_err(error)?;
             }
-            let mut projected = state.clone();
-            for &(axis, value) in &gate.controls {
-                let mask = self.projectors[usize::from(value)]
-                    .broadcast_in_dim(&shape, &[axis])
-                    .map_err(error)?;
-                projected = projected.mul(&mask).map_err(error)?;
-            }
             let k = gate.axes.len();
-            let evolved = matrix
-                .reshape(&vec![2; 2 * k])
-                .map_err(error)?
+            let c = gate.controls.len();
+            matrix = matrix.reshape(&vec![2; 2 * k]).map_err(error)?;
+            if let Some(identity) = &gate.identity {
+                // Controls are batch axes: each batch selects U or I. The
+                // state enters one linear contraction, avoiding branches in
+                // its AD graph. Storage is 2^c * 4^k, not 4^(c+k).
+                let bank_shape = vec![2; c + 2 * k];
+                let matrix_axes: Vec<_> = (c..c + 2 * k).collect();
+                let identity = identity.reshape(&vec![2; 2 * k]).map_err(error)?;
+                let mut delta = matrix
+                    .sub(&identity)
+                    .map_err(error)?
+                    .broadcast_in_dim(&bank_shape, &matrix_axes)
+                    .map_err(error)?;
+                for (axis, &(_, value)) in gate.controls.iter().enumerate() {
+                    let mask = self.projectors[usize::from(value)]
+                        .broadcast_in_dim(&bank_shape, &[axis])
+                        .map_err(error)?;
+                    delta = delta.mul(&mask).map_err(error)?;
+                }
+                matrix = identity
+                    .broadcast_in_dim(&bank_shape, &matrix_axes)
+                    .map_err(error)?
+                    .add(&delta)
+                    .map_err(error)?;
+            }
+            state = matrix
                 .dot_general(
-                    &projected,
+                    &state,
                     DotGeneralConfig {
-                        lhs_contracting_dims: (k..2 * k).collect(),
+                        lhs_contracting_dims: (c + k..c + 2 * k).collect(),
                         rhs_contracting_dims: gate.axes.clone(),
-                        lhs_batch_dims: vec![],
-                        rhs_batch_dims: vec![],
+                        lhs_batch_dims: (0..c).collect(),
+                        rhs_batch_dims: gate.controls.iter().map(|&(axis, _)| axis).collect(),
                     },
                 )
                 .map_err(error)?
                 .transpose(&gate.permutation)
                 .map_err(error)?;
-            state = if gate.controls.is_empty() {
-                evolved
-            } else {
-                state
-                    .add(&evolved.sub(&projected).map_err(error)?)
-                    .map_err(error)?
-            };
         }
         state.reshape(&[1usize << self.n]).map_err(error)
     }

@@ -124,6 +124,11 @@ fn backend(c: &mut Criterion) {
             }
             "custom_gradient" => {
                 use yao_tenferro_probe::circuit_ad as ad;
+                let finish = if std::env::var("YAO_BENCH_SUITE").as_deref() == Ok("cuda") {
+                    ad::finish_targeted
+                } else {
+                    ad::finish
+                };
                 let dc = std::sync::Arc::new(
                     yao_rs::differentiable::DifferentiableCircuit::from_circuit(circuit.clone())
                         .unwrap(),
@@ -148,7 +153,7 @@ fn backend(c: &mut Criterion) {
                         continue;
                     }
                     let ctx = yao_rs::tenferro_ad::eager_cpu_runtime(threads).unwrap();
-                    let got = ad::finish(
+                    let got = finish(
                         &ad::prepare(dc.clone(), &state, &target, ctx.clone(), composed).unwrap(),
                     )
                     .unwrap();
@@ -160,7 +165,7 @@ fn backend(c: &mut Criterion) {
                     );
                     group.bench_function(name, |b| {
                         b.iter(|| {
-                            ad::finish(
+                            finish(
                                 &ad::prepare(
                                     dc.clone(),
                                     black_box(&state),

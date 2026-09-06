@@ -275,3 +275,11 @@ disk caches. NVIDIA process-memory snapshots include allocator retention and
 workspaces and are not continuous peaks. Host RSS is reported separately.
 Metadata records source/lockfile hashes, hardware, runtime paths and the pinned
 Julia environment. Preserve the runtime package versions alongside the report.
+
+The CUDA gradient runner requests parameter and input-state gradients explicitly
+with `runtime.grad` (two targeted pullbacks). Tenferro 0.4.0's stateful
+`backward()` also requests pullbacks for retained intermediates, which is extra
+work beyond this benchmark's output contract. Each qualification process has a
+300-second wall-time limit; adjust `--qualification-timeout` explicitly for a
+larger study. A failed/timed-out qualification aborts timing and is not reported
+as a performance result.

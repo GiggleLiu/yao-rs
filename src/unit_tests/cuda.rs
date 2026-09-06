@@ -117,12 +117,16 @@ fn model() -> Result<DifferentiableCircuit> {
     if let CircuitElement::Gate(pg) = &mut low {
         pg.control_configs.fill(false);
     }
+    let mut mixed = control(vec![0, 1], vec![2], Gate::Ry(0.));
+    if let CircuitElement::Gate(pg) = &mut mixed {
+        pg.control_configs = vec![true, false];
+    }
     let circuit = Circuit::qubits(
         4,
         vec![
             put(vec![0], Gate::H),
             put(vec![1], Gate::Rx(0.)),
-            control(vec![0], vec![2], Gate::Ry(0.)),
+            mixed,
             low,
             put(vec![3], Gate::Phase(0.)),
             put(vec![0], Gate::Rz(0.)),

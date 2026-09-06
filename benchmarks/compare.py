@@ -625,7 +625,7 @@ def cuda_report_sections(directory, summary):
         native = lookup[(case["id"], "native")]["median_ns"]
         if any(not math.isfinite(x) or x <= 0 for x in [resident, transfer, native]):
             raise ValueError("Invalid CUDA comparison timing")
-        lines.append(f"| {case['id']} | {resident / 1e6:.3f} | {transfer / 1e6:.3f} | {native / resident:.3f} | {error:.2e} |")
+        lines.append(f"| {case['id']} | {resident / 1e6:.3f} | {transfer / 1e6:.3f} | {native / resident:.3g} | {error:.2e} |")
     lines += ["", "A CPU/GPU ratio greater than one means this GPU boundary was faster. These are medians of independent process medians; raw confidence intervals and samples are preserved. Transfer-inclusive figures are distinct from a complete setup-inclusive application run.", "",
         "## Process-cold setup and memory snapshots", "",
         "One process per case, with the persistent compiler/driver disk caches left in place. Context, preparation plus input uploads, and first synchronized execution are timed separately. NVIDIA process-memory snapshots include context, workspaces and the allocator pool. They are observed snapshots, not exact live tensor bytes or a continuous peak. Host peak RSS is a separate process metric.", "",
@@ -637,6 +637,7 @@ def cuda_report_sections(directory, summary):
         sizes.append(row["peak_rss_bytes"] / 1048576)
         lines.append(f"| {row['id']} | " + " | ".join(f"{x:.3f}" for x in times + sizes) + " |")
     (directory / "cuda-qualification.json").write_text(json.dumps(memory, indent=2) + "\n")
+    lines += ["", "![CUDA and CPU latency](cuda-latency.svg)", "", "![Observed GPU memory versus depth](cuda-memory.svg)", ""]
     return lines
 
 

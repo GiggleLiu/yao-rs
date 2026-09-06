@@ -105,15 +105,12 @@ impl PreparedCase {
                     .mul(&delta)?
                     .cast(DType::F64)?
                     .reduce_sum(None)?;
-                let _gradients = loss.backward()?;
-                let mut output = vec![loss];
-                for leaf in [&p, &x] {
-                    output.push(EagerTensor::from_tensor_in(
-                        leaf.grad()?.ok_or("missing CUDA gradient")?.to_tensor()?,
-                        gpu.runtime().clone(),
-                    )?);
-                }
-                Ok(output)
+                // backward() in tenferro 0.4.0 computes a separate VJP for
+                // every retained tracked intermediate. Request only the two
+                // outputs this workload needs, using the public targeted API.
+                let dp = gpu.runtime().grad(&loss, &p)?;
+                let dx = gpu.runtime().grad(&loss, &x)?;
+                Ok(vec![loss, dp, dx])
             }
         }
     }

@@ -99,6 +99,20 @@ pub fn finish(e: &Evaluation) -> Result<Vec<C>> {
         .chain(x.as_slice::<C>()?.iter().copied())
         .collect())
 }
+
+/// Target only the requested parameter/input gradients in the CUDA comparison.
+/// The older CPU reports retain their stateful backward() measurement boundary.
+pub fn finish_targeted(e: &Evaluation) -> Result<Vec<C>> {
+    let ctx = e.loss.runtime();
+    let p = ctx.grad(&e.loss, &e.parameters)?;
+    let x = ctx.grad(&e.loss, &e.input)?;
+    Ok(
+        std::iter::once(C::from(e.loss.value()?.as_slice::<f64>()?[0]))
+            .chain(p.value()?.as_slice::<f64>()?.iter().copied().map(C::from))
+            .chain(x.value()?.as_slice::<C>()?.iter().copied())
+            .collect(),
+    )
+}
 fn compose(
     c: &DifferentiableCircuit,
     p: &EagerTensor,

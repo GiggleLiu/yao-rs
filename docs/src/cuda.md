@@ -52,6 +52,11 @@ multiple controls, shared/scaled/product bindings, and empty parameter vectors.
 Small constants are uploaded during preparation; execution computes angles
 from device parameters.
 
+Controls become batch axes of the local gate tensor, keeping state evolution
+in one contraction per gate. A gate with `c` controls and `k` targets uses a
+batch of local matrices with `2^c * 4^k` complex entries; this storage is separate
+from the state and AD intermediates. It avoids a full `4^(c+k)` controlled matrix.
+
 Track inputs with `gpu.upload(&host_tensor, true)`. Compose real scalar losses
 using eager operations, then use `gpu.runtime().grad`, `vjp` or `jvp`. The
 [real Hermitian pairing](./differentiation.md) also applies here. For squared
@@ -108,3 +113,8 @@ user transfers. Time transfers separately, including output materialization.
 Record context creation, preparation and first execution separately from warm
 runs. Prepared objects preserve structure and constants; they do not promise
 zero allocations or fused circuit kernels.
+
+For larger eager graphs, request the gradients you need with `runtime.grad` or
+`runtime.vjp`. Tenferro 0.4.0's stateful `backward()` traverses retained tracked
+intermediates and requests separate pullbacks for them; it can do substantially
+more work than requesting parameter and input-state gradients explicitly.
