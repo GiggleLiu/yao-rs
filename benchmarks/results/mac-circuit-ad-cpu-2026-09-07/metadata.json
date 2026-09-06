@@ -87,7 +87,7 @@
     "Memory probes use zero input states; execution timings use the shared asymmetric complex states. Rust allocator instrumentation excludes provider allocations; process RSS includes runtime and allocator retention."
   ],
   "analysis_sources": {
-    "benchmarks/plot_circuit_ad.py": "02bfec160ec788b4ad1e2df7e8835a8f180b5735513b3922be52a845c6998b41"
+    "benchmarks/plot_circuit_ad.py": "3981a8b62b44f54e6a5966bfa80b920461d6f91b397172c935265cc532ac8b8f"
   },
-  "analysis_notes": "Plot annotation moved inside axes and generated SVG trailing whitespace normalized after measurement; measured source hashes remain unchanged."
+  "analysis_notes": "Plot annotation moved inside axes and generated SVG trailing whitespace normalized after measurement; measured source hashes remain unchanged. Plot script import formatting and executable mode corrected."
 }
