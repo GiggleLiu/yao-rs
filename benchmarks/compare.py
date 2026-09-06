@@ -76,5 +76,121 @@ def main():
         )
 
 
+def backend_report(directory):
+    """Compare medians of independent runs; preserve individual confidence intervals."""
+    import statistics
+    from collections import defaultdict
+
+    directory = Path(directory)
+    values = defaultdict(list)
+    errors = {}
+    for path in sorted(directory.glob("*t-run*-rust.json")):
+        threads = int(path.name.split("t-", 1)[0])
+        for row in json.loads(path.read_text()):
+            values[(threads, row["id"], row["backend"])].append(
+                row["estimates"]["median"]["point_estimate"]
+            )
+    for path in sorted(directory.glob("*t-run*-julia.json")):
+        data = json.loads(path.read_text())
+        for row in data["records"]:
+            values[(data["threads"], row["id"], "julia")].append(row["median_ns"])
+            errors[row["id"]] = max(errors.get(row["id"], 0), row["max_error"])
+    if not values:
+        raise ValueError("No backend measurements found")
+    metadata = json.loads((directory / "metadata.json").read_text())
+    case_path = directory / "cases.json"
+    expected_cases = (
+        {case["id"] for case in json.loads(case_path.read_text())}
+        if case_path.exists()
+        else {case for (_, case, backend) in values if backend in ("native", "julia")}
+    )
+    expected_threads = metadata.get("threads", sorted({t for (t, _, _) in values}))
+    for threads in expected_threads:
+        for case in expected_cases:
+            for backend in ("native", "julia"):
+                count = len(values.get((threads, case, backend), []))
+                if count != metadata["runs"]:
+                    label = "Julia" if backend == "julia" else "native Rust"
+                    raise ValueError(
+                        f"Missing {label} runs for {case} at {threads} threads: {count}/{metadata['runs']}"
+                    )
+    summary = [
+        dict(
+            threads=t,
+            id=case,
+            backend=backend,
+            median_ns=statistics.median(samples),
+            min_run_median_ns=min(samples),
+            max_run_median_ns=max(samples),
+            runs=len(samples),
+        )
+        for (t, case, backend), samples in sorted(values.items())
+    ]
+    (directory / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
+    lookup = {(r["threads"], r["id"], r["backend"]): r for r in summary}
+    lines = [
+        "# CPU backend baseline",
+        "",
+        "Generated from raw Criterion and BenchmarkTools samples in this directory.",
+        "",
+        f"Platform: {metadata['platform']}. Precision: complex128. Independent runs: {metadata['runs']}.",
+        "",
+        "Times below are medians of per-process medians. Rust/Julia includes state copying; tensor phases are reported separately. A Julia/Rust ratio greater than one means native Rust was faster.",
+        "",
+        "| Threads | Case | Native Rust µs | Yao µs | Julia/Rust | Max output error |",
+        "| --- | --- | ---: | ---: | ---: | ---: |",
+    ]
+    for row in summary:
+        if row["backend"] != "native":
+            continue
+        other = lookup.get((row["threads"], row["id"], "julia"))
+        if other is None:
+            raise ValueError(f"Missing Julia measurement for {row['id']}")
+        r, j = row["median_ns"], other["median_ns"]
+        lines.append(
+            f"| {row['threads']} | {row['id']} | {r / 1000:.3f} | {j / 1000:.3f} | {j / r:.2f} | {errors[row['id']]:.2e} |"
+        )
+    lines += [
+        "",
+        "## Tensor and extension phases",
+        "",
+        "Each row uses the named API boundary. `tenferro_from_arrays` includes conversion, automatic planning, execution and output conversion; `omeinsum` includes its conversion/planning/execution. `tenferro_warm` uses an already prepared plan. These are independent planning policies, not a fixed-tree comparison.",
+        "",
+        "| Threads | Case | Phase | Median µs | Range of run medians µs |",
+        "| --- | --- | --- | ---: | ---: |",
+    ]
+    for row in summary:
+        if row["backend"] in ("native", "julia"):
+            continue
+        lines.append(
+            f"| {row['threads']} | {row['id']} | {row['backend']} | {row['median_ns'] / 1000:.3f} | {row['min_run_median_ns'] / 1000:.3f}–{row['max_run_median_ns'] / 1000:.3f} |"
+        )
+    lines += [
+        "",
+        "Raw confidence intervals and samples are in `*-rust.json`; Julia trial samples are in `*-julia.json`. Memory logs report instrumented Rust allocations per phase and whole-process peak RSS separately. Timings from the allocation instrument are diagnostic only. See `metadata.json` and pinned manifests for reproducibility.",
+        "",
+    ]
+    lines += [
+        "## Plots",
+        "",
+        "![CPU scaling](cpu-scaling.svg)",
+        "",
+        "![Circuit and contraction costs](tensor-costs.svg)",
+        "",
+        "![AD memory](ad-memory.svg)",
+        "",
+    ]
+    (directory / "report.md").write_text("\n".join(lines))
+    return summary
+
+
 if __name__ == "__main__":
-    main()
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--backend-results", type=Path)
+    args = parser.parse_args()
+    if args.backend_results:
+        backend_report(args.backend_results)
+    else:
+        main()

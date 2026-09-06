@@ -1,0 +1,948 @@
+{
+  "records": [
+    {
+      "median_ns": 604.0,
+      "construction_median_ns": 1187.5,
+      "max_error": 1.3877787807814457e-17,
+      "id": "rx_8",
+      "samples_ns": [
+        8292.0,
+        625.0,
+        583.0,
+        791.0,
+        416.0,
+        375.0,
+        791.0,
+        625.0,
+        334.0,
+        500.0
+      ],
+      "allocations": 5,
+      "allocated_bytes": 4224
+    },
+    {
+      "median_ns": 645.5,
+      "construction_median_ns": 1125.0,
+      "max_error": 1.5515838457795457e-17,
+      "id": "rz_8",
+      "samples_ns": [
+        8250.0,
+        1041.0,
+        625.0,
+        792.0,
+        458.0,
+        500.0,
+        542.0,
+        666.0,
+        583.0,
+        709.0
+      ],
+      "allocations": 5,
+      "allocated_bytes": 4224
+    },
+    {
+      "median_ns": 583.0,
+      "construction_median_ns": 1250.5,
+      "max_error": 6.938893903907228e-18,
+      "id": "swap_far_8",
+      "samples_ns": [
+        5541.0,
+        583.0,
+        459.0,
+        1000.0,
+        333.0,
+        708.0,
+        542.0,
+        542.0,
+        625.0,
+        583.0
+      ],
+      "allocations": 5,
+      "allocated_bytes": 4224
+    },
+    {
+      "median_ns": 3833.5,
+      "construction_median_ns": 2333.5,
+      "max_error": 1.5515838457795457e-17,
+      "id": "cry_low_far_8",
+      "samples_ns": [
+        38584.0,
+        6083.0,
+        4125.0,
+        3958.0,
+        3667.0,
+        3792.0,
+        3875.0,
+        3500.0,
+        3750.0,
+        3500.0
+      ],
+      "allocations": 60,
+      "allocated_bytes": 6912
+    },
+    {
+      "median_ns": 4729.0,
+      "construction_median_ns": 3083.5,
+      "max_error": 1.5515838457795457e-17,
+      "id": "fsim_adjacent_8",
+      "samples_ns": [
+        50250.0,
+        8041.0,
+        5459.0,
+        5542.0,
+        4750.0,
+        4583.0,
+        4708.0,
+        4667.0,
+        4625.0,
+        4500.0
+      ],
+      "allocations": 73,
+      "allocated_bytes": 7856
+    },
+    {
+      "median_ns": 76833.5,
+      "construction_median_ns": 63312.0,
+      "max_error": 6.866350197783356e-16,
+      "id": "qft_8",
+      "samples_ns": [
+        135791.0,
+        78500.0,
+        77834.0,
+        76917.0,
+        77084.0,
+        76750.0,
+        76083.0,
+        75916.0,
+        76083.0,
+        75334.0
+      ],
+      "allocations": 1440,
+      "allocated_bytes": 71392
+    },
+    {
+      "median_ns": 3583.5,
+      "construction_median_ns": 1104.5,
+      "max_error": 6.160100521542222e-17,
+      "id": "rx_12",
+      "samples_ns": [
+        13042.0,
+        4250.0,
+        3583.0,
+        3625.0,
+        3583.0,
+        3583.0,
+        3584.0,
+        3542.0,
+        3542.0,
+        3584.0
+      ],
+      "allocations": 5,
+      "allocated_bytes": 65664
+    },
+    {
+      "median_ns": 4333.5,
+      "construction_median_ns": 1291.5,
+      "max_error": 6.160100521542222e-17,
+      "id": "rz_12",
+      "samples_ns": [
+        11625.0,
+        4750.0,
+        4292.0,
+        4417.0,
+        4291.0,
+        4333.0,
+        4291.0,
+        4292.0,
+        4334.0,
+        4334.0
+      ],
+      "allocations": 5,
+      "allocated_bytes": 65664
+    },
+    {
+      "median_ns": 13729.5,
+      "construction_median_ns": 1250.0,
+      "max_error": 5.908255262090379e-17,
+      "id": "swap_far_12",
+      "samples_ns": [
+        30792.0,
+        14708.0,
+        13833.0,
+        13709.0,
+        12750.0,
+        14458.0,
+        13750.0,
+        13625.0,
+        13208.0,
+        13500.0
+      ],
+      "allocations": 5,
+      "allocated_bytes": 65664
+    },
+    {
+      "median_ns": 6021.0,
+      "construction_median_ns": 2187.0,
+      "max_error": 6.774311733017761e-17,
+      "id": "cry_low_far_12",
+      "samples_ns": [
+        42208.0,
+        8459.0,
+        6459.0,
+        6292.0,
+        6042.0,
+        5917.0,
+        6000.0,
+        5958.0,
+        5959.0,
+        6000.0
+      ],
+      "allocations": 66,
+      "allocated_bytes": 68912
+    },
+    {
+      "median_ns": 10895.5,
+      "construction_median_ns": 2666.5,
+      "max_error": 6.071532165918825e-17,
+      "id": "fsim_adjacent_12",
+      "samples_ns": [
+        55500.0,
+        14625.0,
+        11625.0,
+        11125.0,
+        11125.0,
+        10625.0,
+        10666.0,
+        10583.0,
+        10500.0,
+        10458.0
+      ],
+      "allocations": 78,
+      "allocated_bytes": 69840
+    },
+    {
+      "median_ns": 291187.5,
+      "construction_median_ns": 173708.5,
+      "max_error": 5.551115123125783e-16,
+      "id": "qft_12",
+      "samples_ns": [
+        349833.0,
+        295792.0,
+        289833.0,
+        291458.0,
+        290917.0,
+        288708.0,
+        289791.0,
+        302375.0,
+        293083.0,
+        290000.0
+      ],
+      "allocations": 3775,
+      "allocated_bytes": 261296
+    },
+    {
+      "median_ns": 89875.0,
+      "construction_median_ns": 1187.0,
+      "max_error": 2.4532694666933987e-18,
+      "id": "rx_16",
+      "samples_ns": [
+        62750.0,
+        95458.0,
+        85875.0,
+        53042.0,
+        105750.0,
+        52875.0,
+        51917.0,
+        135792.0,
+        93875.0,
+        108291.0
+      ],
+      "allocations": 5,
+      "allocated_bytes": 1048704
+    },
+    {
+      "median_ns": 66938.0,
+      "construction_median_ns": 1312.5,
+      "max_error": 2.168404344971009e-18,
+      "id": "rz_16",
+      "samples_ns": [
+        78875.0,
+        67417.0,
+        66792.0,
+        66625.0,
+        66500.0,
+        66167.0,
+        66250.0,
+        74334.0,
+        107292.0,
+        67084.0
+      ],
+      "allocations": 5,
+      "allocated_bytes": 1048704
+    },
+    {
+      "median_ns": 62541.5,
+      "construction_median_ns": 1229.0,
+      "max_error": 1.8399521000200487e-18,
+      "id": "swap_far_16",
+      "samples_ns": [
+        58667.0,
+        51417.0,
+        57375.0,
+        90000.0,
+        87791.0,
+        66416.0,
+        49458.0,
+        106333.0,
+        58000.0,
+        111375.0
+      ],
+      "allocations": 5,
+      "allocated_bytes": 1048704
+    },
+    {
+      "median_ns": 41395.5,
+      "construction_median_ns": 2208.5,
+      "max_error": 2.4532694666933987e-18,
+      "id": "cry_low_far_16",
+      "samples_ns": [
+        80625.0,
+        44459.0,
+        41166.0,
+        42458.0,
+        41291.0,
+        41208.0,
+        42292.0,
+        41291.0,
+        41041.0,
+        41500.0
+      ],
+      "allocations": 66,
+      "allocated_bytes": 1051984
+    },
+    {
+      "median_ns": 95667.0,
+      "construction_median_ns": 2563.0,
+      "max_error": 2.6379777400251014e-18,
+      "id": "fsim_adjacent_16",
+      "samples_ns": [
+        143125.0,
+        102416.0,
+        97792.0,
+        96042.0,
+        95458.0,
+        95542.0,
+        95792.0,
+        95542.0,
+        94042.0,
+        94042.0
+      ],
+      "allocations": 78,
+      "allocated_bytes": 1052912
+    },
+    {
+      "median_ns": 2.9466875e6,
+      "construction_median_ns": 322729.0,
+      "max_error": 1.1411052692018427e-15,
+      "id": "qft_16",
+      "samples_ns": [
+        3.003458e6,
+        2.990833e6,
+        2.983292e6,
+        2.982958e6,
+        2.948667e6,
+        2.944708e6,
+        2.910958e6,
+        2.911916e6,
+        2.933958e6,
+        2.938625e6
+      ],
+      "allocations": 6989,
+      "allocated_bytes": 1410736
+    },
+    {
+      "median_ns": 994000.0,
+      "construction_median_ns": 1062.5,
+      "max_error": 3.249008590296311e-17,
+      "id": "rx_20",
+      "samples_ns": [
+        948250.0,
+        994125.0,
+        987875.0,
+        1.019292e6,
+        976041.0,
+        1.807458e6,
+        1.02825e6,
+        1.04175e6,
+        976750.0,
+        993875.0
+      ],
+      "allocations": 5,
+      "allocated_bytes": 16777344
+    },
+    {
+      "median_ns": 1.2162495e6,
+      "construction_median_ns": 1208.5,
+      "max_error": 3.2113667535790525e-17,
+      "id": "rz_20",
+      "samples_ns": [
+        1.1845e6,
+        1.211833e6,
+        1.209125e6,
+        1.278375e6,
+        1.393375e6,
+        1.426833e6,
+        1.220666e6,
+        1.201542e6,
+        1.22275e6,
+        1.194667e6
+      ],
+      "allocations": 5,
+      "allocated_bytes": 16777344
+    },
+    {
+      "median_ns": 923729.5,
+      "construction_median_ns": 1167.0,
+      "max_error": 3.1916267632542335e-17,
+      "id": "swap_far_20",
+      "samples_ns": [
+        912459.0,
+        900875.0,
+        887792.0,
+        879208.0,
+        896042.0,
+        1.148834e6,
+        935000.0,
+        942334.0,
+        986958.0,
+        942166.0
+      ],
+      "allocations": 5,
+      "allocated_bytes": 16777344
+    },
+    {
+      "median_ns": 736437.5,
+      "construction_median_ns": 2000.0,
+      "max_error": 3.647256752832246e-17,
+      "id": "cry_low_far_20",
+      "samples_ns": [
+        731709.0,
+        775250.0,
+        728250.0,
+        735958.0,
+        728792.0,
+        930583.0,
+        765292.0,
+        736917.0,
+        742792.0,
+        732959.0
+      ],
+      "allocations": 66,
+      "allocated_bytes": 16780656
+    },
+    {
+      "median_ns": 1.592375e6,
+      "construction_median_ns": 2395.5,
+      "max_error": 3.250075727808365e-17,
+      "id": "fsim_adjacent_20",
+      "samples_ns": [
+        1.612875e6,
+        1.587083e6,
+        1.569791e6,
+        1.567e6,
+        1.555417e6,
+        1.827584e6,
+        1.703917e6,
+        1.621625e6,
+        1.589459e6,
+        1.595291e6
+      ],
+      "allocations": 78,
+      "allocated_bytes": 16781584
+    },
+    {
+      "median_ns": 9.59050625e7,
+      "construction_median_ns": 624937.5,
+      "max_error": 1.0603937658865427e-14,
+      "id": "qft_20",
+      "samples_ns": [
+        9.5101542e7,
+        9.5097458e7,
+        9.58555e7,
+        9.6102791e7,
+        9.5954625e7,
+        9.7413833e7
+      ],
+      "allocations": 11179,
+      "allocated_bytes": 17358896
+    },
+    {
+      "median_ns": 1.56039375e7,
+      "construction_median_ns": 1104.0,
+      "max_error": 1.30582238658357e-17,
+      "id": "rx_24",
+      "samples_ns": [
+        1.5588458e7,
+        1.5358916e7,
+        1.5597917e7,
+        1.5636583e7,
+        1.5613666e7,
+        1.560225e7,
+        1.5789625e7,
+        1.5456917e7,
+        1.5605625e7,
+        1.5650458e7
+      ],
+      "allocations": 5,
+      "allocated_bytes": 268435584
+    },
+    {
+      "median_ns": 1.8910083e7,
+      "construction_median_ns": 1166.5,
+      "max_error": 1.2931128002013993e-17,
+      "id": "rz_24",
+      "samples_ns": [
+        1.8925708e7,
+        1.8812708e7,
+        1.8985042e7,
+        1.8679042e7,
+        1.8894458e7,
+        1.9159583e7,
+        1.9264666e7,
+        1.9107667e7,
+        1.8876958e7,
+        1.8771e7
+      ],
+      "allocations": 5,
+      "allocated_bytes": 268435584
+    },
+    {
+      "median_ns": 1.5102479e7,
+      "construction_median_ns": 1208.5,
+      "max_error": 1.2873103179696437e-17,
+      "id": "swap_far_24",
+      "samples_ns": [
+        1.4879292e7,
+        1.4602459e7,
+        1.5149541e7,
+        1.4810125e7,
+        1.513425e7,
+        1.4871208e7,
+        1.510675e7,
+        1.5098208e7,
+        1.5117708e7,
+        1.51125e7
+      ],
+      "allocations": 5,
+      "allocated_bytes": 268435584
+    },
+    {
+      "median_ns": 1.1594333e7,
+      "construction_median_ns": 2000.0,
+      "max_error": 1.470595956108872e-17,
+      "id": "cry_low_far_24",
+      "samples_ns": [
+        1.1587041e7,
+        1.1236208e7,
+        1.1611666e7,
+        1.1657208e7,
+        1.158475e7,
+        1.1734542e7,
+        1.1671958e7,
+        1.1601625e7,
+        1.1484208e7,
+        1.1435833e7
+      ],
+      "allocations": 66,
+      "allocated_bytes": 268439216
+    },
+    {
+      "median_ns": 2.52566875e7,
+      "construction_median_ns": 2229.5,
+      "max_error": 1.30874755603319e-17,
+      "id": "fsim_adjacent_24",
+      "samples_ns": [
+        2.5157958e7,
+        2.538925e7,
+        2.6114041e7,
+        2.4992958e7,
+        2.5258042e7,
+        2.5241166e7,
+        2.5863666e7,
+        2.5255333e7,
+        2.5350917e7,
+        2.5216917e7
+      ],
+      "allocations": 78,
+      "allocated_bytes": 268440144
+    },
+    {
+      "median_ns": 2.415332583e9,
+      "construction_median_ns": 1.0681045e6,
+      "max_error": 1.9384145075036478e-14,
+      "id": "qft_24",
+      "samples_ns": [
+        2.415332583e9
+      ],
+      "allocations": 16345,
+      "allocated_bytes": 269370800
+    },
+    {
+      "median_ns": 1666.5,
+      "construction_median_ns": 110083.0,
+      "max_error": 8.326672684688674e-17,
+      "id": "layers10_4",
+      "samples_ns": [
+        6916.0,
+        1666.0,
+        1625.0,
+        1667.0,
+        1625.0,
+        1583.0,
+        1708.0,
+        1750.0,
+        1667.0,
+        1625.0
+      ],
+      "allocations": 73,
+      "allocated_bytes": 2592
+    },
+    {
+      "median_ns": 10000.0,
+      "construction_median_ns": 112354.0,
+      "max_error": 1.6653345369377348e-16,
+      "id": "gradient10_4",
+      "samples_ns": [
+        23167.0,
+        10375.0,
+        9500.0,
+        9167.0,
+        9625.0,
+        17417.0,
+        18375.0,
+        11875.0,
+        9042.0,
+        9000.0
+      ],
+      "allocations": 652,
+      "allocated_bytes": 29792
+    },
+    {
+      "median_ns": 14937.0,
+      "construction_median_ns": 3.160708e6,
+      "max_error": 3.510833468576701e-16,
+      "id": "layers100_4",
+      "samples_ns": [
+        19875.0,
+        14833.0,
+        14708.0,
+        15041.0,
+        14625.0,
+        14625.0,
+        14584.0,
+        15042.0,
+        16209.0,
+        16583.0
+      ],
+      "allocations": 703,
+      "allocated_bytes": 22752
+    },
+    {
+      "median_ns": 93499.5,
+      "construction_median_ns": 1.7383955e6,
+      "max_error": 1.8041124150158794e-15,
+      "id": "gradient100_4",
+      "samples_ns": [
+        115291.0,
+        96875.0,
+        94875.0,
+        94000.0,
+        91750.0,
+        93291.0,
+        93000.0,
+        93708.0,
+        92709.0,
+        92958.0
+      ],
+      "allocations": 6327,
+      "allocated_bytes": 283584
+    },
+    {
+      "median_ns": 11791.5,
+      "construction_median_ns": 324000.0,
+      "max_error": 6.206335383118183e-17,
+      "id": "layers10_8",
+      "samples_ns": [
+        23125.0,
+        13334.0,
+        11708.0,
+        11834.0,
+        11792.0,
+        11791.0,
+        11833.0,
+        11666.0,
+        11708.0,
+        11583.0
+      ],
+      "allocations": 154,
+      "allocated_bytes": 8992
+    },
+    {
+      "median_ns": 145645.5,
+      "construction_median_ns": 242624.5,
+      "max_error": 6.661338147750939e-16,
+      "id": "gradient10_8",
+      "samples_ns": [
+        164250.0,
+        141291.0,
+        140875.0,
+        156667.0,
+        159291.0,
+        150000.0,
+        138459.0,
+        157292.0,
+        138834.0,
+        139500.0
+      ],
+      "allocations": 1446,
+      "allocated_bytes": 344000
+    },
+    {
+      "median_ns": 115667.0,
+      "construction_median_ns": 6.7780625e6,
+      "max_error": 3.198672041575565e-16,
+      "id": "layers100_8",
+      "samples_ns": [
+        131958.0,
+        119167.0,
+        115959.0,
+        114625.0,
+        120667.0,
+        115375.0,
+        115125.0,
+        114708.0,
+        119208.0,
+        114750.0
+      ],
+      "allocations": 1504,
+      "allocated_bytes": 52192
+    },
+    {
+      "median_ns": 1.399e6,
+      "construction_median_ns": 6.353729e6,
+      "max_error": 1.0130785099704553e-15,
+      "id": "gradient100_8",
+      "samples_ns": [
+        1.421958e6,
+        1.399292e6,
+        1.3765e6,
+        1.563083e6,
+        1.471542e6,
+        1.453208e6,
+        1.361083e6,
+        1.35875e6,
+        1.398708e6,
+        1.345291e6
+      ],
+      "allocations": 14234,
+      "allocated_bytes": 3329024
+    },
+    {
+      "median_ns": 204437.5,
+      "construction_median_ns": 548083.0,
+      "max_error": 2.081957271676468e-16,
+      "id": "layers10_12",
+      "samples_ns": [
+        208583.0,
+        201125.0,
+        204417.0,
+        207292.0,
+        203375.0,
+        211208.0,
+        204458.0,
+        203583.0,
+        204291.0,
+        221000.0
+      ],
+      "allocations": 234,
+      "allocated_bytes": 72992
+    },
+    {
+      "median_ns": 2.341875e6,
+      "construction_median_ns": 413688.0,
+      "max_error": 2.886579864025407e-15,
+      "id": "gradient10_12",
+      "samples_ns": [
+        2.434667e6,
+        2.512042e6,
+        2.448625e6,
+        2.302833e6,
+        2.380917e6,
+        2.205625e6,
+        2.43175e6,
+        2.182041e6,
+        2.168291e6,
+        2.181e6
+      ],
+      "allocations": 2208,
+      "allocated_bytes": 7475552
+    },
+    {
+      "median_ns": 1.994063e6,
+      "construction_median_ns": 1.29832915e7,
+      "max_error": 1.9568572756434446e-16,
+      "id": "layers100_12",
+      "samples_ns": [
+        2.039708e6,
+        2.011833e6,
+        2.004792e6,
+        1.993917e6,
+        1.994209e6,
+        2.051041e6,
+        1.9895e6,
+        1.978291e6,
+        1.9855e6,
+        1.991333e6
+      ],
+      "allocations": 2304,
+      "allocated_bytes": 139232
+    },
+    {
+      "median_ns": 2.3518979e7,
+      "construction_median_ns": 1.27128125e7,
+      "max_error": 7.216449660063518e-16,
+      "id": "gradient100_12",
+      "samples_ns": [
+        2.3622791e7,
+        2.323975e7,
+        2.2707875e7,
+        2.3822875e7,
+        2.3072125e7,
+        2.4737208e7,
+        2.3701209e7,
+        2.3415167e7,
+        2.4664459e7,
+        2.3235125e7
+      ],
+      "allocations": 21836,
+      "allocated_bytes": 72984352
+    },
+    {
+      "median_ns": 30166.5,
+      "construction_median_ns": 31812.0,
+      "max_error": 1.2509268882771003e-16,
+      "id": "noisy_4",
+      "samples_ns": [
+        93125.0,
+        34250.0,
+        32208.0,
+        31167.0,
+        29250.0,
+        30500.0,
+        29208.0,
+        29833.0,
+        29375.0,
+        29042.0
+      ],
+      "allocations": 586,
+      "allocated_bytes": 91936
+    },
+    {
+      "median_ns": 360895.5,
+      "construction_median_ns": 48479.0,
+      "max_error": 5.204367661579016e-17,
+      "id": "noisy_6",
+      "samples_ns": [
+        418583.0,
+        361584.0,
+        361917.0,
+        360292.0,
+        360084.0,
+        360125.0,
+        361375.0,
+        360416.0,
+        360208.0,
+        365416.0
+      ],
+      "allocations": 878,
+      "allocated_bytes": 1671840
+    },
+    {
+      "median_ns": 7.2435e6,
+      "construction_median_ns": 67770.5,
+      "max_error": 1.8297015907360072e-17,
+      "id": "noisy_8",
+      "samples_ns": [
+        7.27075e6,
+        7.161875e6,
+        7.46625e6,
+        7.11525e6,
+        7.169417e6,
+        7.512458e6,
+        7.21625e6,
+        7.164709e6,
+        7.376375e6,
+        8.484917e6
+      ],
+      "allocations": 1170,
+      "allocated_bytes": 34647584
+    },
+    {
+      "median_ns": 1.55171e8,
+      "construction_median_ns": 83896.0,
+      "max_error": 6.7224059715987856e-18,
+      "id": "noisy_10",
+      "samples_ns": [
+        1.54742083e8,
+        1.55171e8,
+        2.62182542e8
+      ],
+      "allocations": 1462,
+      "allocated_bytes": 687921568
+    },
+    {
+      "median_ns": 396.0,
+      "construction_median_ns": 14708.5,
+      "max_error": 0.0,
+      "id": "tensor_state_4",
+      "samples_ns": [
+        6959.0,
+        833.0,
+        583.0,
+        458.0,
+        375.0,
+        375.0,
+        375.0,
+        375.0,
+        417.0,
+        375.0
+      ],
+      "allocations": 14,
+      "allocated_bytes": 704
+    },
+    {
+      "median_ns": 2750.0,
+      "construction_median_ns": 32521.0,
+      "max_error": 0.0,
+      "id": "tensor_state_8",
+      "samples_ns": [
+        10250.0,
+        3334.0,
+        3375.0,
+        2875.0,
+        2792.0,
+        2500.0,
+        2459.0,
+        2708.0,
+        2667.0,
+        2625.0
+      ],
+      "allocations": 27,
+      "allocated_bytes": 4928
+    }
+  ],
+  "julia": "1.12.4",
+  "blas": "LBTConfig([ILP64] libopenblas64_.dylib)",
+  "threads": 1,
+  "yao": "0.9.3"
+}

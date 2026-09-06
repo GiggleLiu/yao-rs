@@ -1,0 +1,120 @@
+# Full-output validation and warmed timing of the shared Rust/Julia circuits.
+using Yao, BenchmarkTools, JSON, LinearAlgebra, Statistics
+
+function build_circuit(spec)
+    n = spec["num_qubits"]
+    blocks = AbstractBlock[]
+    for el in spec["elements"]
+        if el["type"] == "channel"
+            noise = if el["channel"] == "Depolarizing"
+                quantum_channel(DepolarizingError(el["n"], el["p"]))
+            elseif el["channel"] == "AmplitudeDamping"
+                quantum_channel(AmplitudeDampingError(el["gamma"], el["excited_population"]))
+            else
+                error("unsupported channel $(el["channel"])")
+            end
+            push!(blocks, put(n, Tuple(n .- el["locs"]) => noise))
+            continue
+        end
+        name = el["gate"]
+        params = get(el, "params", Float64[])
+        gate = if name == "Rx"
+            Rx(params[1])
+        elseif name == "Ry"
+            Ry(params[1])
+        elseif name == "Rz"
+            Rz(params[1])
+        elseif name == "Phase"
+            shift(params[1])
+        elseif name == "FSim"
+            theta, phi = params
+            matblock(ComplexF64[1 0 0 0; 0 cos(theta) -im*sin(theta) 0; 0 -im*sin(theta) cos(theta) 0; 0 0 0 exp(-im*phi)])
+        elseif name == "H"
+            H
+        elseif name == "X"
+            X
+        elseif name == "SWAP"
+            SWAP
+        else
+            error("unsupported gate $name")
+        end
+        targets = Tuple(n .- el["targets"])
+        controls = get(el, "controls", [])
+        configs = get(el, "control_configs", fill(true, length(controls)))
+        # Mapping sites, rather than permuting states, makes complete flat vectors agree.
+        if isempty(controls)
+            push!(blocks, put(n, targets => gate))
+        else
+            active = Tuple((n-q)*(config ? 1 : -1) for (q,config) in zip(controls,configs))
+            push!(blocks, control(n, active, targets => gate))
+        end
+    end
+    chain(n, blocks...)
+end
+
+# The same reversible algorithm used by Yao's expect adjoint, returning the value too.
+# Based on YaoBlocks/src/autodiff/specializes.jl (MIT); the inner product adds the value.
+function value_gradient(initial,circuit,op)
+    out=apply!(copy(initial),circuit)
+    cotangent=apply!(2copy(out),op)
+    value=real(dot(statevec(out),statevec(cotangent)))/2
+    _,gradient=Yao.AD.apply_back((out,cotangent),circuit)
+    value,gradient
+end
+
+function evaluate(mode, initial, circuit, op)
+    if mode == "gradient"
+        value,grad=value_gradient(initial,circuit,op)
+        return ComplexF64[value;grad]
+    end
+    output=apply!(copy(initial),circuit)
+    mode == "density" ? vec(permutedims(output.state)) : vec(statevec(output))
+end
+
+function main()
+    cases_path, reference_dir, output_path=ARGS
+    threads=parse(Int,get(ENV,"YAO_BENCH_THREADS","1"))
+    BLAS.set_num_threads(threads)
+    records=[]
+    for case in JSON.parsefile(cases_path)
+        spec=case["circuit"]; n=spec["num_qubits"]; mode=case["mode"]
+        construction=@benchmark build_circuit($spec) samples=10 evals=1 seconds=0.5
+        circuit=build_circuit(spec)
+        initial=if case["initial"] == "deterministic"
+            values=ComplexF64[cos(0.1*k)+im*sin(0.2*k) for k in 0:((1<<n)-1)]
+            ArrayReg(values/norm(values))
+        elseif mode == "density"
+            density_matrix(zero_state(n))
+        else
+            zero_state(n)
+        end
+        op=put(n,n=>Z)
+        # Full state/matrix/gradient comparison outside measured closures.
+        got=evaluate(mode,initial,circuit,op)
+        if mode == "gradient"
+            _, public_grad=adjoint(expect)(op,initial=>circuit)
+            isapprox(real.(got[2:end]),public_grad;atol=1e-10,rtol=1e-10) || error("public adjoint disagreement")
+        end
+        bytes=read(joinpath(reference_dir,case["id"]*".bin"))
+        expected=reinterpret(ComplexF64,bytes)
+        length(got)==length(expected) || error("output length mismatch")
+        err=maximum(abs,got-expected)
+        isapprox(got,expected;atol=1e-10,rtol=1e-10) || error("$(case["id"]): error=$err")
+        # Rust expect_grad includes one forward value calculation and one backward sweep.
+        trial=if mode == "gradient"
+            @benchmark value_gradient($initial,$circuit,$op) samples=10 evals=1 seconds=0.5
+        else
+            @benchmark apply!(copy($initial),$circuit) samples=10 evals=1 seconds=0.5
+        end
+        push!(records,Dict("id"=>case["id"],"median_ns"=>median(trial).time,
+            "samples_ns"=>trial.times,"allocations"=>trial.allocs,"allocated_bytes"=>trial.memory,
+            "construction_median_ns"=>median(construction).time,"max_error"=>err))
+        println(case["id"]," error=",err," median_ns=",median(trial).time)
+        open(output_path,"w") do io
+            JSON.print(io,Dict("julia"=>string(VERSION),"yao"=>string(pkgversion(Yao)),
+                "threads"=>threads,"blas"=>string(BLAS.get_config()),"records"=>records),2)
+        end
+        GC.gc()
+    end
+end
+main()
