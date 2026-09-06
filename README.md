@@ -54,6 +54,9 @@ Install from this checkout with `cargo install --path yao-cli --features tenferr
 then select `yao contract tn.json --backend tenferro --threads 4`.
 See [tensor-network execution](docs/src/tensor-networks.md#tenferro-cpu-execution).
 
+Pauli Hamiltonians, Ising/Heisenberg models, product-formula evolution and shared
+physical parameter gradients are available in the [Hamiltonian guide](docs/src/hamiltonian.md).
+
 ## CLI
 
 Install the published CLI below. To build the development version instead,

@@ -86,3 +86,24 @@ Run compilation/tests first and keep other build jobs off the measurement host
 during the final timing passes. Preserve each report's metadata and source
 hashes; do not overwrite the earlier 24-qubit baseline. `plot_backend.py` adds a
 separate `supported-costs.svg`/`.png` comparison when these phases are present.
+
+### Hamiltonian product formulas
+
+```sh
+python3 benchmarks/run_backend.py benchmarks/results/mac-evolution-cpu-2026-09-07 --suite evolution --julia ~/.juliaup/bin/julia
+uv run --with matplotlib benchmarks/plot_evolution.py benchmarks/results/mac-evolution-cpu-2026-09-07
+```
+
+The evolution suite uses the Rust model builders to emit shared circuits for
+three-qubit Ising and XYZ Hamiltonians, first/second order formulas, and
+1, 2, 4, 8, 16 steps. Julia independently builds the Hamiltonian from Pauli
+blocks and computes its dense exponential outside timing. The report separates
+Rust–Yao circuit agreement from each formula's relative state error against
+that exponential. Timings cover execution of the same lowered circuits, with
+construction measured separately; they do not benchmark adaptive Krylov action.
+Two additional zero-state cases exercise both tensor contractors, including
+the supported tenferro adapter with the same supplied tree as omeinsum.
+The runner also measures model/circuit construction and native execution heap
+in separate processes at 3/12 qubits and 1/16 second-order steps. Each raw
+`memory-evolution-*.log` includes phase heap accounting and process peak RSS.
+`compare.py` generates the memory table alongside the accuracy/cost comparison.

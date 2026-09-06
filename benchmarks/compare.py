@@ -76,6 +76,40 @@ def main():
         )
 
 
+def evolution_memory_rows(directory):
+    """Read phase heap bytes and platform-specific time(1) peak RSS units."""
+    import re
+
+    rows = []
+    for path in sorted(Path(directory).glob("memory-evolution-*.log")):
+        text = path.read_text()
+        records = [
+            json.loads(line) for line in text.splitlines() if line.startswith("{")
+        ]
+        metadata = next(row for row in records if "model" in row)
+        phases = {row["phase"]: row for row in records if "phase" in row}
+        mac = re.search(r"(\d+)\s+maximum resident set size", text)
+        linux = re.search(r"Maximum resident set size \(kbytes\):\s*(\d+)", text)
+        if not mac and not linux:
+            raise ValueError(f"Missing peak RSS in {path}")
+        rows.append(
+            dict(
+                model=metadata["model"],
+                qubits=metadata["qubits"],
+                steps=metadata["steps"],
+                gates=metadata["gates"],
+                circuit_retained_bytes=phases["circuit_construction"][
+                    "retained_additional_rust_heap_bytes"
+                ],
+                execution_peak_bytes=phases["native_execution"][
+                    "peak_additional_rust_heap_bytes"
+                ],
+                peak_rss_bytes=int(mac[1]) if mac else int(linux[1]) * 1024,
+            )
+        )
+    return rows
+
+
 def backend_report(directory):
     """Compare medians of independent runs; preserve individual confidence intervals."""
     import statistics
@@ -84,6 +118,7 @@ def backend_report(directory):
     directory = Path(directory)
     values = defaultdict(list)
     errors = {}
+    approximation_errors = {}
     for path in sorted(directory.glob("*t-run*-rust.json")):
         threads = int(path.name.split("t-", 1)[0])
         for row in json.loads(path.read_text()):
@@ -95,6 +130,15 @@ def backend_report(directory):
         for row in data["records"]:
             values[(data["threads"], row["id"], "julia")].append(row["median_ns"])
             errors[row["id"]] = max(errors.get(row["id"], 0), row["max_error"])
+            if "approximation_error" in row:
+                for backend, field in [
+                    ("native", "approximation_error"),
+                    ("julia", "yao_approximation_error"),
+                ]:
+                    key = (data["threads"], row["id"], backend)
+                    approximation_errors[key] = max(
+                        approximation_errors.get(key, 0), row[field]
+                    )
     if not values:
         raise ValueError("No backend measurements found")
     metadata = json.loads((directory / "metadata.json").read_text())
@@ -126,6 +170,10 @@ def backend_report(directory):
         )
         for (t, case, backend), samples in sorted(values.items())
     ]
+    for row in summary:
+        key = (row["threads"], row["id"], row["backend"])
+        if key in approximation_errors:
+            row["relative_state_error"] = approximation_errors[key]
     (directory / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
     lookup = {(r["threads"], r["id"], r["backend"]): r for r in summary}
     lines = [
@@ -175,21 +223,60 @@ def backend_report(directory):
         "Raw confidence intervals and samples are in `*-rust.json`; Julia trial samples are in `*-julia.json`. Memory logs report instrumented Rust allocations per phase and whole-process peak RSS separately. Timings from the allocation instrument are diagnostic only. See `metadata.json` and pinned manifests for reproducibility.",
         "",
     ]
-    lines += [
-        "## Plots",
-        "",
-        "![CPU scaling](cpu-scaling.svg)",
-        "",
-        "![Circuit and contraction costs](tensor-costs.svg)",
-        "",
-        "![AD memory](ad-memory.svg)",
-        "",
-    ]
-    if any(row["backend"] == "supported_warm" for row in summary):
+    if approximation_errors:
         lines += [
-            "![Supported adapter, same contraction tree](supported-costs.svg)",
+            "## Product-formula accuracy",
+            "",
+            "Relative state error is measured against a dense exponential of the Hamiltonian built independently with Yao Pauli blocks. Timings compare the same lowered product formula on the same input; they exclude Hamiltonian/circuit construction and do not compare against adaptive Krylov execution.",
+            "",
+            "| Threads | Case | Native µs | Yao µs | Native relative error | Yao relative error |",
+            "| --- | --- | ---: | ---: | ---: | ---: |",
+        ]
+        for row in summary:
+            if row["backend"] == "native" and "relative_state_error" in row:
+                other = lookup[(row["threads"], row["id"], "julia")]
+                lines.append(
+                    f"| {row['threads']} | {row['id']} | {row['median_ns'] / 1000:.3f} | {other['median_ns'] / 1000:.3f} | {row['relative_state_error']:.3e} | {other['relative_state_error']:.3e} |"
+                )
+        lines += [
+            "",
+            "![Product-formula error versus execution time](evolution-error-time.svg)",
             "",
         ]
+    else:
+        lines += [
+            "## Plots",
+            "",
+            "![CPU scaling](cpu-scaling.svg)",
+            "",
+            "![Circuit and contraction costs](tensor-costs.svg)",
+            "",
+            "![AD memory](ad-memory.svg)",
+            "",
+        ]
+        if any(row["backend"] == "supported_warm" for row in summary):
+            lines += [
+                "![Supported adapter, same contraction tree](supported-costs.svg)",
+                "",
+            ]
+    memory = evolution_memory_rows(directory)
+    if memory:
+        (directory / "evolution-memory.json").write_text(
+            json.dumps(memory, indent=2) + "\n"
+        )
+        lines += [
+            "## Product-formula memory",
+            "",
+            "Second-order formulas, isolated native processes. Retained circuit heap is measured after construction; execution peak is additional Rust heap above the existing circuit/input state. Whole-process RSS includes startup and allocator retention. These small workloads do not establish a large-state memory limit. Allocation-instrumented times are diagnostic only.",
+            "",
+            "| Model | Qubits | Steps | Gates | Circuit retained KiB | Execution peak KiB | Process peak RSS MiB |",
+            "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+        ]
+        for row in memory:
+            lines.append(
+                f"| {row['model']} | {row['qubits']} | {row['steps']} | {row['gates']} | {row['circuit_retained_bytes'] / 1024:.2f} | {row['execution_peak_bytes'] / 1024:.2f} | {row['peak_rss_bytes'] / 1048576:.2f} |"
+            )
+        lines.append("")
     (directory / "report.md").write_text("\n".join(lines))
     return summary
 

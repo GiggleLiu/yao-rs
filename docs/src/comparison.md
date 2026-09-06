@@ -14,11 +14,11 @@ which differentiation and noise workflows are implemented.
 | Automatic differentiation | Parameter/state gradients and ChainRules integration | Adjoint expectation gradients for parameterized unitary circuits |
 | Tensor-network export | YaoToEinsum | Pure states, overlaps, expectations and density matrices |
 | Diagonal tensor optimization | Yes | Yes |
-| Contraction-order optimization | OMEinsumContractionOrders; slicing in current source | omeco planning and omeinsum contraction; slicing not yet exposed |
+| Contraction-order optimization | OMEinsumContractionOrders; slicing in current source | omeco planning, omeinsum and tenferro contraction; reusable tenferro plans; slicing not yet exposed |
 | Noise channels | Density-matrix channel execution | Kraus channels and density matrices; automatic noisy CLI simulation |
 | Measurement / sampling | Register operations and in-circuit measurement blocks | Register operations and CLI sampling |
 | Circuit visualization | YaoPlots | Built-in SVG rendering |
-| Hamiltonian evolution | TimeEvolution and Krylov exponential action | Planned |
+| Hamiltonian evolution | TimeEvolution and Krylov exponential action | Pauli rotations, Ising/XYZ models, first/second order product formulas with shared physical parameters; Krylov action planned |
 
 The tensor optimization entries are verified against the local Yao source
 commit `31c7c1333b14b1e89123c511eff5742e7ac24edd`, including
@@ -32,8 +32,9 @@ may not describe every current-source capability. See Yao's
 including controlled gates. General custom-loss/input-state differentiation
 and differentiation through noise channels are separate future increments.
 
-The tenferro feasibility fixture under `benchmarks/tenferro-probe` evaluates a
-published tensor/autodiff backend without changing the supported library API.
+The optional `tenferro` feature provides a supported CPU tensor contractor and
+CLI backend. The fixture under `benchmarks/tenferro-probe` compares it with the
+native simulator, previous contractor, and experimental tensor/AD operations.
 Performance conclusions must name the workload, precision, CPU, thread count,
 and whether conversion/planning is included. Use the reproducible benchmark
 instructions in `benchmarks/README.md`; do not infer circuit performance from

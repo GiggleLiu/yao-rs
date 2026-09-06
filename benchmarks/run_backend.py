@@ -54,6 +54,26 @@ def collect_criterion():
     return records
 
 
+def measure_evolution_memory(output, env):
+    """Separate processes: model/circuit construction and native execution heap/RSS."""
+    for model in ["ising", "heisenberg"]:
+        for n in [3, 12]:
+            for steps in [1, 16]:
+                run(
+                    [
+                        "/usr/bin/time",
+                        "-l" if sys.platform == "darwin" else "-v",
+                        str(TARGET / "release/memory"),
+                        "evolution",
+                        model,
+                        str(n),
+                        str(steps),
+                    ],
+                    env,
+                    output / f"memory-evolution-{model}-{n}-{steps}.log",
+                )
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("output", type=Path)
@@ -61,6 +81,7 @@ def main():
     p.add_argument("--runs", type=int, default=3)
     p.add_argument("--max-qubits", type=int, default=24)
     p.add_argument("--julia", default="julia")
+    p.add_argument("--suite", choices=["circuits", "evolution"], default="circuits")
     a = p.parse_args()
     if min(a.threads) < 1 or a.runs < 1 or not 4 <= a.max_qubits <= 24:
         p.error("positive threads/runs and 4..24 qubits required")
@@ -69,16 +90,17 @@ def main():
     env = os.environ.copy()
     env["CARGO_TARGET_DIR"] = str(TARGET)
     cases = output / "cases.json"
-    run(
-        [
-            sys.executable,
-            "benchmarks/generate_cases.py",
-            str(cases),
-            "--max-qubits",
-            str(a.max_qubits),
-        ],
-        env,
-    )
+    if a.suite == "circuits":
+        run(
+            [
+                sys.executable,
+                "benchmarks/generate_cases.py",
+                str(cases),
+                "--max-qubits",
+                str(a.max_qubits),
+            ],
+            env,
+        )
     env["YAO_BENCH_CASES"] = str(cases)
     build = [
         "cargo",
@@ -91,6 +113,8 @@ def main():
         "--benches",
     ]
     run(build, env, output / "build.log")
+    if a.suite == "evolution":
+        run([str(TARGET / "release/evolution_cases"), str(cases)], env)
     run(
         ["cargo", "bench", "--locked", "--manifest-path", str(MANIFEST), "--no-run"],
         env,
@@ -128,6 +152,7 @@ def main():
         cpu=platform.processor(),
         threads=a.threads,
         runs=a.runs,
+        suite=a.suite,
         cases_sha256=sha(cases),
         sources={str(x.relative_to(ROOT)): sha(x) for x in source_paths},
         git_head=subprocess.check_output(
@@ -214,6 +239,8 @@ def main():
             env,
             output / f"memory-nonlinear-16-{depth}.log",
         )
+    if a.suite == "evolution":
+        measure_evolution_memory(output, env)
     run(
         [sys.executable, "benchmarks/compare.py", "--backend-results", str(output)], env
     )

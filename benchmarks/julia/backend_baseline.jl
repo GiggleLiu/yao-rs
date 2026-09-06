@@ -33,6 +33,8 @@ function build_circuit(spec)
             H
         elseif name == "X"
             X
+        elseif name == "S"
+            ConstGate.S
         elseif name == "SWAP"
             SWAP
         else
@@ -71,6 +73,18 @@ function evaluate(mode, initial, circuit, op)
     mode == "density" ? vec(permutedims(output.state)) : vec(statevec(output))
 end
 
+# Dense oracle built from Yao Pauli blocks, independent of the emitted circuit.
+# Only used for the bounded 3-qubit accuracy fixtures, outside timing regions.
+function exact_evolution(spec, n, initial, time)
+    h = zeros(ComplexF64, 1<<n, 1<<n)
+    paulis = Dict("I"=>I2, "X"=>X, "Y"=>Y, "Z"=>Z)
+    for (coefficient, word) in zip(spec["coeffs"], spec["opstrings"])
+        block = chain(n, (put(n,n-site=>paulis[op]) for (site,op) in word["ops"])...)
+        h .+= complex(coefficient...) .* mat(block)
+    end
+    exp(-im*time*h) * vec(statevec(initial))
+end
+
 function main()
     cases_path, reference_dir, output_path=ARGS
     threads=parse(Int,get(ENV,"YAO_BENCH_THREADS","1"))
@@ -106,9 +120,16 @@ function main()
         else
             @benchmark apply!(copy($initial),$circuit) samples=10 evals=1 seconds=0.5
         end
-        push!(records,Dict("id"=>case["id"],"median_ns"=>median(trial).time,
+        record=Dict{String,Any}("id"=>case["id"],"median_ns"=>median(trial).time,
             "samples_ns"=>trial.times,"allocations"=>trial.allocs,"allocated_bytes"=>trial.memory,
-            "construction_median_ns"=>median(construction).time,"max_error"=>err))
+            "construction_median_ns"=>median(construction).time,"max_error"=>err)
+        if haskey(case, "evolution")
+            evolution=case["evolution"]
+            exact=exact_evolution(evolution["hamiltonian"],n,initial,evolution["time"])
+            record["approximation_error"] = norm(expected-exact)/norm(exact)
+            record["yao_approximation_error"] = norm(got-exact)/norm(exact)
+        end
+        push!(records,record)
         println(case["id"]," error=",err," median_ns=",median(trial).time)
         open(output_path,"w") do io
             JSON.print(io,Dict("julia"=>string(VERSION),"yao"=>string(pkgversion(Yao)),

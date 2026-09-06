@@ -50,6 +50,9 @@ fn phase<T>(name: &str, f: impl FnOnce() -> T) -> T {
     out
 }
 fn main() -> Result<()> {
+    if std::env::args().nth(1).as_deref() == Some("evolution") {
+        return evolution_memory();
+    }
     let n: usize = std::env::args().nth(1).unwrap_or("12".into()).parse()?;
     let depth: usize = std::env::args().nth(2).unwrap_or("10".into()).parse()?;
     if !(1..=20).contains(&n) || depth == 0 || depth > 1000 {
@@ -93,6 +96,38 @@ fn main() -> Result<()> {
     println!(
         "{}",
         json!({"qubits":n,"depth":depth,"operation":if nonlinear { "scaled_sin" } else { "conj" },"state_bytes":(1<<n)*16,"note":"Rust allocator instrumentation excludes provider allocations; timings include instrumentation. Not RSS."})
+    );
+    Ok(())
+}
+
+fn evolution_memory() -> Result<()> {
+    use yao_rs::hamiltonian::{Boundary, ProductFormula, heisenberg, ising};
+    let model = std::env::args().nth(2).ok_or("expected model")?;
+    let n: usize = std::env::args().nth(3).ok_or("expected qubits")?.parse()?;
+    let steps: usize = std::env::args().nth(4).ok_or("expected steps")?.parse()?;
+    if !(3..=20).contains(&n) || !(1..=1000).contains(&steps) {
+        return Err("expected 3..20 qubits and 1..1000 steps".into());
+    }
+    let h = phase("model", || match model.as_str() {
+        "ising" => ising(n, -0.7, 0.4, Boundary::Open),
+        "heisenberg" => heisenberg(n, [0.4, 0.7, -0.3], 0.2, Boundary::Periodic),
+        _ => Err("expected ising or heisenberg".into()),
+    })?;
+    let bound = phase("circuit_construction", || {
+        h.evolve(0.8, steps, ProductFormula::Suzuki2)
+    })?;
+    let input = phase("state_input", || yao_rs::ArrayReg::zero_state(n));
+    let out = phase("native_execution", || bound.apply(&input))?;
+    let norm: f64 = out.state.iter().map(|x| x.norm_sqr()).sum();
+    if (norm - 1.).abs() > 1e-9 {
+        return Err("evolution state norm mismatch".into());
+    }
+    println!(
+        "{}",
+        json!({"model":model,"qubits":n,"steps":steps,"order":2,
+        "gates":bound.circuit().elements.len(), "gate_parameters":bound.circuit().num_params(),
+        "physical_parameters":bound.parameters().len(), "state_bytes":(1usize<<n)*16,"norm_squared":norm,
+        "note":"Isolated model construction and native execution; Rust heap excludes provider allocations. Timings include instrumentation. RSS includes startup and allocator retention."})
     );
     Ok(())
 }

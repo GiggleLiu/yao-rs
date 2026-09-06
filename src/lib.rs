@@ -38,11 +38,13 @@ pub mod easybuild;
 pub mod einsum;
 pub mod expect;
 pub mod gate;
+pub mod hamiltonian;
 pub mod instruct_qubit;
 pub mod json;
 pub mod measure;
 pub mod noise;
 pub mod operator;
+pub mod parameters;
 #[cfg(feature = "qasm")]
 pub mod qasm;
 pub mod register;

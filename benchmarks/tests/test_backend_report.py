@@ -19,6 +19,31 @@ generate = load("generate_cases")
 
 
 class BackendReportTests(unittest.TestCase):
+    def test_evolution_memory_rss_units_and_phase_boundaries(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "memory-evolution-test.log"
+            records = [
+                dict(model="ising", qubits=12, steps=16, gates=2208),
+                dict(
+                    phase="circuit_construction",
+                    retained_additional_rust_heap_bytes=4096,
+                ),
+                dict(phase="native_execution", peak_additional_rust_heap_bytes=65536),
+            ]
+            prefix = "\n".join(json.dumps(row) for row in records) + "\n"
+            for rss in [
+                "2097152 maximum resident set size",
+                "Maximum resident set size (kbytes): 2048",
+            ]:
+                path.write_text(prefix + rss)
+                (row,) = compare.evolution_memory_rows(temp)
+                self.assertEqual(row["peak_rss_bytes"], 2097152)
+                self.assertEqual(row["circuit_retained_bytes"], 4096)
+                self.assertEqual(row["execution_peak_bytes"], 65536)
+            path.write_text(prefix)
+            with self.assertRaisesRegex(ValueError, "Missing peak RSS"):
+                compare.evolution_memory_rows(temp)
+
     def test_medians_and_threads_are_not_mixed(self):
         with tempfile.TemporaryDirectory() as temp:
             path = Path(temp)
@@ -46,7 +71,13 @@ class BackendReportTests(unittest.TestCase):
                             dict(
                                 threads=threads,
                                 records=[
-                                    dict(id="gate_8", median_ns=500, max_error=1e-14)
+                                    dict(
+                                        id="gate_8",
+                                        median_ns=500,
+                                        max_error=1e-14,
+                                        approximation_error=0.01 * run * threads,
+                                        yao_approximation_error=0.02 * run * threads,
+                                    )
                                 ],
                             )
                         )
@@ -60,6 +91,21 @@ class BackendReportTests(unittest.TestCase):
             self.assertEqual(native, {1: 200, 4: 800})
             self.assertIn("2.50", (path / "report.md").read_text())
             self.assertIn("0.62", (path / "report.md").read_text())
+            errors = {
+                (row["threads"], row["backend"]): row["relative_state_error"]
+                for row in summary
+            }
+            self.assertEqual(
+                errors,
+                {
+                    (1, "native"): 0.03,
+                    (1, "julia"): 0.06,
+                    (4, "native"): 0.12,
+                    (4, "julia"): 0.24,
+                },
+            )
+            self.assertIn("1.00e-14", (path / "report.md").read_text())
+            self.assertIn("evolution-error-time.svg", (path / "report.md").read_text())
 
     def test_missing_baseline_is_an_error(self):
         with tempfile.TemporaryDirectory() as temp:
