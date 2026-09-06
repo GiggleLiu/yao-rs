@@ -76,9 +76,47 @@ def main():
         )
 
 
+def peak_rss_bytes(text):
+    import re
+
+    mac = re.search(r"(\d+)\s+maximum resident set size", text)
+    linux = re.search(r"Maximum resident set size \(kbytes\):\s*(\d+)", text)
+    if not mac and not linux:
+        raise ValueError("Missing peak RSS")
+    return int(mac[1]) if mac else int(linux[1]) * 1024
+
+
+def circuit_ad_memory_rows(directory):
+    path = Path(directory) / "circuit-ad-memory-status.json"
+    if not path.exists():
+        return []
+    rows = json.loads(path.read_text())
+    for row in rows:
+        if "file" not in row:
+            continue
+        text = (Path(directory) / row["file"]).read_text()
+        records = [
+            json.loads(line) for line in text.splitlines() if line.startswith("{")
+        ]
+        if row["status"] == "complete" and not any(
+            r.get("status") == "complete" for r in records
+        ):
+            raise ValueError(
+                "AD memory result claims completion without a completed probe"
+            )
+        phases = {r["phase"]: r for r in records if "phase" in r}
+        row["peak_rss_bytes"] = peak_rss_bytes(text)
+        row["forward_retained_bytes"] = phases.get("circuit_ad_forward_tape", {}).get(
+            "retained_additional_rust_heap_bytes"
+        )
+        row["backward_peak_bytes"] = phases.get(
+            "circuit_ad_backward", phases.get("native_value_and_grad", {})
+        ).get("peak_additional_rust_heap_bytes")
+    return rows
+
+
 def evolution_memory_rows(directory):
     """Read phase heap bytes and platform-specific time(1) peak RSS units."""
-    import re
 
     rows = []
     for path in sorted(Path(directory).glob("memory-evolution-*.log")):
@@ -88,10 +126,6 @@ def evolution_memory_rows(directory):
         ]
         metadata = next(row for row in records if "model" in row)
         phases = {row["phase"]: row for row in records if "phase" in row}
-        mac = re.search(r"(\d+)\s+maximum resident set size", text)
-        linux = re.search(r"Maximum resident set size \(kbytes\):\s*(\d+)", text)
-        if not mac and not linux:
-            raise ValueError(f"Missing peak RSS in {path}")
         rows.append(
             dict(
                 model=metadata["model"],
@@ -104,7 +138,7 @@ def evolution_memory_rows(directory):
                 execution_peak_bytes=phases["native_execution"][
                     "peak_additional_rust_heap_bytes"
                 ],
-                peak_rss_bytes=int(mac[1]) if mac else int(linux[1]) * 1024,
+                peak_rss_bytes=peak_rss_bytes(text),
             )
         )
     return rows
@@ -243,6 +277,19 @@ def backend_report(directory):
             "![Product-formula error versus execution time](evolution-error-time.svg)",
             "",
         ]
+    elif metadata.get("suite") == "circuit-ad":
+        lines += [
+            "## Circuit AD costs and memory",
+            "",
+            "Every timing returns squared state-distance loss, real parameter gradients, and the complex input-state gradient. Native uses one forward pass plus its reversible sweep; the tenferro rows include input copies, eager graph construction, loss, backward and output collection, with context construction excluded. The ordinary-composition fixture uses 4×4 tensor matrices on the last two sites of the full asymmetric input; no gate fusion is applied.",
+            "",
+            "Repeated ordinary-composition timings cover 10 layers. The 100-layer cases are qualified separately with a 30-CPU-second cap, starting at 8 qubits; larger cases are skipped if that representative run fails to complete. The memory table records each outcome. Missing timings are not speedups. The circuit primitive and native/Yao baselines cover all six cases.",
+            "",
+            "![Circuit AD execution costs](circuit-ad-costs.svg)",
+            "",
+            "![Circuit AD memory](circuit-ad-memory.svg)",
+            "",
+        ]
     else:
         lines += [
             "## Plots",
@@ -277,6 +324,28 @@ def backend_report(directory):
                 f"| {row['model']} | {row['qubits']} | {row['steps']} | {row['gates']} | {row['circuit_retained_bytes'] / 1024:.2f} | {row['execution_peak_bytes'] / 1024:.2f} | {row['peak_rss_bytes'] / 1048576:.2f} |"
             )
         lines.append("")
+    ad_memory = circuit_ad_memory_rows(directory)
+    if ad_memory:
+        (directory / "circuit-ad-memory.json").write_text(
+            json.dumps(ad_memory, indent=2) + "\n"
+        )
+        lines += [
+            "| Backend | Qubits | Layers | Status | Forward retained MiB | Backward peak extra MiB | Process peak RSS MiB |",
+            "| --- | ---: | ---: | --- | ---: | ---: | ---: |",
+        ]
+
+        def mib(row, key):
+            return "—" if row.get(key) is None else f"{row[key] / 1048576:.3f}"
+
+        for row in ad_memory:
+            lines.append(
+                f"| {row['backend']} | {row['qubits']} | {row['depth']} | {row['status']} | {mib(row, 'forward_retained_bytes')} | {mib(row, 'backward_peak_bytes')} | {mib(row, 'peak_rss_bytes')} |"
+            )
+        lines += [
+            "",
+            "Native peak heap covers combined value/gradient execution. Other backward peaks are additional to retained forward storage. RSS includes startup/provider allocations and allocator retention; a terminated run's RSS is only its observed peak before termination. Rust heap counts exclude native-provider allocations. Allocation-instrumented times are diagnostic only.",
+            "",
+        ]
     (directory / "report.md").write_text("\n".join(lines))
     return summary
 

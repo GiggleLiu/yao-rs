@@ -50,6 +50,9 @@ fn phase<T>(name: &str, f: impl FnOnce() -> T) -> T {
     out
 }
 fn main() -> Result<()> {
+    if std::env::args().nth(1).as_deref() == Some("circuit-ad") {
+        return circuit_ad_memory();
+    }
     if std::env::args().nth(1).as_deref() == Some("evolution") {
         return evolution_memory();
     }
@@ -96,6 +99,48 @@ fn main() -> Result<()> {
     println!(
         "{}",
         json!({"qubits":n,"depth":depth,"operation":if nonlinear { "scaled_sin" } else { "conj" },"state_bytes":(1<<n)*16,"note":"Rust allocator instrumentation excludes provider allocations; timings include instrumentation. Not RSS."})
+    );
+    Ok(())
+}
+
+fn circuit_ad_memory() -> Result<()> {
+    use yao_tenferro_probe::circuit_ad as ad;
+    let backend = std::env::args()
+        .nth(2)
+        .ok_or("expected native/custom/composed")?;
+    if !["native", "custom", "composed"].contains(&backend.as_str()) {
+        return Err("unknown AD backend".into());
+    }
+    let n: usize = std::env::args().nth(3).ok_or("expected qubits")?.parse()?;
+    let depth: usize = std::env::args().nth(4).ok_or("expected depth")?.parse()?;
+    if !(2..=16).contains(&n) || !(1..=100).contains(&depth) {
+        return Err("expected 2..16 qubits and 1..100 layers".into());
+    }
+    let c = std::sync::Arc::new(ad::circuit(n, depth)?);
+    let input = yao_rs::ArrayReg::zero_state(n);
+    let target = ad::target(n);
+    println!(
+        "{}",
+        json!({"backend":backend,"qubits":n,"depth":depth,"parameters":c.num_parameters(),"state_bytes":(1usize<<n)*16})
+    );
+    let result = if backend == "native" {
+        phase("native_value_and_grad", || ad::native(&c, &input, &target))?
+    } else {
+        let ctx = yao_rs::tenferro_ad::eager_cpu_runtime(1)?;
+        let evaluation = phase("circuit_ad_forward_tape", || {
+            ad::prepare(c, &input, &target, ctx, backend == "composed")
+        })?;
+        phase("circuit_ad_backward", || ad::finish(&evaluation))?
+    };
+    if result
+        .iter()
+        .any(|z| !z.re.is_finite() || !z.im.is_finite())
+    {
+        return Err("nonfinite AD result".into());
+    }
+    println!(
+        "{}",
+        json!({"status":"complete","output_values":result.len(),"loss":result[0].re,"note":"Rust heap instrumentation; excludes native provider allocations. RSS includes startup, forward and backward. Diagnostic times are not benchmark timings."})
     );
     Ok(())
 }

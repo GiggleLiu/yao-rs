@@ -10,8 +10,8 @@ validation targets the NVIDIA A800 host reachable as `ssh gpu`.
 | --- | --- | --- |
 | 1. Published backend feasibility / CPU baseline | Complex/layout/AD/custom-operation tests; reproducible CPU report and memory measurements | Merged [PR #47](https://github.com/GiggleLiu/yao-rs/pull/47) (`6bad156`) |
 | 2. Supported tenferro CPU backend | Library/CLI adapter, explicit and reusable plans, numerical/feature/package checks | Implemented in [PR #48](https://github.com/GiggleLiu/yao-rs/pull/48); merged (`3ec7e69`) |
-| 3. Hamiltonian evolution | Pauli rotations, model builders, Trotter/Suzuki, physical parameter bindings and convergence tests | Implemented in [PR #49](https://github.com/GiggleLiu/yao-rs/pull/49); validation and CPU report complete |
-| 4. Differentiable circuits | Custom losses/input-state VJP, tenferro integration, shared parameters, numerical and memory tests | Pending |
+| 3. Hamiltonian evolution | Pauli rotations, model builders, Trotter/Suzuki, physical parameter bindings and convergence tests | Merged [PR #49](https://github.com/GiggleLiu/yao-rs/pull/49) (`a1f24f3`) |
+| 4. Differentiable circuits | Custom losses/input-state VJP, tenferro integration, shared parameters, numerical and memory tests | Implementing on `codex/differentiable-circuits` |
 | 5. Tensor memory / observables | Polynomial expectations, omeco slicing, estimates, versioned plans and budget tests | Pending |
 | 6. Noisy trajectories | Seeded Kraus sampling, uncertainty, exact-density comparisons and memory scaling | Pending |
 | 7. Matrix-free exponential action | Community implementation qualification, error/convergence diagnostics, Yao comparison | Pending |

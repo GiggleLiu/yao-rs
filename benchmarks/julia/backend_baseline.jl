@@ -55,7 +55,7 @@ function build_circuit(spec)
 end
 
 # The same reversible algorithm used by Yao's expect adjoint, returning the value too.
-# Based on YaoBlocks/src/autodiff/specializes.jl (MIT); the inner product adds the value.
+# Based on YaoBlocks/src/autodiff/specializes.jl (Apache-2.0); the inner product adds the value.
 function value_gradient(initial,circuit,op)
     out=apply!(copy(initial),circuit)
     cotangent=apply!(2copy(out),op)
@@ -68,9 +68,26 @@ function evaluate(mode, initial, circuit, op)
     if mode == "gradient"
         value,grad=value_gradient(initial,circuit,op)
         return ComplexF64[value;grad]
+    elseif mode == "custom_gradient"
+        return custom_gradient(initial,circuit,op)
     end
     output=apply!(copy(initial),circuit)
     mode == "density" ? vec(permutedims(output.state)) : vec(statevec(output))
+end
+
+function custom_target(n)
+    values=ComplexF64[cos(0.23*k)+im*sin(0.17*k) for k in 0:((1<<n)-1)]
+    values/norm(values)
+end
+
+# General real-pairing pullback: d||psi-target||² seeds 2(psi-target).
+# Yao apply_back returns the input cotangent and real gate parameters directly.
+function custom_gradient(initial,circuit,target)
+    out=apply!(copy(initial),circuit)
+    delta=vec(statevec(out))-target
+    value=sum(abs2,delta)
+    (_,input_bar),params=Yao.AD.apply_back((out,ArrayReg(2delta)),circuit)
+    ComplexF64[value;params;vec(statevec(input_bar))]
 end
 
 # Dense oracle built from Yao Pauli blocks, independent of the emitted circuit.
@@ -102,7 +119,7 @@ function main()
         else
             zero_state(n)
         end
-        op=put(n,n=>Z)
+        op=mode == "custom_gradient" ? custom_target(n) : put(n,n=>Z)
         # Full state/matrix/gradient comparison outside measured closures.
         got=evaluate(mode,initial,circuit,op)
         if mode == "gradient"
@@ -117,6 +134,8 @@ function main()
         # Rust expect_grad includes one forward value calculation and one backward sweep.
         trial=if mode == "gradient"
             @benchmark value_gradient($initial,$circuit,$op) samples=10 evals=1 seconds=0.5
+        elseif mode == "custom_gradient"
+            @benchmark custom_gradient($initial,$circuit,$op) samples=10 evals=1 seconds=0.5
         else
             @benchmark apply!(copy($initial),$circuit) samples=10 evals=1 seconds=0.5
         end

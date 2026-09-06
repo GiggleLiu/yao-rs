@@ -8,6 +8,7 @@ use tenferro_einsum::{ConcreteEinsumPlan, EinsumSubscripts};
 use tenferro_tensor::{BackendSessionHost, Tensor};
 
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
+pub mod circuit_ad;
 pub mod extension;
 
 /// Materialize logical ndarray axes in Fortran order, including strided arrays.

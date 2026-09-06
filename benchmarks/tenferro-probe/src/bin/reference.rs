@@ -27,6 +27,14 @@ fn main() -> Result<()> {
                 let (value, grad) = expect_grad(&op, &circuit, &state);
                 std::iter::once(value).chain(grad).map(C::from).collect()
             }
+            "custom_gradient" => {
+                let c = yao_rs::differentiable::DifferentiableCircuit::from_circuit(circuit)?;
+                yao_tenferro_probe::circuit_ad::native(
+                    &c,
+                    &state,
+                    &yao_tenferro_probe::circuit_ad::target(state.nqubits()),
+                )?
+            }
             _ => return Err("unknown mode".into()),
         };
         let mut file = BufWriter::new(File::create(

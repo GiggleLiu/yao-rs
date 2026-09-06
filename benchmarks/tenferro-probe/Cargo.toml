@@ -8,7 +8,7 @@ rust-version = "1.96"
 publish = false
 
 [dependencies]
-yao-rs = { path = "../..", features = ["omeinsum", "tenferro"] }
+yao-rs = { path = "../..", features = ["omeinsum", "tenferro-ad"] }
 tenferro-tensor = "=0.4.0"
 tenferro-cpu = "=0.4.0"
 tenferro-runtime = "=0.4.0"

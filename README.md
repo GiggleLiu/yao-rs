@@ -12,7 +12,7 @@ A Rust port of [Yao.jl](https://github.com/QuantumBFS/Yao.jl) focused on quantum
 - **Qudit support** with per-site dimensions for tensor-network export; state simulation is qubit-only
 - **Circuit validation** with controlled gates (qubit-only controls)
 - **Qubit simulation** via `ArrayReg`, plus density-matrix simulation of noise channels
-- **Differentiable circuits** via adjoint-mode `expect_grad`, parameter readback, and parameter updates
+- **Differentiable circuits** with expectation gradients, parameter/input-state VJPs and JVPs, shared physical parameters, and tenferro custom losses
 - **Tensor network export** via [omeco](https://crates.io/crates/omeco) for contraction order optimization
 - **Diagonal gate optimization** in tensor networks (shared legs vs input/output legs)
 - **SVG circuit rendering** via `Circuit::to_svg()` and `yao visualize`
@@ -53,6 +53,12 @@ contraction with explicit threads and reusable plans (Rust 1.96 or newer).
 Install from this checkout with `cargo install --path yao-cli --features tenferro --locked`,
 then select `yao contract tn.json --backend tenferro --threads 4`.
 See [tensor-network execution](docs/src/tensor-networks.md#tenferro-cpu-execution).
+
+Enable `tenferro-ad` for custom-loss circuit differentiation. The optional
+`optimizer-example` feature runs an argmin L-BFGS state-fitting example:
+`cargo run --release --example custom_loss --features optimizer-example`.
+See [differentiation](docs/src/differentiation.md) for cotangent conventions,
+parameter sharing, and CPU execution/retention boundaries.
 
 Pauli Hamiltonians, Ising/Heisenberg models, product-formula evolution and shared
 physical parameter gradients are available in the [Hamiltonian guide](docs/src/hamiltonian.md).

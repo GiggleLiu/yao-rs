@@ -32,7 +32,7 @@ fn controls_match(basis: usize, nbits: usize, pg: &PositionedGate) -> bool {
 ///
 /// Unlike a controlled unitary, a controlled generator maps inactive control
 /// branches to zero because those amplitudes have no parameter derivative.
-fn apply_generator(
+pub(crate) fn apply_generator(
     state: &mut [Complex64],
     nbits: usize,
     pg: &PositionedGate,
@@ -103,9 +103,8 @@ pub fn expect_grad(
     let value = expect_arrayreg(&psi, observable).re;
 
     let n_params = circuit.num_params();
-    let mut grad = vec![0.0_f64; n_params];
     if n_params == 0 {
-        return (value, grad);
+        return (value, Vec::new());
     }
 
     let nbits = psi.nqubits();
@@ -130,6 +129,22 @@ pub fn expect_grad(
         }
     }
 
+    let grad = reverse_unitary(circuit, &mut psi, &mut lambda_state, 2.0);
+    (value, grad)
+}
+
+// Shared reversible sweep. The caller validates unitarity and dimensions.
+// `scale` preserves expect_grad's H*psi seed while general VJPs use scale=1.
+pub(crate) fn reverse_unitary(
+    circuit: &Circuit,
+    psi: &mut ArrayReg,
+    lambda_state: &mut [Complex64],
+    scale: f64,
+) -> Vec<f64> {
+    let n_params = circuit.num_params();
+    let mut grad = vec![0.; n_params];
+    let nbits = psi.nqubits();
+    let dim = psi.state.len();
     let mut slot = n_params;
     let mut phi_scratch = vec![Complex64::new(0.0, 0.0); dim];
     for el in circuit.elements.iter().rev() {
@@ -149,7 +164,7 @@ pub fn expect_grad(
                         for k in 0..dim {
                             acc += lambda_state[k].conj() * phi_scratch[k];
                         }
-                        grad[slot] = 2.0 * acc.re;
+                        grad[slot] = scale * acc.re;
                     }
                 }
 
@@ -160,13 +175,13 @@ pub fn expect_grad(
                     control_configs: pg.control_configs.clone(),
                 };
                 dispatch_arrayreg_gate(nbits, psi.state_vec_mut(), &dag_pg);
-                dispatch_arrayreg_gate(nbits, &mut lambda_state, &dag_pg);
+                dispatch_arrayreg_gate(nbits, lambda_state, &dag_pg);
             }
         }
     }
     debug_assert_eq!(slot, 0);
 
-    (value, grad)
+    grad
 }
 
 #[cfg(test)]

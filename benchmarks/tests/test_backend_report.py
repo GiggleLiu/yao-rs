@@ -16,9 +16,43 @@ def load(name):
 
 compare = load("compare")
 generate = load("generate_cases")
+runner = load("run_backend")
 
 
 class BackendReportTests(unittest.TestCase):
+    def test_memory_termination_is_not_a_completed_or_timed_result(self):
+        import signal
+
+        self.assertEqual(
+            runner.memory_probe_status("composed", -signal.SIGXCPU), "cpu_limit"
+        )
+        self.assertEqual(
+            runner.memory_probe_status("composed", -signal.SIGKILL),
+            "killed_with_cpu_limit",
+        )
+        with self.assertRaises(RuntimeError):
+            runner.memory_probe_status("composed", -signal.SIGSEGV)
+        with tempfile.TemporaryDirectory() as temp:
+            p = Path(temp)
+            row = dict(
+                backend="composed",
+                qubits=8,
+                depth=100,
+                status="cpu_limit",
+                file="probe.log",
+            )
+            (p / "circuit-ad-memory-status.json").write_text(json.dumps([row]))
+            (p / "probe.log").write_text(
+                '{"phase":"circuit_ad_forward_tape","retained_additional_rust_heap_bytes":4096}\n2097152 maximum resident set size\n'
+            )
+            (result,) = compare.circuit_ad_memory_rows(p)
+            self.assertEqual(result["peak_rss_bytes"], 2097152)
+            self.assertIsNone(result["backward_peak_bytes"])
+            row["status"] = "complete"
+            (p / "circuit-ad-memory-status.json").write_text(json.dumps([row]))
+            with self.assertRaisesRegex(ValueError, "without a completed probe"):
+                compare.circuit_ad_memory_rows(p)
+
     def test_evolution_memory_rss_units_and_phase_boundaries(self):
         with tempfile.TemporaryDirectory() as temp:
             path = Path(temp) / "memory-evolution-test.log"

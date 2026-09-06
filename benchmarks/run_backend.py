@@ -74,6 +74,90 @@ def measure_evolution_memory(output, env):
                 )
 
 
+def measure_circuit_ad_memory(output, env):
+    """Bound expensive ordinary composition; record incomplete runs explicitly."""
+    records = []
+    for n in [8, 12, 16]:
+        for depth in [10, 100]:
+            for backend in ["native", "custom", "composed"]:
+                if (
+                    backend == "composed"
+                    and depth == 100
+                    and n != 8
+                    and any(
+                        r["backend"] == "composed"
+                        and r["qubits"] == 8
+                        and r["depth"] == 100
+                        and r["status"] != "complete"
+                        for r in records
+                    )
+                ):
+                    records.append(
+                        dict(
+                            backend=backend,
+                            qubits=n,
+                            depth=depth,
+                            status="not_run_after_representative_limit",
+                        )
+                    )
+                    continue
+                name = f"memory-circuit-ad-{backend}-{n}-{depth}.log"
+                command = [
+                    str(TARGET / "release/memory"),
+                    "circuit-ad",
+                    backend,
+                    str(n),
+                    str(depth),
+                ]
+                if backend == "composed":
+                    command = [
+                        "sh",
+                        "-c",
+                        'ulimit -c 0; ulimit -t 30; exec "$@"',
+                        "ad-memory-limit",
+                    ] + command
+                with (output / name).open("w") as log:
+                    result = subprocess.run(
+                        ["/usr/bin/time", "-l" if sys.platform == "darwin" else "-v"]
+                        + command,
+                        cwd=ROOT,
+                        env=env,
+                        stdout=log,
+                        stderr=subprocess.STDOUT,
+                    )
+                status = memory_probe_status(backend, result.returncode)
+                records.append(
+                    dict(
+                        backend=backend,
+                        qubits=n,
+                        depth=depth,
+                        status=status,
+                        returncode=result.returncode,
+                        file=name,
+                        cpu_seconds_limit=30 if backend == "composed" else None,
+                    )
+                )
+                (output / "circuit-ad-memory-status.json").write_text(
+                    json.dumps(records, indent=2) + "\n"
+                )
+    (output / "circuit-ad-memory-status.json").write_text(
+        json.dumps(records, indent=2) + "\n"
+    )
+
+
+def memory_probe_status(backend, returncode):
+    import signal
+
+    if returncode == 0:
+        return "complete"
+    if backend == "composed":
+        if returncode in [-signal.SIGXCPU, 128 + signal.SIGXCPU]:
+            return "cpu_limit"
+        if returncode in [-signal.SIGKILL, 128 + signal.SIGKILL]:
+            return "killed_with_cpu_limit"  # SIGKILL alone does not prove its cause.
+    raise RuntimeError(f"AD memory probe failed: {backend}, exit={returncode}")
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("output", type=Path)
@@ -81,7 +165,9 @@ def main():
     p.add_argument("--runs", type=int, default=3)
     p.add_argument("--max-qubits", type=int, default=24)
     p.add_argument("--julia", default="julia")
-    p.add_argument("--suite", choices=["circuits", "evolution"], default="circuits")
+    p.add_argument(
+        "--suite", choices=["circuits", "evolution", "circuit-ad"], default="circuits"
+    )
     a = p.parse_args()
     if min(a.threads) < 1 or a.runs < 1 or not 4 <= a.max_qubits <= 24:
         p.error("positive threads/runs and 4..24 qubits required")
@@ -115,6 +201,8 @@ def main():
     run(build, env, output / "build.log")
     if a.suite == "evolution":
         run([str(TARGET / "release/evolution_cases"), str(cases)], env)
+    elif a.suite == "circuit-ad":
+        run([str(TARGET / "release/ad_cases"), str(cases)], env)
     run(
         ["cargo", "bench", "--locked", "--manifest-path", str(MANIFEST), "--no-run"],
         env,
@@ -241,6 +329,8 @@ def main():
         )
     if a.suite == "evolution":
         measure_evolution_memory(output, env)
+    elif a.suite == "circuit-ad":
+        measure_circuit_ad_memory(output, env)
     run(
         [sys.executable, "benchmarks/compare.py", "--backend-results", str(output)], env
     )
