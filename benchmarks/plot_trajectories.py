@@ -129,7 +129,7 @@ axes[1].set(
     ylabel="Memory (MiB)",
     title="16-qubit product fixture: sample-count scaling",
 )
-axes[1].legend(fontsize=8)
+axes[1].legend(fontsize=8, loc="center", bbox_to_anchor=(0.5, 0.35))
 for ax in axes:
     ax.grid(alpha=0.2)
 fig.suptitle(

@@ -13,7 +13,7 @@ validation targets the NVIDIA A800 host reachable as `ssh gpu`.
 | 3. Hamiltonian evolution | Pauli rotations, model builders, Trotter/Suzuki, physical parameter bindings and convergence tests | Merged [PR #49](https://github.com/GiggleLiu/yao-rs/pull/49) (`a1f24f3`) |
 | 4. Differentiable circuits | Custom losses/input-state VJP, tenferro integration, shared parameters, numerical and memory tests | Merged [PR #50](https://github.com/GiggleLiu/yao-rs/pull/50) (`bd00084`) |
 | 5. Tensor memory / observables | Polynomial expectations, omeco slicing, estimates, versioned plans and budget tests | Merged [PR #51](https://github.com/GiggleLiu/yao-rs/pull/51) (`53897a4`) |
-| 6. Noisy trajectories | Seeded Kraus sampling, uncertainty, exact-density comparisons and memory scaling | Implementing on `codex/noisy-trajectories` |
+| 6. Noisy trajectories | Seeded Kraus sampling, uncertainty, exact-density comparisons and memory scaling | Implemented in [PR #52](https://github.com/GiggleLiu/yao-rs/pull/52); CPU report complete |
 | 7. Matrix-free exponential action | Community implementation qualification, error/convergence diagnostics, Yao comparison | Pending |
 | 8. GPU execution | Resident tensor/circuit/AD execution, explicit transfers, correctness and timings via `ssh gpu` | Pending |
 
@@ -303,7 +303,7 @@ checks. GPU, stochastic trajectories and matrix-free evolution remain later
 milestones.
 
 
-## Seeded noisy trajectories (milestone 6)
+## Seeded noisy trajectories (PR #52)
 
 `TrajectoryCircuit` validates qubit/unitary structure and local CPTP Kraus maps,
 then samples normalized branches with native state-vector kernels. Rand's existing
@@ -324,7 +324,32 @@ Implementation validation: `make check-all` (656 tests), 12 benchmark-fixture te
 and Clippy, nine report tests, warnings-denied API docs/mdBook, a runnable noise
 example, CLI pure-input/density-input checks, and serial/parallel reproducibility.
 An independent embedded complex matrix qualifies three-target Kraus execution.
-The benchmark smoke test passes exact native/tenferro comparisons and all three
-Yao complex expectations (maximum discrepancy `3.13e-16`). Repeated CPU timings,
-accuracy and memory results are being collected; no performance conclusion is
-claimed from smoke timings.
+The full workspace suite also passes on the GPU host using Linux Rust 1.96.
+
+The [trajectory M4 CPU report](../../benchmarks/results/mac-trajectories-cpu-2026-09-07/report.md)
+records three independent processes at one/four threads, with raw samples,
+source hashes and 23 isolated memory probes. All 18 Yao exact complex-expectation
+comparisons pass (maximum discrepancy `3.13e-16`); tenferro exact contractions
+also agree with direct density evolution. Measured implementation is `5cbef8a`;
+subsequent report presentation/validation changes have separate hashes.
+
+For the six-qubit entangled case, eight-seed RMSE falls from 0.02450 at 128
+trajectories to 0.01045 at 512 and 0.00370 at 2048. Predicted RMS sampling errors
+are 0.01932/0.00952/0.00481. One-worker ensemble times are 0.94/3.80/15.06 ms;
+exact native/Yao density expectations take 1.06/1.14 ms. Trajectories trade
+sampling error and work for memory, and are not automatically faster.
+
+At eight qubits the exact prepared tenferro contraction takes 1.98 ms versus
+20.43 ms native density and 19.33 ms Yao (one thread). This tensor boundary
+excludes export, order search and its separately measured 1.42 ms compilation;
+it does not measure a tenferro trajectory executor. Existing defaults remain.
+
+For the simpler 16-qubit product fixture, 256 trajectories take 1385.66 ms with
+one worker and 455.99 ms with four. Additional execution heap stays 2.0001 MiB
+at both 64 and 256 samples for one worker, and about 8.03 MiB for four. Process
+RSS is 5.50/11.89 MiB for the 256-sample runs. The 10-qubit exact density probe
+uses 48.00 MiB additional execution heap and 66.50 MiB RSS; one-worker
+trajectories on that same product fixture use 0.0313 MiB and 2.48 MiB. These
+memory measurements include neither an accuracy equivalence claim nor a
+claim that heap equals process RSS. Parallel overhead slows the four-qubit
+fixture, while benefiting the larger workloads.

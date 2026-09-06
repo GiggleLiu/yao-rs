@@ -1,0 +1,1931 @@
+[
+  {
+    "circuit": {
+      "elements": [
+        {
+          "gate": "Ry",
+          "params": [
+            0.31
+          ],
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.23
+          ],
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.38
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.23
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.45
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.23
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.52
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.23
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            0
+          ],
+          "gate": "X",
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            1
+          ],
+          "gate": "X",
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            2
+          ],
+          "gate": "X",
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            0
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            0
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            1
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            1
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            2
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            2
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            3
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            3
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.31
+          ],
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.34
+          ],
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.38
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.34
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.45
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.34
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.52
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.34
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            0
+          ],
+          "gate": "X",
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            1
+          ],
+          "gate": "X",
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            2
+          ],
+          "gate": "X",
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            0
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            0
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            1
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            1
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            2
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            2
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            3
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            3
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        }
+      ],
+      "num_qubits": 4
+    },
+    "id": "noisy_expectation_4",
+    "initial": "zero",
+    "mode": "expectation_dm",
+    "operator": {
+      "coeffs": [
+        [
+          0.6,
+          0.1
+        ],
+        [
+          0.2,
+          0.0
+        ],
+        [
+          0.0,
+          0.1
+        ]
+      ],
+      "opstrings": [
+        {
+          "ops": [
+            [
+              0,
+              "Z"
+            ],
+            [
+              3,
+              "Z"
+            ]
+          ]
+        },
+        {
+          "ops": [
+            [
+              3,
+              "Y"
+            ]
+          ]
+        },
+        {
+          "ops": [
+            [
+              1,
+              "Pu"
+            ]
+          ]
+        }
+      ]
+    },
+    "tensor": false
+  },
+  {
+    "circuit": {
+      "elements": [
+        {
+          "gate": "Ry",
+          "params": [
+            0.31
+          ],
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.23
+          ],
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.38
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.23
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.45
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.23
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.52
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.23
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.5900000000000001
+          ],
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.23
+          ],
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.66
+          ],
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.23
+          ],
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            0
+          ],
+          "gate": "X",
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            1
+          ],
+          "gate": "X",
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            2
+          ],
+          "gate": "X",
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            3
+          ],
+          "gate": "X",
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            4
+          ],
+          "gate": "X",
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            0
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            0
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            1
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            1
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            2
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            2
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            3
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            3
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            4
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            4
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            5
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            5
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.31
+          ],
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.34
+          ],
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.38
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.34
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.45
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.34
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.52
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.34
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.5900000000000001
+          ],
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.34
+          ],
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.66
+          ],
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.34
+          ],
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            0
+          ],
+          "gate": "X",
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            1
+          ],
+          "gate": "X",
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            2
+          ],
+          "gate": "X",
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            3
+          ],
+          "gate": "X",
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            4
+          ],
+          "gate": "X",
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            0
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            0
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            1
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            1
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            2
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            2
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            3
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            3
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            4
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            4
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            5
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            5
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        }
+      ],
+      "num_qubits": 6
+    },
+    "id": "noisy_expectation_6",
+    "initial": "zero",
+    "mode": "expectation_dm",
+    "operator": {
+      "coeffs": [
+        [
+          0.6,
+          0.1
+        ],
+        [
+          0.2,
+          0.0
+        ],
+        [
+          0.0,
+          0.1
+        ]
+      ],
+      "opstrings": [
+        {
+          "ops": [
+            [
+              0,
+              "Z"
+            ],
+            [
+              5,
+              "Z"
+            ]
+          ]
+        },
+        {
+          "ops": [
+            [
+              5,
+              "Y"
+            ]
+          ]
+        },
+        {
+          "ops": [
+            [
+              1,
+              "Pu"
+            ]
+          ]
+        }
+      ]
+    },
+    "tensor": false
+  },
+  {
+    "circuit": {
+      "elements": [
+        {
+          "gate": "Ry",
+          "params": [
+            0.31
+          ],
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.23
+          ],
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.38
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.23
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.45
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.23
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.52
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.23
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.5900000000000001
+          ],
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.23
+          ],
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.66
+          ],
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.23
+          ],
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.73
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.23
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.8
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.23
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            0
+          ],
+          "gate": "X",
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            1
+          ],
+          "gate": "X",
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            2
+          ],
+          "gate": "X",
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            3
+          ],
+          "gate": "X",
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            4
+          ],
+          "gate": "X",
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            5
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            6
+          ],
+          "gate": "X",
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            0
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            0
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            1
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            1
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            2
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            2
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            3
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            3
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            4
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            4
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            5
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            5
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            6
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            6
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            7
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            7
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.31
+          ],
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.34
+          ],
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.38
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.34
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.45
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.34
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.52
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.34
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.5900000000000001
+          ],
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.34
+          ],
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.66
+          ],
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.34
+          ],
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.73
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.34
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.8
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            0.34
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            0
+          ],
+          "gate": "X",
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            1
+          ],
+          "gate": "X",
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            2
+          ],
+          "gate": "X",
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            3
+          ],
+          "gate": "X",
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            4
+          ],
+          "gate": "X",
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            5
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            6
+          ],
+          "gate": "X",
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            0
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            0
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            1
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            1
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            2
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            2
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            3
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            3
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            4
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            4
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            5
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            5
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            6
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            6
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.1,
+          "gamma": 0.15,
+          "locs": [
+            7
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            7
+          ],
+          "n": 1,
+          "p": 0.08,
+          "type": "channel"
+        }
+      ],
+      "num_qubits": 8
+    },
+    "id": "noisy_expectation_8",
+    "initial": "zero",
+    "mode": "expectation_dm",
+    "operator": {
+      "coeffs": [
+        [
+          0.6,
+          0.1
+        ],
+        [
+          0.2,
+          0.0
+        ],
+        [
+          0.0,
+          0.1
+        ]
+      ],
+      "opstrings": [
+        {
+          "ops": [
+            [
+              0,
+              "Z"
+            ],
+            [
+              7,
+              "Z"
+            ]
+          ]
+        },
+        {
+          "ops": [
+            [
+              7,
+              "Y"
+            ]
+          ]
+        },
+        {
+          "ops": [
+            [
+              1,
+              "Pu"
+            ]
+          ]
+        }
+      ]
+    },
+    "tensor": false
+  }
+]

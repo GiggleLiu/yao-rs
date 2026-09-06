@@ -1,0 +1,23 @@
+{"allocated_bytes":11720,"diagnostic_ns":10334,"peak_additional_rust_heap_bytes":8200,"phase":"circuit","retained_additional_rust_heap_bytes":5616}
+{"allocated_bytes":16384,"diagnostic_ns":2625,"peak_additional_rust_heap_bytes":16384,"phase":"input","retained_additional_rust_heap_bytes":16384}
+{"allocated_bytes":16777216,"diagnostic_ns":1061417,"peak_additional_rust_heap_bytes":16777216,"phase":"density_input","retained_additional_rust_heap_bytes":16777216}
+{"allocated_bytes":520107140,"diagnostic_ns":75112458,"peak_additional_rust_heap_bytes":50332209,"phase":"density_execute","retained_additional_rust_heap_bytes":0}
+{"backend":"density","mean":[0.6285401561245713,0.0],"note":"Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.","qubits":10,"state_bytes":16384,"status":"complete","threads":1,"trajectories":0}
+        0.07 real         0.07 user         0.00 sys
+            69730304  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                4440  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+                   5  involuntary context switches
+          1598494050  instructions retired
+           319171316  cycles elapsed
+            68600264  peak memory footprint

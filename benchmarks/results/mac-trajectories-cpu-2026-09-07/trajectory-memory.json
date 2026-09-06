@@ -1,0 +1,370 @@
+[
+  {
+    "backend": "density",
+    "mean": [
+      0.18991874145914003,
+      0.03722042601079689
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 4,
+    "state_bytes": 256,
+    "status": "complete",
+    "threads": 1,
+    "trajectories": 0,
+    "peak_rss_bytes": 2555904,
+    "execution_peak_bytes": 13105,
+    "execution_retained_bytes": 0
+  },
+  {
+    "backend": "density",
+    "mean": [
+      0.053415455296207046,
+      0.01772761785206709
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 8,
+    "state_bytes": 4096,
+    "status": "complete",
+    "threads": 1,
+    "trajectories": 0,
+    "peak_rss_bytes": 6799360,
+    "execution_peak_bytes": 3146545,
+    "execution_retained_bytes": 0
+  },
+  {
+    "backend": "density",
+    "mean": [
+      0.6285401561245713,
+      0.0
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 10,
+    "state_bytes": 16384,
+    "status": "complete",
+    "threads": 1,
+    "trajectories": 0,
+    "peak_rss_bytes": 69730304,
+    "execution_peak_bytes": 50332209,
+    "execution_retained_bytes": 0
+  },
+  {
+    "backend": "trajectory",
+    "mean": [
+      0.19321516295028437,
+      0.037784136573446134
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 4,
+    "state_bytes": 256,
+    "status": "complete",
+    "threads": 1,
+    "trajectories": 64,
+    "peak_rss_bytes": 2621440,
+    "execution_peak_bytes": 608,
+    "execution_retained_bytes": 0
+  },
+  {
+    "backend": "trajectory",
+    "mean": [
+      0.19321516295028437,
+      0.037784136573446134
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 4,
+    "state_bytes": 256,
+    "status": "complete",
+    "threads": 4,
+    "trajectories": 64,
+    "peak_rss_bytes": 2981888,
+    "execution_peak_bytes": 37128,
+    "execution_retained_bytes": 34280
+  },
+  {
+    "backend": "trajectory",
+    "mean": [
+      0.17923707792385477,
+      0.036660512374078004
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 4,
+    "state_bytes": 256,
+    "status": "complete",
+    "threads": 1,
+    "trajectories": 256,
+    "peak_rss_bytes": 2637824,
+    "execution_peak_bytes": 608,
+    "execution_retained_bytes": 0
+  },
+  {
+    "backend": "trajectory",
+    "mean": [
+      0.17923707792385477,
+      0.036660512374078004
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 4,
+    "state_bytes": 256,
+    "status": "complete",
+    "threads": 4,
+    "trajectories": 256,
+    "peak_rss_bytes": 2998272,
+    "execution_peak_bytes": 38344,
+    "execution_retained_bytes": 34392
+  },
+  {
+    "backend": "trajectory",
+    "mean": [
+      0.08150131995674417,
+      0.02228683423442118
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 8,
+    "state_bytes": 4096,
+    "status": "complete",
+    "threads": 1,
+    "trajectories": 64,
+    "peak_rss_bytes": 2703360,
+    "execution_peak_bytes": 8288,
+    "execution_retained_bytes": 0
+  },
+  {
+    "backend": "trajectory",
+    "mean": [
+      0.08150131995674417,
+      0.02228683423442118
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 8,
+    "state_bytes": 4096,
+    "status": "complete",
+    "threads": 4,
+    "trajectories": 64,
+    "peak_rss_bytes": 3063808,
+    "execution_peak_bytes": 67896,
+    "execution_retained_bytes": 34328
+  },
+  {
+    "backend": "trajectory",
+    "mean": [
+      0.05500763552022931,
+      0.01768432107694406
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 8,
+    "state_bytes": 4096,
+    "status": "complete",
+    "threads": 1,
+    "trajectories": 256,
+    "peak_rss_bytes": 2703360,
+    "execution_peak_bytes": 8288,
+    "execution_retained_bytes": 0
+  },
+  {
+    "backend": "trajectory",
+    "mean": [
+      0.05500763552022931,
+      0.01768432107694406
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 8,
+    "state_bytes": 4096,
+    "status": "complete",
+    "threads": 4,
+    "trajectories": 256,
+    "peak_rss_bytes": 3096576,
+    "execution_peak_bytes": 69064,
+    "execution_retained_bytes": 34328
+  },
+  {
+    "backend": "trajectory",
+    "mean": [
+      0.6844897533553572,
+      0.0
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 10,
+    "state_bytes": 16384,
+    "status": "complete",
+    "threads": 1,
+    "trajectories": 64,
+    "peak_rss_bytes": 2572288,
+    "execution_peak_bytes": 32864,
+    "execution_retained_bytes": 0
+  },
+  {
+    "backend": "trajectory",
+    "mean": [
+      0.6844897533553572,
+      0.0
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 10,
+    "state_bytes": 16384,
+    "status": "complete",
+    "threads": 4,
+    "trajectories": 64,
+    "peak_rss_bytes": 3047424,
+    "execution_peak_bytes": 166200,
+    "execution_retained_bytes": 34392
+  },
+  {
+    "backend": "trajectory",
+    "mean": [
+      0.6621694353111611,
+      0.0
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 10,
+    "state_bytes": 16384,
+    "status": "complete",
+    "threads": 1,
+    "trajectories": 256,
+    "peak_rss_bytes": 2605056,
+    "execution_peak_bytes": 32864,
+    "execution_retained_bytes": 0
+  },
+  {
+    "backend": "trajectory",
+    "mean": [
+      0.6621694353111611,
+      0.0
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 10,
+    "state_bytes": 16384,
+    "status": "complete",
+    "threads": 4,
+    "trajectories": 256,
+    "peak_rss_bytes": 3080192,
+    "execution_peak_bytes": 167368,
+    "execution_retained_bytes": 34328
+  },
+  {
+    "backend": "trajectory",
+    "mean": [
+      0.6844897533553523,
+      0.0
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 12,
+    "state_bytes": 65536,
+    "status": "complete",
+    "threads": 1,
+    "trajectories": 64,
+    "peak_rss_bytes": 2801664,
+    "execution_peak_bytes": 131168,
+    "execution_retained_bytes": 0
+  },
+  {
+    "backend": "trajectory",
+    "mean": [
+      0.6844897533553523,
+      0.0
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 12,
+    "state_bytes": 65536,
+    "status": "complete",
+    "threads": 4,
+    "trajectories": 64,
+    "peak_rss_bytes": 3555328,
+    "execution_peak_bytes": 559416,
+    "execution_retained_bytes": 34328
+  },
+  {
+    "backend": "trajectory",
+    "mean": [
+      0.6621694353111568,
+      0.0
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 12,
+    "state_bytes": 65536,
+    "status": "complete",
+    "threads": 1,
+    "trajectories": 256,
+    "peak_rss_bytes": 2801664,
+    "execution_peak_bytes": 131168,
+    "execution_retained_bytes": 0
+  },
+  {
+    "backend": "trajectory",
+    "mean": [
+      0.6621694353111568,
+      0.0
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 12,
+    "state_bytes": 65536,
+    "status": "complete",
+    "threads": 4,
+    "trajectories": 256,
+    "peak_rss_bytes": 3571712,
+    "execution_peak_bytes": 560584,
+    "execution_retained_bytes": 34328
+  },
+  {
+    "backend": "trajectory",
+    "mean": [
+      0.6844897533553582,
+      0.0
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 16,
+    "state_bytes": 1048576,
+    "status": "complete",
+    "threads": 1,
+    "trajectories": 64,
+    "peak_rss_bytes": 5767168,
+    "execution_peak_bytes": 2097248,
+    "execution_retained_bytes": 0
+  },
+  {
+    "backend": "trajectory",
+    "mean": [
+      0.6844897533553582,
+      0.0
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 16,
+    "state_bytes": 1048576,
+    "status": "complete",
+    "threads": 4,
+    "trajectories": 64,
+    "peak_rss_bytes": 12435456,
+    "execution_peak_bytes": 8423736,
+    "execution_retained_bytes": 34328
+  },
+  {
+    "backend": "trajectory",
+    "mean": [
+      0.6621694353111628,
+      0.0
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 16,
+    "state_bytes": 1048576,
+    "status": "complete",
+    "threads": 1,
+    "trajectories": 256,
+    "peak_rss_bytes": 5767168,
+    "execution_peak_bytes": 2097248,
+    "execution_retained_bytes": 0
+  },
+  {
+    "backend": "trajectory",
+    "mean": [
+      0.6621694353111628,
+      0.0
+    ],
+    "note": "Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention.",
+    "qubits": 16,
+    "state_bytes": 1048576,
+    "status": "complete",
+    "threads": 4,
+    "trajectories": 256,
+    "peak_rss_bytes": 12468224,
+    "execution_peak_bytes": 8424904,
+    "execution_retained_bytes": 34328
+  }
+]

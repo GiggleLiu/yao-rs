@@ -182,7 +182,7 @@ def trajectory_memory_rows(directory):
                    execution_peak_bytes=phase["peak_additional_rust_heap_bytes"],
                    execution_retained_bytes=phase["retained_additional_rust_heap_bytes"])
         rows.append(row)
-    return rows
+    return sorted(rows, key=lambda r: (r["backend"], r["qubits"], r["trajectories"], r["threads"]))
 
 
 def evolution_memory_rows(directory):
@@ -309,9 +309,10 @@ def backend_report(directory):
         )
     lines += [
         "",
-        "## Tensor and extension phases",
+        "## Trajectory and tensor phases" if metadata.get("suite") == "trajectories" else "## Tensor and extension phases",
         "",
-        "Each row uses the named API boundary. `tenferro_from_arrays` includes conversion, automatic planning, execution and output conversion; `omeinsum` includes its conversion/planning/execution. `tenferro_warm` uses an already prepared plan. Those prototype rows use independent planning policies. Where present, `supported_planning` compiles an existing omeco greedy tree; `supported_warm` runs the supported CPU adapter including ndarray input/output adaptation; `supported_from_arrays` combines those two phases. `omeinsum_fixed_tree` executes the identical tree, including its internal preparation. These supported rows exclude tree search and CPU context creation.",
+        ("Trajectory rows report complete ensembles; `trajectory_prepare` validates/prepares local gates and channels. Tenferro rows report exact expectation-network compilation and warm contraction. Their accuracy and timing boundaries are detailed below." if metadata.get("suite") == "trajectories" else
+"Each row uses the named API boundary. `tenferro_from_arrays` includes conversion, automatic planning, execution and output conversion; `omeinsum` includes its conversion/planning/execution. `tenferro_warm` uses an already prepared plan. Those prototype rows use independent planning policies. Where present, `supported_planning` compiles an existing omeco greedy tree; `supported_warm` runs the supported CPU adapter including ndarray input/output adaptation; `supported_from_arrays` combines those two phases. `omeinsum_fixed_tree` executes the identical tree, including its internal preparation. These supported rows exclude tree search and CPU context creation."),
         "",
         "| Threads | Case | Phase | Median µs | Range of run medians µs |",
         "| --- | --- | --- | ---: | ---: |",
@@ -373,7 +374,7 @@ def backend_report(directory):
             "![Contraction time and memory](slicing-tradeoff.svg)",
             "",
         ]
-    else:
+    elif metadata.get("suite") != "trajectories":
         lines += [
             "## Plots",
             "",
@@ -392,10 +393,13 @@ def backend_report(directory):
     if metadata.get("suite") == "trajectories":
         import math
         diagnostics = sorted(directory.glob("*-trajectory-stats.jsonl"))
-        if len(diagnostics) != metadata["runs"] * len(metadata["threads"]):
+        expected_names = {f"{t}t-run{r}-trajectory-stats.jsonl" for t in metadata["threads"] for r in range(1, metadata["runs"]+1)}
+        if {p.name for p in diagnostics} != expected_names:
             raise ValueError("Missing trajectory diagnostic processes")
         for path in diagnostics:
             records = [json.loads(line) for line in path.read_text().splitlines()]
+            if any(r["statistics"]["threads"] != int(path.name.split("t-")[0]) for r in records):
+                raise ValueError("Trajectory diagnostic thread count disagrees with process")
             keys = {(r["id"], r["statistics"]["trajectories"], r["statistics"]["seed"]) for r in records}
             expected_keys = {(f"noisy_expectation_{n}", count, seed)
                              for n in [4, 6, 8] for count in [128, 512, 2048]
@@ -405,7 +409,9 @@ def backend_report(directory):
                 raise ValueError("Missing or duplicate trajectory diagnostic workloads")
         trajectory = trajectory_rows(directory)
         memory_rows = trajectory_memory_rows(directory)
-        if len(memory_rows) != 23:
+        expected_memory = {("trajectory", n, count, t) for n in [4,8,10,12,16] for count in [64,256] for t in [1,4]}
+        expected_memory |= {("density",n,0,1) for n in [4,8,10]}
+        if len(memory_rows) != len(expected_memory) or {(r["backend"],r["qubits"],r["trajectories"],r["threads"]) for r in memory_rows} != expected_memory:
             raise ValueError("Missing trajectory memory workloads")
         (directory / "trajectory-statistics.json").write_text(json.dumps(trajectory, indent=2)+"\n")
         (directory / "trajectory-memory.json").write_text(json.dumps(memory_rows, indent=2)+"\n")

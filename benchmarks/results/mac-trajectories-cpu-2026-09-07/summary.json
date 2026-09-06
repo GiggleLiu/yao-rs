@@ -1,0 +1,506 @@
+[
+  {
+    "threads": 1,
+    "id": "noisy_expectation_4",
+    "backend": "julia",
+    "median_ns": 104270.5,
+    "min_run_median_ns": 100292.0,
+    "max_run_median_ns": 104625.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_4",
+    "backend": "native",
+    "median_ns": 57218.57548701299,
+    "min_run_median_ns": 55555.21824534162,
+    "max_run_median_ns": 57749.587239583336,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_4",
+    "backend": "tenferro_exact_prepare",
+    "median_ns": 433390.24761904764,
+    "min_run_median_ns": 423511.07651515154,
+    "max_run_median_ns": 435408.2682539682,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_4",
+    "backend": "tenferro_exact_warm",
+    "median_ns": 818691.8333333333,
+    "min_run_median_ns": 795019.6805555555,
+    "max_run_median_ns": 823084.2152777778,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_4",
+    "backend": "trajectory_128",
+    "median_ns": 238857.2321637427,
+    "min_run_median_ns": 231768.496875,
+    "max_run_median_ns": 242818.31973684212,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_4",
+    "backend": "trajectory_2048",
+    "median_ns": 3821083.3333333335,
+    "min_run_median_ns": 3704642.375,
+    "max_run_median_ns": 3877738.1333333333,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_4",
+    "backend": "trajectory_512",
+    "median_ns": 965746.3444444444,
+    "min_run_median_ns": 945680.1875,
+    "max_run_median_ns": 966077.0833333333,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_4",
+    "backend": "trajectory_prepare",
+    "median_ns": 7517.846003262643,
+    "min_run_median_ns": 7410.31453377085,
+    "max_run_median_ns": 7581.273920406435,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_6",
+    "backend": "julia",
+    "median_ns": 1139541.5,
+    "min_run_median_ns": 1127416.5,
+    "max_run_median_ns": 1155958.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_6",
+    "backend": "native",
+    "median_ns": 1056744.222222222,
+    "min_run_median_ns": 1007862.9880952381,
+    "max_run_median_ns": 1070161.3333333335,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_6",
+    "backend": "tenferro_exact_prepare",
+    "median_ns": 868791.0303030303,
+    "min_run_median_ns": 842397.7704545455,
+    "max_run_median_ns": 879678.0606060605,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_6",
+    "backend": "tenferro_exact_warm",
+    "median_ns": 1278899.1208333333,
+    "min_run_median_ns": 1250571.6229166668,
+    "max_run_median_ns": 1317876.4857142856,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_6",
+    "backend": "trajectory_128",
+    "median_ns": 941589.4533333334,
+    "min_run_median_ns": 913753.85,
+    "max_run_median_ns": 950981.2625,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_6",
+    "backend": "trajectory_2048",
+    "median_ns": 15055523.830357142,
+    "min_run_median_ns": 14690253.583333332,
+    "max_run_median_ns": 15155683.986111112,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_6",
+    "backend": "trajectory_512",
+    "median_ns": 3800142.5,
+    "min_run_median_ns": 3654424.023809524,
+    "max_run_median_ns": 3814166.722222222,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_6",
+    "backend": "trajectory_prepare",
+    "median_ns": 11140.30861952862,
+    "min_run_median_ns": 11093.29245738886,
+    "max_run_median_ns": 11413.032644110275,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_8",
+    "backend": "julia",
+    "median_ns": 19329063.0,
+    "min_run_median_ns": 18969541.5,
+    "max_run_median_ns": 19424271.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_8",
+    "backend": "native",
+    "median_ns": 20425430.5,
+    "min_run_median_ns": 19923923.5,
+    "max_run_median_ns": 20558896.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_8",
+    "backend": "tenferro_exact_prepare",
+    "median_ns": 1422763.0982142857,
+    "min_run_median_ns": 1401503.3730158731,
+    "max_run_median_ns": 1440235.9668367347,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_8",
+    "backend": "tenferro_exact_warm",
+    "median_ns": 1984995.85,
+    "min_run_median_ns": 1765846.3055555555,
+    "max_run_median_ns": 2026319.0142857144,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_8",
+    "backend": "trajectory_128",
+    "median_ns": 4825401.383333333,
+    "min_run_median_ns": 4715727.5,
+    "max_run_median_ns": 4867456.216666667,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_8",
+    "backend": "trajectory_2048",
+    "median_ns": 77968645.5,
+    "min_run_median_ns": 75535958.5,
+    "max_run_median_ns": 78622771.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_8",
+    "backend": "trajectory_512",
+    "median_ns": 19335590.166666668,
+    "min_run_median_ns": 19253909.666666664,
+    "max_run_median_ns": 19538889.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_expectation_8",
+    "backend": "trajectory_prepare",
+    "median_ns": 15200.364814814815,
+    "min_run_median_ns": 14925.176939962032,
+    "max_run_median_ns": 15411.146598639456,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "product_noise_12",
+    "backend": "trajectory_256",
+    "median_ns": 64643583.5,
+    "min_run_median_ns": 62898333.0,
+    "max_run_median_ns": 64982625.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "product_noise_12",
+    "backend": "trajectory_64",
+    "median_ns": 16117385.5,
+    "min_run_median_ns": 15719857.5,
+    "max_run_median_ns": 16390962.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "product_noise_16",
+    "backend": "trajectory_256",
+    "median_ns": 1385657395.5,
+    "min_run_median_ns": 1361287541.0,
+    "max_run_median_ns": 1396184812.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "product_noise_16",
+    "backend": "trajectory_64",
+    "median_ns": 344462833.5,
+    "min_run_median_ns": 336429750.0,
+    "max_run_median_ns": 348156146.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_4",
+    "backend": "julia",
+    "median_ns": 95187.5,
+    "min_run_median_ns": 89625.0,
+    "max_run_median_ns": 100520.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_4",
+    "backend": "native",
+    "median_ns": 58927.962507730364,
+    "min_run_median_ns": 58917.4693877551,
+    "max_run_median_ns": 62648.89564007421,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_4",
+    "backend": "tenferro_exact_prepare",
+    "median_ns": 440624.71768707485,
+    "min_run_median_ns": 438297.9585034014,
+    "max_run_median_ns": 441175.9731670446,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_4",
+    "backend": "tenferro_exact_warm",
+    "median_ns": 1464839.5,
+    "min_run_median_ns": 1445968.1642857143,
+    "max_run_median_ns": 1469309.5238095238,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_4",
+    "backend": "trajectory_128",
+    "median_ns": 418884.625,
+    "min_run_median_ns": 411172.34090909094,
+    "max_run_median_ns": 431504.1666666666,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_4",
+    "backend": "trajectory_2048",
+    "median_ns": 5805084.366666667,
+    "min_run_median_ns": 5780951.05,
+    "max_run_median_ns": 5880418.488095238,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_4",
+    "backend": "trajectory_512",
+    "median_ns": 1599947.5104166665,
+    "min_run_median_ns": 1599014.4020833333,
+    "max_run_median_ns": 1614800.6041666665,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_4",
+    "backend": "trajectory_prepare",
+    "median_ns": 7657.7194721051965,
+    "min_run_median_ns": 7489.472316267547,
+    "max_run_median_ns": 7743.713224792917,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_6",
+    "backend": "julia",
+    "median_ns": 5152458.5,
+    "min_run_median_ns": 5143208.5,
+    "max_run_median_ns": 5210020.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_6",
+    "backend": "native",
+    "median_ns": 1086681.3703703703,
+    "min_run_median_ns": 1084088.3138888888,
+    "max_run_median_ns": 1088359.9583333335,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_6",
+    "backend": "tenferro_exact_prepare",
+    "median_ns": 883249.4272727272,
+    "min_run_median_ns": 870010.7954545454,
+    "max_run_median_ns": 884452.8011363636,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_6",
+    "backend": "tenferro_exact_warm",
+    "median_ns": 2302493.0416666665,
+    "min_run_median_ns": 2274431.8291666666,
+    "max_run_median_ns": 2526386.527777778,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_6",
+    "backend": "trajectory_128",
+    "median_ns": 968132.8666666667,
+    "min_run_median_ns": 966578.1266666667,
+    "max_run_median_ns": 974704.2416666667,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_6",
+    "backend": "trajectory_2048",
+    "median_ns": 14277921.3875,
+    "min_run_median_ns": 14136578.125,
+    "max_run_median_ns": 14413341.125,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_6",
+    "backend": "trajectory_512",
+    "median_ns": 3771010.194444444,
+    "min_run_median_ns": 3740301.208333333,
+    "max_run_median_ns": 3843245.333333333,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_6",
+    "backend": "trajectory_prepare",
+    "median_ns": 11357.520088719899,
+    "min_run_median_ns": 11245.701160862354,
+    "max_run_median_ns": 11413.885835427136,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_8",
+    "backend": "julia",
+    "median_ns": 26862000.0,
+    "min_run_median_ns": 26691854.0,
+    "max_run_median_ns": 27285083.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_8",
+    "backend": "native",
+    "median_ns": 20920687.5,
+    "min_run_median_ns": 20699020.833333332,
+    "max_run_median_ns": 21000118.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_8",
+    "backend": "tenferro_exact_prepare",
+    "median_ns": 1452472.0285714287,
+    "min_run_median_ns": 1451221.725,
+    "max_run_median_ns": 1465626.380952381,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_8",
+    "backend": "tenferro_exact_warm",
+    "median_ns": 3176408.574074074,
+    "min_run_median_ns": 3023875.854166667,
+    "max_run_median_ns": 3483956.8333333335,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_8",
+    "backend": "trajectory_128",
+    "median_ns": 3435652.261904762,
+    "min_run_median_ns": 3427442.4523809524,
+    "max_run_median_ns": 3440487.8583333334,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_8",
+    "backend": "trajectory_2048",
+    "median_ns": 54385875.5,
+    "min_run_median_ns": 52603520.5,
+    "max_run_median_ns": 54805437.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_8",
+    "backend": "trajectory_512",
+    "median_ns": 13511088.5625,
+    "min_run_median_ns": 13439690.777777778,
+    "max_run_median_ns": 13633385.375,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_expectation_8",
+    "backend": "trajectory_prepare",
+    "median_ns": 15345.399678632064,
+    "min_run_median_ns": 15253.502687046343,
+    "max_run_median_ns": 15353.647623138604,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "product_noise_12",
+    "backend": "trajectory_256",
+    "median_ns": 28237083.5,
+    "min_run_median_ns": 27733093.75,
+    "max_run_median_ns": 28308583.25,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "product_noise_12",
+    "backend": "trajectory_64",
+    "median_ns": 6881775.25,
+    "min_run_median_ns": 6838146.541666666,
+    "max_run_median_ns": 6882957.142857143,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "product_noise_16",
+    "backend": "trajectory_256",
+    "median_ns": 455988541.5,
+    "min_run_median_ns": 455478395.5,
+    "max_run_median_ns": 457452125.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "product_noise_16",
+    "backend": "trajectory_64",
+    "median_ns": 112923166.5,
+    "min_run_median_ns": 112002895.5,
+    "max_run_median_ns": 112995833.5,
+    "runs": 3
+  }
+]

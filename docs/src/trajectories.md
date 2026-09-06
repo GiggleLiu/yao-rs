@@ -99,3 +99,13 @@ replace equality with those Kraus entries. This correction changes results for
 `ThermalRelaxation`; other damping parameters retain their existing definitions.
 The analytic map is also used by
 [Qiskit Aer's thermal channel](https://github.com/Qiskit/qiskit-aer/blob/0.17.1/qiskit_aer/noise/errors/standard_errors.py).
+
+
+## CPU measurements
+
+The [M4 report](https://github.com/GiggleLiu/yao-rs/blob/main/benchmarks/results/mac-trajectories-cpu-2026-09-07/report.md)
+compares achieved sampling error, exact native/Yao/tenferro expectations and
+isolated memory. It shows constant state-buffer memory as sample count grows,
+with useful parallelism on larger cases and overhead on small ones. High-sample
+trajectory estimates can take longer than exact simulation when a density
+matrix still fits comfortably.
