@@ -317,10 +317,11 @@ def backend_report(directory):
         else {case for (_, case, backend) in values if backend in ("native", "julia")}
     )
     expected_threads = metadata.get("threads", sorted({t for (t, _, _) in values}))
+    cuda_diagnostics = {case["id"] for case in json.loads(case_path.read_text()) if case.get("cuda_diagnostic_only", False)} if metadata.get("suite") == "cuda" else set()
     for threads in expected_threads:
         for case in expected_cases:
             required = ["native", "julia"]
-            if metadata.get("suite") == "cuda":
+            if metadata.get("suite") == "cuda" and case not in cuda_diagnostics:
                 required += ["cuda_resident", "cuda_transfer_inclusive"]
             for backend in required:
                 count = len(values.get((threads, case, backend), []))
@@ -614,12 +615,18 @@ def cuda_report_sections(directory, summary):
         error = max(record["max_error"], record["transfer_max_error"])
         if not math.isfinite(error) or error > 1e-9:
             raise ValueError(f"GPU qualification error for {case['id']}: {error}")
+        samples = record.get("resident_samples_ns", [])
+        if not samples or any(not math.isfinite(x) or x <= 0 for x in samples):
+            raise ValueError(f"Invalid GPU diagnostic samples for {case['id']}")
         phases = {row["phase"]: row["device_process_bytes"] for row in records if "phase" in row}
         if set(phases) != {"context", "prepared", "first_result", "after_repeats"}:
             raise ValueError(f"Incomplete GPU memory snapshots for {case['id']}")
         if any(not math.isfinite(value) or value < 0 for value in phases.values()):
             raise ValueError("Invalid GPU memory snapshot")
         memory.append({**record, "snapshots": phases, "peak_rss_bytes": peak_rss_bytes(text)})
+        if case.get("cuda_diagnostic_only", False):
+            lines.append(f"| {case['id']} | Diagnostic only | Diagnostic only | — | {error:.2e} |")
+            continue
         resident = lookup[(case["id"], "cuda_resident")]["median_ns"]
         transfer = lookup[(case["id"], "cuda_transfer_inclusive")]["median_ns"]
         native = lookup[(case["id"], "native")]["median_ns"]
@@ -628,16 +635,18 @@ def cuda_report_sections(directory, summary):
         lines.append(f"| {case['id']} | {resident / 1e6:.3f} | {transfer / 1e6:.3f} | {native / resident:.3g} | {error:.2e} |")
     lines += ["", "A CPU/GPU ratio greater than one means this GPU boundary was faster. These are medians of independent process medians; raw confidence intervals and samples are preserved. Transfer-inclusive figures are distinct from a complete setup-inclusive application run.", "",
         "## Process-cold setup and memory snapshots", "",
-        "One process per case, with the persistent compiler/driver disk caches left in place. Context, preparation plus input uploads, and first synchronized execution are timed separately. NVIDIA process-memory snapshots include context, workspaces and the allocator pool. They are observed snapshots, not exact live tensor bytes or a continuous peak. Host peak RSS is a separate process metric.", "",
-        "| Case | Context ms | Prepare + upload ms | First resident ms | Context GPU MiB | Prepared GPU MiB | First result GPU MiB | After repeats GPU MiB | Host peak MiB |",
-        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |"]
+        "One process per case, with the persistent compiler/driver disk caches left in place. Context, preparation plus input uploads, and first synchronized execution are timed separately. NVIDIA process-memory snapshots include context, workspaces and the allocator pool. They are observed snapshots, not exact live tensor bytes or a continuous peak. Host peak RSS is a separate process metric and includes the native correctness reference.", "",
+        "| Case | Context ms | Prepare + upload ms | First resident ms | Warm diagnostic ms | Context GPU MiB | Prepared GPU MiB | First result GPU MiB | After repeats GPU MiB | Host peak MiB |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |"]
     for row in memory:
         times = [row[k] / 1e6 for k in ["context_ns", "preparation_upload_ns", "first_resident_ns"]]
+        import statistics
+        times.append(statistics.median(row["resident_samples_ns"]) / 1e6)
         sizes = [row["snapshots"][k] / 1048576 for k in ["context", "prepared", "first_result", "after_repeats"]]
         sizes.append(row["peak_rss_bytes"] / 1048576)
         lines.append(f"| {row['id']} | " + " | ".join(f"{x:.3f}" for x in times + sizes) + " |")
     (directory / "cuda-qualification.json").write_text(json.dumps(memory, indent=2) + "\n")
-    lines += ["", "![CUDA and CPU latency](cuda-latency.svg)", "", "![Observed GPU memory versus depth](cuda-memory.svg)", ""]
+    lines += ["", "Warm diagnostic values summarize samples within one probe process; they are not independent-run statistics. Deep cases marked diagnostic-only have one such sample and are excluded from the repeated GPU latency comparison.", "", "![CUDA and CPU latency](cuda-latency.svg)", "", "![Observed GPU memory versus depth](cuda-memory.svg)", ""]
     return lines
 
 

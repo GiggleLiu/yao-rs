@@ -30,6 +30,7 @@ class BackendReportTests(unittest.TestCase):
                       for name in ["context", "prepared", "first_result", "after_repeats"]]
             record = {"id": "gpu", "status": "complete", "max_error": 1e-12,
                       "transfer_max_error": 2e-12, "context_ns": 1,
+                      "resident_samples_ns": [4],
                       "preparation_upload_ns": 2, "first_resident_ns": 3}
             log = path / "memory-gpu.log"
             def write(exit_status=0):
@@ -40,6 +41,10 @@ class BackendReportTests(unittest.TestCase):
             memory = json.loads((path / "cuda-qualification.json").read_text())[0]
             self.assertEqual(memory["peak_rss_bytes"], 4096 * 1024)
             self.assertEqual(memory["snapshots"]["context"], 1024)
+            (path / "cases.json").write_text(json.dumps([{"id": "gpu", "cuda_diagnostic_only": True}]))
+            lines = compare.cuda_report_sections(path, [summary[-1]])
+            self.assertTrue(any("Diagnostic only" in line for line in lines))
+            (path / "cases.json").write_text(json.dumps([{"id": "gpu"}]))
             write(1)
             with self.assertRaisesRegex(ValueError, "did not exit"):
                 compare.cuda_report_sections(path, summary)

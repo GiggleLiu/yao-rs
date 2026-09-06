@@ -39,7 +39,11 @@ def main():
         ["state", "custom_gradient", "density"],
         ["Unitary state", "Loss + all gradients", "Exact noisy density"],
     ):
-        selected = [case for case in cases if case["mode"] == mode]
+        selected = [
+            case
+            for case in cases
+            if case["mode"] == mode and not case.get("cuda_diagnostic_only", False)
+        ]
         y = np.arange(len(selected))
         for i, (backend, name, color) in enumerate(zip(backends, names, colors)):
             rows = [lookup[(case["id"], backend)] for case in selected]
@@ -73,9 +77,7 @@ def main():
         ax.invert_yaxis()
         ax.grid(axis="x", alpha=0.2)
     axes[0].legend(fontsize=8, loc="best")
-    fig.suptitle(
-        "Complex128 · GPU and host CPU · medians and range of process medians"
-    )
+    fig.suptitle("Complex128 · GPU and host CPU · medians and range of process medians")
     save(fig, directory, "cuda-latency")
 
     records = json.loads((directory / "cuda-qualification.json").read_text())

@@ -283,3 +283,11 @@ work beyond this benchmark's output contract. Each qualification process has a
 300-second wall-time limit; adjust `--qualification-timeout` explicitly for a
 larger study. A failed/timed-out qualification aborts timing and is not reported
 as a performance result.
+
+By default, 40-layer gradient cases carry `cuda_diagnostic_only: true`: their
+cold probe, full-output agreement, memory snapshots, and one warm diagnostic
+sample are recorded, while repeated GPU Criterion timing is reserved for the
+10-layer cases. CPU/Yao timings still cover every case. Diagnostic values are
+labeled separately and do not enter CPU/GPU timing ratios or latency bars.
+Use `--repeat-deep-gradients --qualification-timeout 600` to request the longer
+repeated study. The memory-versus-depth plot includes the completed deep probes.

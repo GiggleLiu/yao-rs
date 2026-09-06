@@ -22,6 +22,7 @@ def main():
     parser.add_argument("--yao-source", type=Path, required=True)
     parser.add_argument("--runs", type=int, default=3)
     parser.add_argument("--qualification-timeout", type=int, default=300)
+    parser.add_argument("--repeat-deep-gradients", action="store_true")
     parser.add_argument("--smoke", action="store_true")
     args = parser.parse_args()
     if args.runs < 1 or args.qualification_timeout < 1:
@@ -60,6 +61,10 @@ def main():
     )
     env["YAO_BENCH_CASES"] = str(cases_path)
     cases = json.loads(cases_path.read_text())
+    if args.repeat_deep_gradients:
+        for case in cases:
+            case["cuda_diagnostic_only"] = False
+        cases_path.write_text(json.dumps(cases, indent=2) + "\n")
     sources = []
     for folder in [
         "src",
@@ -126,6 +131,7 @@ def main():
             "CUDA and CPU tenferro custom-loss cases request parameter and input-state gradients with two targeted pullbacks; native Rust and Yao use their joint reversible pullback.",
             "GPU resident execution includes fresh device copies for tracked inputs, allocation and host dispatch. Transfers and prepared constants are separate boundaries.",
             "The host is shared. GPU inventory is captured before measurement, CPU affinity and GPU clocks are not pinned; use run-to-run dispersion when interpreting results.",
+            "Cases marked cuda_diagnostic_only have one process-cold probe and one warm diagnostic sample, with full-output checks; their expensive deep gradients are excluded from repeated GPU timings.",
         ],
     }
     (output / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
@@ -177,7 +183,12 @@ def main():
                 output / f"1t-run{index}-{name}.log",
             )
             records = collect_criterion(criterion)
-            if {row["id"] for row in records} != {case["id"] for case in cases}:
+            expected = {
+                case["id"]
+                for case in cases
+                if name != "gpu" or not case.get("cuda_diagnostic_only", False)
+            }
+            if {row["id"] for row in records} != expected:
                 raise ValueError(f"incomplete {name} Criterion results")
             (output / f"1t-run{index}-{name}.json").write_text(
                 json.dumps(records, indent=2) + "\n"

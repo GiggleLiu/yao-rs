@@ -58,7 +58,7 @@ fn main() -> Result<()> {
     let error = check(&prepared.download(&gpu, &output)?, &expected)?;
     drop(output);
     let mut samples = Vec::new();
-    for _ in 0..3 {
+    for _ in 0..if case.cuda_diagnostic_only { 1 } else { 3 } {
         gpu.synchronize()?;
         let start = Instant::now();
         let result = prepared.resident(&gpu)?;

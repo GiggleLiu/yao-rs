@@ -301,6 +301,55 @@ fn cuda_empty_parameters_scalar_phase_and_many_controls() -> Result {
             1e-12,
         );
     }
+    // A controlled identity term is an observable relative phase. Zero target
+    // axes must still batch and differentiate correctly under mixed controls.
+    let phase = C::from_polar(1., 0.47);
+    let mut scalar = control(
+        vec![0, 2],
+        vec![],
+        Gate::Custom {
+            matrix: Array2::from_elem((1, 1), phase),
+            is_diagonal: true,
+            label: "controlled phase".into(),
+        },
+    );
+    if let CircuitElement::Gate(pg) = &mut scalar {
+        pg.control_configs = vec![false, true];
+    }
+    let circuit = DifferentiableCircuit::from_circuit(Circuit::qubits(3, vec![scalar])?)?;
+    let x = state(3, 0.4);
+    let input = upload_state(&gpu, &x, true)?;
+    let y = gpu.prepare(&circuit)?.apply(&p, &input)?;
+    let multiplier = |i| {
+        if i & 4 == 0 && i & 1 != 0 {
+            phase
+        } else {
+            C::new(1., 0.)
+        }
+    };
+    close(
+        &read(&gpu, &y)?,
+        &x.state
+            .iter()
+            .enumerate()
+            .map(|(i, x)| multiplier(i) * x)
+            .collect::<Vec<_>>(),
+        1e-12,
+    );
+    let seed = state(3, -0.3);
+    let dx = gpu
+        .runtime()
+        .vjp(&y, &input, &upload_state(&gpu, &seed, false)?)?;
+    close(
+        &read(&gpu, &dx)?,
+        &seed
+            .state
+            .iter()
+            .enumerate()
+            .map(|(i, x)| multiplier(i).conj() * x)
+            .collect::<Vec<_>>(),
+        1e-12,
+    );
     let mut element = control((0..10).collect(), vec![11], Gate::Y);
     if let CircuitElement::Gate(pg) = &mut element {
         for (i, value) in pg.control_configs.iter_mut().enumerate() {

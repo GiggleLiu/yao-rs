@@ -9,8 +9,15 @@ fn main() -> Result<()> {
         .ok_or("usage: cuda_cases OUTPUT [--smoke]")?;
     let smoke = std::env::args().any(|x| x == "--smoke");
     let mut cases = Vec::new();
-    let mut add = |id, mode, initial, circuit: &Circuit, tensor| -> Result<()> {
+    let mut add = |id,
+                   mode,
+                   initial,
+                   circuit: &Circuit,
+                   tensor,
+                   cuda_diagnostic_only|
+     -> Result<()> {
         cases.push(json!({"id":id,"mode":mode,"initial":initial,"tensor":tensor,
+            "cuda_diagnostic_only":cuda_diagnostic_only,
             "circuit":serde_json::from_str::<serde_json::Value>(&yao_rs::circuit_to_json(circuit))?}));
         Ok(())
     };
@@ -32,6 +39,7 @@ fn main() -> Result<()> {
             "deterministic",
             &Circuit::qubits(n, gates)?,
             false,
+            false,
         )?;
     }
     for n in if smoke { vec![4] } else { vec![8, 16, 20] } {
@@ -43,6 +51,7 @@ fn main() -> Result<()> {
                 "deterministic",
                 c.template().circuit(),
                 false,
+                depth > 10,
             )?;
         }
     }
@@ -71,6 +80,7 @@ fn main() -> Result<()> {
             "zero",
             &Circuit::qubits(n, gates)?,
             true,
+            false,
         )?;
     }
     std::fs::write(output, serde_json::to_string_pretty(&cases)? + "\n")?;

@@ -298,6 +298,8 @@ mod tests {
 #[derive(serde::Deserialize)]
 pub struct Case {
     #[serde(default)]
+    pub cuda_diagnostic_only: bool,
+    #[serde(default)]
     pub krylov: Option<krylov::Specification>,
     #[serde(default)]
     pub operator: Option<yao_rs::OperatorPolynomial>,

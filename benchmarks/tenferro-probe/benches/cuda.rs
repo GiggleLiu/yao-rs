@@ -9,6 +9,9 @@ use yao_tenferro_probe::{
 fn bench(c: &mut Criterion) {
     let gpu = CudaSimulator::new(0).unwrap();
     for case in cases().unwrap() {
+        if case.cuda_diagnostic_only {
+            continue;
+        }
         let mut group = c.benchmark_group(&case.id);
         group
             .sample_size(10)
