@@ -30,6 +30,9 @@ pub mod ad;
 pub mod apply;
 pub mod circuit;
 pub mod contraction_plan;
+pub mod differentiable;
+#[cfg(feature = "tenferro-ad")]
+pub mod tenferro_ad;
 
 #[cfg(feature = "omeinsum")]
 pub mod contractor;

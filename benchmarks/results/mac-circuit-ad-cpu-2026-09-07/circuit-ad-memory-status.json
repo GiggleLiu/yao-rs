@@ -1,0 +1,158 @@
+[
+  {
+    "backend": "native",
+    "qubits": 8,
+    "depth": 10,
+    "status": "complete",
+    "returncode": 0,
+    "file": "memory-circuit-ad-native-8-10.log",
+    "cpu_seconds_limit": null
+  },
+  {
+    "backend": "custom",
+    "qubits": 8,
+    "depth": 10,
+    "status": "complete",
+    "returncode": 0,
+    "file": "memory-circuit-ad-custom-8-10.log",
+    "cpu_seconds_limit": null
+  },
+  {
+    "backend": "composed",
+    "qubits": 8,
+    "depth": 10,
+    "status": "complete",
+    "returncode": 0,
+    "file": "memory-circuit-ad-composed-8-10.log",
+    "cpu_seconds_limit": 30
+  },
+  {
+    "backend": "native",
+    "qubits": 8,
+    "depth": 100,
+    "status": "complete",
+    "returncode": 0,
+    "file": "memory-circuit-ad-native-8-100.log",
+    "cpu_seconds_limit": null
+  },
+  {
+    "backend": "custom",
+    "qubits": 8,
+    "depth": 100,
+    "status": "complete",
+    "returncode": 0,
+    "file": "memory-circuit-ad-custom-8-100.log",
+    "cpu_seconds_limit": null
+  },
+  {
+    "backend": "composed",
+    "qubits": 8,
+    "depth": 100,
+    "status": "cpu_limit",
+    "returncode": -24,
+    "file": "memory-circuit-ad-composed-8-100.log",
+    "cpu_seconds_limit": 30
+  },
+  {
+    "backend": "native",
+    "qubits": 12,
+    "depth": 10,
+    "status": "complete",
+    "returncode": 0,
+    "file": "memory-circuit-ad-native-12-10.log",
+    "cpu_seconds_limit": null
+  },
+  {
+    "backend": "custom",
+    "qubits": 12,
+    "depth": 10,
+    "status": "complete",
+    "returncode": 0,
+    "file": "memory-circuit-ad-custom-12-10.log",
+    "cpu_seconds_limit": null
+  },
+  {
+    "backend": "composed",
+    "qubits": 12,
+    "depth": 10,
+    "status": "complete",
+    "returncode": 0,
+    "file": "memory-circuit-ad-composed-12-10.log",
+    "cpu_seconds_limit": 30
+  },
+  {
+    "backend": "native",
+    "qubits": 12,
+    "depth": 100,
+    "status": "complete",
+    "returncode": 0,
+    "file": "memory-circuit-ad-native-12-100.log",
+    "cpu_seconds_limit": null
+  },
+  {
+    "backend": "custom",
+    "qubits": 12,
+    "depth": 100,
+    "status": "complete",
+    "returncode": 0,
+    "file": "memory-circuit-ad-custom-12-100.log",
+    "cpu_seconds_limit": null
+  },
+  {
+    "backend": "composed",
+    "qubits": 12,
+    "depth": 100,
+    "status": "not_run_after_representative_limit"
+  },
+  {
+    "backend": "native",
+    "qubits": 16,
+    "depth": 10,
+    "status": "complete",
+    "returncode": 0,
+    "file": "memory-circuit-ad-native-16-10.log",
+    "cpu_seconds_limit": null
+  },
+  {
+    "backend": "custom",
+    "qubits": 16,
+    "depth": 10,
+    "status": "complete",
+    "returncode": 0,
+    "file": "memory-circuit-ad-custom-16-10.log",
+    "cpu_seconds_limit": null
+  },
+  {
+    "backend": "composed",
+    "qubits": 16,
+    "depth": 10,
+    "status": "complete",
+    "returncode": 0,
+    "file": "memory-circuit-ad-composed-16-10.log",
+    "cpu_seconds_limit": 30
+  },
+  {
+    "backend": "native",
+    "qubits": 16,
+    "depth": 100,
+    "status": "complete",
+    "returncode": 0,
+    "file": "memory-circuit-ad-native-16-100.log",
+    "cpu_seconds_limit": null
+  },
+  {
+    "backend": "custom",
+    "qubits": 16,
+    "depth": 100,
+    "status": "complete",
+    "returncode": 0,
+    "file": "memory-circuit-ad-custom-16-100.log",
+    "cpu_seconds_limit": null
+  },
+  {
+    "backend": "composed",
+    "qubits": 16,
+    "depth": 100,
+    "status": "not_run_after_representative_limit"
+  }
+]

@@ -1,0 +1,22 @@
+{"backend":"custom","depth":100,"parameters":300,"qubits":12,"state_bytes":65536}
+{"allocated_bytes":1004748,"diagnostic_ns":1273916,"peak_additional_rust_heap_bytes":552724,"phase":"circuit_ad_forward_tape","retained_additional_rust_heap_bytes":223628}
+{"allocated_bytes":3241084,"diagnostic_ns":11210833,"peak_additional_rust_heap_bytes":1253901,"phase":"circuit_ad_backward","retained_additional_rust_heap_bytes":696020}
+{"loss":2.0190355527707404,"note":"Rust heap instrumentation; excludes native provider allocations. RSS includes startup, forward and backward. Diagnostic times are not benchmark timings.","output_values":4397,"status":"complete"}
+        0.01 real         0.01 user         0.00 sys
+             9584640  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                 768  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+                   5  involuntary context switches
+           426160778  instructions retired
+            58817172  cycles elapsed
+             3948928  peak memory footprint

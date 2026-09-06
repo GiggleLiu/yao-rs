@@ -32,7 +32,7 @@ permutation. Density matrices are compared in Rust row-major order.
 Gradient timings return both value and parameter gradient. The Julia wrapper
 uses Yao's reversible `apply_back` routine and computes the value from the same
 forward state/cotangent; it avoids a second forward circuit evaluation. The
-wrapper follows Yao's MIT-licensed `expect_g` algorithm, with an added inner
+wrapper follows Yao's Apache-2.0-licensed `expect_g` algorithm, with an added inner
 product for the value. The tests also exercise the public expectation adjoint
 when checking numerical agreement.
 
@@ -107,3 +107,38 @@ The runner also measures model/circuit construction and native execution heap
 in separate processes at 3/12 qubits and 1/16 second-order steps. Each raw
 `memory-evolution-*.log` includes phase heap accounting and process peak RSS.
 `compare.py` generates the memory table alongside the accuracy/cost comparison.
+
+### Circuit custom-loss AD
+
+```sh
+python3 benchmarks/run_backend.py benchmarks/results/mac-circuit-ad-cpu-2026-09-07 --suite circuit-ad --julia ~/.juliaup/bin/julia
+uv run --with matplotlib benchmarks/plot_circuit_ad.py benchmarks/results/mac-circuit-ad-cpu-2026-09-07
+```
+
+This suite returns squared state-distance loss, real parameter gradients and
+complex input-state gradients for 8/12/16 qubits and 10/100 layers. Each layer
+has Ry, Rz, CX and Rx acting on the final two sites of the same full asymmetric
+complex input. The target is independently generated from the recorded formula.
+This workload compares derivative implementations, not every circuit topology.
+Yao uses `apply_back` with seed `2(output-target)` and the same site mapping.
+
+`native` shares the existing reversible sweep. `tenferro_circuit_ad` embeds it
+as a circuit primitive; `tenferro_composed_ad` constructs ordinary 4×4 tensor
+matrices and multiplies the state in tenferro. Tensor rows include input copies,
+eager graph construction, forward loss, backward and result collection; context
+creation is excluded. Outputs are checked before timing. No fusion is applied.
+
+Repeated tensor-composition timings cover 10 layers. Separate processes qualify
+100-layer composition with a 30-CPU-second limit, beginning at 8 qubits. Larger
+100-layer composition probes are skipped if that representative run does not
+complete. Limits and skipped cases are recorded explicitly, without timing
+ratios. `memory-circuit-ad-*.log` separates retained forward heap from additional
+backward peak heap and process RSS. A terminated run's RSS is only its observed
+peak before termination. CPU-limit diagnostics and allocation-instrumented
+times are not treated as successful benchmark measurements.
+
+
+The committed [circuit AD M4 report](results/mac-circuit-ad-cpu-2026-09-07/report.md)
+contains the six shared gradient cases, three runs at one/four threads, and
+bounded isolated memory probes. See the report for complete versus CPU-limited
+composition runs and the measured overhead of the tenferro circuit operation.

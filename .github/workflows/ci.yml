@@ -34,13 +34,15 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        features: ["--all-features", "--no-default-features", "--no-default-features --features tenferro"]
+        features: ["--all-features", "--no-default-features", "--no-default-features --features tenferro", "--no-default-features --features tenferro-ad"]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - run: cargo test --workspace --locked ${{ matrix.features }}
+      - if: matrix.features == '--all-features'
+        run: cargo run --example custom_loss --all-features --locked
 
   tenferro-probe:
     runs-on: ubuntu-latest

@@ -43,6 +43,56 @@ fn backend(c: &mut Criterion) {
                     b.iter(|| expect_grad(black_box(&op), black_box(&circuit), black_box(&state)))
                 });
             }
+            "custom_gradient" => {
+                use yao_tenferro_probe::circuit_ad as ad;
+                let dc = std::sync::Arc::new(
+                    yao_rs::differentiable::DifferentiableCircuit::from_circuit(circuit.clone())
+                        .unwrap(),
+                );
+                let target = ad::target(circuit.nbits);
+                let expected = ad::native(&dc, &state, &target).unwrap();
+                group.bench_function("native", |b| {
+                    b.iter(|| {
+                        ad::native(black_box(&dc), black_box(&state), black_box(&target)).unwrap()
+                    })
+                });
+                for (name, composed) in [
+                    ("tenferro_circuit_ad", false),
+                    ("tenferro_composed_ad", true),
+                ] {
+                    // A separate CPU-time-bounded process records the 100-layer
+                    // composition limit. Keep it out of repeated timing runs.
+                    if composed && dc.num_parameters() > 30 {
+                        continue;
+                    }
+                    let ctx = yao_rs::tenferro_ad::eager_cpu_runtime(threads).unwrap();
+                    let got = ad::finish(
+                        &ad::prepare(dc.clone(), &state, &target, ctx.clone(), composed).unwrap(),
+                    )
+                    .unwrap();
+                    assert_eq!(got.len(), expected.len());
+                    assert!(
+                        got.iter()
+                            .zip(&expected)
+                            .all(|(a, b)| (a - b).norm() < 1e-9)
+                    );
+                    group.bench_function(name, |b| {
+                        b.iter(|| {
+                            ad::finish(
+                                &ad::prepare(
+                                    dc.clone(),
+                                    black_box(&state),
+                                    black_box(&target),
+                                    ctx.clone(),
+                                    composed,
+                                )
+                                .unwrap(),
+                            )
+                            .unwrap()
+                        })
+                    });
+                }
+            }
             _ => panic!("unknown mode"),
         }
         if case.tensor {

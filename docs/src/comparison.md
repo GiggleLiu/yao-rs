@@ -11,7 +11,7 @@ which differentiation and noise workflows are implemented.
 | State-vector simulation | In-place and batched registers | In-place qubit registers |
 | GPU simulation | CuYao | Planned; no supported GPU backend yet |
 | Symbolic computation | YaoSym | No |
-| Automatic differentiation | Parameter/state gradients and ChainRules integration | Adjoint expectation gradients for parameterized unitary circuits |
+| Automatic differentiation | Parameter/state gradients and ChainRules integration | Unitary parameter/input-state VJPs and JVPs; shared physical bindings; custom losses via tenferro |
 | Tensor-network export | YaoToEinsum | Pure states, overlaps, expectations and density matrices |
 | Diagonal tensor optimization | Yes | Yes |
 | Contraction-order optimization | OMEinsumContractionOrders; slicing in current source | omeco planning, omeinsum and tenferro contraction; reusable tenferro plans; slicing not yet exposed |
@@ -29,8 +29,9 @@ may not describe every current-source capability. See Yao's
 [block](https://docs.yaoquantum.org/stable/man/blocks.html) documentation.
 
 `expect_grad` already supports Rx, Ry, Rz, Phase, and both FSim parameters,
-including controlled gates. General custom-loss/input-state differentiation
-and differentiation through noise channels are separate future increments.
+including controlled gates. `DifferentiableCircuit` adds general output seeds
+and input-state derivatives; `tenferro-ad` composes custom scalar losses.
+Differentiation through noise channels remains outside the supported domain.
 
 The optional `tenferro` feature provides a supported CPU tensor contractor and
 CLI backend. The fixture under `benchmarks/tenferro-probe` compares it with the
