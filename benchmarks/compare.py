@@ -135,6 +135,11 @@ def backend_report(directory):
         "",
         f"Platform: {metadata['platform']}. Precision: complex128. Independent runs: {metadata['runs']}.",
         "",
+        *(
+            ["Measurement notes: " + " ".join(metadata["measurement_notes"]), ""]
+            if metadata.get("measurement_notes")
+            else []
+        ),
         "Times below are medians of per-process medians. Rust/Julia includes state copying; tensor phases are reported separately. A Julia/Rust ratio greater than one means native Rust was faster.",
         "",
         "| Threads | Case | Native Rust µs | Yao µs | Julia/Rust | Max output error |",

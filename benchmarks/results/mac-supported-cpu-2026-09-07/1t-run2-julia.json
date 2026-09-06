@@ -1,0 +1,388 @@
+{
+  "records": [
+    {
+      "median_ns": 604.5,
+      "construction_median_ns": 2479.5,
+      "max_error": 1.3877787807814457e-17,
+      "id": "rx_8",
+      "samples_ns": [
+        5959.0,
+        1000.0,
+        750.0,
+        708.0,
+        583.0,
+        542.0,
+        625.0,
+        542.0,
+        584.0,
+        583.0
+      ],
+      "allocations": 5,
+      "allocated_bytes": 4224
+    },
+    {
+      "median_ns": 667.0,
+      "construction_median_ns": 1229.0,
+      "max_error": 1.5515838457795457e-17,
+      "id": "rz_8",
+      "samples_ns": [
+        6791.0,
+        666.0,
+        1375.0,
+        875.0,
+        666.0,
+        667.0,
+        500.0,
+        667.0,
+        416.0,
+        750.0
+      ],
+      "allocations": 5,
+      "allocated_bytes": 4224
+    },
+    {
+      "median_ns": 1125.0,
+      "construction_median_ns": 1229.5,
+      "max_error": 6.938893903907228e-18,
+      "id": "swap_far_8",
+      "samples_ns": [
+        10084.0,
+        2250.0,
+        1250.0,
+        1125.0,
+        709.0,
+        1167.0,
+        1042.0,
+        1000.0,
+        1125.0,
+        708.0
+      ],
+      "allocations": 5,
+      "allocated_bytes": 4224
+    },
+    {
+      "median_ns": 3625.0,
+      "construction_median_ns": 4812.0,
+      "max_error": 1.5515838457795457e-17,
+      "id": "cry_low_far_8",
+      "samples_ns": [
+        45375.0,
+        6000.0,
+        4042.0,
+        3916.0,
+        3666.0,
+        3542.0,
+        3458.0,
+        3500.0,
+        3334.0,
+        3584.0
+      ],
+      "allocations": 60,
+      "allocated_bytes": 6912
+    },
+    {
+      "median_ns": 10875.0,
+      "construction_median_ns": 2875.0,
+      "max_error": 1.5515838457795457e-17,
+      "id": "fsim_adjacent_8",
+      "samples_ns": [
+        82750.0,
+        16583.0,
+        11458.0,
+        11000.0,
+        10750.0,
+        10417.0,
+        10166.0,
+        11000.0,
+        10583.0,
+        10667.0
+      ],
+      "allocations": 73,
+      "allocated_bytes": 7856
+    },
+    {
+      "median_ns": 180375.0,
+      "construction_median_ns": 70854.5,
+      "max_error": 6.866350197783356e-16,
+      "id": "qft_8",
+      "samples_ns": [
+        252792.0,
+        181083.0,
+        173209.0,
+        175042.0,
+        173625.0,
+        174667.0,
+        1.167375e6,
+        186500.0,
+        180250.0,
+        180500.0
+      ],
+      "allocations": 1440,
+      "allocated_bytes": 71392
+    },
+    {
+      "median_ns": 4042.0,
+      "construction_median_ns": 254438.0,
+      "max_error": 8.326672684688674e-17,
+      "id": "layers10_4",
+      "samples_ns": [
+        17875.0,
+        4125.0,
+        4042.0,
+        4042.0,
+        4083.0,
+        4041.0,
+        4041.0,
+        4292.0,
+        4042.0,
+        4042.0
+      ],
+      "allocations": 73,
+      "allocated_bytes": 2592
+    },
+    {
+      "median_ns": 10583.5,
+      "construction_median_ns": 235729.5,
+      "max_error": 1.6653345369377348e-16,
+      "id": "gradient10_4",
+      "samples_ns": [
+        28916.0,
+        11208.0,
+        10792.0,
+        10542.0,
+        10625.0,
+        10000.0,
+        10166.0,
+        10666.0,
+        10000.0,
+        10416.0
+      ],
+      "allocations": 652,
+      "allocated_bytes": 29792
+    },
+    {
+      "median_ns": 15770.5,
+      "construction_median_ns": 3.4895835e6,
+      "max_error": 3.510833468576701e-16,
+      "id": "layers100_4",
+      "samples_ns": [
+        22875.0,
+        15959.0,
+        15750.0,
+        15500.0,
+        15791.0,
+        15791.0,
+        15542.0,
+        15708.0,
+        15625.0,
+        15917.0
+      ],
+      "allocations": 703,
+      "allocated_bytes": 22752
+    },
+    {
+      "median_ns": 98271.0,
+      "construction_median_ns": 1.00858335e7,
+      "max_error": 1.8041124150158794e-15,
+      "id": "gradient100_4",
+      "samples_ns": [
+        120041.0,
+        108167.0,
+        115667.0,
+        97791.0,
+        98417.0,
+        97500.0,
+        96416.0,
+        96458.0,
+        98125.0,
+        100958.0
+      ],
+      "allocations": 6327,
+      "allocated_bytes": 283584
+    },
+    {
+      "median_ns": 12645.5,
+      "construction_median_ns": 729208.5,
+      "max_error": 6.206335383118183e-17,
+      "id": "layers10_8",
+      "samples_ns": [
+        22833.0,
+        13209.0,
+        12792.0,
+        12583.0,
+        12125.0,
+        12458.0,
+        12833.0,
+        12666.0,
+        12625.0,
+        12417.0
+      ],
+      "allocations": 154,
+      "allocated_bytes": 8992
+    },
+    {
+      "median_ns": 151667.0,
+      "construction_median_ns": 349104.0,
+      "max_error": 6.661338147750939e-16,
+      "id": "gradient10_8",
+      "samples_ns": [
+        167167.0,
+        174333.0,
+        134416.0,
+        150417.0,
+        151750.0,
+        152417.0,
+        143042.0,
+        192125.0,
+        142375.0,
+        151584.0
+      ],
+      "allocations": 1446,
+      "allocated_bytes": 344000
+    },
+    {
+      "median_ns": 316313.0,
+      "construction_median_ns": 2.0420958e7,
+      "max_error": 3.198672041575565e-16,
+      "id": "layers100_8",
+      "samples_ns": [
+        505625.0,
+        310417.0,
+        299875.0,
+        324791.0,
+        357041.0,
+        322209.0,
+        453917.0,
+        301125.0,
+        297833.0,
+        297250.0
+      ],
+      "allocations": 1504,
+      "allocated_bytes": 52192
+    },
+    {
+      "median_ns": 2.282625e6,
+      "construction_median_ns": 1.30155415e7,
+      "max_error": 1.0130785099704553e-15,
+      "id": "gradient100_8",
+      "samples_ns": [
+        5.950292e6,
+        3.293667e6,
+        1.582209e6,
+        1.563916e6,
+        1.491042e6,
+        1.687417e6,
+        3.571916e6,
+        2.97975e6,
+        2.877833e6,
+        1.582375e6
+      ],
+      "allocations": 14234,
+      "allocated_bytes": 3329024
+    },
+    {
+      "median_ns": 81291.5,
+      "construction_median_ns": 71625.5,
+      "max_error": 1.2509268882771003e-16,
+      "id": "noisy_4",
+      "samples_ns": [
+        196958.0,
+        86625.0,
+        81375.0,
+        326750.0,
+        88834.0,
+        81208.0,
+        80208.0,
+        78833.0,
+        80167.0,
+        79458.0
+      ],
+      "allocations": 586,
+      "allocated_bytes": 91936
+    },
+    {
+      "median_ns": 407813.0,
+      "construction_median_ns": 104937.5,
+      "max_error": 5.204367661579016e-17,
+      "id": "noisy_6",
+      "samples_ns": [
+        445584.0,
+        375333.0,
+        370333.0,
+        373666.0,
+        371292.0,
+        394084.0,
+        421542.0,
+        707375.0,
+        1.033084e6,
+        1.024083e6
+      ],
+      "allocations": 878,
+      "allocated_bytes": 1671840
+    },
+    {
+      "median_ns": 1.95650205e7,
+      "construction_median_ns": 156437.0,
+      "max_error": 1.8297015907360072e-17,
+      "id": "noisy_8",
+      "samples_ns": [
+        1.0288375e7,
+        1.48745e7,
+        1.7057625e7,
+        2.0065458e7,
+        2.6039459e7,
+        9.574584e6,
+        2.0221833e7,
+        2.1017625e7,
+        3.1500625e7,
+        1.9064583e7
+      ],
+      "allocations": 1170,
+      "allocated_bytes": 34647584
+    },
+    {
+      "median_ns": 395.5,
+      "construction_median_ns": 32062.5,
+      "max_error": 0.0,
+      "id": "tensor_state_4",
+      "samples_ns": [
+        11375.0,
+        875.0,
+        542.0,
+        417.0,
+        416.0,
+        333.0,
+        375.0,
+        333.0,
+        333.0,
+        375.0
+      ],
+      "allocations": 14,
+      "allocated_bytes": 704
+    },
+    {
+      "median_ns": 2958.0,
+      "construction_median_ns": 67791.5,
+      "max_error": 0.0,
+      "id": "tensor_state_8",
+      "samples_ns": [
+        11750.0,
+        4334.0,
+        2958.0,
+        2625.0,
+        2958.0,
+        2959.0,
+        2875.0,
+        2625.0,
+        2792.0,
+        2959.0
+      ],
+      "allocations": 27,
+      "allocated_bytes": 4928
+    }
+  ],
+  "julia": "1.12.4",
+  "blas": "LBTConfig([ILP64] libopenblas64_.dylib)",
+  "threads": 1,
+  "yao": "0.9.3"
+}

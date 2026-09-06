@@ -1,0 +1,1550 @@
+[
+  {
+    "threads": 1,
+    "id": "cry_low_far_8",
+    "backend": "julia",
+    "median_ns": 3625.0,
+    "min_run_median_ns": 3333.0,
+    "max_run_median_ns": 3625.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cry_low_far_8",
+    "backend": "native",
+    "median_ns": 210.95557445593897,
+    "min_run_median_ns": 200.35294639884586,
+    "max_run_median_ns": 431.1350404347378,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "extension_12",
+    "backend": "complex_ad",
+    "median_ns": 94806.63009259259,
+    "min_run_median_ns": 94792.03078703705,
+    "max_run_median_ns": 303520.1870915033,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "extension_12",
+    "backend": "composed",
+    "median_ns": 7902.40303030303,
+    "min_run_median_ns": 7592.913208333333,
+    "max_run_median_ns": 12980.85175945378,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "extension_12",
+    "backend": "custom",
+    "median_ns": 13001.561683599419,
+    "min_run_median_ns": 12829.716205657132,
+    "max_run_median_ns": 30495.267384414616,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "extension_12",
+    "backend": "custom_prepare",
+    "median_ns": 8014.791151809355,
+    "min_run_median_ns": 7981.803957571554,
+    "max_run_median_ns": 15728.638184380032,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "extension_16",
+    "backend": "complex_ad",
+    "median_ns": 561888.5482026143,
+    "min_run_median_ns": 560609.3198529412,
+    "max_run_median_ns": 1688309.4444444445,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "extension_16",
+    "backend": "composed",
+    "median_ns": 81343.94923469388,
+    "min_run_median_ns": 81150.7008972468,
+    "max_run_median_ns": 172422.60969387757,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "extension_16",
+    "backend": "custom",
+    "median_ns": 66730.04601147029,
+    "min_run_median_ns": 65791.30821078431,
+    "max_run_median_ns": 143162.46569444443,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "extension_16",
+    "backend": "custom_prepare",
+    "median_ns": 8007.328673378361,
+    "min_run_median_ns": 7989.809921332329,
+    "max_run_median_ns": 16314.884085213032,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "extension_8",
+    "backend": "complex_ad",
+    "median_ns": 66482.58675373135,
+    "min_run_median_ns": 63343.25670498084,
+    "max_run_median_ns": 190066.86997126436,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "extension_8",
+    "backend": "composed",
+    "median_ns": 2750.6395627433367,
+    "min_run_median_ns": 2660.091165596419,
+    "max_run_median_ns": 4929.629118705036,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "extension_8",
+    "backend": "custom",
+    "median_ns": 9156.293413978496,
+    "min_run_median_ns": 8852.955390539053,
+    "max_run_median_ns": 16135.484015202324,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "extension_8",
+    "backend": "custom_prepare",
+    "median_ns": 8296.525348542458,
+    "min_run_median_ns": 7927.826731159481,
+    "max_run_median_ns": 14876.472752860835,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "fsim_adjacent_8",
+    "backend": "julia",
+    "median_ns": 4917.0,
+    "min_run_median_ns": 4812.5,
+    "max_run_median_ns": 10875.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "fsim_adjacent_8",
+    "backend": "native",
+    "median_ns": 740.3922394246646,
+    "min_run_median_ns": 732.4868845245471,
+    "max_run_median_ns": 1643.9565705651748,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "gradient100_4",
+    "backend": "julia",
+    "median_ns": 96125.0,
+    "min_run_median_ns": 94688.0,
+    "max_run_median_ns": 98271.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "gradient100_4",
+    "backend": "native",
+    "median_ns": 112502.99074074073,
+    "min_run_median_ns": 111727.92283950618,
+    "max_run_median_ns": 279566.62847222225,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "gradient100_8",
+    "backend": "julia",
+    "median_ns": 1505416.5,
+    "min_run_median_ns": 1463916.5,
+    "max_run_median_ns": 2282625.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "gradient100_8",
+    "backend": "native",
+    "median_ns": 1081937.6968253967,
+    "min_run_median_ns": 1077886.7824074074,
+    "max_run_median_ns": 1105303.472222222,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "gradient10_4",
+    "backend": "julia",
+    "median_ns": 10417.0,
+    "min_run_median_ns": 10083.0,
+    "max_run_median_ns": 10583.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "gradient10_4",
+    "backend": "native",
+    "median_ns": 11333.9661360799,
+    "min_run_median_ns": 11279.216811414393,
+    "max_run_median_ns": 25828.017851307188,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "gradient10_8",
+    "backend": "julia",
+    "median_ns": 153291.5,
+    "min_run_median_ns": 151667.0,
+    "max_run_median_ns": 304875.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "gradient10_8",
+    "backend": "native",
+    "median_ns": 109090.1319686411,
+    "min_run_median_ns": 108587.90784313725,
+    "max_run_median_ns": 274963.9107323232,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "layers100_4",
+    "backend": "julia",
+    "median_ns": 15396.0,
+    "min_run_median_ns": 15083.5,
+    "max_run_median_ns": 15770.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "layers100_4",
+    "backend": "native",
+    "median_ns": 18970.27096273292,
+    "min_run_median_ns": 18882.296369294607,
+    "max_run_median_ns": 46337.961492891,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "layers100_8",
+    "backend": "julia",
+    "median_ns": 123459.0,
+    "min_run_median_ns": 116937.0,
+    "max_run_median_ns": 316313.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "layers100_8",
+    "backend": "native",
+    "median_ns": 227585.07665505225,
+    "min_run_median_ns": 227520.14041666666,
+    "max_run_median_ns": 329708.9479813664,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "layers10_4",
+    "backend": "julia",
+    "median_ns": 1708.0,
+    "min_run_median_ns": 1562.5,
+    "max_run_median_ns": 4042.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "layers10_4",
+    "backend": "native",
+    "median_ns": 1934.6985030571368,
+    "min_run_median_ns": 1898.8679048414024,
+    "max_run_median_ns": 4762.895217710371,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "layers10_8",
+    "backend": "julia",
+    "median_ns": 12603.5,
+    "min_run_median_ns": 11771.0,
+    "max_run_median_ns": 12645.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "layers10_8",
+    "backend": "native",
+    "median_ns": 23249.919084249086,
+    "min_run_median_ns": 22814.43098818475,
+    "max_run_median_ns": 56807.90995934959,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_4",
+    "backend": "conversion",
+    "median_ns": 22822.70066334992,
+    "min_run_median_ns": 22736.23772040302,
+    "max_run_median_ns": 23204.057714450202,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_4",
+    "backend": "julia",
+    "median_ns": 36145.5,
+    "min_run_median_ns": 35999.5,
+    "max_run_median_ns": 81291.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_4",
+    "backend": "native",
+    "median_ns": 22396.067804551538,
+    "min_run_median_ns": 22283.126838235294,
+    "max_run_median_ns": 23600.97653435855,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_4",
+    "backend": "omeinsum",
+    "median_ns": 329642.85308641975,
+    "min_run_median_ns": 328184.5833333334,
+    "max_run_median_ns": 331497.4527777778,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_4",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 111269.75624274099,
+    "min_run_median_ns": 109514.70137693631,
+    "max_run_median_ns": 115661.82208333333,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_4",
+    "backend": "planning",
+    "median_ns": 346317.3485576923,
+    "min_run_median_ns": 345196.9138888889,
+    "max_run_median_ns": 349183.8923076923,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_4",
+    "backend": "supported_from_arrays",
+    "median_ns": 600523.4388020833,
+    "min_run_median_ns": 594359.9660714285,
+    "max_run_median_ns": 601809.286111111,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_4",
+    "backend": "supported_planning",
+    "median_ns": 172761.5202991453,
+    "min_run_median_ns": 171210.17250673857,
+    "max_run_median_ns": 174287.9817307692,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_4",
+    "backend": "supported_warm",
+    "median_ns": 425484.25974025973,
+    "min_run_median_ns": 424490.6856060606,
+    "max_run_median_ns": 455858.55,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_4",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 509283.4201388889,
+    "min_run_median_ns": 499897.2028508772,
+    "max_run_median_ns": 509583.57539682544,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_4",
+    "backend": "tenferro_warm",
+    "median_ns": 129115.04722222223,
+    "min_run_median_ns": 128214.44704861112,
+    "max_run_median_ns": 131257.39166666666,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_6",
+    "backend": "conversion",
+    "median_ns": 35255.241288086116,
+    "min_run_median_ns": 34216.99284351145,
+    "max_run_median_ns": 43575.2682549505,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_6",
+    "backend": "julia",
+    "median_ns": 407813.0,
+    "min_run_median_ns": 386020.5,
+    "max_run_median_ns": 431354.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_6",
+    "backend": "native",
+    "median_ns": 387039.759375,
+    "min_run_median_ns": 384250.9322916666,
+    "max_run_median_ns": 388176.0777529762,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_6",
+    "backend": "omeinsum",
+    "median_ns": 542713.8431372549,
+    "min_run_median_ns": 542045.068627451,
+    "max_run_median_ns": 546125.1722689075,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_6",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 195993.97021276597,
+    "min_run_median_ns": 194111.03672745696,
+    "max_run_median_ns": 239268.86029411765,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_6",
+    "backend": "planning",
+    "median_ns": 590583.7604166667,
+    "min_run_median_ns": 587274.8854166667,
+    "max_run_median_ns": 1005805.6547619047,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_6",
+    "backend": "supported_from_arrays",
+    "median_ns": 1034807.2530864198,
+    "min_run_median_ns": 1033511.4638447971,
+    "max_run_median_ns": 1331217.298611111,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_6",
+    "backend": "supported_planning",
+    "median_ns": 325503.57738095237,
+    "min_run_median_ns": 325305.55555555556,
+    "max_run_median_ns": 326358.2272959184,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_6",
+    "backend": "supported_warm",
+    "median_ns": 700461.7521367521,
+    "min_run_median_ns": 697951.9557823129,
+    "max_run_median_ns": 1774927.9583333335,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_6",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 872911.7164502165,
+    "min_run_median_ns": 872808.4621212122,
+    "max_run_median_ns": 2567695.3125,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_6",
+    "backend": "tenferro_warm",
+    "median_ns": 247480.13663663663,
+    "min_run_median_ns": 226139.16822916665,
+    "max_run_median_ns": 510603.45535714284,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_8",
+    "backend": "julia",
+    "median_ns": 10571020.5,
+    "min_run_median_ns": 7254146.0,
+    "max_run_median_ns": 19565020.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "noisy_8",
+    "backend": "native",
+    "median_ns": 7938410.4,
+    "min_run_median_ns": 7901562.475,
+    "max_run_median_ns": 14872659.833333332,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "qft_8",
+    "backend": "julia",
+    "median_ns": 78041.5,
+    "min_run_median_ns": 75937.5,
+    "max_run_median_ns": 180375.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "qft_8",
+    "backend": "native",
+    "median_ns": 4600.240560545575,
+    "min_run_median_ns": 4560.292785571142,
+    "max_run_median_ns": 12124.582164634146,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "rx_8",
+    "backend": "julia",
+    "median_ns": 541.5,
+    "min_run_median_ns": 499.5,
+    "max_run_median_ns": 604.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "rx_8",
+    "backend": "native",
+    "median_ns": 318.9731745807978,
+    "min_run_median_ns": 318.62768802934863,
+    "max_run_median_ns": 787.3916497294406,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "rz_8",
+    "backend": "julia",
+    "median_ns": 645.5,
+    "min_run_median_ns": 604.0,
+    "max_run_median_ns": 667.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "rz_8",
+    "backend": "native",
+    "median_ns": 181.8402203268662,
+    "min_run_median_ns": 180.92918666866686,
+    "max_run_median_ns": 462.65417402061524,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "swap_far_8",
+    "backend": "julia",
+    "median_ns": 583.5,
+    "min_run_median_ns": 521.0,
+    "max_run_median_ns": 1125.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "swap_far_8",
+    "backend": "native",
+    "median_ns": 178.87423526514112,
+    "min_run_median_ns": 178.5139790340728,
+    "max_run_median_ns": 392.19457962512365,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "tensor_state_4",
+    "backend": "conversion",
+    "median_ns": 16533.807439038417,
+    "min_run_median_ns": 8739.847978825794,
+    "max_run_median_ns": 21049.70277185501,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "tensor_state_4",
+    "backend": "julia",
+    "median_ns": 395.5,
+    "min_run_median_ns": 375.0,
+    "max_run_median_ns": 396.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "tensor_state_4",
+    "backend": "native",
+    "median_ns": 349.8384857742983,
+    "min_run_median_ns": 346.48125818125817,
+    "max_run_median_ns": 677.4245584415996,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "tensor_state_4",
+    "backend": "omeinsum",
+    "median_ns": 73338.36222857142,
+    "min_run_median_ns": 72479.78174603175,
+    "max_run_median_ns": 135938.39862637362,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "tensor_state_4",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 59228.69836400818,
+    "min_run_median_ns": 30297.391565153193,
+    "max_run_median_ns": 63584.98883928571,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "tensor_state_4",
+    "backend": "planning",
+    "median_ns": 184927.0833333333,
+    "min_run_median_ns": 80040.39592035644,
+    "max_run_median_ns": 200189.21937321936,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "tensor_state_4",
+    "backend": "supported_from_arrays",
+    "median_ns": 426633.10555555555,
+    "min_run_median_ns": 182997.876,
+    "max_run_median_ns": 518583.3296703297,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "tensor_state_4",
+    "backend": "supported_planning",
+    "median_ns": 41211.76300904978,
+    "min_run_median_ns": 40982.0479542042,
+    "max_run_median_ns": 103752.14119278779,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "tensor_state_4",
+    "backend": "supported_warm",
+    "median_ns": 138631.4808802309,
+    "min_run_median_ns": 137581.62313432834,
+    "max_run_median_ns": 359984.29821428575,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "tensor_state_4",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 276252.8115079365,
+    "min_run_median_ns": 122513.35155555556,
+    "max_run_median_ns": 299835.2857142857,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "tensor_state_4",
+    "backend": "tenferro_warm",
+    "median_ns": 74213.22042606515,
+    "min_run_median_ns": 27870.49001019368,
+    "max_run_median_ns": 85827.75614906833,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "tensor_state_8",
+    "backend": "conversion",
+    "median_ns": 18427.27189193767,
+    "min_run_median_ns": 18350.553812415652,
+    "max_run_median_ns": 44788.96077639752,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "tensor_state_8",
+    "backend": "julia",
+    "median_ns": 2958.0,
+    "min_run_median_ns": 2791.5,
+    "max_run_median_ns": 2958.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "tensor_state_8",
+    "backend": "native",
+    "median_ns": 12016.800885269122,
+    "min_run_median_ns": 4360.409793566971,
+    "max_run_median_ns": 12526.569799270073,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "tensor_state_8",
+    "backend": "omeinsum",
+    "median_ns": 459150.8993055555,
+    "min_run_median_ns": 181749.70750000002,
+    "max_run_median_ns": 555751.912585034,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "tensor_state_8",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 74241.72671568628,
+    "min_run_median_ns": 69780.97156488549,
+    "max_run_median_ns": 152866.5070921986,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "tensor_state_8",
+    "backend": "planning",
+    "median_ns": 205551.72727272726,
+    "min_run_median_ns": 201822.51878306878,
+    "max_run_median_ns": 397505.8514957265,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "tensor_state_8",
+    "backend": "supported_from_arrays",
+    "median_ns": 824539.5928571429,
+    "min_run_median_ns": 433125.2751322752,
+    "max_run_median_ns": 991251.9015151516,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "tensor_state_8",
+    "backend": "supported_planning",
+    "median_ns": 180219.76626016258,
+    "min_run_median_ns": 117644.82321937321,
+    "max_run_median_ns": 447921.3508403362,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "tensor_state_8",
+    "backend": "supported_warm",
+    "median_ns": 502257.6754385965,
+    "min_run_median_ns": 309304.8095833333,
+    "max_run_median_ns": 1297637.25625,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "tensor_state_8",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 354281.3100961539,
+    "min_run_median_ns": 301070.26666666666,
+    "max_run_median_ns": 712918.6666666667,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "tensor_state_8",
+    "backend": "tenferro_warm",
+    "median_ns": 81126.54345764854,
+    "min_run_median_ns": 77321.86324786325,
+    "max_run_median_ns": 184230.26730418944,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "cry_low_far_8",
+    "backend": "julia",
+    "median_ns": 3624.5,
+    "min_run_median_ns": 3541.5,
+    "max_run_median_ns": 3625.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "cry_low_far_8",
+    "backend": "native",
+    "median_ns": 204.5690265185857,
+    "min_run_median_ns": 200.10513389386233,
+    "max_run_median_ns": 344.4003744112764,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "extension_12",
+    "backend": "complex_ad",
+    "median_ns": 209228.65813953488,
+    "min_run_median_ns": 208116.87603820598,
+    "max_run_median_ns": 213609.375,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "extension_12",
+    "backend": "composed",
+    "median_ns": 13557.091116535768,
+    "min_run_median_ns": 13473.11320058997,
+    "max_run_median_ns": 13682.547558545091,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "extension_12",
+    "backend": "custom",
+    "median_ns": 24189.557912391476,
+    "min_run_median_ns": 24102.82121348991,
+    "max_run_median_ns": 25557.948407960197,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "extension_12",
+    "backend": "custom_prepare",
+    "median_ns": 85611.89890965732,
+    "min_run_median_ns": 84100.6889471385,
+    "max_run_median_ns": 87029.37324263039,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "extension_16",
+    "backend": "complex_ad",
+    "median_ns": 568260.6966666667,
+    "min_run_median_ns": 564156.775510204,
+    "max_run_median_ns": 576143.4733333334,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "extension_16",
+    "backend": "composed",
+    "median_ns": 89735.69215686274,
+    "min_run_median_ns": 89469.4874727669,
+    "max_run_median_ns": 89850.31944444444,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "extension_16",
+    "backend": "custom",
+    "median_ns": 82990.11365953108,
+    "min_run_median_ns": 81176.41103603604,
+    "max_run_median_ns": 83132.33975535168,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "extension_16",
+    "backend": "custom_prepare",
+    "median_ns": 86194.24845679013,
+    "min_run_median_ns": 85399.0271226415,
+    "max_run_median_ns": 87655.69615384616,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "extension_8",
+    "backend": "complex_ad",
+    "median_ns": 177817.98459383752,
+    "min_run_median_ns": 175888.42994505493,
+    "max_run_median_ns": 182349.3044217687,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "extension_8",
+    "backend": "composed",
+    "median_ns": 8776.36370772947,
+    "min_run_median_ns": 8708.58747585646,
+    "max_run_median_ns": 8785.224289021164,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "extension_8",
+    "backend": "custom",
+    "median_ns": 19297.067545473124,
+    "min_run_median_ns": 18995.017355495656,
+    "max_run_median_ns": 19825.83275328693,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "extension_8",
+    "backend": "custom_prepare",
+    "median_ns": 85655.73890186916,
+    "min_run_median_ns": 84339.03202160494,
+    "max_run_median_ns": 86742.08632653061,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "fsim_adjacent_8",
+    "backend": "julia",
+    "median_ns": 4917.0,
+    "min_run_median_ns": 4896.0,
+    "max_run_median_ns": 4979.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "fsim_adjacent_8",
+    "backend": "native",
+    "median_ns": 755.5837907518296,
+    "min_run_median_ns": 723.2346636122498,
+    "max_run_median_ns": 1363.9940535471235,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "gradient100_4",
+    "backend": "julia",
+    "median_ns": 96666.5,
+    "min_run_median_ns": 95145.5,
+    "max_run_median_ns": 97708.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "gradient100_4",
+    "backend": "native",
+    "median_ns": 115264.95815752461,
+    "min_run_median_ns": 112445.24847560975,
+    "max_run_median_ns": 116210.22888888889,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "gradient100_8",
+    "backend": "julia",
+    "median_ns": 1461958.5,
+    "min_run_median_ns": 1402583.0,
+    "max_run_median_ns": 1463354.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "gradient100_8",
+    "backend": "native",
+    "median_ns": 1106601.8564814813,
+    "min_run_median_ns": 1085639.2174603175,
+    "max_run_median_ns": 1118556.8316326533,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "gradient10_4",
+    "backend": "julia",
+    "median_ns": 10396.5,
+    "min_run_median_ns": 10125.5,
+    "max_run_median_ns": 10541.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "gradient10_4",
+    "backend": "native",
+    "median_ns": 13096.840129392212,
+    "min_run_median_ns": 12151.074615036232,
+    "max_run_median_ns": 17607.256134423897,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "gradient10_8",
+    "backend": "julia",
+    "median_ns": 153750.0,
+    "min_run_median_ns": 145688.0,
+    "max_run_median_ns": 168313.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "gradient10_8",
+    "backend": "native",
+    "median_ns": 122892.97371794871,
+    "min_run_median_ns": 109158.72073412698,
+    "max_run_median_ns": 130850.02777777778,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "layers100_4",
+    "backend": "julia",
+    "median_ns": 15521.0,
+    "min_run_median_ns": 15229.5,
+    "max_run_median_ns": 15729.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "layers100_4",
+    "backend": "native",
+    "median_ns": 19304.131054131052,
+    "min_run_median_ns": 18813.6093389811,
+    "max_run_median_ns": 23826.68690869087,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "layers100_8",
+    "backend": "julia",
+    "median_ns": 116042.0,
+    "min_run_median_ns": 115604.0,
+    "max_run_median_ns": 118187.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "layers100_8",
+    "backend": "native",
+    "median_ns": 231307.8796296296,
+    "min_run_median_ns": 227461.19910714286,
+    "max_run_median_ns": 288371.8333333334,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "layers10_4",
+    "backend": "julia",
+    "median_ns": 1687.5,
+    "min_run_median_ns": 1666.5,
+    "max_run_median_ns": 1709.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "layers10_4",
+    "backend": "native",
+    "median_ns": 1949.3439071280686,
+    "min_run_median_ns": 1883.8461377870563,
+    "max_run_median_ns": 4938.116663873994,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "layers10_8",
+    "backend": "julia",
+    "median_ns": 11895.5,
+    "min_run_median_ns": 11791.0,
+    "max_run_median_ns": 12354.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "layers10_8",
+    "backend": "native",
+    "median_ns": 23430.8687177835,
+    "min_run_median_ns": 22716.599127182046,
+    "max_run_median_ns": 70440.58185404338,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_4",
+    "backend": "conversion",
+    "median_ns": 22692.559870049503,
+    "min_run_median_ns": 22611.893506856984,
+    "max_run_median_ns": 29321.9078125,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_4",
+    "backend": "julia",
+    "median_ns": 36374.5,
+    "min_run_median_ns": 35187.5,
+    "max_run_median_ns": 37708.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_4",
+    "backend": "native",
+    "median_ns": 21919.679754273504,
+    "min_run_median_ns": 21758.169545332257,
+    "max_run_median_ns": 22340.05072016461,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_4",
+    "backend": "omeinsum",
+    "median_ns": 324153.2744897959,
+    "min_run_median_ns": 323726.7669642857,
+    "max_run_median_ns": 331189.8392857143,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_4",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 114161.95294642856,
+    "min_run_median_ns": 110457.36077235773,
+    "max_run_median_ns": 134478.85906862747,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_4",
+    "backend": "planning",
+    "median_ns": 343865.6693121693,
+    "min_run_median_ns": 343474.65231481486,
+    "max_run_median_ns": 378293.452173913,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_4",
+    "backend": "supported_from_arrays",
+    "median_ns": 892338.474025974,
+    "min_run_median_ns": 885528.9368686869,
+    "max_run_median_ns": 2496556.152777778,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_4",
+    "backend": "supported_planning",
+    "median_ns": 171394.43261455526,
+    "min_run_median_ns": 170574.59328703705,
+    "max_run_median_ns": 173721.61886792452,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_4",
+    "backend": "supported_warm",
+    "median_ns": 723248.4010989012,
+    "min_run_median_ns": 722707.9326923077,
+    "max_run_median_ns": 1996729.8050000002,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_4",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 514675.3449074074,
+    "min_run_median_ns": 512747.22407407407,
+    "max_run_median_ns": 700833.8766233766,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_4",
+    "backend": "tenferro_warm",
+    "median_ns": 143347.70332577475,
+    "min_run_median_ns": 140672.4423828125,
+    "max_run_median_ns": 190984.60507246375,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_6",
+    "backend": "conversion",
+    "median_ns": 34089.47355889724,
+    "min_run_median_ns": 34017.215347849175,
+    "max_run_median_ns": 35447.45416666666,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_6",
+    "backend": "julia",
+    "median_ns": 1955958.0,
+    "min_run_median_ns": 1701041.5,
+    "max_run_median_ns": 2002395.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_6",
+    "backend": "native",
+    "median_ns": 383975.2204861111,
+    "min_run_median_ns": 383725.3869047619,
+    "max_run_median_ns": 423375.0574829932,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_6",
+    "backend": "omeinsum",
+    "median_ns": 541208.7450980392,
+    "min_run_median_ns": 540787.0029411765,
+    "max_run_median_ns": 552346.8033333332,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_6",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 187176.96598639456,
+    "min_run_median_ns": 186343.53784013604,
+    "max_run_median_ns": 202061.9741161616,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_6",
+    "backend": "planning",
+    "median_ns": 587206.703125,
+    "min_run_median_ns": 584314.453125,
+    "max_run_median_ns": 607520.9851851852,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_6",
+    "backend": "supported_from_arrays",
+    "median_ns": 1502478.9642857143,
+    "min_run_median_ns": 1475280.0904761907,
+    "max_run_median_ns": 1607728.1047619048,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_6",
+    "backend": "supported_planning",
+    "median_ns": 322932.4655172414,
+    "min_run_median_ns": 322339.55938697315,
+    "max_run_median_ns": 367128.6666666666,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_6",
+    "backend": "supported_warm",
+    "median_ns": 1173410.4125,
+    "min_run_median_ns": 1138681.7578125,
+    "max_run_median_ns": 2871718.777777778,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_6",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 885479.2462121212,
+    "min_run_median_ns": 879252.6339285714,
+    "max_run_median_ns": 905437.91,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_6",
+    "backend": "tenferro_warm",
+    "median_ns": 281390.1927083334,
+    "min_run_median_ns": 259966.90102040817,
+    "max_run_median_ns": 297098.13103448274,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_8",
+    "backend": "julia",
+    "median_ns": 11380771.0,
+    "min_run_median_ns": 11368854.5,
+    "max_run_median_ns": 13177854.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "noisy_8",
+    "backend": "native",
+    "median_ns": 7887908.3,
+    "min_run_median_ns": 7872993.09375,
+    "max_run_median_ns": 8022064.575,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "qft_8",
+    "backend": "julia",
+    "median_ns": 77083.5,
+    "min_run_median_ns": 76583.0,
+    "max_run_median_ns": 78021.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "qft_8",
+    "backend": "native",
+    "median_ns": 4744.798357742377,
+    "min_run_median_ns": 4512.109905189621,
+    "max_run_median_ns": 13790.717485658213,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "rx_8",
+    "backend": "julia",
+    "median_ns": 520.5,
+    "min_run_median_ns": 479.0,
+    "max_run_median_ns": 625.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "rx_8",
+    "backend": "native",
+    "median_ns": 326.7816757346811,
+    "min_run_median_ns": 320.3838098849926,
+    "max_run_median_ns": 358.92177861892173,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "rz_8",
+    "backend": "julia",
+    "median_ns": 625.5,
+    "min_run_median_ns": 604.5,
+    "max_run_median_ns": 646.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "rz_8",
+    "backend": "native",
+    "median_ns": 200.1924680633623,
+    "min_run_median_ns": 179.37459115732403,
+    "max_run_median_ns": 264.0841149800023,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "swap_far_8",
+    "backend": "julia",
+    "median_ns": 562.5,
+    "min_run_median_ns": 521.0,
+    "max_run_median_ns": 625.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "swap_far_8",
+    "backend": "native",
+    "median_ns": 181.93476685474684,
+    "min_run_median_ns": 178.85617231601276,
+    "max_run_median_ns": 259.61636236277616,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "tensor_state_4",
+    "backend": "conversion",
+    "median_ns": 8653.818192713326,
+    "min_run_median_ns": 8627.753185941043,
+    "max_run_median_ns": 8666.669608778626,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "tensor_state_4",
+    "backend": "julia",
+    "median_ns": 375.0,
+    "min_run_median_ns": 375.0,
+    "max_run_median_ns": 416.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "tensor_state_4",
+    "backend": "native",
+    "median_ns": 342.9110696938891,
+    "min_run_median_ns": 340.7623207817688,
+    "max_run_median_ns": 351.3163982614267,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "tensor_state_4",
+    "backend": "omeinsum",
+    "median_ns": 72596.483994709,
+    "min_run_median_ns": 72551.7270723104,
+    "max_run_median_ns": 74145.65171370968,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "tensor_state_4",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 29966.384868421053,
+    "min_run_median_ns": 29443.812954429086,
+    "max_run_median_ns": 30721.672983479104,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "tensor_state_4",
+    "backend": "planning",
+    "median_ns": 79538.92525584795,
+    "min_run_median_ns": 79240.8001863354,
+    "max_run_median_ns": 79776.38946859902,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "tensor_state_4",
+    "backend": "supported_from_arrays",
+    "median_ns": 291879.3669354839,
+    "min_run_median_ns": 291270.9516129032,
+    "max_run_median_ns": 293951.7782258064,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "tensor_state_4",
+    "backend": "supported_planning",
+    "median_ns": 41176.88434343434,
+    "min_run_median_ns": 41063.72837573386,
+    "max_run_median_ns": 41236.58220211162,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "tensor_state_4",
+    "backend": "supported_warm",
+    "median_ns": 248502.99131944444,
+    "min_run_median_ns": 248477.74024024024,
+    "max_run_median_ns": 252395.23873873876,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "tensor_state_4",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 134756.5279411765,
+    "min_run_median_ns": 134577.45265151514,
+    "max_run_median_ns": 135239.6978021978,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "tensor_state_4",
+    "backend": "tenferro_warm",
+    "median_ns": 37144.97572016461,
+    "min_run_median_ns": 36904.52246543779,
+    "max_run_median_ns": 41053.73665919283,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "tensor_state_8",
+    "backend": "conversion",
+    "median_ns": 18152.81283467202,
+    "min_run_median_ns": 18132.376946107783,
+    "max_run_median_ns": 18460.434741902835,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "tensor_state_8",
+    "backend": "julia",
+    "median_ns": 2813.0,
+    "min_run_median_ns": 2750.5,
+    "max_run_median_ns": 2833.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "tensor_state_8",
+    "backend": "native",
+    "median_ns": 4347.486524036822,
+    "min_run_median_ns": 4343.148669423241,
+    "max_run_median_ns": 4371.767502594258,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "tensor_state_8",
+    "backend": "omeinsum",
+    "median_ns": 181205.087037037,
+    "min_run_median_ns": 180672.18259803922,
+    "max_run_median_ns": 181546.6666666667,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "tensor_state_8",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 68428.93796992481,
+    "min_run_median_ns": 67999.31996268657,
+    "max_run_median_ns": 71743.0316043084,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "tensor_state_8",
+    "backend": "planning",
+    "median_ns": 202245.19400352734,
+    "min_run_median_ns": 201312.73148148146,
+    "max_run_median_ns": 203585.0738095238,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "tensor_state_8",
+    "backend": "supported_from_arrays",
+    "median_ns": 661769.0535714286,
+    "min_run_median_ns": 659456.5204081633,
+    "max_run_median_ns": 665398.9693877551,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "tensor_state_8",
+    "backend": "supported_planning",
+    "median_ns": 116644.60840201465,
+    "min_run_median_ns": 115249.86856540084,
+    "max_run_median_ns": 118182.14545454545,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "tensor_state_8",
+    "backend": "supported_warm",
+    "median_ns": 541024.0980392157,
+    "min_run_median_ns": 539862.3908496732,
+    "max_run_median_ns": 543039.0882352942,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "tensor_state_8",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 314285.4881773399,
+    "min_run_median_ns": 313630.70337301586,
+    "max_run_median_ns": 316918.1919642857,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "tensor_state_8",
+    "backend": "tenferro_warm",
+    "median_ns": 87026.69365079365,
+    "min_run_median_ns": 80202.25908659924,
+    "max_run_median_ns": 87832.53221153846,
+    "runs": 3
+  }
+]
