@@ -231,3 +231,7 @@ Twenty-four isolated memory probes vary model, qubits and basis cap (8/20/40)
 at rtol=1e-8. They separate additional execution heap from whole-process RSS.
 Generate standalone plots with
 `uv run --with matplotlib benchmarks/plot_krylov.py RESULTS`.
+
+The [recorded M4 report](results/mac-krylov-cpu-2026-09-07/report.md) includes
+all 32 cases in six timing processes and all 24 memory probes, with raw
+convergence diagnostics and standalone error/time and memory figures.

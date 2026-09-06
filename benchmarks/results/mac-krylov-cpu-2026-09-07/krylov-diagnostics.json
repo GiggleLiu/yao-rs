@@ -1,0 +1,2186 @@
+[
+  {
+    "id": "krylov_ising_4q_tol4",
+    "info": {
+      "estimated_error": 2.766908791610736e-05,
+      "matvecs": 7,
+      "max_krylov_dim": 7,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_tol7",
+    "info": {
+      "estimated_error": 4.640687364631939e-08,
+      "matvecs": 9,
+      "max_krylov_dim": 9,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_tol10",
+    "info": {
+      "estimated_error": 1.8675409618589766e-15,
+      "matvecs": 10,
+      "max_krylov_dim": 10,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_asymmetric",
+    "info": {
+      "estimated_error": 2.463979214200902e-11,
+      "matvecs": 12,
+      "max_krylov_dim": 12,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 9.999999999999999e-11
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_8q_tol4",
+    "info": {
+      "estimated_error": 9.287016445963392e-05,
+      "matvecs": 19,
+      "max_krylov_dim": 19,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_8q_tol7",
+    "info": {
+      "estimated_error": 8.178841817886249e-08,
+      "matvecs": 32,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_8q_tol10",
+    "info": {
+      "estimated_error": 4.8436098359298493e-11,
+      "matvecs": 40,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_12q_tol4",
+    "info": {
+      "estimated_error": 8.715042354980244e-05,
+      "matvecs": 32,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_12q_tol7",
+    "info": {
+      "estimated_error": 8.711355135888926e-08,
+      "matvecs": 48,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_12q_tol10",
+    "info": {
+      "estimated_error": 9.346501798220603e-11,
+      "matvecs": 67,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_16q_tol4",
+    "info": {
+      "estimated_error": 8.031778872328195e-05,
+      "matvecs": 39,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_16q_tol7",
+    "info": {
+      "estimated_error": 9.504800408259332e-08,
+      "matvecs": 57,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_16q_tol10",
+    "info": {
+      "estimated_error": 8.126135426979004e-11,
+      "matvecs": 80,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_tol4",
+    "info": {
+      "estimated_error": 4.76970796920528e-16,
+      "matvecs": 4,
+      "max_krylov_dim": 4,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_tol7",
+    "info": {
+      "estimated_error": 4.76970796920528e-16,
+      "matvecs": 4,
+      "max_krylov_dim": 4,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_tol10",
+    "info": {
+      "estimated_error": 4.76970796920528e-16,
+      "matvecs": 4,
+      "max_krylov_dim": 4,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_asymmetric",
+    "info": {
+      "estimated_error": 2.96955745770479e-15,
+      "matvecs": 12,
+      "max_krylov_dim": 12,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 9.999999999999999e-11
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_8q_tol4",
+    "info": {
+      "estimated_error": 1.363844021875959e-05,
+      "matvecs": 16,
+      "max_krylov_dim": 16,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_8q_tol7",
+    "info": {
+      "estimated_error": 1.8462115853163102e-14,
+      "matvecs": 18,
+      "max_krylov_dim": 18,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_8q_tol10",
+    "info": {
+      "estimated_error": 1.8462115853163102e-14,
+      "matvecs": 18,
+      "max_krylov_dim": 18,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_12q_tol4",
+    "info": {
+      "estimated_error": 7.993895375295435e-05,
+      "matvecs": 33,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_12q_tol7",
+    "info": {
+      "estimated_error": 8.337769609300819e-08,
+      "matvecs": 49,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_12q_tol10",
+    "info": {
+      "estimated_error": 8.980845535428607e-11,
+      "matvecs": 68,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_16q_tol4",
+    "info": {
+      "estimated_error": 8.756321117613856e-05,
+      "matvecs": 46,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_16q_tol7",
+    "info": {
+      "estimated_error": 9.12267176956778e-08,
+      "matvecs": 66,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_16q_tol10",
+    "info": {
+      "estimated_error": 8.477897674805415e-11,
+      "matvecs": 94,
+      "max_krylov_dim": 20,
+      "steps": 5,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_tol4",
+    "info": {
+      "estimated_error": 2.766908791610736e-05,
+      "matvecs": 7,
+      "max_krylov_dim": 7,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_tol7",
+    "info": {
+      "estimated_error": 4.640687364631939e-08,
+      "matvecs": 9,
+      "max_krylov_dim": 9,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_tol10",
+    "info": {
+      "estimated_error": 1.8675409618589766e-15,
+      "matvecs": 10,
+      "max_krylov_dim": 10,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_asymmetric",
+    "info": {
+      "estimated_error": 2.463979214200902e-11,
+      "matvecs": 12,
+      "max_krylov_dim": 12,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 9.999999999999999e-11
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_8q_tol4",
+    "info": {
+      "estimated_error": 9.287016445963392e-05,
+      "matvecs": 19,
+      "max_krylov_dim": 19,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_8q_tol7",
+    "info": {
+      "estimated_error": 8.178841817886249e-08,
+      "matvecs": 32,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_8q_tol10",
+    "info": {
+      "estimated_error": 4.8436098359298493e-11,
+      "matvecs": 40,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_12q_tol4",
+    "info": {
+      "estimated_error": 8.715042354980244e-05,
+      "matvecs": 32,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_12q_tol7",
+    "info": {
+      "estimated_error": 8.711355135888926e-08,
+      "matvecs": 48,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_12q_tol10",
+    "info": {
+      "estimated_error": 9.346501798220603e-11,
+      "matvecs": 67,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_16q_tol4",
+    "info": {
+      "estimated_error": 8.031778872328195e-05,
+      "matvecs": 39,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_16q_tol7",
+    "info": {
+      "estimated_error": 9.504800408259332e-08,
+      "matvecs": 57,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_16q_tol10",
+    "info": {
+      "estimated_error": 8.126135426979004e-11,
+      "matvecs": 80,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_tol4",
+    "info": {
+      "estimated_error": 4.76970796920528e-16,
+      "matvecs": 4,
+      "max_krylov_dim": 4,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_tol7",
+    "info": {
+      "estimated_error": 4.76970796920528e-16,
+      "matvecs": 4,
+      "max_krylov_dim": 4,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_tol10",
+    "info": {
+      "estimated_error": 4.76970796920528e-16,
+      "matvecs": 4,
+      "max_krylov_dim": 4,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_asymmetric",
+    "info": {
+      "estimated_error": 2.96955745770479e-15,
+      "matvecs": 12,
+      "max_krylov_dim": 12,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 9.999999999999999e-11
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_8q_tol4",
+    "info": {
+      "estimated_error": 1.363844021875959e-05,
+      "matvecs": 16,
+      "max_krylov_dim": 16,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_8q_tol7",
+    "info": {
+      "estimated_error": 1.8462115853163102e-14,
+      "matvecs": 18,
+      "max_krylov_dim": 18,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_8q_tol10",
+    "info": {
+      "estimated_error": 1.8462115853163102e-14,
+      "matvecs": 18,
+      "max_krylov_dim": 18,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_12q_tol4",
+    "info": {
+      "estimated_error": 7.993895375295435e-05,
+      "matvecs": 33,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_12q_tol7",
+    "info": {
+      "estimated_error": 8.337769609300819e-08,
+      "matvecs": 49,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_12q_tol10",
+    "info": {
+      "estimated_error": 8.980845535428607e-11,
+      "matvecs": 68,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_16q_tol4",
+    "info": {
+      "estimated_error": 8.756321117613856e-05,
+      "matvecs": 46,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_16q_tol7",
+    "info": {
+      "estimated_error": 9.12267176956778e-08,
+      "matvecs": 66,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_16q_tol10",
+    "info": {
+      "estimated_error": 8.477897674805415e-11,
+      "matvecs": 94,
+      "max_krylov_dim": 20,
+      "steps": 5,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_tol4",
+    "info": {
+      "estimated_error": 2.766908791610736e-05,
+      "matvecs": 7,
+      "max_krylov_dim": 7,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_tol7",
+    "info": {
+      "estimated_error": 4.640687364631939e-08,
+      "matvecs": 9,
+      "max_krylov_dim": 9,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_tol10",
+    "info": {
+      "estimated_error": 1.8675409618589766e-15,
+      "matvecs": 10,
+      "max_krylov_dim": 10,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_asymmetric",
+    "info": {
+      "estimated_error": 2.463979214200902e-11,
+      "matvecs": 12,
+      "max_krylov_dim": 12,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 9.999999999999999e-11
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_8q_tol4",
+    "info": {
+      "estimated_error": 9.287016445963392e-05,
+      "matvecs": 19,
+      "max_krylov_dim": 19,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_8q_tol7",
+    "info": {
+      "estimated_error": 8.178841817886249e-08,
+      "matvecs": 32,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_8q_tol10",
+    "info": {
+      "estimated_error": 4.8436098359298493e-11,
+      "matvecs": 40,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_12q_tol4",
+    "info": {
+      "estimated_error": 8.715042354980244e-05,
+      "matvecs": 32,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_12q_tol7",
+    "info": {
+      "estimated_error": 8.711355135888926e-08,
+      "matvecs": 48,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_12q_tol10",
+    "info": {
+      "estimated_error": 9.346501798220603e-11,
+      "matvecs": 67,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_16q_tol4",
+    "info": {
+      "estimated_error": 8.031778872328195e-05,
+      "matvecs": 39,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_16q_tol7",
+    "info": {
+      "estimated_error": 9.504800408259332e-08,
+      "matvecs": 57,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_16q_tol10",
+    "info": {
+      "estimated_error": 8.126135426979004e-11,
+      "matvecs": 80,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_tol4",
+    "info": {
+      "estimated_error": 4.76970796920528e-16,
+      "matvecs": 4,
+      "max_krylov_dim": 4,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_tol7",
+    "info": {
+      "estimated_error": 4.76970796920528e-16,
+      "matvecs": 4,
+      "max_krylov_dim": 4,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_tol10",
+    "info": {
+      "estimated_error": 4.76970796920528e-16,
+      "matvecs": 4,
+      "max_krylov_dim": 4,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_asymmetric",
+    "info": {
+      "estimated_error": 2.96955745770479e-15,
+      "matvecs": 12,
+      "max_krylov_dim": 12,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 9.999999999999999e-11
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_8q_tol4",
+    "info": {
+      "estimated_error": 1.363844021875959e-05,
+      "matvecs": 16,
+      "max_krylov_dim": 16,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_8q_tol7",
+    "info": {
+      "estimated_error": 1.8462115853163102e-14,
+      "matvecs": 18,
+      "max_krylov_dim": 18,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_8q_tol10",
+    "info": {
+      "estimated_error": 1.8462115853163102e-14,
+      "matvecs": 18,
+      "max_krylov_dim": 18,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_12q_tol4",
+    "info": {
+      "estimated_error": 7.993895375295435e-05,
+      "matvecs": 33,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_12q_tol7",
+    "info": {
+      "estimated_error": 8.337769609300819e-08,
+      "matvecs": 49,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_12q_tol10",
+    "info": {
+      "estimated_error": 8.980845535428607e-11,
+      "matvecs": 68,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_16q_tol4",
+    "info": {
+      "estimated_error": 8.756321117613856e-05,
+      "matvecs": 46,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_16q_tol7",
+    "info": {
+      "estimated_error": 9.12267176956778e-08,
+      "matvecs": 66,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_16q_tol10",
+    "info": {
+      "estimated_error": 8.477897674805415e-11,
+      "matvecs": 94,
+      "max_krylov_dim": 20,
+      "steps": 5,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 1,
+    "process": "1t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_tol4",
+    "info": {
+      "estimated_error": 2.766908791610736e-05,
+      "matvecs": 7,
+      "max_krylov_dim": 7,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_tol7",
+    "info": {
+      "estimated_error": 4.640687364631939e-08,
+      "matvecs": 9,
+      "max_krylov_dim": 9,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_tol10",
+    "info": {
+      "estimated_error": 1.8675409618589766e-15,
+      "matvecs": 10,
+      "max_krylov_dim": 10,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_asymmetric",
+    "info": {
+      "estimated_error": 2.463979214200902e-11,
+      "matvecs": 12,
+      "max_krylov_dim": 12,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 9.999999999999999e-11
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_8q_tol4",
+    "info": {
+      "estimated_error": 9.287016445963392e-05,
+      "matvecs": 19,
+      "max_krylov_dim": 19,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_8q_tol7",
+    "info": {
+      "estimated_error": 8.178841817886249e-08,
+      "matvecs": 32,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_8q_tol10",
+    "info": {
+      "estimated_error": 4.8436098359298493e-11,
+      "matvecs": 40,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_12q_tol4",
+    "info": {
+      "estimated_error": 8.715042354980244e-05,
+      "matvecs": 32,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_12q_tol7",
+    "info": {
+      "estimated_error": 8.711355135888926e-08,
+      "matvecs": 48,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_12q_tol10",
+    "info": {
+      "estimated_error": 9.346501798220603e-11,
+      "matvecs": 67,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_16q_tol4",
+    "info": {
+      "estimated_error": 8.031778872328195e-05,
+      "matvecs": 39,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_16q_tol7",
+    "info": {
+      "estimated_error": 9.504800408259332e-08,
+      "matvecs": 57,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_16q_tol10",
+    "info": {
+      "estimated_error": 8.126135426979004e-11,
+      "matvecs": 80,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_tol4",
+    "info": {
+      "estimated_error": 4.76970796920528e-16,
+      "matvecs": 4,
+      "max_krylov_dim": 4,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_tol7",
+    "info": {
+      "estimated_error": 4.76970796920528e-16,
+      "matvecs": 4,
+      "max_krylov_dim": 4,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_tol10",
+    "info": {
+      "estimated_error": 4.76970796920528e-16,
+      "matvecs": 4,
+      "max_krylov_dim": 4,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_asymmetric",
+    "info": {
+      "estimated_error": 2.96955745770479e-15,
+      "matvecs": 12,
+      "max_krylov_dim": 12,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 9.999999999999999e-11
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_8q_tol4",
+    "info": {
+      "estimated_error": 1.363844021875959e-05,
+      "matvecs": 16,
+      "max_krylov_dim": 16,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_8q_tol7",
+    "info": {
+      "estimated_error": 1.8462115853163102e-14,
+      "matvecs": 18,
+      "max_krylov_dim": 18,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_8q_tol10",
+    "info": {
+      "estimated_error": 1.8462115853163102e-14,
+      "matvecs": 18,
+      "max_krylov_dim": 18,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_12q_tol4",
+    "info": {
+      "estimated_error": 7.993895375295435e-05,
+      "matvecs": 33,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_12q_tol7",
+    "info": {
+      "estimated_error": 8.337769609300819e-08,
+      "matvecs": 49,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_12q_tol10",
+    "info": {
+      "estimated_error": 8.980845535428607e-11,
+      "matvecs": 68,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_16q_tol4",
+    "info": {
+      "estimated_error": 8.756321117613856e-05,
+      "matvecs": 46,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_16q_tol7",
+    "info": {
+      "estimated_error": 9.12267176956778e-08,
+      "matvecs": 66,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_16q_tol10",
+    "info": {
+      "estimated_error": 8.477897674805415e-11,
+      "matvecs": 94,
+      "max_krylov_dim": 20,
+      "steps": 5,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run1-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_tol4",
+    "info": {
+      "estimated_error": 2.766908791610736e-05,
+      "matvecs": 7,
+      "max_krylov_dim": 7,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_tol7",
+    "info": {
+      "estimated_error": 4.640687364631939e-08,
+      "matvecs": 9,
+      "max_krylov_dim": 9,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_tol10",
+    "info": {
+      "estimated_error": 1.8675409618589766e-15,
+      "matvecs": 10,
+      "max_krylov_dim": 10,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_asymmetric",
+    "info": {
+      "estimated_error": 2.463979214200902e-11,
+      "matvecs": 12,
+      "max_krylov_dim": 12,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 9.999999999999999e-11
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_8q_tol4",
+    "info": {
+      "estimated_error": 9.287016445963392e-05,
+      "matvecs": 19,
+      "max_krylov_dim": 19,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_8q_tol7",
+    "info": {
+      "estimated_error": 8.178841817886249e-08,
+      "matvecs": 32,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_8q_tol10",
+    "info": {
+      "estimated_error": 4.8436098359298493e-11,
+      "matvecs": 40,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_12q_tol4",
+    "info": {
+      "estimated_error": 8.715042354980244e-05,
+      "matvecs": 32,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_12q_tol7",
+    "info": {
+      "estimated_error": 8.711355135888926e-08,
+      "matvecs": 48,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_12q_tol10",
+    "info": {
+      "estimated_error": 9.346501798220603e-11,
+      "matvecs": 67,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_16q_tol4",
+    "info": {
+      "estimated_error": 8.031778872328195e-05,
+      "matvecs": 39,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_16q_tol7",
+    "info": {
+      "estimated_error": 9.504800408259332e-08,
+      "matvecs": 57,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_16q_tol10",
+    "info": {
+      "estimated_error": 8.126135426979004e-11,
+      "matvecs": 80,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_tol4",
+    "info": {
+      "estimated_error": 4.76970796920528e-16,
+      "matvecs": 4,
+      "max_krylov_dim": 4,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_tol7",
+    "info": {
+      "estimated_error": 4.76970796920528e-16,
+      "matvecs": 4,
+      "max_krylov_dim": 4,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_tol10",
+    "info": {
+      "estimated_error": 4.76970796920528e-16,
+      "matvecs": 4,
+      "max_krylov_dim": 4,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_asymmetric",
+    "info": {
+      "estimated_error": 2.96955745770479e-15,
+      "matvecs": 12,
+      "max_krylov_dim": 12,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 9.999999999999999e-11
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_8q_tol4",
+    "info": {
+      "estimated_error": 1.363844021875959e-05,
+      "matvecs": 16,
+      "max_krylov_dim": 16,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_8q_tol7",
+    "info": {
+      "estimated_error": 1.8462115853163102e-14,
+      "matvecs": 18,
+      "max_krylov_dim": 18,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_8q_tol10",
+    "info": {
+      "estimated_error": 1.8462115853163102e-14,
+      "matvecs": 18,
+      "max_krylov_dim": 18,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_12q_tol4",
+    "info": {
+      "estimated_error": 7.993895375295435e-05,
+      "matvecs": 33,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_12q_tol7",
+    "info": {
+      "estimated_error": 8.337769609300819e-08,
+      "matvecs": 49,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_12q_tol10",
+    "info": {
+      "estimated_error": 8.980845535428607e-11,
+      "matvecs": 68,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_16q_tol4",
+    "info": {
+      "estimated_error": 8.756321117613856e-05,
+      "matvecs": 46,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_16q_tol7",
+    "info": {
+      "estimated_error": 9.12267176956778e-08,
+      "matvecs": 66,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_16q_tol10",
+    "info": {
+      "estimated_error": 8.477897674805415e-11,
+      "matvecs": 94,
+      "max_krylov_dim": 20,
+      "steps": 5,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run2-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_tol4",
+    "info": {
+      "estimated_error": 2.766908791610736e-05,
+      "matvecs": 7,
+      "max_krylov_dim": 7,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_tol7",
+    "info": {
+      "estimated_error": 4.640687364631939e-08,
+      "matvecs": 9,
+      "max_krylov_dim": 9,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_tol10",
+    "info": {
+      "estimated_error": 1.8675409618589766e-15,
+      "matvecs": 10,
+      "max_krylov_dim": 10,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_4q_asymmetric",
+    "info": {
+      "estimated_error": 2.463979214200902e-11,
+      "matvecs": 12,
+      "max_krylov_dim": 12,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 9.999999999999999e-11
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_8q_tol4",
+    "info": {
+      "estimated_error": 9.287016445963392e-05,
+      "matvecs": 19,
+      "max_krylov_dim": 19,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_8q_tol7",
+    "info": {
+      "estimated_error": 8.178841817886249e-08,
+      "matvecs": 32,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_8q_tol10",
+    "info": {
+      "estimated_error": 4.8436098359298493e-11,
+      "matvecs": 40,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_12q_tol4",
+    "info": {
+      "estimated_error": 8.715042354980244e-05,
+      "matvecs": 32,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_12q_tol7",
+    "info": {
+      "estimated_error": 8.711355135888926e-08,
+      "matvecs": 48,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_12q_tol10",
+    "info": {
+      "estimated_error": 9.346501798220603e-11,
+      "matvecs": 67,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_16q_tol4",
+    "info": {
+      "estimated_error": 8.031778872328195e-05,
+      "matvecs": 39,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_16q_tol7",
+    "info": {
+      "estimated_error": 9.504800408259332e-08,
+      "matvecs": 57,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_ising_16q_tol10",
+    "info": {
+      "estimated_error": 8.126135426979004e-11,
+      "matvecs": 80,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_tol4",
+    "info": {
+      "estimated_error": 4.76970796920528e-16,
+      "matvecs": 4,
+      "max_krylov_dim": 4,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_tol7",
+    "info": {
+      "estimated_error": 4.76970796920528e-16,
+      "matvecs": 4,
+      "max_krylov_dim": 4,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_tol10",
+    "info": {
+      "estimated_error": 4.76970796920528e-16,
+      "matvecs": 4,
+      "max_krylov_dim": 4,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_4q_asymmetric",
+    "info": {
+      "estimated_error": 2.96955745770479e-15,
+      "matvecs": 12,
+      "max_krylov_dim": 12,
+      "steps": 1,
+      "time_reached": 0.8,
+      "tolerance": 9.999999999999999e-11
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_8q_tol4",
+    "info": {
+      "estimated_error": 1.363844021875959e-05,
+      "matvecs": 16,
+      "max_krylov_dim": 16,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_8q_tol7",
+    "info": {
+      "estimated_error": 1.8462115853163102e-14,
+      "matvecs": 18,
+      "max_krylov_dim": 18,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_8q_tol10",
+    "info": {
+      "estimated_error": 1.8462115853163102e-14,
+      "matvecs": 18,
+      "max_krylov_dim": 18,
+      "steps": 1,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_12q_tol4",
+    "info": {
+      "estimated_error": 7.993895375295435e-05,
+      "matvecs": 33,
+      "max_krylov_dim": 20,
+      "steps": 2,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_12q_tol7",
+    "info": {
+      "estimated_error": 8.337769609300819e-08,
+      "matvecs": 49,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_12q_tol10",
+    "info": {
+      "estimated_error": 8.980845535428607e-11,
+      "matvecs": 68,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_16q_tol4",
+    "info": {
+      "estimated_error": 8.756321117613856e-05,
+      "matvecs": 46,
+      "max_krylov_dim": 20,
+      "steps": 3,
+      "time_reached": 2.1,
+      "tolerance": 0.0001
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_16q_tol7",
+    "info": {
+      "estimated_error": 9.12267176956778e-08,
+      "matvecs": 66,
+      "max_krylov_dim": 20,
+      "steps": 4,
+      "time_reached": 2.1,
+      "tolerance": 1e-07
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  },
+  {
+    "id": "krylov_heisenberg_16q_tol10",
+    "info": {
+      "estimated_error": 8.477897674805415e-11,
+      "matvecs": 94,
+      "max_krylov_dim": 20,
+      "steps": 5,
+      "time_reached": 2.1,
+      "tolerance": 1e-10
+    },
+    "status": "complete",
+    "threads": 4,
+    "process": "4t-run3-krylov-stats.jsonl"
+  }
+]

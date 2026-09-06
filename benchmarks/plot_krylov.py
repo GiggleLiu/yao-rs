@@ -7,10 +7,13 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator, NullFormatter, StrMethodFormatter
 
 
 def save(fig, directory, name):
-    fig.savefig(directory / f"{name}.svg", bbox_inches="tight")
+    svg = directory / f"{name}.svg"
+    fig.savefig(svg, bbox_inches="tight")
+    svg.write_text("\n".join(line.rstrip() for line in svg.read_text().splitlines()) + "\n")
     fig.savefig(directory / f"{name}.png", dpi=180, bbox_inches="tight")
     plt.close(fig)
 
@@ -35,6 +38,9 @@ def main():
                           [max(r["relative_state_error"], 1e-16) for r in points],
                           "o-", color=colors[backend], label=labels[backend])
             ax.set(title=f"{model.title()} · {n} qubits", xlabel="Execution time (ms)", ylabel="Relative state error")
+            ax.xaxis.set_major_locator(MaxNLocator(nbins=4, min_n_ticks=3))
+            ax.xaxis.set_major_formatter(StrMethodFormatter("{x:g}"))
+            ax.xaxis.set_minor_formatter(NullFormatter())
             ax.grid(True, which="major", alpha=0.2)
             if i == j == 0:
                 ax.legend()

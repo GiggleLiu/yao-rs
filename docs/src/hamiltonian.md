@@ -179,3 +179,10 @@ compares the same Ising/XYZ circuits with Yao.jl, separates approximation error
 from cross-language agreement, and includes execution costs and isolated memory
 measurements. The sweep uses 1–16 product steps and three runs each at one/four
 threads. Reproduce it with the evolution suite in `benchmarks/README.md`.
+
+The [Krylov CPU report](https://github.com/GiggleLiu/yao-rs/blob/main/benchmarks/results/mac-krylov-cpu-2026-09-07/report.md)
+compares adaptive Rust and Yao evolution at 4–16 qubits, three tolerances and
+three independent runs per thread setting. Read achieved state error alongside
+execution time: the two solvers have different stopping criteria. Its 24 memory
+probes show the basis-cap storage/work tradeoff, separating additional execution
+heap from process RSS. Four-qubit Suzuki tensor timings are reported separately.

@@ -14,7 +14,7 @@ validation targets the NVIDIA A800 host reachable as `ssh gpu`.
 | 4. Differentiable circuits | Custom losses/input-state VJP, tenferro integration, shared parameters, numerical and memory tests | Merged [PR #50](https://github.com/GiggleLiu/yao-rs/pull/50) (`bd00084`) |
 | 5. Tensor memory / observables | Polynomial expectations, omeco slicing, estimates, versioned plans and budget tests | Merged [PR #51](https://github.com/GiggleLiu/yao-rs/pull/51) (`53897a4`) |
 | 6. Noisy trajectories | Seeded Kraus sampling, uncertainty, exact-density comparisons and memory scaling | Merged [PR #52](https://github.com/GiggleLiu/yao-rs/pull/52) (`f09b722`) |
-| 7. Matrix-free exponential action | Community implementation qualification, error/convergence diagnostics, Yao comparison | CPU solver implemented; full benchmark report and final validation in progress |
+| 7. Matrix-free exponential action | Community implementation qualification, error/convergence diagnostics, Yao comparison | Implemented; repeated CPU error/time and memory report recorded |
 | 8. GPU execution | Resident tensor/circuit/AD execution, explicit transfers, correctness and timings via `ssh gpu` | Pending |
 
 Reusable subcircuits, batching, measurement/feedforward, symbolic algebra,
@@ -383,8 +383,32 @@ as a design reference. It is not a translation of KrylovKit's phi-function
 integrator and adds no runtime dependency. See the Hamiltonian guide for the
 algorithm and callback contract.
 
-The new CPU suite compares native adaptive evolution with Yao TimeEvolution,
-reports achieved error independently of nominal tolerance, and retains bounded
-four-qubit product-formula tensor comparisons through tenferro and omeinsum.
-Repeated measurements and their final report are pending at this implementation
-checkpoint; qualification runs are not presented as performance results.
+The [repeated CPU report](../../benchmarks/results/mac-krylov-cpu-2026-09-07/report.md)
+records 32 workloads at one/four threads, three independent processes each,
+and 24 isolated memory probes. The measured source is `b3bb513`; all 192
+Julia qualification records pass and tight references differ by at most
+3.46e-13. The report includes achieved-error/time plots, the complete tolerance
+sweep, raw convergence diagnostics, and separate tensor planning/execution.
+
+On the M4 at one thread and nominal tolerance 1e-10, 16-qubit Ising takes
+273.93 ms in Rust with relative state error 5.67e-11, versus 282.38 ms and
+4.27e-10 in Yao. The corresponding XYZ case takes 506.87 ms / 6.02e-11 versus
+631.62 ms / 1.63e-10. Results vary by workload: 12-qubit Ising takes 11.93 ms
+in Rust and 8.96 ms in Yao, with errors 6.36e-11 and 1.95e-10 respectively.
+The solvers use different stopping criteria and basis policies, so nominal
+tolerance ratios are not equal-accuracy speedups. Native vector kernels remain
+serial; four-thread provider settings do not make them parallel.
+
+For the 16-qubit XYZ memory probe at rtol=1e-8, basis caps 8/20/40 use
+11.04/23.05/43.09 MiB additional execution heap and 279/74/51 operator
+applications. Whole-process RSS is 14.95/27.16/47.42 MiB. The cap therefore
+exposes a measurable storage/work tradeoff, and heap remains distinct from RSS.
+
+The bounded four-qubit tensor comparison executes fixed Suzuki circuits.
+At 32 XYZ steps, native/Yao execution takes 0.176/0.223 ms, the supported
+tenferro adapter takes 96.24 ms with a prepared tree, and omeinsum takes
+16.77 ms with that same tree. The product-formula state error is 4.57e-5.
+These small-state circuits expose general tensor execution overhead; they do
+not measure an adaptive tenferro Krylov backend or establish a default backend
+change. The zero-state four-qubit XYZ adaptive case terminates in a
+four-dimensional invariant subspace; asymmetric inputs are tested separately.

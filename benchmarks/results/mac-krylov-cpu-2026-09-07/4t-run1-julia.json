@@ -1,0 +1,911 @@
+{
+  "records": [
+    {
+      "samples_ns": [
+        160125.0,
+        129583.0,
+        137084.0,
+        131000.0,
+        130708.0,
+        128708.0,
+        122792.0,
+        125708.0,
+        123334.0,
+        119250.0
+      ],
+      "allocated_bytes": 60288,
+      "construction_median_ns": 7375.0,
+      "approximation_error": 2.509353761753121e-5,
+      "max_error": 3.061954018967713e-5,
+      "id": "krylov_ising_4q_tol4",
+      "median_ns": 129145.5,
+      "allocations": 525,
+      "yao_approximation_error": 7.734253977529284e-5,
+      "oracle": "dense exponential",
+      "tight_reference_error": 1.4740789515594868e-15,
+      "yao_krylov": {
+        "oracle_numops": 11,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 1.1171147388638733e-22,
+        "numops": 7,
+        "normres": 6.156175073736266e-5
+      }
+    },
+    {
+      "samples_ns": [
+        177875.0,
+        145500.0,
+        146084.0,
+        139709.0,
+        137000.0,
+        137958.0,
+        142167.0,
+        142333.0,
+        142250.0,
+        125375.0
+      ],
+      "allocated_bytes": 102880,
+      "construction_median_ns": 7208.5,
+      "approximation_error": 4.326537143266042e-8,
+      "max_error": 2.3247967733403362e-8,
+      "id": "krylov_ising_4q_tol7",
+      "median_ns": 142208.5,
+      "allocations": 729,
+      "yao_approximation_error": 1.927797032213867e-9,
+      "oracle": "dense exponential",
+      "tight_reference_error": 1.4740789515594868e-15,
+      "yao_krylov": {
+        "oracle_numops": 11,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 1.1171147388638733e-22,
+        "numops": 10,
+        "normres": 1.4890714907965653e-9
+      }
+    },
+    {
+      "samples_ns": [
+        166292.0,
+        180875.0,
+        152959.0,
+        153083.0,
+        170375.0,
+        162209.0,
+        173084.0,
+        158375.0,
+        149583.0,
+        170375.0
+      ],
+      "allocated_bytes": 122624,
+      "construction_median_ns": 7167.0,
+      "approximation_error": 1.4740789515594868e-15,
+      "max_error": 1.1801832636420706e-15,
+      "id": "krylov_ising_4q_tol10",
+      "median_ns": 164250.5,
+      "allocations": 803,
+      "yao_approximation_error": 7.00316927280346e-16,
+      "oracle": "dense exponential",
+      "tight_reference_error": 1.4740789515594868e-15,
+      "yao_krylov": {
+        "oracle_numops": 11,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 1.1171147388638733e-22,
+        "numops": 11,
+        "normres": 1.1171147388638733e-22
+      }
+    },
+    {
+      "samples_ns": [
+        170000.0,
+        182125.0,
+        162167.0,
+        174125.0,
+        158625.0,
+        163041.0,
+        158416.0,
+        156875.0,
+        167542.0,
+        155334.0
+      ],
+      "allocated_bytes": 145440,
+      "construction_median_ns": 6854.0,
+      "approximation_error": 2.33247731167361e-11,
+      "max_error": 3.308579274369679e-11,
+      "id": "krylov_ising_4q_asymmetric",
+      "median_ns": 162604.0,
+      "allocations": 877,
+      "yao_approximation_error": 7.25522034472975e-11,
+      "oracle": "dense exponential",
+      "tight_reference_error": 2.7429632365700457e-14,
+      "yao_krylov": {
+        "oracle_numops": 14,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 4.789986793392232e-14,
+        "numops": 12,
+        "normres": 5.754882934273842e-11
+      }
+    },
+    {
+      "median_ns": 2270.5,
+      "construction_median_ns": 127812.5,
+      "approximation_error": 0.03169673514279837,
+      "max_error": 4.311326371230795e-15,
+      "id": "krylov_product_ising_4q_steps2",
+      "samples_ns": [
+        8750.0,
+        2417.0,
+        2292.0,
+        2250.0,
+        2291.0,
+        2208.0,
+        2292.0,
+        2250.0,
+        2208.0,
+        2250.0
+      ],
+      "allocations": 87,
+      "allocated_bytes": 3040,
+      "yao_approximation_error": 0.03169673514279843
+    },
+    {
+      "median_ns": 8708.5,
+      "construction_median_ns": 804729.5,
+      "approximation_error": 0.0019178155186796932,
+      "max_error": 1.73371065691092e-14,
+      "id": "krylov_product_ising_4q_steps8",
+      "samples_ns": [
+        13334.0,
+        8833.0,
+        8542.0,
+        8708.0,
+        8709.0,
+        8542.0,
+        8625.0,
+        8792.0,
+        8542.0,
+        8750.0
+      ],
+      "allocations": 339,
+      "allocated_bytes": 11104,
+      "yao_approximation_error": 0.0019178155186791632
+    },
+    {
+      "median_ns": 34250.0,
+      "construction_median_ns": 4.746208e6,
+      "approximation_error": 0.00011962523389279179,
+      "max_error": 7.054801243587601e-14,
+      "id": "krylov_product_ising_4q_steps32",
+      "samples_ns": [
+        45041.0,
+        34250.0,
+        34042.0,
+        34250.0,
+        33708.0,
+        33542.0,
+        33667.0,
+        36000.0,
+        36875.0,
+        36750.0
+      ],
+      "allocations": 1347,
+      "allocated_bytes": 43360,
+      "yao_approximation_error": 0.00011962523389334245
+    },
+    {
+      "samples_ns": [
+        467583.0,
+        452625.0,
+        567166.0,
+        552125.0,
+        534458.0,
+        506417.0,
+        521250.0,
+        514958.0,
+        541084.0,
+        530083.0
+      ],
+      "allocated_bytes": 2454272,
+      "construction_median_ns": 13270.5,
+      "approximation_error": 2.460158186068464e-5,
+      "max_error": 0.0001097356812233838,
+      "id": "krylov_ising_8q_tol4",
+      "median_ns": 525666.5,
+      "allocations": 2533,
+      "yao_approximation_error": 0.0003692557250568374,
+      "oracle": "dense exponential",
+      "tight_reference_error": 2.801523178818736e-14,
+      "yao_krylov": {
+        "oracle_numops": 30,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 5.911680020668327e-14,
+        "numops": 17,
+        "normres": 0.00017175937880859512
+      }
+    },
+    {
+      "samples_ns": [
+        729041.0,
+        696208.0,
+        674792.0,
+        674250.0,
+        700209.0,
+        666916.0,
+        671833.0,
+        680209.0,
+        752208.0,
+        700875.0
+      ],
+      "allocated_bytes": 3017536,
+      "construction_median_ns": 13417.0,
+      "approximation_error": 3.542891271010627e-8,
+      "max_error": 9.869006073542317e-8,
+      "id": "krylov_ising_8q_tol7",
+      "median_ns": 688208.5,
+      "allocations": 3278,
+      "yao_approximation_error": 4.045817047057413e-7,
+      "oracle": "dense exponential",
+      "tight_reference_error": 2.801523178818736e-14,
+      "yao_krylov": {
+        "oracle_numops": 30,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 5.911680020668327e-14,
+        "numops": 22,
+        "normres": 1.8157150278648743e-7
+      }
+    },
+    {
+      "samples_ns": [
+        1.0005e6,
+        991542.0,
+        960416.0,
+        958125.0,
+        924834.0,
+        903208.0,
+        929958.0,
+        936667.0,
+        901792.0,
+        950208.0
+      ],
+      "allocated_bytes": 3552000,
+      "construction_median_ns": 13020.5,
+      "approximation_error": 3.45865646076426e-11,
+      "max_error": 6.046486010604183e-11,
+      "id": "krylov_ising_8q_tol10",
+      "median_ns": 943437.5,
+      "allocations": 3874,
+      "yao_approximation_error": 3.377507027077489e-10,
+      "oracle": "dense exponential",
+      "tight_reference_error": 2.801523178818736e-14,
+      "yao_krylov": {
+        "oracle_numops": 30,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 5.911680020668327e-14,
+        "numops": 26,
+        "normres": 1.511126394772796e-10
+      }
+    },
+    {
+      "samples_ns": [
+        1.977625e7,
+        2.1962208e7,
+        3.1021791e7,
+        3.2547e7,
+        3.3844083e7,
+        3.4406541e7,
+        3.4216959e7,
+        3.5730125e7,
+        3.2896584e7,
+        3.4824083e7
+      ],
+      "allocated_bytes": 54726976,
+      "construction_median_ns": 18938.0,
+      "approximation_error": 2.426732212781041e-5,
+      "max_error": 3.835392423511997e-5,
+      "id": "krylov_ising_12q_tol4",
+      "median_ns": 3.33703335e7,
+      "allocations": 23164,
+      "yao_approximation_error": 0.00020132675856022794,
+      "oracle": "KrylovKit tol=1e-13",
+      "tight_reference_error": 1.0535246798198918e-13,
+      "yao_krylov": {
+        "oracle_numops": 40,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 4.467751634782981e-14,
+        "numops": 24,
+        "normres": 9.629713486181548e-5
+      }
+    },
+    {
+      "samples_ns": [
+        2.544125e7,
+        3.5421333e7,
+        4.5896167e7,
+        4.8747041e7,
+        4.8026917e7,
+        4.5936291e7,
+        3.5610709e7,
+        2.9716708e7,
+        3.7098583e7,
+        4.0762917e7
+      ],
+      "allocated_bytes": 64658560,
+      "construction_median_ns": 22188.0,
+      "approximation_error": 4.063801788899124e-8,
+      "max_error": 2.7982468682326586e-8,
+      "id": "krylov_ising_12q_tol7",
+      "median_ns": 3.893075e7,
+      "allocations": 28954,
+      "yao_approximation_error": 1.938497090052892e-7,
+      "oracle": "KrylovKit tol=1e-13",
+      "tight_reference_error": 1.0535246798198918e-13,
+      "yao_krylov": {
+        "oracle_numops": 40,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 4.467751634782981e-14,
+        "numops": 30,
+        "normres": 8.91082683694621e-8
+      }
+    },
+    {
+      "samples_ns": [
+        3.0231667e7,
+        4.8498209e7,
+        4.5807292e7,
+        4.7780459e7,
+        4.7926917e7,
+        4.8386667e7,
+        4.7812084e7,
+        4.7283417e7,
+        4.3800541e7,
+        4.6221917e7
+      ],
+      "allocated_bytes": 73119680,
+      "construction_median_ns": 19937.5,
+      "approximation_error": 6.358633576652314e-11,
+      "max_error": 2.9885202876835214e-11,
+      "id": "krylov_ising_12q_tol10",
+      "median_ns": 4.7531938e7,
+      "allocations": 33779,
+      "yao_approximation_error": 1.9510927352688497e-10,
+      "oracle": "KrylovKit tol=1e-13",
+      "tight_reference_error": 1.0535246798198918e-13,
+      "yao_krylov": {
+        "oracle_numops": 40,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 4.467751634782981e-14,
+        "numops": 35,
+        "normres": 8.609950351194456e-11
+      }
+    },
+    {
+      "samples_ns": [
+        1.76563667e8,
+        2.58880167e8,
+        1.713755e8
+      ],
+      "allocated_bytes": 968466496,
+      "construction_median_ns": 25395.5,
+      "approximation_error": 1.4674273980477146e-5,
+      "max_error": 4.278491118314016e-5,
+      "id": "krylov_ising_16q_tol4",
+      "median_ns": 1.76563667e8,
+      "allocations": 37621,
+      "yao_approximation_error": 0.00030013881603125654,
+      "oracle": "KrylovKit tol=1e-13",
+      "tight_reference_error": 3.4593868933116466e-13,
+      "yao_krylov": {
+        "oracle_numops": 48,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 5.948992141980764e-14,
+        "numops": 29,
+        "normres": 0.0001551334651240112
+      }
+    },
+    {
+      "samples_ns": [
+        2.58506708e8,
+        2.70316416e8
+      ],
+      "allocated_bytes": 1230188160,
+      "construction_median_ns": 26479.5,
+      "approximation_error": 3.756443787791914e-8,
+      "max_error": 1.55949102826221e-8,
+      "id": "krylov_ising_16q_tol7",
+      "median_ns": 2.64411562e8,
+      "allocations": 47997,
+      "yao_approximation_error": 1.64305182177609e-7,
+      "oracle": "KrylovKit tol=1e-13",
+      "tight_reference_error": 3.4593868933116466e-13,
+      "yao_krylov": {
+        "oracle_numops": 48,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 5.948992141980764e-14,
+        "numops": 37,
+        "normres": 7.77496008564607e-8
+      }
+    },
+    {
+      "samples_ns": [
+        3.07557084e8,
+        2.960085e8
+      ],
+      "allocated_bytes": 1393995136,
+      "construction_median_ns": 28562.5,
+      "approximation_error": 5.67400840940505e-11,
+      "max_error": 6.993391253047477e-11,
+      "id": "krylov_ising_16q_tol10",
+      "median_ns": 3.01782792e8,
+      "allocations": 54482,
+      "yao_approximation_error": 4.2735405920299087e-10,
+      "oracle": "KrylovKit tol=1e-13",
+      "tight_reference_error": 3.4593868933116466e-13,
+      "yao_krylov": {
+        "oracle_numops": 48,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 5.948992141980764e-14,
+        "numops": 42,
+        "normres": 1.9589794391176807e-10
+      }
+    },
+    {
+      "samples_ns": [
+        119417.0,
+        135750.0,
+        115875.0,
+        127542.0,
+        117625.0,
+        129417.0,
+        127000.0,
+        115958.0,
+        120042.0,
+        119542.0
+      ],
+      "allocated_bytes": 62912,
+      "construction_median_ns": 19229.0,
+      "approximation_error": 8.437820525416214e-16,
+      "max_error": 6.473657049138938e-16,
+      "id": "krylov_heisenberg_4q_tol4",
+      "median_ns": 119792.0,
+      "allocations": 746,
+      "yao_approximation_error": 3.105494195215809e-16,
+      "oracle": "dense exponential",
+      "tight_reference_error": 8.437820525416214e-16,
+      "yao_krylov": {
+        "oracle_numops": 5,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 8.349346317686961e-19,
+        "numops": 5,
+        "normres": 8.349346317686961e-19
+      }
+    },
+    {
+      "samples_ns": [
+        108167.0,
+        144000.0,
+        117209.0,
+        120166.0,
+        99542.0,
+        81792.0,
+        120792.0,
+        125833.0,
+        108542.0,
+        82708.0
+      ],
+      "allocated_bytes": 62912,
+      "construction_median_ns": 18646.0,
+      "approximation_error": 8.437820525416214e-16,
+      "max_error": 6.473657049138938e-16,
+      "id": "krylov_heisenberg_4q_tol7",
+      "median_ns": 112875.5,
+      "allocations": 746,
+      "yao_approximation_error": 3.105494195215809e-16,
+      "oracle": "dense exponential",
+      "tight_reference_error": 8.437820525416214e-16,
+      "yao_krylov": {
+        "oracle_numops": 5,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 8.349346317686961e-19,
+        "numops": 5,
+        "normres": 8.349346317686961e-19
+      }
+    },
+    {
+      "samples_ns": [
+        97708.0,
+        137333.0,
+        133208.0,
+        129000.0,
+        134375.0,
+        123916.0,
+        123333.0,
+        122584.0,
+        121917.0,
+        122959.0
+      ],
+      "allocated_bytes": 62912,
+      "construction_median_ns": 17396.0,
+      "approximation_error": 8.437820525416214e-16,
+      "max_error": 6.473657049138938e-16,
+      "id": "krylov_heisenberg_4q_tol10",
+      "median_ns": 123624.5,
+      "allocations": 746,
+      "yao_approximation_error": 3.105494195215809e-16,
+      "oracle": "dense exponential",
+      "tight_reference_error": 8.437820525416214e-16,
+      "yao_krylov": {
+        "oracle_numops": 5,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 8.349346317686961e-19,
+        "numops": 5,
+        "normres": 8.349346317686961e-19
+      }
+    },
+    {
+      "samples_ns": [
+        204917.0,
+        213458.0,
+        202792.0,
+        216834.0,
+        194250.0,
+        196458.0,
+        191584.0,
+        190209.0,
+        208500.0,
+        210292.0
+      ],
+      "allocated_bytes": 198800,
+      "construction_median_ns": 18375.5,
+      "approximation_error": 1.7274266276495404e-15,
+      "max_error": 6.620737537031165e-16,
+      "id": "krylov_heisenberg_4q_asymmetric",
+      "median_ns": 203854.5,
+      "allocations": 1736,
+      "yao_approximation_error": 6.41418550225287e-16,
+      "oracle": "dense exponential",
+      "tight_reference_error": 1.7274266276495404e-15,
+      "yao_krylov": {
+        "oracle_numops": 12,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 8.176815717007065e-25,
+        "numops": 12,
+        "normres": 8.176815717007065e-25
+      }
+    },
+    {
+      "median_ns": 12562.0,
+      "construction_median_ns": 640895.5,
+      "approximation_error": 0.011947360884471793,
+      "max_error": 1.8276324715073025e-14,
+      "id": "krylov_product_heisenberg_4q_steps2",
+      "samples_ns": [
+        23625.0,
+        13334.0,
+        12792.0,
+        12583.0,
+        12291.0,
+        12541.0,
+        12666.0,
+        12458.0,
+        12458.0,
+        12417.0
+      ],
+      "allocations": 419,
+      "allocated_bytes": 14688,
+      "yao_approximation_error": 0.011947360884471799
+    },
+    {
+      "median_ns": 56708.5,
+      "construction_median_ns": 5.261646e6,
+      "approximation_error": 0.0007313449915252706,
+      "max_error": 7.647140115239119e-14,
+      "id": "krylov_product_heisenberg_4q_steps8",
+      "samples_ns": [
+        63750.0,
+        54958.0,
+        58625.0,
+        57125.0,
+        57167.0,
+        56667.0,
+        54875.0,
+        56541.0,
+        56167.0,
+        56750.0
+      ],
+      "allocations": 1667,
+      "allocated_bytes": 57696,
+      "yao_approximation_error": 0.0007313449915250711
+    },
+    {
+      "median_ns": 218333.0,
+      "construction_median_ns": 8.0446875e6,
+      "approximation_error": 4.565163236574417e-5,
+      "max_error": 3.006679094336897e-13,
+      "id": "krylov_product_heisenberg_4q_steps32",
+      "samples_ns": [
+        247291.0,
+        227792.0,
+        223709.0,
+        219834.0,
+        218583.0,
+        218083.0,
+        217917.0,
+        217458.0,
+        217792.0,
+        217916.0
+      ],
+      "allocations": 6659,
+      "allocated_bytes": 229728,
+      "yao_approximation_error": 4.5651632366589316e-5
+    },
+    {
+      "samples_ns": [
+        720084.0,
+        689209.0,
+        815541.0,
+        746709.0,
+        741708.0,
+        696834.0,
+        746000.0,
+        723916.0,
+        734250.0,
+        775542.0
+      ],
+      "allocated_bytes": 3196272,
+      "construction_median_ns": 34313.0,
+      "approximation_error": 3.511449360840269e-6,
+      "max_error": 9.545439031862772e-5,
+      "id": "krylov_heisenberg_8q_tol4",
+      "median_ns": 737979.0,
+      "allocations": 4221,
+      "yao_approximation_error": 0.0004047309646201639,
+      "oracle": "dense exponential",
+      "tight_reference_error": 2.461459791036109e-15,
+      "yao_krylov": {
+        "oracle_numops": 19,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 3.048308138141656e-17,
+        "numops": 14,
+        "normres": 0.00017050171721033784
+      }
+    },
+    {
+      "samples_ns": [
+        863375.0,
+        803500.0,
+        921958.0,
+        823542.0,
+        799250.0,
+        795000.0,
+        811458.0,
+        848750.0,
+        871958.0,
+        849000.0
+      ],
+      "allocated_bytes": 3883760,
+      "construction_median_ns": 33958.5,
+      "approximation_error": 2.461459791036109e-15,
+      "max_error": 1.273869807288103e-8,
+      "id": "krylov_heisenberg_8q_tol7",
+      "median_ns": 836146.0,
+      "allocations": 5429,
+      "yao_approximation_error": 7.274474343700238e-8,
+      "oracle": "dense exponential",
+      "tight_reference_error": 2.461459791036109e-15,
+      "yao_krylov": {
+        "oracle_numops": 19,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 3.048308138141656e-17,
+        "numops": 18,
+        "normres": 3.146234044025343e-8
+      }
+    },
+    {
+      "samples_ns": [
+        928834.0,
+        891042.0,
+        948167.0,
+        929167.0,
+        914958.0,
+        907125.0,
+        971625.0,
+        918417.0,
+        898458.0,
+        918875.0
+      ],
+      "allocated_bytes": 4066432,
+      "construction_median_ns": 33625.0,
+      "approximation_error": 2.461459791036109e-15,
+      "max_error": 3.947248820392849e-16,
+      "id": "krylov_heisenberg_8q_tol10",
+      "median_ns": 918646.0,
+      "allocations": 5731,
+      "yao_approximation_error": 2.0927632352293766e-15,
+      "oracle": "dense exponential",
+      "tight_reference_error": 2.461459791036109e-15,
+      "yao_krylov": {
+        "oracle_numops": 19,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 3.048308138141656e-17,
+        "numops": 19,
+        "normres": 3.048308138141656e-17
+      }
+    },
+    {
+      "samples_ns": [
+        4.7626875e7,
+        8.3076625e7,
+        8.7247209e7,
+        7.6894e7,
+        7.4831916e7,
+        7.9606375e7,
+        7.8452084e7
+      ],
+      "allocated_bytes": 92829504,
+      "construction_median_ns": 47646.0,
+      "approximation_error": 2.0036432622178e-5,
+      "max_error": 4.785152832114382e-5,
+      "id": "krylov_heisenberg_12q_tol4",
+      "median_ns": 7.8452084e7,
+      "allocations": 52663,
+      "yao_approximation_error": 0.0003049079623349512,
+      "oracle": "KrylovKit tol=1e-13",
+      "tight_reference_error": 1.1892470502815816e-13,
+      "yao_krylov": {
+        "oracle_numops": 38,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 4.9567995109619674e-14,
+        "numops": 23,
+        "normres": 0.00014136092041290148
+      }
+    },
+    {
+      "samples_ns": [
+        6.8911833e7,
+        1.03865833e8,
+        1.0220675e8,
+        1.00909708e8,
+        1.01477875e8,
+        1.06148834e8
+      ],
+      "allocated_bytes": 113089344,
+      "construction_median_ns": 48646.0,
+      "approximation_error": 4.0355514318332046e-8,
+      "max_error": 2.42011930195517e-8,
+      "id": "krylov_heisenberg_12q_tol7",
+      "median_ns": 1.018423125e8,
+      "allocations": 66403,
+      "yao_approximation_error": 3.0537703241259926e-7,
+      "oracle": "KrylovKit tol=1e-13",
+      "tight_reference_error": 1.1892470502815816e-13,
+      "yao_krylov": {
+        "oracle_numops": 38,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 4.9567995109619674e-14,
+        "numops": 29,
+        "normres": 1.3623659377851022e-7
+      }
+    },
+    {
+      "samples_ns": [
+        8.6881833e7,
+        1.24309459e8,
+        1.17878125e8,
+        1.15505542e8,
+        1.16524375e8
+      ],
+      "allocated_bytes": 130138864,
+      "construction_median_ns": 48708.0,
+      "approximation_error": 6.339424321292597e-11,
+      "max_error": 2.7470510788092484e-11,
+      "id": "krylov_heisenberg_12q_tol10",
+      "median_ns": 1.16524375e8,
+      "allocations": 77853,
+      "yao_approximation_error": 1.181853369955666e-10,
+      "oracle": "KrylovKit tol=1e-13",
+      "tight_reference_error": 1.1892470502815816e-13,
+      "yao_krylov": {
+        "oracle_numops": 38,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 4.9567995109619674e-14,
+        "numops": 34,
+        "normres": 5.191659868235561e-11
+      }
+    },
+    {
+      "samples_ns": [
+        4.53180375e8,
+        4.98667958e8
+      ],
+      "allocated_bytes": 2110182592,
+      "construction_median_ns": 63583.5,
+      "approximation_error": 2.181730953515332e-5,
+      "max_error": 1.496496101685035e-5,
+      "id": "krylov_heisenberg_16q_tol4",
+      "median_ns": 4.759241665e8,
+      "allocations": 94419,
+      "yao_approximation_error": 0.00021625677153736385,
+      "oracle": "KrylovKit tol=1e-13",
+      "tight_reference_error": 2.1062914259799965e-13,
+      "yao_krylov": {
+        "oracle_numops": 48,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 6.3729232311548e-14,
+        "numops": 31,
+        "normres": 0.0001028085276825445
+      }
+    },
+    {
+      "samples_ns": [
+        5.75795083e8
+      ],
+      "allocated_bytes": 2514853376,
+      "construction_median_ns": 64708.5,
+      "approximation_error": 4.6375388388203274e-8,
+      "max_error": 1.927774801123182e-8,
+      "id": "krylov_heisenberg_16q_tol7",
+      "median_ns": 5.75795083e8,
+      "allocations": 112695,
+      "yao_approximation_error": 2.856237433258042e-7,
+      "oracle": "KrylovKit tol=1e-13",
+      "tight_reference_error": 2.1062914259799965e-13,
+      "yao_krylov": {
+        "oracle_numops": 48,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 6.3729232311548e-14,
+        "numops": 37,
+        "normres": 1.3252777789614968e-7
+      }
+    },
+    {
+      "samples_ns": [
+        6.50506167e8
+      ],
+      "allocated_bytes": 2919770528,
+      "construction_median_ns": 66812.5,
+      "approximation_error": 6.019342431891649e-11,
+      "max_error": 1.7787899356948764e-11,
+      "id": "krylov_heisenberg_16q_tol10",
+      "median_ns": 6.50506167e8,
+      "allocations": 130971,
+      "yao_approximation_error": 1.634475684787048e-10,
+      "oracle": "KrylovKit tol=1e-13",
+      "tight_reference_error": 2.1062914259799965e-13,
+      "yao_krylov": {
+        "oracle_numops": 48,
+        "converged": 1,
+        "numiter": 1,
+        "oracle_normres": 6.3729232311548e-14,
+        "numops": 43,
+        "normres": 7.350956612214455e-11
+      }
+    }
+  ],
+  "julia": "1.12.4",
+  "blas": "LBTConfig([ILP64] libopenblas64_.dylib)",
+  "threads": 4,
+  "yao": "0.9.3"
+}
