@@ -8,7 +8,7 @@ validation targets the NVIDIA A800 host reachable as `ssh gpu`.
 
 | Milestone | Required evidence | Status |
 | --- | --- | --- |
-| 1. Published backend feasibility / CPU baseline | Complex/layout/AD/custom-operation tests; reproducible CPU report and memory measurements | In progress |
+| 1. Published backend feasibility / CPU baseline | Complex/layout/AD/custom-operation tests; reproducible CPU report and memory measurements | Validated; [PR #47](https://github.com/GiggleLiu/yao-rs/pull/47) awaiting merge |
 | 2. Supported tenferro CPU backend | Library/CLI adapter, explicit and reusable plans, numerical/feature/package checks | Pending |
 | 3. Hamiltonian evolution | Pauli rotations, model builders, Trotter/Suzuki, physical parameter bindings and convergence tests | Pending |
 | 4. Differentiable circuits | Custom losses/input-state VJP, tenferro integration, shared parameters, numerical and memory tests | Pending |
@@ -83,8 +83,38 @@ Host access alone is not evidence that GPU execution works.
 
 ## Validation and performance record
 
-Milestone 1 checks and raw CPU results will be linked here before its PR is
-merged. See `benchmarks/README.md` for shared fixtures, numerical equivalence,
+The [Apple M4 CPU report](../../benchmarks/results/mac-cpu-2026-09-07/report.md)
+contains three independent runs each at one and four threads, all 48 shared
+workloads, raw samples/confidence intervals, pinned environments and plots.
+Every Julia output comparison passed; the largest absolute discrepancy was
+1.94e-14. `make check-all`, eight tenferro probe tests, fixture Clippy, four
+report-generator tests and all GitHub CI jobs passed before the results update.
+The x86-64 host completed the release build with Rust 1.96; its full benchmark
+report is still running and will be included in the CPU backend follow-up.
+
+Measured one-thread examples (medians of three run medians):
+
+| Workload | Native yao-rs | Yao.jl | Interpretation |
+| --- | ---: | ---: | --- |
+| Rx, 24 qubits | 21.95 ms | 15.60 ms | Yao is faster on this large gate workload |
+| QFT, 24 qubits | 2.427 s | 2.415 s | Similar full-circuit cost on this host |
+| 100-layer gradient, 12 qubits | 23.31 ms | 23.66 ms | Similar value/gradient cost |
+| Noisy density matrix, 10 qubits | 198.42 ms | 155.45 ms | Yao is faster for this exact-noise case |
+
+For the 8-qubit tensor-state fixture, native simulation takes 4.48 µs,
+omeinsum contraction from arrays 181.67 µs, tenferro from arrays 306.62 µs,
+and prepared tenferro execution 82.36 µs. These are different algorithms and
+planning boundaries, not interchangeable speedup claims. The initial policy
+therefore keeps native execution and adds tenferro explicitly. The custom X
+extension takes 66.40 µs versus 91.68 µs for prepared tensor composition at
+16 qubits, supporting further specialized-operation experiments.
+
+Memory retention depends on AD rules: the 16-qubit-sized nonlinear chain
+retains 10.06 MiB after 10 layers and 100.55 MiB after 100 layers, whereas
+conjugation mainly retains graph metadata. Whole-process RSS is reported
+separately. This is evidence for testing the actual circuit differentiation
+rules and their memory, not a universal assertion that every AD operation
+retains every intermediate state. See `benchmarks/README.md` for shared fixtures, numerical equivalence,
 thread controls, phase boundaries and the distinction between Rust heap and
 process RSS. GPU timings must later distinguish synchronized resident execution
 from transfer-inclusive execution, and report unsupported dtype/operations

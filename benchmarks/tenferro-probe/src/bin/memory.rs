@@ -55,6 +55,7 @@ fn main() -> Result<()> {
     if !(1..=20).contains(&n) || depth == 0 || depth > 1000 {
         return Err("expected 1..20 qubits and 1..1000 layers".into());
     }
+    let nonlinear = std::env::args().nth(3).as_deref() == Some("nonlinear");
     let circuit = Circuit::qubits(n, (0..n).map(|q| put(vec![q], Gate::Ry(0.3))).collect())?;
     let network = phase("export", || {
         yao_rs::einsum::circuit_to_einsum_with_boundary(&circuit, &[])
@@ -72,10 +73,18 @@ fn main() -> Result<()> {
             ctx.clone(),
         )
     })?;
+    let scale = EagerTensor::from_tensor_in(
+        Tensor::from_vec_col_major(vec![1], vec![C::new(0.3, 0.0)])?,
+        ctx.clone(),
+    )?;
     let loss = phase("ad_forward_tape", || -> Result<_> {
         let mut y = x.clone();
         for _ in 0..depth {
-            y = y.conj()?;
+            y = if nonlinear {
+                y.sin()?.mul(&scale)?
+            } else {
+                y.conj()?
+            };
         }
         let m = y.abs()?;
         Ok(m.mul(&m)?.reduce_sum(Some(&[0]))?)
@@ -83,7 +92,7 @@ fn main() -> Result<()> {
     let _gradient = phase("ad_backward", || ctx.grad(&loss, &x))?;
     println!(
         "{}",
-        json!({"qubits":n,"depth":depth,"state_bytes":(1<<n)*16,"note":"Rust allocator instrumentation excludes provider allocations; timings include instrumentation. Not RSS."})
+        json!({"qubits":n,"depth":depth,"operation":if nonlinear { "scaled_sin" } else { "conj" },"state_bytes":(1<<n)*16,"note":"Rust allocator instrumentation excludes provider allocations; timings include instrumentation. Not RSS."})
     );
     Ok(())
 }

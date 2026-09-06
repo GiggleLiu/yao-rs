@@ -48,6 +48,7 @@ traced runtime and compares it with tensor composition. The eager AD microcase
 measures input copying, graph construction, forward loss, and backward together.
 It is a tensor loss, not yet full circuit AD. The separate memory probe reports
 AD input, retained forward tape and backward allocation phases across depths.
+Both a linear conjugation chain and a nonlinear `0.3*sin(x)` chain are measured: their derivative rules have different primal-state retention needs.
 
 `metadata.json` records compiler, source hashes, machine and thread controls;
 lockfiles pin Rust and Julia dependencies. Raw Criterion JSON retains samples
