@@ -4,7 +4,8 @@ use anyhow::Result;
 
 pub fn probs(input: &str, locs: Option<&[usize]>, out: &OutputConfig) -> Result<()> {
     let reg = state_io::read_state(input)?;
-    let probabilities = yao_rs::probs(&reg, locs);
+    super::validate_locs(reg.nqubits(), locs)?;
+    let probabilities = reg.probs(locs);
 
     let nbits = reg.nqubits();
     let json_value = serde_json::json!({

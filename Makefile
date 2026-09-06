@@ -2,11 +2,9 @@
 .PHONY: help build build-release check fmt fmt-check clippy test check-all release clean doc doc-serve doc-open rustdoc example-qft run-plan module-graph cli bench bench-gates bench-qft bench-density bench-julia bench-compare
 
 CARGO ?= cargo
+CARGO_TARGET_DIR ?= target
 DOC_PORT ?= 3001
 DOC_HOST ?= 127.0.0.1
-
-# Cross-platform sed in-place: macOS needs -i '', Linux needs -i
-SED_I := sed -i$(shell if [ "$$(uname)" = "Darwin" ]; then echo " ''"; fi)
 
 help:
 	@printf "Rust targets:\n"
@@ -50,44 +48,32 @@ check:
 	$(CARGO) check --workspace
 
 fmt:
-	$(CARGO) fmt
+	$(CARGO) fmt --all
 
 fmt-check:
-	$(CARGO) fmt -- --check
+	$(CARGO) fmt --all -- --check
 
 clippy:
-	$(CARGO) clippy --workspace --all-targets --all-features -- -D warnings
+	$(CARGO) clippy --workspace --all-targets --all-features --locked -- -D warnings
 
 test:
-	$(CARGO) test --workspace --all-features
+	$(CARGO) test --workspace --all-features --locked
 
 check-all: fmt-check clippy test
 	@echo "All checks passed."
 
-# Release a new version: make release V=0.2.0
-# Bumps the single workspace version + inter-crate dep versions, commits,
-# tags vX.Y.Z, and pushes. The release.yml workflow then publishes
-# bitbasis -> yao-rs -> yao-cli to crates.io and creates a GitHub release.
+# Validate, bump, check, commit, and atomically push only the release tag.
 release:
 ifndef V
 	$(error Usage: make release V=x.y.z)
 endif
-	@echo "Releasing v$(V)..."
-	$(SED_I) 's/^version = ".*"/version = "$(V)"/' Cargo.toml
-	$(SED_I) 's/bitbasis = { path = "bitbasis", version = "[^"]*"/bitbasis = { path = "bitbasis", version = "$(V)"/' Cargo.toml
-	$(SED_I) 's/yao-rs = { path = "..", version = "[^"]*"/yao-rs = { path = "..", version = "$(V)"/' yao-cli/Cargo.toml
-	$(CARGO) check --workspace
-	git add Cargo.toml yao-cli/Cargo.toml
-	git commit -m "release: v$(V)"
-	git tag -a "v$(V)" -m "Release v$(V)"
-	git push origin HEAD --tags
-	@echo "v$(V) pushed — release.yml will publish to crates.io and create the GitHub release."
+	python3 scripts/release.py "$(V)"
 
 doc:
 	mdbook build docs
-	$(CARGO) doc --workspace --no-deps
+	$(CARGO) doc --workspace --no-deps --all-features --locked
 	rm -rf docs/book/api
-	cp -r target/doc docs/book/api
+	cp -r "$(CARGO_TARGET_DIR)/doc" docs/book/api
 
 doc-serve: doc
 	@-lsof -ti:$(DOC_PORT) | xargs kill 2>/dev/null || true

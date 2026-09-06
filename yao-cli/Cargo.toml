@@ -4,6 +4,9 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
+readme = "README.md"
+keywords = ["quantum", "simulation"]
+categories = ["science", "simulation"]
 description = "CLI tool for yao-rs quantum circuit simulation"
 
 [[bin]]

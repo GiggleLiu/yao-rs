@@ -4,6 +4,9 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
+readme = "README.md"
+keywords = ["quantum", "simulation"]
+categories = ["science", "simulation"]
 description = "Bit-string basis manipulation for qubit simulation — a Rust port of BitBasis.jl"
 
 [dependencies]

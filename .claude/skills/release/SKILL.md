@@ -46,14 +46,18 @@ cargo publish --dry-run -p yao-rs
 make release V=x.y.z
 ```
 
-This bumps `[workspace.package] version` plus the inter-crate dependency
-versions (`bitbasis` in the root, `yao-rs` in `yao-cli`), runs
-`cargo check --workspace`, commits `release: vx.y.z`, tags `vx.y.z`, and pushes.
+This requires a clean `main` branch and an unused version tag. It bumps
+`[workspace.package] version` plus inter-crate dependency versions and updates
+`Cargo.lock`, runs `make check-all`, commits and tags the release, and atomically
+pushes HEAD with only the new tag.
 
 The `.github/workflows/release.yml` workflow then:
-1. creates a GitHub release with auto-generated notes, and
-2. publishes `bitbasis` → `yao-rs` → `yao-cli` to crates.io (in dependency
-   order, with indexing waits).
+1. verifies the tag, tests, API docs, and workspace packages,
+2. publishes `bitbasis` → `yao-rs` → `yao-cli` with Cargo's workspace publishing
+   and index polling, and
+3. creates a GitHub release with auto-generated notes after publishing succeeds.
+
+See `RELEASING.md` for the full procedure and partial-publish recovery.
 
 ## Prerequisites (one-time)
 

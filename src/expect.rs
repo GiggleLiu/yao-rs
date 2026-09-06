@@ -42,33 +42,15 @@ pub fn expect_dm(dm: &DensityMatrix, op: &OperatorPolynomial) -> Complex64 {
 }
 
 fn expect_opstring_dm(dm: &DensityMatrix, opstring: &OperatorString) -> Complex64 {
-    let nbits = dm.nbits();
-    let dim = 1usize << nbits;
-    let op_sites = opstring.ops();
-
-    let mut trace = Complex64::new(0.0, 0.0);
-    for row in 0..dim {
-        for col in 0..dim {
-            let mut op_entry = Complex64::new(1.0, 0.0);
-
-            for &(loc, op) in op_sites {
-                let matrix = op_matrix(&op);
-                let row_bit = (row >> loc) & 1;
-                let col_bit = (col >> loc) & 1;
-                op_entry *= matrix[[row_bit, col_bit]];
-            }
-
-            let untouched_match = (0..nbits)
-                .filter(|loc| !op_sites.iter().any(|(site, _)| site == loc))
-                .all(|loc| ((row >> loc) & 1) == ((col >> loc) & 1));
-
-            if untouched_match {
-                trace += op_entry * dm.state_data()[col * dim + row];
-            }
-        }
+    let dim = 1usize << dm.nbits();
+    let mut state = dm.state_data().to_vec();
+    // Row-major vectorization places the row qubits first (0 = MSB).
+    // Left multiplication by O followed by the trace gives Tr(O rho).
+    for &(loc, op) in opstring.ops() {
+        assert!(loc < dm.nbits(), "operator site out of range");
+        apply_single_op(&mut state, loc, &op);
     }
-
-    trace
+    (0..dim).map(|i| state[i * dim + i]).sum()
 }
 
 #[cfg(test)]
@@ -115,5 +97,27 @@ mod tests {
         let mixed = expect_dm(&dm, &op);
         assert_abs_diff_eq!(pure.re, mixed.re, epsilon = 1e-10);
         assert_abs_diff_eq!(pure.im, mixed.im, epsilon = 1e-10);
+    }
+}
+
+#[cfg(test)]
+mod ordering_tests {
+    use super::*;
+
+    #[test]
+    fn density_expectations_match_pure_on_asymmetric_complex_states() {
+        let reg = ArrayReg::deterministic_state(3);
+        let dm = DensityMatrix::from_reg(&reg);
+        for site in 0..3 {
+            for op in [Op::X, Op::Y, Op::Z, Op::P0, Op::P1, Op::Pu, Op::Pd] {
+                let operator = OperatorPolynomial::single(site, op, Complex64::new(0.7, -0.3));
+                let pure = expect_arrayreg(&reg, &operator);
+                let mixed = expect_dm(&dm, &operator);
+                assert!(
+                    (pure - mixed).norm() < 1e-12,
+                    "site={site} op={op:?}: {pure} != {mixed}"
+                );
+            }
+        }
     }
 }

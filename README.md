@@ -9,9 +9,10 @@ A Rust port of [Yao.jl](https://github.com/QuantumBFS/Yao.jl) focused on quantum
 ## Features
 
 - **Gate enum** with named qubit gates (X, Y, Z, H, S, T, SWAP, Rx, Ry, Rz) and custom qudit gates
-- **Qudit support** with per-site dimensions
+- **Qudit support** with per-site dimensions for tensor-network export; state simulation is qubit-only
 - **Circuit validation** with controlled gates (qubit-only controls)
-- **Qubit simulation** via `ArrayReg` and direct circuit application
+- **Qubit simulation** via `ArrayReg`, plus density-matrix simulation of noise channels
+- **Differentiable circuits** via adjoint-mode `expect_grad`, parameter readback, and parameter updates
 - **Tensor network export** via [omeco](https://crates.io/crates/omeco) for contraction order optimization
 - **Diagonal gate optimization** in tensor networks (shared legs vs input/output legs)
 - **SVG circuit rendering** via `Circuit::to_svg()` and `yao visualize`
@@ -24,11 +25,41 @@ A Rust port of [Yao.jl](https://github.com/QuantumBFS/Yao.jl) focused on quantum
 - The `yao-rs` library for circuit construction, simulation, tensor network export, and SVG rendering
 - The `yao` CLI for running the same workflows from the terminal without writing Rust
 
-For library usage, examples, and API details, see the documentation links at the end of this README.
+## Rust library
+
+```toml
+[dependencies]
+yao-rs = "0.1"
+```
+
+```rust
+use yao_rs::{ArrayReg, Circuit, Gate, apply, control, probs, put};
+
+let bell = Circuit::qubits(2, vec![
+    put(vec![0], Gate::H),
+    control(vec![0], vec![1], Gate::X),
+]).unwrap();
+let state = apply(&bell, &ArrayReg::zero_state(2));
+let p = probs(&state, None);
+assert!((p[0] - 0.5).abs() < 1e-12);
+assert!((p[3] - 0.5).abs() < 1e-12);
+```
+
+Qubit 0 is the most significant bit of a state-vector index. Library features
+are opt-in: `qasm` enables OpenQASM 2.0, `omeinsum` enables native tensor
+contraction, and `parallel` enables Rayon operations. The CLI enables `qasm`
+and `omeinsum` by default.
+
+## CLI
+
+Install the published CLI below. To build the development version instead,
+clone this repository and run `cargo install --path yao-cli --locked`.
+The project uses Rust edition 2024; use a current stable Rust toolchain.
+
 
 ```bash
 # Install
-cargo install --path yao-cli
+cargo install yao-cli --locked
 
 # Generate an example circuit
 yao example bell > bell.json
@@ -74,4 +105,16 @@ Other CLI capabilities include:
 
 ## Documentation
 
+[Full Rust API reference](https://docs.rs/yao-rs) ·
+[Differentiable simulation](https://giggleliu.github.io/yao-rs/differentiation.html)
+
 See the [mdBook documentation](https://giggleliu.github.io/yao-rs/) for detailed guides, including the [CLI guide](https://giggleliu.github.io/yao-rs/cli.html), the [Getting Started guide](https://giggleliu.github.io/yao-rs/getting-started.html), and the [QFT walkthrough](https://giggleliu.github.io/yao-rs/examples/qft.html).
+
+## Development
+
+Run `make check-all` for workspace formatting, Clippy, and all-feature tests.
+Run `make doc` to build the book and full API docs (requires mdBook 0.5.2).
+See [CONTRIBUTING.md](CONTRIBUTING.md) for feature checks and the
+[release guide](RELEASING.md) for packaging and publishing.
+
+Licensed under the [MIT license](LICENSE).

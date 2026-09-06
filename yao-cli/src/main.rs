@@ -76,6 +76,7 @@ fn main() -> anyhow::Result<()> {
             circuit,
             input,
             shots,
+            seed,
             op,
             locs,
         } => commands::run::run(
@@ -84,11 +85,15 @@ fn main() -> anyhow::Result<()> {
             shots,
             op.as_deref(),
             locs.as_deref(),
+            seed,
             &out,
         ),
-        Commands::Measure { input, shots, locs } => {
-            commands::measure::measure(&input, shots, locs.as_deref(), &out)
-        }
+        Commands::Measure {
+            input,
+            shots,
+            locs,
+            seed,
+        } => commands::measure::measure(&input, shots, locs.as_deref(), seed, &out),
         Commands::Probs { input, locs } => commands::probs::probs(&input, locs.as_deref(), &out),
         Commands::Expect { input, op } => commands::expect::expect(&input, &op, &out),
         #[cfg(feature = "omeinsum")]

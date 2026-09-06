@@ -4,11 +4,14 @@ The `yao` CLI provides a command-line interface for quantum circuit simulation, 
 
 ## Installation
 
-Build from source (requires Rust toolchain):
+Install the published CLI with a current stable Rust toolchain:
 
 ```bash
-cargo install --path yao-cli
+cargo install yao-cli --locked
 ```
+
+From a repository checkout, install the development version with
+`cargo install --path yao-cli --locked`.
 
 ## Quick Start: Bell State
 
@@ -42,7 +45,9 @@ yao simulate bell.json | yao probs -
 
 ## Output Modes
 
-Output is human-readable in a terminal, JSON when piped. Use `--json` to force JSON in interactive mode.
+Structured results are human-readable in a terminal, JSON when piped.
+`simulate` and `run` without post-processing emit binary state files; QASM
+exports and SVG diagrams keep their native formats. Use `--json` to force JSON in interactive mode.
 
 ```bash
 yao inspect bell.json              # human-readable
@@ -72,7 +77,11 @@ cat circuit.json | yao inspect -
 
 ### `yao simulate`
 
-Simulate a circuit and output the resulting quantum state.
+Simulate a circuit and output the resulting quantum state. Circuits containing
+noise channels automatically use a density matrix. Noiseless circuits use a
+state vector unless a density-matrix input file is provided. All state-processing
+commands accept both representations. Density matrices require 4^n complex
+entries instead of 2^n; use small circuits or the tensor-network path for noise.
 
 ```bash
 yao simulate circuit.json --output state.bin
@@ -80,7 +89,7 @@ yao simulate circuit.json --input initial.bin --output final.bin
 yao simulate circuit.json | yao measure - --shots 100
 ```
 
-Without `--output`, writes binary state data to stdout (suitable for piping to other commands).
+Without `--output`, writes binary state data to a pipe; writing binary data directly to a terminal is rejected.
 
 | Option | Description |
 |--------|-------------|
@@ -100,6 +109,7 @@ yao simulate circuit.json | yao measure - --shots 1024
 | Option | Description |
 |--------|-------------|
 | `--shots <N>` | Number of measurement shots (default: 1024) |
+| `--seed <u64>` | Reproduce measurement samples with the same binary version |
 | `--locs <i,j,...>` | Qubit indices for partial measurement (comma-separated) |
 
 ### `yao probs`
@@ -145,6 +155,7 @@ yao run circuit.json --output state.bin
 |--------|-------------|
 | `--input <file>` | Input state file (defaults to \|0...0>) |
 | `--shots <N>` | Simulate then measure (mutually exclusive with `--op`) |
+| `--seed <u64>` | Reproduce measurement samples; requires `--shots` |
 | `--op <expr>` | Simulate then compute expectation (mutually exclusive with `--shots`) |
 | `--locs <i,j,...>` | Qubit indices for partial measurement (used with `--shots`) |
 | `--output <file>` | Save final state to file |
@@ -167,7 +178,7 @@ yao toeinsum circuit.json --op "Z(0)Z(1)"
 | Option | Description |
 |--------|-------------|
 | `--mode <pure\|dm\|overlap\|state>` | Export mode: `pure` (default), `dm` (density matrix), `overlap` (scalar ⟨0\|U\|0⟩), or `state` (state vector with \|0⟩ boundary tensors) |
-| `--op <expr>` | Operator expression for expectation value TN (overrides `--mode`) |
+| `--op <expr>` | Single operator term for expectation value TN (overrides `--mode`) |
 | `--output <file>` | Save tensor network JSON to file |
 
 See [Tensor Network JSON Format](#tensor-network-json-format) below for the output schema.
@@ -410,7 +421,13 @@ Header example:
 {"format":"yao-state-v1","num_qubits":4,"dims":[2,2,2,2],"num_elements":16,"dtype":"complex128"}
 ```
 
-Each complex amplitude is stored as two 64-bit little-endian floats (real, imaginary), 16 bytes per element. The total binary payload size is `num_elements * 16` bytes.
+Each complex amplitude is stored as two 64-bit little-endian floats (real,
+imaginary), 16 bytes per element. The total binary payload size is
+`num_elements * 16` bytes. Pure states use `yao-state-v1` with `2^num_qubits`
+entries. Density matrices use `yao-density-v1` with `4^num_qubits` entries in
+row-major order; `dims` still lists one dimension per physical qubit. Headers
+must agree on qubit count, dimensions, and element count. Truncated payloads
+and non-finite values are rejected.
 
 ## Tensor Network JSON Format
 
@@ -420,18 +437,9 @@ The `toeinsum` command outputs a JSON tensor network DTO:
 {
   "format": "yao-tn-v1",
   "mode": "pure",
-  "eincode": {
-    "input_indices": [["2", "0"], ["3", "4", "2", "1"]],
-    "output_indices": ["3", "4"]
-  },
-  "tensors": [
-    {
-      "shape": [2, 2],
-      "data_re": [0.707, 0.707, 0.707, -0.707],
-      "data_im": [0.0, 0.0, 0.0, 0.0]
-    }
-  ],
-  "size_dict": { "0": 2, "1": 2, "2": 2, "3": 2, "4": 2 },
+  "eincode": {"input_indices": [["0"]], "output_indices": ["0"]},
+  "tensors": [{"shape": [2], "data_re": [1.0, 0.0], "data_im": [0.0, 0.0]}],
+  "size_dict": {"0": 2},
   "contraction_order": null
 }
 ```
@@ -439,7 +447,7 @@ The `toeinsum` command outputs a JSON tensor network DTO:
 | Field | Description |
 |-------|-------------|
 | `format` | Always `"yao-tn-v1"` |
-| `mode` | `"pure"`, `"dm"`, `"overlap"`, or `"state"` |
+| `mode` | Representation: `"pure"` (also used by state/overlap exports) or `"dm"` |
 | `eincode.input_indices` | Index labels for each tensor (list of lists) |
 | `eincode.output_indices` | Open indices of the final state |
 | `tensors` | Gate tensors with shape and split real/imaginary data |
@@ -499,3 +507,29 @@ yao fetch qasmbench grover | yao fromqasm - | yao run - --shots 100
 ```bash
 yao visualize circuit.json --output circuit.svg
 ```
+
+## Noisy simulation
+
+Save this as `noisy.json`:
+
+```json
+{
+  "num_qubits": 1,
+  "elements": [
+    {"type": "gate", "gate": "X", "targets": [0]},
+    {"type": "channel", "channel": "AmplitudeDamping", "locs": [0],
+     "gamma": 0.25, "excited_population": 0.0}
+  ]
+}
+```
+
+```bash
+yao simulate noisy.json | yao probs - --json
+yao run noisy.json --op "Z(0)" --json
+yao run noisy.json --shots 1024 --seed 42
+```
+
+The probabilities are `[0.25, 0.75]` and the Z expectation is `-0.5`.
+Noise is applied exactly as a density-matrix channel; the seed controls only
+measurement sampling. Saved density states can be passed to a later simulation
+using `--input`. Circuit JSON and initial state cannot both use stdin at once.

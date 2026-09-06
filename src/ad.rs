@@ -4,7 +4,8 @@
 //! computes both `value = <psi|H|psi>` and its gradient with respect to every
 //! trainable parameter of U, using one forward pass plus one backward sweep.
 //!
-//! See `docs/superpowers/specs/2026-04-21-parameter-dispatch-and-ad-design.md`.
+//! Parameters follow [`Circuit::parameters`] order; update them with
+//! [`Circuit::dispatch`]. Noise-channel differentiation is unsupported.
 
 use ndarray::Array2;
 use num_complex::Complex64;
@@ -70,6 +71,19 @@ fn apply_generator(
 /// The returned gradient vector has length `circuit.num_params()` and follows
 /// the same ordering as `circuit.parameters()`.
 ///
+/// The observable must be Hermitian and the circuit gates must be unitary.
+/// Supports Rx, Ry, Rz, Phase, and both FSim parameters, including controls.
+///
+/// ```
+/// use yao_rs::{ArrayReg, Circuit, Gate, Op, OperatorPolynomial, expect_grad, put};
+/// let circuit = Circuit::qubits(1, vec![put(vec![0], Gate::Rx(0.3))]).unwrap();
+/// let z = OperatorPolynomial::single(0, Op::Z, 1.0.into());
+/// let (value, gradient) = expect_grad(&z, &circuit, &ArrayReg::zero_state(1));
+/// assert!((value - 0.3_f64.cos()).abs() < 1e-12);
+/// assert!((gradient[0] + 0.3_f64.sin()).abs() < 1e-12);
+/// ```
+///
+/// # Panics
 /// Panics if the circuit contains any `CircuitElement::Channel`, or if `psi0`'s
 /// qubit count does not match the circuit.
 pub fn expect_grad(

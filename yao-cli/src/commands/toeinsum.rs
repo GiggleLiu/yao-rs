@@ -12,7 +12,11 @@ pub fn toeinsum(
     let circuit = super::load_circuit(circuit_path)?;
 
     let dto = if let Some(op_str) = op {
-        let operator = crate::operator_parser::parse_operator(op_str)?;
+        let operator = crate::operator_parser::parse_operator_for_qubits(op_str, circuit.nbits)?;
+        anyhow::ensure!(
+            operator.len() == 1,
+            "Tensor-network expectation export supports a single operator term; use `yao run --op` for sums"
+        );
         let tn = yao_rs::circuit_to_expectation(&circuit, &operator);
         TensorNetworkDto::from_pure(&tn)
     } else {

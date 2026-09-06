@@ -2,51 +2,38 @@ use crate::output::OutputConfig;
 use crate::state_io;
 use anyhow::Result;
 use std::io::{BufWriter, IsTerminal};
-use yao_rs::measure::{MeasureResult, PostProcess, measure_with_postprocess};
-use yao_rs::{ArrayReg, apply};
 
+#[allow(clippy::too_many_arguments)]
 pub fn run(
     circuit_path: &str,
     input_path: Option<&str>,
     shots: Option<usize>,
     op: Option<&str>,
     locs: Option<&[usize]>,
+    seed: Option<u64>,
     out: &OutputConfig,
 ) -> Result<()> {
     let circuit = super::load_circuit(circuit_path)?;
 
-    let input_state = if let Some(path) = input_path {
-        state_io::read_state(path)?
-    } else {
-        ArrayReg::zero_state(circuit.nbits)
-    };
+    anyhow::ensure!(
+        circuit_path != "-" || input_path != Some("-"),
+        "Circuit and input state cannot both read from stdin"
+    );
+    let mut result = super::simulation_input(&circuit, input_path)?;
 
-    let mut result = apply(&circuit, &input_state);
+    super::validate_locs(circuit.nbits, locs)?;
+    result.apply(&circuit)?;
     let nbits = result.nqubits();
 
     if let Some(nshots) = shots {
-        let measure_locs: Vec<usize> = locs.map_or_else(|| (0..nbits).collect(), |l| l.to_vec());
-        let mut rng = rand::rng();
-
-        let mut outcomes = Vec::with_capacity(nshots);
-        for _ in 0..nshots {
-            match measure_with_postprocess(
-                &mut result,
-                &measure_locs,
-                PostProcess::NoPostProcess,
-                &mut rng,
-            ) {
-                MeasureResult::Value(bits) => outcomes.push(bits),
-                MeasureResult::Removed(_, _) => unreachable!(),
-            }
-        }
+        let outcomes = super::sample_state(&result, nshots, locs, seed)?;
 
         let (human, json_value) = super::format_measurement(&outcomes, nshots, locs, nbits);
 
         out.emit(&human, &json_value)
     } else if let Some(op_str) = op {
-        let operator = crate::operator_parser::parse_operator(op_str)?;
-        let value = crate::commands::expect::compute_expectation(&result, &operator);
+        let operator = crate::operator_parser::parse_operator_for_qubits(op_str, nbits)?;
+        let value = result.expectation(&operator);
 
         let (human, json_value) = super::format_expectation(op_str, value);
 

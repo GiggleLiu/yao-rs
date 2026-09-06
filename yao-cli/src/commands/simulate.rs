@@ -2,18 +2,17 @@ use crate::output::OutputConfig;
 use crate::state_io;
 use anyhow::Result;
 use std::io::{BufWriter, IsTerminal};
-use yao_rs::{ArrayReg, apply};
 
 pub fn simulate(circuit_path: &str, input_path: Option<&str>, out: &OutputConfig) -> Result<()> {
     let circuit = super::load_circuit(circuit_path)?;
 
-    let input_state = if let Some(path) = input_path {
-        state_io::read_state(path)?
-    } else {
-        ArrayReg::zero_state(circuit.nbits)
-    };
+    anyhow::ensure!(
+        circuit_path != "-" || input_path != Some("-"),
+        "Circuit and input state cannot both read from stdin"
+    );
+    let mut result = super::simulation_input(&circuit, input_path)?;
 
-    let result = apply(&circuit, &input_state);
+    result.apply(&circuit)?;
 
     if let Some(ref path) = out.output {
         state_io::write_state(&result, path)?;
