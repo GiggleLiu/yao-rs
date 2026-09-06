@@ -180,6 +180,11 @@ def backend_report(directory):
         "![AD memory](ad-memory.svg)",
         "",
     ]
+    if any(row["backend"] == "supported_warm" for row in summary):
+        lines += [
+            "![Supported adapter, same contraction tree](supported-costs.svg)",
+            "",
+        ]
     (directory / "report.md").write_text("\n".join(lines))
     return summary
 

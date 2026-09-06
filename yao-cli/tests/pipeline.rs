@@ -297,6 +297,16 @@ fn tenferro_unary_and_empty_network_cli() {
         assert_eq!(values, expected);
         #[cfg(feature = "omeinsum")]
         {
+            let old = yao()
+                .args(["contract", "-", "--backend", "omeinsum"])
+                .write_stdin(optimized.clone())
+                .assert()
+                .success()
+                .get_output()
+                .stdout
+                .clone();
+            let old: serde_json::Value = serde_json::from_slice(&old).unwrap();
+            assert_eq!(result, old);
             let rejected = yao()
                 .args(["contract", "-", "--backend", "omeinsum", "--threads", "2"])
                 .write_stdin(optimized)
@@ -310,5 +320,45 @@ fn tenferro_unary_and_empty_network_cli() {
                     .contains("--threads requires --backend tenferro")
             );
         }
+    }
+}
+
+#[test]
+fn nonbinary_tree_is_explicitly_supported_or_rejected_by_backend() {
+    let dto = serde_json::json!({
+        "format":"yao-tn-v1", "mode":"pure",
+        "eincode":{"input_indices":[["0"],["0"],["0"]],"output_indices":[]},
+        "size_dict":{"0":2},
+        "tensors":vec![serde_json::json!({"shape":[2],"data_re":[1,2],"data_im":[0,0]}); 3],
+        "contraction_order":{"isleaf":false, "args":[
+            {"isleaf":true,"tensorindex":0},{"isleaf":true,"tensorindex":1},{"isleaf":true,"tensorindex":2}],
+            "eins":{"ixs":[[0],[0],[0]],"iy":[]}}
+    });
+    #[cfg(feature = "omeinsum")]
+    {
+        let output = yao()
+            .args(["contract", "-", "--backend", "omeinsum"])
+            .write_stdin(dto.to_string())
+            .assert()
+            .failure()
+            .get_output()
+            .stderr
+            .clone();
+        assert!(String::from_utf8_lossy(&output).contains("omeinsum supports binary trees"));
+        assert!(!String::from_utf8_lossy(&output).contains("panicked"));
+    }
+    #[cfg(feature = "tenferro")]
+    {
+        let output = yao()
+            .args(["contract", "-", "--backend", "tenferro"])
+            .write_stdin(dto.to_string())
+            .assert()
+            .success()
+            .get_output()
+            .stdout
+            .clone();
+        let value: serde_json::Value = serde_json::from_slice(&output).unwrap();
+        assert_eq!(value["re"], 9.0);
+        assert_eq!(value["im"], 0.0);
     }
 }

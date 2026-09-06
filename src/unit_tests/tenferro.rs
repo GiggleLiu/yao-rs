@@ -202,12 +202,14 @@ fn layouts_identity_transpose_and_reusing_new_values() {
             let code = EinCode::new(vec![vec![u64::MAX, 7]], output.clone());
             let plan = cpu.prepare(&code, &sizes, None).unwrap();
             for factor in [1., 2.] {
-                let input = if factor == 1. {
-                    a.clone()
+                // Pass the original sliced storage itself: ndarray::clone
+                // may materialize noncontiguous layouts before the adapter.
+                let got = if factor == 1. {
+                    cpu.execute(&plan, std::slice::from_ref(&a)).unwrap()
                 } else {
-                    a.mapv(|x| x * factor)
+                    let input = a.as_standard_layout().mapv(|x| x * factor);
+                    cpu.execute(&plan, &[input]).unwrap()
                 };
-                let got = cpu.execute(&plan, &[input]).unwrap();
                 let want = if output[0] == 7 { a.t() } else { a.view() };
                 close(&got, &want.iter().map(|x| x * factor).collect::<Vec<_>>());
             }

@@ -230,6 +230,8 @@ when available, otherwise `tenferro`. `--threads` accepts a positive integer and
 requires tenferro; its default is 1. Both providers execute the serialized
 contraction order. Tenferro reports invalid shapes/plans as errors and supports
 complex128 tensors, qudit exports and exact noisy density-matrix networks.
+The omeinsum provider accepts binary trees, a single unary root, and empty
+networks; other node arities require tenferro.
 This option selects tensor contraction; direct `simulate`/`run` use the existing
 register kernels.
 

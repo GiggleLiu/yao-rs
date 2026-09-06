@@ -45,12 +45,12 @@ fn main() -> anyhow::Result<()> {
             | Commands::Fetch { .. }
     );
     #[cfg(any(feature = "omeinsum", feature = "tenferro"))]
-    let omeinsum_auto_json = matches!(
+    let contraction_auto_json = matches!(
         cli.command,
         Commands::Contract { .. } | Commands::Optimize { .. }
     );
     #[cfg(not(any(feature = "omeinsum", feature = "tenferro")))]
-    let omeinsum_auto_json = false;
+    let contraction_auto_json = false;
     #[cfg(feature = "qasm")]
     let qasm_auto_json = matches!(
         cli.command,
@@ -58,7 +58,7 @@ fn main() -> anyhow::Result<()> {
     );
     #[cfg(not(feature = "qasm"))]
     let qasm_auto_json = false;
-    let auto_json = base_auto_json || omeinsum_auto_json || qasm_auto_json;
+    let auto_json = base_auto_json || contraction_auto_json || qasm_auto_json;
 
     let out = OutputConfig {
         output: cli.output,

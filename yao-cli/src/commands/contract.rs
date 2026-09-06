@@ -49,6 +49,10 @@ pub fn contract_cmd(
         #[cfg(feature = "omeinsum")]
         ContractionBackend::Omeinsum => {
             anyhow::ensure!(threads.is_none(), "--threads requires --backend tenferro");
+            anyhow::ensure!(
+                omeinsum_tree_supported(&tree, true),
+                "omeinsum supports binary trees and a single unary root; use --backend tenferro for this tree"
+            );
             yao_rs::contractor::contract_dm_with_tree(&tn, tree)
         }
         #[cfg(feature = "tenferro")]
@@ -109,6 +113,17 @@ pub fn contract_cmd(
             .join("\n");
         let json_value = serde_json::json!(data);
         out.emit(&format!("Tensor entries:\n{human}\n"), &json_value)
+    }
+}
+
+#[cfg(feature = "omeinsum")]
+fn omeinsum_tree_supported(tree: &NestedEinsum<i32>, root: bool) -> bool {
+    match tree {
+        NestedEinsum::Leaf { .. } => true,
+        NestedEinsum::Node { args, .. } => {
+            (root && (args.is_empty() || matches!(args.as_slice(), [NestedEinsum::Leaf { .. }])))
+                || (args.len() == 2 && args.iter().all(|arg| omeinsum_tree_supported(arg, false)))
+        }
     }
 }
 
