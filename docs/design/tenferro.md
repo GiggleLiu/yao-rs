@@ -11,7 +11,7 @@ validation targets the NVIDIA A800 host reachable as `ssh gpu`.
 | 1. Published backend feasibility / CPU baseline | Complex/layout/AD/custom-operation tests; reproducible CPU report and memory measurements | Merged [PR #47](https://github.com/GiggleLiu/yao-rs/pull/47) (`6bad156`) |
 | 2. Supported tenferro CPU backend | Library/CLI adapter, explicit and reusable plans, numerical/feature/package checks | Implemented in [PR #48](https://github.com/GiggleLiu/yao-rs/pull/48); merged (`3ec7e69`) |
 | 3. Hamiltonian evolution | Pauli rotations, model builders, Trotter/Suzuki, physical parameter bindings and convergence tests | Merged [PR #49](https://github.com/GiggleLiu/yao-rs/pull/49) (`a1f24f3`) |
-| 4. Differentiable circuits | Custom losses/input-state VJP, tenferro integration, shared parameters, numerical and memory tests | Implementing on `codex/differentiable-circuits` |
+| 4. Differentiable circuits | Custom losses/input-state VJP, tenferro integration, shared parameters, numerical and memory tests | Implemented in [PR #50](https://github.com/GiggleLiu/yao-rs/pull/50); validation and CPU report complete |
 | 5. Tensor memory / observables | Polynomial expectations, omeco slicing, estimates, versioned plans and budget tests | Pending |
 | 6. Noisy trajectories | Seeded Kraus sampling, uncertainty, exact-density comparisons and memory scaling | Pending |
 | 7. Matrix-free exponential action | Community implementation qualification, error/convergence diagnostics, Yao comparison | Pending |
@@ -198,3 +198,53 @@ Validation: `make check-all` (618 tests), no-default-feature tests, warnings-den
 rustdoc and mdBook, the native/tenferro example, fixture Clippy, and five report
 tests. Timing sources are pinned at `2c97de3`; later memory/report source hashes
 are recorded separately. GPU execution remains a later milestone.
+
+
+## Differentiable circuits (PR #50)
+
+`DifferentiableCircuit` generalizes the existing reversible adjoint sweep to
+arbitrary complex output cotangents and returns both physical-parameter and
+input-state gradients. Its JVP applies the same binding Jacobian. The optional
+`tenferro-ad` feature exposes this as an eager/traced operation whose trainable
+parameters are tensor inputs. Tenferro differentiates surrounding real losses;
+the circuit operation retains its final state and parameter values. First-order
+rules reject higher-order transforms explicitly. Channels and nonunitary custom
+matrices are outside the reversible domain. An optional argmin L-BFGS example
+optimizes a complex state-distance loss to below `1e-20`.
+
+The [circuit AD M4 report](../../benchmarks/results/mac-circuit-ad-cpu-2026-09-07/report.md)
+contains six shared cases at 8/12/16 qubits and 10/100 layers, three independent
+runs each at one/four configured threads, and 36 passing Yao comparisons of
+loss, every real parameter gradient, and every complex input gradient. The
+maximum discrepancy is `2.20e-14`. Timing and memory sources are pinned at
+`6a949d7`; a later plot-label adjustment is recorded separately in metadata.
+
+One-thread medians of run medians, returning the same loss and gradients:
+
+| Workload | Native | Yao | Tenferro circuit operation | Ordinary tensor composition |
+| --- | ---: | ---: | ---: | ---: |
+| 12 qubits, 10 layers | 0.535 ms | 0.615 ms | 1.429 ms | 42.637 ms |
+| 16 qubits, 10 layers | 8.542 ms | 9.339 ms | 20.120 ms | 103.422 ms |
+| 16 qubits, 100 layers | 83.395 ms | 89.391 ms | 185.119 ms | Not repeatedly timed |
+
+Tenferro rows include input copies, eager graph construction, loss, backward,
+and gradient collection; reusable context creation is excluded. Its custom
+operation substantially reduces the cost of this unfused tensor-composition
+fixture but remains slower than native/Yao execution. Four threads do not
+consistently help these workloads; native circuit kernels remain serial.
+
+In isolated memory probes, the 16-qubit custom operation retains 3.022 MiB
+after the forward phase at 10 layers and 3.026 MiB at 100 layers; process RSS
+is 28.70 and 28.50 MiB respectively. Ordinary composition at 16 qubits and
+10 layers peaks at 235.64 MiB RSS. Its 8-qubit, 100-layer backward reaches the
+30 CPU-second limit with 3138.70 MiB observed peak RSS; larger 100-layer
+composition probes are explicitly skipped. This incomplete run supplies no
+completed timing or speedup ratio. Rust heap and whole-process RSS measure
+different storage, and allocator/provider retention affects the latter.
+
+Validation: `make check-all` (631 tests), nine fixture tests, six report tests,
+warnings-denied rustdoc and mdBook, successful optimizer example, and a Linux
+Rust 1.96 check of all workspace targets/features. Numerical tests include
+finite-difference step sweeps, real/imaginary input perturbations, JVP/VJP
+duality, non-real cotangents, active-low controls, FSim, shared and zero-time
+parameters, empty parameter tensors, and invalid derivative domains.

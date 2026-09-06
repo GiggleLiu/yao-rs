@@ -127,3 +127,13 @@ The adapter caches the value/gradient pair when argmin requests them separately
 at identical parameters. It checks that the final squared error is below
 `1e-10`. The optional optimizer dependencies are confined to this example
 feature; the core library does not implement an optimizer.
+
+
+## CPU measurements
+
+The [reproducible CPU report](https://github.com/GiggleLiu/yao-rs/blob/main/benchmarks/results/mac-circuit-ad-cpu-2026-09-07/report.md)
+compares native simulation, Yao.jl, the tenferro circuit operation, and ordinary
+tensor composition. On the measured M4, the circuit operation reduces memory
+and time versus that unfused composition fixture, while native and Yao remain
+faster. The report includes raw run ranges, isolated memory probes, and explicit
+incomplete-run labels. These are CPU results; device execution is separate work.

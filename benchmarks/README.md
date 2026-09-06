@@ -136,3 +136,9 @@ ratios. `memory-circuit-ad-*.log` separates retained forward heap from additiona
 backward peak heap and process RSS. A terminated run's RSS is only its observed
 peak before termination. CPU-limit diagnostics and allocation-instrumented
 times are not treated as successful benchmark measurements.
+
+
+The committed [circuit AD M4 report](results/mac-circuit-ad-cpu-2026-09-07/report.md)
+contains the six shared gradient cases, three runs at one/four threads, and
+bounded isolated memory probes. See the report for complete versus CPU-limited
+composition runs and the measured overhead of the tenferro circuit operation.

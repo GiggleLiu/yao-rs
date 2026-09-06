@@ -105,7 +105,7 @@ for ax, n in zip(axes.flat, [8, 12, 16]):
                 ax.annotate(
                     "CPU limit; incomplete",
                     (r["depth"], r["peak_rss_bytes"] / 1048576),
-                    xytext=(-105, 7),
+                    xytext=(-115, -18),
                     textcoords="offset points",
                     fontsize=8,
                 )
@@ -158,3 +158,8 @@ fig.suptitle(
 )
 fig.savefig(a.directory / "circuit-ad-memory.svg")
 fig.savefig(a.directory / "circuit-ad-memory.png", dpi=180)
+
+# Matplotlib emits trailing spaces inside path data; normalize generated text.
+for name in ["circuit-ad-costs.svg", "circuit-ad-memory.svg"]:
+    path = a.directory / name
+    path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")

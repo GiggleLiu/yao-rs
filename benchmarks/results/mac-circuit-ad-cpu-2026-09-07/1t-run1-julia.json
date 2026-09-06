@@ -1,0 +1,124 @@
+{
+  "records": [
+    {
+      "median_ns": 41729.5,
+      "construction_median_ns": 57479.0,
+      "max_error": 4.440892098500626e-16,
+      "id": "custom_gradient_8_depth10",
+      "samples_ns": [
+        72584.0,
+        43375.0,
+        42292.0,
+        41584.0,
+        41875.0,
+        43000.0,
+        41333.0,
+        40958.0,
+        41208.0,
+        40583.0
+      ],
+      "allocations": 453,
+      "allocated_bytes": 73072
+    },
+    {
+      "median_ns": 414833.5,
+      "construction_median_ns": 1.2838335e6,
+      "max_error": 5.003707553108401e-16,
+      "id": "custom_gradient_8_depth100",
+      "samples_ns": [
+        435958.0,
+        399542.0,
+        411042.0,
+        419542.0,
+        419416.0,
+        415167.0,
+        399583.0,
+        414500.0,
+        403334.0,
+        421416.0
+      ],
+      "allocations": 4058,
+      "allocated_bytes": 563824
+    },
+    {
+      "median_ns": 602271.0,
+      "construction_median_ns": 53729.0,
+      "max_error": 1.2878587085651816e-14,
+      "id": "custom_gradient_12_depth10",
+      "samples_ns": [
+        582500.0,
+        564167.0,
+        606625.0,
+        608500.0,
+        598334.0,
+        618708.0,
+        602375.0,
+        623208.0,
+        597583.0,
+        602167.0
+      ],
+      "allocations": 453,
+      "allocated_bytes": 948592
+    },
+    {
+      "median_ns": 5.9135625e6,
+      "construction_median_ns": 843167.0,
+      "max_error": 5.10702591327572e-15,
+      "id": "custom_gradient_12_depth100",
+      "samples_ns": [
+        5.6115e6,
+        5.723458e6,
+        5.914375e6,
+        5.9065e6,
+        5.905917e6,
+        5.98825e6,
+        5.946167e6,
+        5.91275e6,
+        5.982292e6,
+        5.934542e6
+      ],
+      "allocations": 4058,
+      "allocated_bytes": 6963824
+    },
+    {
+      "median_ns": 9.3393745e6,
+      "construction_median_ns": 53937.5,
+      "max_error": 7.993605777301127e-15,
+      "id": "custom_gradient_16_depth10",
+      "samples_ns": [
+        8.928625e6,
+        8.894084e6,
+        9.342416e6,
+        9.411542e6,
+        9.6765e6,
+        9.813083e6,
+        9.50625e6,
+        9.175916e6,
+        9.177291e6,
+        9.336333e6
+      ],
+      "allocations": 453,
+      "allocated_bytes": 14711152
+    },
+    {
+      "median_ns": 8.73595e7,
+      "construction_median_ns": 725541.5,
+      "max_error": 2.19824158875781e-14,
+      "id": "custom_gradient_16_depth100",
+      "samples_ns": [
+        8.6991125e7,
+        8.8456708e7,
+        8.7953667e7,
+        8.6932125e7,
+        8.7386e7,
+        8.7333e7
+      ],
+      "allocations": 4058,
+      "allocated_bytes": 109199984
+    }
+  ],
+  "julia": "1.12.4",
+  "blas": "LBTConfig([ILP64] libopenblas64_.dylib)",
+  "threads": 1,
+  "yao": "0.9.3"
+}
