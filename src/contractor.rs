@@ -189,6 +189,43 @@ fn omeinsum_to_ndarray<L: Label>(
     }
 }
 
+/// Whether this provider can execute an explicit tree without changing it.
+/// Supports binary nodes and a single unary root; tenferro also accepts n-ary
+/// nodes. Validate semantics with `contraction_plan::validate_tree` separately.
+pub fn tree_supported<L: Label>(tree: &NestedEinsum<L>) -> bool {
+    fn visit<L: Label>(tree: &NestedEinsum<L>, root: bool) -> bool {
+        match tree {
+            NestedEinsum::Leaf { .. } => true,
+            NestedEinsum::Node { args, .. } => {
+                (root
+                    && (args.is_empty() || matches!(args.as_slice(), [NestedEinsum::Leaf { .. }])))
+                    || (args.len() == 2 && args.iter().all(|arg| visit(arg, false)))
+            }
+        }
+    }
+    visit(tree, true)
+}
+
+/// Execute fixed slices with omeinsum, using the same tree for each slice.
+/// Unlike the prepared tenferro adapter, this provider prepares its executor
+/// during each slice; comparisons must label that boundary.
+pub fn contract_sliced<L: Label>(
+    plan: &crate::slicing::SlicedPlan<L>,
+    tensors: &[ArrayD<Complex64>],
+) -> Result<ArrayD<Complex64>, String> {
+    if !tree_supported(plan.tree()) {
+        return Err("omeinsum supports binary trees and a single unary root".into());
+    }
+    plan.execute_with(tensors, |inputs| {
+        Ok(contract_impl(
+            inputs,
+            plan.code(),
+            plan.slice_sizes(),
+            Some(plan.tree().clone()),
+        ))
+    })
+}
+
 #[cfg(test)]
 #[path = "unit_tests/contractor.rs"]
 mod tests;

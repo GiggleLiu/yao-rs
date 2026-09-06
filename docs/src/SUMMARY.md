@@ -41,6 +41,7 @@
 - [Hamiltonian Evolution](./hamiltonian.md)
 - [Differentiable Simulation](./differentiation.md)
 - [Tensor Networks](./tensor-networks.md)
+- [Multiple Observables and Memory Controls](./tensor-memory.md)
 
 # Reference
 

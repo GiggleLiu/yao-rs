@@ -550,3 +550,11 @@ The probabilities are `[0.25, 0.75]` and the Z expectation is `-0.5`.
 Noise is applied exactly as a density-matrix channel; the seed controls only
 measurement sampling. Saved density states can be passed to a later simulation
 using `--input`. Circuit JSON and initial state cannot both use stdin at once.
+
+
+Tensor expectations support sums, including noisy circuits. Use
+`yao optimize tn.json --memory-budget 67108864` for automatic slicing, or
+`--slice=3,-3` for fixed tensor labels. Budgets are estimates in bytes, with one
+active slice; they are not process RSS caps. Sliced plans use `yao-tn-v2` and are
+validated before contraction. See the
+[memory-control guide](https://giggleliu.github.io/yao-rs/tensor-memory.html).

@@ -115,6 +115,21 @@ def circuit_ad_memory_rows(directory):
     return rows
 
 
+def tensor_memory_rows(directory):
+    rows = []
+    for path in sorted(Path(directory).glob("memory-tensor-*.log")):
+        text = path.read_text()
+        records = [json.loads(line) for line in text.splitlines() if line.startswith("{")]
+        if not any(r.get("status") == "complete" for r in records):
+            raise ValueError(f"Incomplete tensor memory probe: {path.name}")
+        metadata = next(r for r in records if "estimate" in r)
+        phases = {r["phase"]: r for r in records if "phase" in r}
+        rows.append(dict(metadata, peak_rss_bytes=peak_rss_bytes(text),
+                         execution_peak_bytes=phases["slice_execution"]["peak_additional_rust_heap_bytes"],
+                         input_retained_bytes=phases["matrix_inputs"]["retained_additional_rust_heap_bytes"]))
+    return rows
+
+
 def evolution_memory_rows(directory):
     """Read phase heap bytes and platform-specific time(1) peak RSS units."""
 
@@ -290,6 +305,19 @@ def backend_report(directory):
             "![Circuit AD memory](circuit-ad-memory.svg)",
             "",
         ]
+    elif metadata.get("suite") == "tensor-memory":
+        lines += [
+            "## Polynomial expectations and sliced contraction",
+            "",
+            "Circuit rows compare the same complex polynomial expectation from a zero input, including simulation and expectation evaluation in native Rust/Yao. Yao uses sandwich for pure states and its dense operator trace formula without real projection for density matrices; native Rust applies each operator string without a dense operator matrix. Tensor rows share circuit tensors across terms. `observable_export` is separate; prepared tenferro execution excludes CPU context, tree search and compilation. omeinsum rows include executor preparation. Unsliced and term-sliced rows use the identical omeco greedy tree.",
+            "",
+            "Synthetic matrix-chain rows are a separate dense complex128 contraction workload, with no native/Yao simulator timing. `fixed_output` slices the first output index of the supplied ((A B) C) tree. `auto` explicitly allows omeco TreeSA replanning under the complete estimated budget; it is qualified at dimension 32 only. Heuristic slicing can produce many slice assignments. Larger fixed-path runs use dimensions 128/256. Separately labelled outer-product stress cases at dimensions 32/64 deliberately form an n^4 intermediate before contracting the third matrix; fixed output slicing is compared on that path, while a greedy unsliced path shows how planning can avoid the intermediate entirely. No automatic-planner speedup is inferred for those larger sizes.",
+            "",
+            "![Observable execution costs](observable-costs.svg)",
+            "",
+            "![Contraction time and memory](slicing-tradeoff.svg)",
+            "",
+        ]
     else:
         lines += [
             "## Plots",
@@ -346,6 +374,23 @@ def backend_report(directory):
             "Native peak heap covers combined value/gradient execution. Other backward peaks are additional to retained forward storage. RSS includes startup/provider allocations and allocator retention; a terminated run's RSS is only its observed peak before termination. Rust heap counts exclude native-provider allocations. Allocation-instrumented times are diagnostic only.",
             "",
         ]
+    tensor_memory = tensor_memory_rows(directory)
+    if tensor_memory:
+        (directory / "tensor-memory.json").write_text(json.dumps(tensor_memory, indent=2) + "\n")
+        lines += [
+            "## Isolated contraction memory",
+            "",
+            "One active slice; all storage columns are MiB. Input and full output storage remain allocated. Estimates conservatively count tensor buffers and a zero user workspace reserve; they exclude runtime metadata, compiled programs, allocator retention and unreported provider scratch. Process RSS is measured independently and is not bounded by that estimate. Heap-instrumented execution times are diagnostic only.",
+            "",
+            "| Backend | Fixture | Matrix dimension | Mode | Slices | Input | Output | omeco peak | Worker buffers | Total estimate | Execution extra heap | Process peak RSS |",
+            "| --- | --- | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+        ]
+        for row in tensor_memory:
+            e = row["estimate"]
+            quantities = [e[k] for k in ("input_bytes", "output_bytes", "omeco_peak_bytes", "worker_buffer_bytes", "estimated_total_bytes")]
+            quantities += [row["execution_peak_bytes"], row["peak_rss_bytes"]]
+            lines.append(f"| {row['backend']} | {row['kind']} | {row['dimension']} | {row['mode']} | {e['slices']} | " + " | ".join(f"{x / 1048576:.3f}" for x in quantities) + " |")
+        lines.append("")
     (directory / "report.md").write_text("\n".join(lines))
     return summary
 

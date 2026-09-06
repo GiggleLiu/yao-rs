@@ -261,10 +261,21 @@ pub fn circuit_to_einsum_with_boundary(circuit: &Circuit, final_state: &[usize])
 /// A `TensorNetwork` representing ⟨0|U†OU|0⟩ with empty output indices (scalar result).
 ///
 /// # Note
-/// For simplicity, this implementation handles single-term operators where each term
-/// consists of single-site operators. The operator polynomial coefficients are multiplied
-/// into the first operator tensor.
+/// Terms share the circuit tensors and a summed term-selection index. Each
+/// coefficient appears once, including identity terms. Identity factors support
+/// arbitrary site dimensions; nonidentity operators require qubits.
+///
+/// # Panics
+/// Panics for channels (use the density-matrix variant), invalid operator sites,
+/// duplicate sites within a term, nonfinite coefficients, or nonqubit operators.
 pub fn circuit_to_expectation(circuit: &Circuit, operator: &OperatorPolynomial) -> TensorNetwork {
+    assert!(
+        !circuit
+            .elements
+            .iter()
+            .any(|e| matches!(e, CircuitElement::Channel(_))),
+        "Pure expectation export does not support channels; use circuit_to_expectation_dm"
+    );
     let n = circuit.num_sites();
 
     // Labels 0..n-1 are initial state indices for each site
@@ -325,82 +336,30 @@ pub fn circuit_to_expectation(circuit: &Circuit, operator: &OperatorPolynomial) 
         all_tensors.push(tensor);
     }
 
-    // Labels after U - these are where we insert the operator
-    let u_output_labels = current_labels.clone();
-
-    // ===== Part 3: Operator tensors =====
-    // Handle operator polynomial - we create tensors for each term and combine
-    // For now, we handle single-site operators in each term
-
-    // We need to insert operator tensors that connect U output to U† input
-    // Each site gets an operator (Identity if not explicitly specified in the term)
-
-    // For simplicity, we handle a single-term operator polynomial first
-    // TODO: Support multi-term polynomials by either:
-    // 1. Creating separate tensor networks and summing results
-    // 2. Using a more sophisticated contraction strategy
-
-    if operator.is_empty() {
-        // Zero operator - return a network that gives 0
-        // We can do this by adding a zero tensor
-        let zero_tensor =
-            ArrayD::from_shape_vec(IxDyn(&[1]), vec![Complex64::new(0.0, 0.0)]).unwrap();
-        all_ixs.push(vec![]);
-        all_tensors.push(zero_tensor);
-    } else {
-        // For each site, collect which operator is applied
-        let mut site_ops: Vec<Option<(crate::operator::Op, Complex64)>> = vec![None; n];
-
-        // Only single-term polynomials are supported
-        assert!(
-            operator.len() == 1,
-            "circuit_to_expectation() only supports single-term OperatorPolynomial, got {} terms",
-            operator.len()
-        );
-        let (coeff, opstring) = operator.iter().next().unwrap();
-
-        for (site, op) in opstring.ops() {
-            site_ops[*site] = Some((*op, *coeff));
-        }
-
-        // Insert operator tensors for each site
-        for i in 0..n {
-            let d = circuit.dims[i];
-
-            // Get the operator matrix (or identity if none specified)
-            let op_mat = if let Some((op, coeff_for_site)) = &site_ops[i] {
-                let mut mat = op_matrix(op);
-                // Apply coefficient to first operator only to avoid multiplying multiple times
-                if i == opstring.ops().first().map(|(s, _)| *s).unwrap_or(i) {
-                    for elem in mat.iter_mut() {
-                        *elem *= coeff_for_site;
-                    }
-                }
-                mat
-            } else {
-                op_matrix(&crate::operator::Op::I)
-            };
-
-            // Create tensor: shape (d, d) for operator connecting U output to U† input
-            let input_label = u_output_labels[i];
-            let output_label = next_label;
+    // Share U and U† across all polynomial terms. The selector is a summed
+    // hyperedge; slicing it also provides a bounded term-by-term execution path.
+    let output_labels: Vec<_> = (0..n)
+        .map(|i| {
+            let label = next_label;
             next_label += 1;
-            size_dict.insert(output_label, d);
-
-            // Tensor data: op_mat[out, in] -> shape [d, d] with legs [output_label, input_label]
-            let mut data = Vec::with_capacity(d * d);
-            for out_idx in 0..d {
-                for in_idx in 0..d {
-                    data.push(op_mat[[out_idx, in_idx]]);
-                }
-            }
-            let tensor = ArrayD::from_shape_vec(IxDyn(&[d, d]), data).unwrap();
-            all_ixs.push(vec![output_label, input_label]);
-            all_tensors.push(tensor);
-
-            current_labels[i] = output_label;
-        }
+            size_dict.insert(label, circuit.dims[i]);
+            label
+        })
+        .collect();
+    append_observable(
+        &circuit.dims,
+        operator,
+        &current_labels,
+        &output_labels,
+        next_label,
+        &mut all_ixs,
+        &mut all_tensors,
+        &mut size_dict,
+    );
+    if operator.len() > 1 && n > 0 {
+        next_label += 1;
     }
+    current_labels = output_labels;
 
     // ===== Part 4: U† circuit tensors (conjugate transpose, reverse order) =====
     // For U†, we process gates in reverse order and conjugate the matrices
@@ -665,79 +624,121 @@ pub fn circuit_to_expectation_dm(
     let ket_labels: Vec<i32> = tn.code.iy[..n].to_vec();
     let bra_labels: Vec<i32> = tn.code.iy[n..].to_vec();
 
-    if operator.is_empty() {
-        let zero_tensor =
-            ArrayD::from_shape_vec(IxDyn(&[]), vec![Complex64::new(0.0, 0.0)]).unwrap();
-        let mut ixs = tn.code.ixs;
-        ixs.push(vec![]);
-        return TensorNetworkDM {
-            code: EinCode::new(ixs, vec![]),
-            tensors: {
-                let mut t = tn.tensors;
-                t.push(zero_tensor);
-                t
-            },
-            size_dict: tn.size_dict,
-        };
-    }
-
-    // Handle first term (only single-term polynomials are supported)
-    assert!(
-        operator.len() == 1,
-        "circuit_to_expectation_dm() only supports single-term OperatorPolynomial, got {} terms",
-        operator.len()
+    let selector = tn
+        .size_dict
+        .keys()
+        .copied()
+        .max()
+        .unwrap_or(0)
+        .checked_add(1)
+        .expect("Observable label overflow");
+    append_observable(
+        &circuit.dims,
+        operator,
+        &ket_labels,
+        &bra_labels,
+        selector,
+        &mut tn.code.ixs,
+        &mut tn.tensors,
+        &mut tn.size_dict,
     );
-    let (coeff, opstring) = operator.iter().next().unwrap();
+    tn.code.iy.clear();
+    tn
+}
 
-    let mut site_ops: Vec<Option<crate::operator::Op>> = vec![None; n];
-    for (site, op) in opstring.ops() {
-        site_ops[*site] = Some(*op);
+// Factor a polynomial into local operator tensors joined by a term selector.
+// The singleton case keeps its original rank-two representation.
+#[allow(clippy::too_many_arguments)]
+fn append_observable<L: omeco::Label>(
+    dims: &[usize],
+    operator: &OperatorPolynomial,
+    inputs: &[L],
+    outputs: &[L],
+    selector: L,
+    ixs: &mut Vec<Vec<L>>,
+    tensors: &mut Vec<ArrayD<Complex64>>,
+    sizes: &mut HashMap<L, usize>,
+) {
+    use crate::operator::Op;
+    assert_eq!(
+        operator.coeffs().len(),
+        operator.opstrings().len(),
+        "Invalid polynomial lengths"
+    );
+    for (coefficient, word) in operator.iter() {
+        assert!(
+            coefficient.re.is_finite() && coefficient.im.is_finite(),
+            "Observable coefficients must be finite"
+        );
+        let mut sites = std::collections::HashSet::new();
+        for &(site, op) in word.ops() {
+            assert!(site < dims.len(), "Observable site out of range");
+            assert!(sites.insert(site), "Duplicate observable site");
+            assert!(
+                op == Op::I || dims[site] == 2,
+                "Nonidentity observable operators require qubits"
+            );
+        }
     }
-
-    // For each site, insert operator tensor on the ket side:
-    // O[bra_label, ket_label] — connecting ket output to bra (for trace)
-    let mut first_op_site = true;
-    let mut ixs = tn.code.ixs;
-
-    for i in 0..n {
-        let d = circuit.dims[i];
-        let op_mat = if let Some(op) = &site_ops[i] {
-            let mut mat = op_matrix(op);
-            if first_op_site {
-                for elem in mat.iter_mut() {
-                    *elem *= coeff;
-                }
-                first_op_site = false;
-            }
-            mat
-        } else {
-            let mut mat = op_matrix(&crate::operator::Op::I);
-            if first_op_site {
-                for elem in mat.iter_mut() {
-                    *elem *= coeff;
-                }
-                first_op_site = false;
-            }
-            mat
-        };
-
-        // Operator tensor: O[out, in] with legs [bra_label, ket_label]
-        // Using bra_label as output traces it with the bra copy of rho
-        let mut data = Vec::with_capacity(d * d);
-        for out_idx in 0..d {
-            for in_idx in 0..d {
-                data.push(op_mat[[out_idx, in_idx]]);
+    if dims.is_empty() {
+        ixs.push(vec![]);
+        tensors.push(ArrayD::from_elem(
+            IxDyn(&[]),
+            operator.coeffs().iter().sum(),
+        ));
+        return;
+    }
+    let terms = operator.len().max(1);
+    let multiple = terms > 1;
+    if multiple {
+        sizes.insert(selector.clone(), terms);
+    }
+    for (site, &d) in dims.iter().enumerate() {
+        let mut shape = vec![d, d];
+        let mut legs = vec![outputs[site].clone(), inputs[site].clone()];
+        if multiple {
+            shape.insert(0, terms);
+            legs.insert(0, selector.clone());
+        }
+        let mut tensor = ArrayD::zeros(IxDyn(&shape));
+        for k in 0..terms {
+            let (coefficient, op) = operator
+                .coeffs()
+                .get(k)
+                .zip(operator.opstrings().get(k))
+                .map_or((Complex64::new(0., 0.), Op::I), |(c, word)| {
+                    (
+                        *c,
+                        word.ops()
+                            .iter()
+                            .find(|(s, _)| *s == site)
+                            .map_or(Op::I, |(_, op)| *op),
+                    )
+                });
+            let mut matrix = if op == Op::I {
+                ndarray::Array2::eye(d)
+            } else {
+                op_matrix(&op)
+            };
+            let coefficient = if site == 0 {
+                coefficient
+            } else {
+                Complex64::new(1., 0.)
+            };
+            matrix.mapv_inplace(|value| coefficient * value);
+            if multiple {
+                tensor
+                    .index_axis_mut(ndarray::Axis(0), k)
+                    .assign(&matrix.into_dyn());
+            } else {
+                tensor.assign(&matrix.into_dyn());
             }
         }
-        let tensor = ArrayD::from_shape_vec(IxDyn(&[d, d]), data).unwrap();
-        tn.tensors.push(tensor);
-        ixs.push(vec![bra_labels[i], ket_labels[i]]);
-    }
-
-    // Output is empty (scalar = trace)
-    TensorNetworkDM {
-        code: EinCode::new(ixs, vec![]),
-        tensors: tn.tensors,
-        size_dict: tn.size_dict,
+        ixs.push(legs);
+        tensors.push(tensor);
     }
 }
+
+#[cfg(test)]
+#[path = "unit_tests/observables.rs"]
+mod observable_tests;

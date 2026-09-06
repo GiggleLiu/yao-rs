@@ -14,11 +14,23 @@ pub fn toeinsum(
     let dto = if let Some(op_str) = op {
         let operator = crate::operator_parser::parse_operator_for_qubits(op_str, circuit.nbits)?;
         anyhow::ensure!(
-            operator.len() == 1,
-            "Tensor-network expectation export supports a single operator term; use `yao run --op` for sums"
+            operator
+                .opstrings()
+                .iter()
+                .flat_map(|s| s.ops())
+                .all(|(site, op)| *op == yao_rs::Op::I || circuit.dims[*site] == 2),
+            "Nonidentity operators require qubit sites"
         );
-        let tn = yao_rs::circuit_to_expectation(&circuit, &operator);
-        TensorNetworkDto::from_pure(&tn)
+        if matches!(mode, TnMode::Dm)
+            || circuit
+                .elements
+                .iter()
+                .any(|e| matches!(e, yao_rs::CircuitElement::Channel(_)))
+        {
+            TensorNetworkDto::from_dm(&yao_rs::circuit_to_expectation_dm(&circuit, &operator))
+        } else {
+            TensorNetworkDto::from_pure(&yao_rs::circuit_to_expectation(&circuit, &operator))
+        }
     } else {
         match mode {
             TnMode::Pure => {
@@ -42,7 +54,8 @@ pub fn toeinsum(
 
     let json_value = serde_json::to_value(&dto)?;
     let human = format!(
-        "Tensor Network (mode={mode:?}):\n  Tensors: {}\n  Labels: {}\n",
+        "Tensor Network (mode={}):\n  Tensors: {}\n  Labels: {}\n",
+        dto.mode,
         dto.tensors.len(),
         dto.size_dict.len(),
     );

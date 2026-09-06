@@ -24,6 +24,7 @@ pub struct EinCodeDto {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct TensorNetworkDto {
     pub format: String,
     pub mode: String,
@@ -32,6 +33,18 @@ pub struct TensorNetworkDto {
     pub size_dict: HashMap<String, usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub contraction_order: Option<NestedEinsumTree<i32>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub slice_plan: Option<SlicePlanDto>,
+}
+
+/// Version-two execution semantics. Older CLI readers reject the enclosing
+/// `yao-tn-v2` format before contraction rather than discarding these slices.
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SlicePlanDto {
+    pub labels: Vec<i32>,
+    pub budget: yao_rs::slicing::SliceBudget,
+    pub estimate: yao_rs::slicing::MemoryEstimate,
 }
 
 impl TensorNetworkDto {
@@ -55,6 +68,7 @@ impl TensorNetworkDto {
                 .map(|(label, size)| (label.to_string(), *size))
                 .collect(),
             contraction_order: None,
+            slice_plan: None,
         }
     }
 
@@ -78,6 +92,7 @@ impl TensorNetworkDto {
                 .map(|(label, size)| (label.to_string(), *size))
                 .collect(),
             contraction_order: None,
+            slice_plan: None,
         }
     }
 
@@ -88,9 +103,13 @@ impl TensorNetworkDto {
     #[cfg(any(feature = "omeinsum", feature = "tenferro", test))]
     pub fn to_tensor_network(&self) -> anyhow::Result<TensorNetworkDM> {
         anyhow::ensure!(
-            self.format == "yao-tn-v1",
+            matches!(self.format.as_str(), "yao-tn-v1" | "yao-tn-v2"),
             "Unknown tensor-network format: {}",
             self.format
+        );
+        anyhow::ensure!(
+            (self.format == "yao-tn-v2") == self.slice_plan.is_some(),
+            "yao-tn-v2 requires slice_plan; yao-tn-v1 must not contain slice_plan"
         );
         anyhow::ensure!(
             matches!(self.mode.as_str(), "pure" | "dm" | "state" | "overlap"),
@@ -157,6 +176,24 @@ impl TensorNetworkDto {
                 &EinCode::new(ixs.clone(), iy.clone()),
             )
             .map_err(anyhow::Error::msg)?;
+        }
+        if let Some(sliced) = &self.slice_plan {
+            let tree = self
+                .contraction_order
+                .as_ref()
+                .ok_or_else(|| anyhow::anyhow!("Sliced plan requires a contraction order"))?;
+            let plan = yao_rs::slicing::SlicedPlan::new(
+                &EinCode::new(ixs.clone(), iy.clone()),
+                &size_dict,
+                &tree.clone().into(),
+                &sliced.labels,
+                sliced.budget,
+            )
+            .map_err(anyhow::Error::msg)?;
+            anyhow::ensure!(
+                plan.estimate() == sliced.estimate,
+                "Stored memory estimate disagrees with sliced plan"
+            );
         }
         Ok(TensorNetworkDM {
             code: EinCode::new(ixs, iy),

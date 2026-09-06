@@ -1,0 +1,24 @@
+{"allocated_bytes":49840,"diagnostic_ns":35459,"peak_additional_rust_heap_bytes":49840,"phase":"matrix_inputs","retained_additional_rust_heap_bytes":49736}
+{"allocated_bytes":2772,"diagnostic_ns":10042,"peak_additional_rust_heap_bytes":1604,"phase":"slice_planning","retained_additional_rust_heap_bytes":1064}
+{"backend":"tenferro","dimension":32,"estimate":{"concurrent_slices":1,"estimated_total_bytes":16990208,"input_bytes":49152,"largest_intermediate_bytes":16777216,"omeco_peak_bytes":16809984,"output_bytes":16384,"slices":1,"worker_buffer_bytes":16924672,"workspace_reserved_bytes":0},"kind":"outer","labels":[],"mode":"unsliced","tree":{"args":[{"args":[{"isleaf":true,"tensorindex":0},{"isleaf":true,"tensorindex":1}],"eins":{"ixs":[[0,1],[2,3]],"iy":[0,1,2,3]},"isleaf":false},{"isleaf":true,"tensorindex":2}],"eins":{"ixs":[[0,1,2,3],[1,2]],"iy":[0,3]},"isleaf":false}}
+{"allocated_bytes":32023,"diagnostic_ns":52083,"peak_additional_rust_heap_bytes":13520,"phase":"slice_compilation","retained_additional_rust_heap_bytes":3492}
+{"allocated_bytes":33768429,"diagnostic_ns":2972083,"peak_additional_rust_heap_bytes":33643476,"phase":"slice_execution","retained_additional_rust_heap_bytes":33609912}
+{"checksum":17790.397958588404,"status":"complete"}
+        0.00 real         0.00 user         0.00 sys
+            40468480  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                2654  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+                   5  involuntary context switches
+            65175561  instructions retired
+            19759190  cycles elapsed
+            35455360  peak memory footprint

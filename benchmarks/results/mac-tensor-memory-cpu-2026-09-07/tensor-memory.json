@@ -1,0 +1,2010 @@
+[
+  {
+    "backend": "omeinsum",
+    "dimension": 128,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 2369536,
+      "input_bytes": 786432,
+      "largest_intermediate_bytes": 262144,
+      "omeco_peak_bytes": 266240,
+      "output_bytes": 262144,
+      "slices": 128,
+      "worker_buffer_bytes": 1320960,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "chain",
+    "labels": [
+      0
+    ],
+    "mode": "fixed_output",
+    "tree": {
+      "args": [
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 1
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "iy": [
+              0,
+              2
+            ]
+          },
+          "isleaf": false
+        },
+        {
+          "isleaf": true,
+          "tensorindex": 2
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 5373952,
+    "execution_peak_bytes": 1578504,
+    "input_retained_bytes": 787016
+  },
+  {
+    "backend": "omeinsum",
+    "dimension": 128,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 3670016,
+      "input_bytes": 786432,
+      "largest_intermediate_bytes": 262144,
+      "omeco_peak_bytes": 786432,
+      "output_bytes": 262144,
+      "slices": 1,
+      "worker_buffer_bytes": 2621440,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "chain",
+    "labels": [],
+    "mode": "unsliced",
+    "tree": {
+      "args": [
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 1
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "iy": [
+              0,
+              2
+            ]
+          },
+          "isleaf": false
+        },
+        {
+          "isleaf": true,
+          "tensorindex": 2
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 5357568,
+    "execution_peak_bytes": 6556132,
+    "input_retained_bytes": 787016
+  },
+  {
+    "backend": "omeinsum",
+    "dimension": 256,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 9457664,
+      "input_bytes": 3145728,
+      "largest_intermediate_bytes": 1048576,
+      "omeco_peak_bytes": 1056768,
+      "output_bytes": 1048576,
+      "slices": 256,
+      "worker_buffer_bytes": 5263360,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "chain",
+    "labels": [
+      0
+    ],
+    "mode": "fixed_output",
+    "tree": {
+      "args": [
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 1
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "iy": [
+              0,
+              2
+            ]
+          },
+          "isleaf": false
+        },
+        {
+          "isleaf": true,
+          "tensorindex": 2
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 12484608,
+    "execution_peak_bytes": 6301192,
+    "input_retained_bytes": 3146312
+  },
+  {
+    "backend": "omeinsum",
+    "dimension": 256,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 14680064,
+      "input_bytes": 3145728,
+      "largest_intermediate_bytes": 1048576,
+      "omeco_peak_bytes": 3145728,
+      "output_bytes": 1048576,
+      "slices": 1,
+      "worker_buffer_bytes": 10485760,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "chain",
+    "labels": [],
+    "mode": "unsliced",
+    "tree": {
+      "args": [
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 1
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "iy": [
+              0,
+              2
+            ]
+          },
+          "isleaf": false
+        },
+        {
+          "isleaf": true,
+          "tensorindex": 2
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 12517376,
+    "execution_peak_bytes": 11536868,
+    "input_retained_bytes": 3146312
+  },
+  {
+    "backend": "omeinsum",
+    "dimension": 32,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 70160,
+      "input_bytes": 49152,
+      "largest_intermediate_bytes": 512,
+      "omeco_peak_bytes": 1040,
+      "output_bytes": 16384,
+      "slices": 1024,
+      "worker_buffer_bytes": 4624,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "chain",
+    "labels": [
+      0,
+      2
+    ],
+    "mode": "auto",
+    "tree": {
+      "args": [
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 1
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "iy": [
+              0,
+              2
+            ]
+          },
+          "isleaf": false
+        },
+        {
+          "isleaf": true,
+          "tensorindex": 2
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 3424256,
+    "execution_peak_bytes": 23424,
+    "input_retained_bytes": 49736
+  },
+  {
+    "backend": "omeinsum",
+    "dimension": 32,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 150016,
+      "input_bytes": 49152,
+      "largest_intermediate_bytes": 16384,
+      "omeco_peak_bytes": 17408,
+      "output_bytes": 16384,
+      "slices": 32,
+      "worker_buffer_bytes": 84480,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "chain",
+    "labels": [
+      0
+    ],
+    "mode": "fixed_output",
+    "tree": {
+      "args": [
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 1
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "iy": [
+              0,
+              2
+            ]
+          },
+          "isleaf": false
+        },
+        {
+          "isleaf": true,
+          "tensorindex": 2
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 3096576,
+    "execution_peak_bytes": 100872,
+    "input_retained_bytes": 49736
+  },
+  {
+    "backend": "omeinsum",
+    "dimension": 32,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 229376,
+      "input_bytes": 49152,
+      "largest_intermediate_bytes": 16384,
+      "omeco_peak_bytes": 49152,
+      "output_bytes": 16384,
+      "slices": 1,
+      "worker_buffer_bytes": 163840,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "chain",
+    "labels": [],
+    "mode": "unsliced",
+    "tree": {
+      "args": [
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 1
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "iy": [
+              0,
+              2
+            ]
+          },
+          "isleaf": false
+        },
+        {
+          "isleaf": true,
+          "tensorindex": 2
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 3096576,
+    "execution_peak_bytes": 4297862,
+    "input_retained_bytes": 49736
+  },
+  {
+    "backend": "omeinsum",
+    "dimension": 32,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 673792,
+      "input_bytes": 49152,
+      "largest_intermediate_bytes": 524288,
+      "omeco_peak_bytes": 541184,
+      "output_bytes": 16384,
+      "slices": 32,
+      "worker_buffer_bytes": 608256,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "outer",
+    "labels": [
+      0
+    ],
+    "mode": "fixed_output",
+    "tree": {
+      "args": [
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 1
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "iy": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "isleaf": false
+        },
+        {
+          "isleaf": true,
+          "tensorindex": 2
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 4325376,
+    "execution_peak_bytes": 1135720,
+    "input_retained_bytes": 49736
+  },
+  {
+    "backend": "omeinsum",
+    "dimension": 32,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 229376,
+      "input_bytes": 49152,
+      "largest_intermediate_bytes": 16384,
+      "omeco_peak_bytes": 65536,
+      "output_bytes": 16384,
+      "slices": 1,
+      "worker_buffer_bytes": 163840,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "outer",
+    "labels": [],
+    "mode": "greedy",
+    "tree": {
+      "args": [
+        {
+          "isleaf": true,
+          "tensorindex": 1
+        },
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 2
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "iy": [
+              0,
+              2
+            ]
+          },
+          "isleaf": false
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            2,
+            3
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 3342336,
+    "execution_peak_bytes": 4314774,
+    "input_retained_bytes": 49736
+  },
+  {
+    "backend": "omeinsum",
+    "dimension": 32,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 16990208,
+      "input_bytes": 49152,
+      "largest_intermediate_bytes": 16777216,
+      "omeco_peak_bytes": 16809984,
+      "output_bytes": 16384,
+      "slices": 1,
+      "worker_buffer_bytes": 16924672,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "outer",
+    "labels": [],
+    "mode": "unsliced",
+    "tree": {
+      "args": [
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 1
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "iy": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "isleaf": false
+        },
+        {
+          "isleaf": true,
+          "tensorindex": 2
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 36569088,
+    "execution_peak_bytes": 33623000,
+    "input_retained_bytes": 49736
+  },
+  {
+    "backend": "omeinsum",
+    "dimension": 64,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 4788224,
+      "input_bytes": 196608,
+      "largest_intermediate_bytes": 4194304,
+      "omeco_peak_bytes": 4260864,
+      "output_bytes": 65536,
+      "slices": 64,
+      "worker_buffer_bytes": 4526080,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "outer",
+    "labels": [
+      0
+    ],
+    "mode": "fixed_output",
+    "tree": {
+      "args": [
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 1
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "iy": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "isleaf": false
+        },
+        {
+          "isleaf": true,
+          "tensorindex": 2
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 12173312,
+    "execution_peak_bytes": 8723048,
+    "input_retained_bytes": 197192
+  },
+  {
+    "backend": "omeinsum",
+    "dimension": 64,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 917504,
+      "input_bytes": 196608,
+      "largest_intermediate_bytes": 65536,
+      "omeco_peak_bytes": 262144,
+      "output_bytes": 65536,
+      "slices": 1,
+      "worker_buffer_bytes": 655360,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "outer",
+    "labels": [],
+    "mode": "greedy",
+    "tree": {
+      "args": [
+        {
+          "isleaf": true,
+          "tensorindex": 1
+        },
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 2
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "iy": [
+              0,
+              2
+            ]
+          },
+          "isleaf": false
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            2,
+            3
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 3883008,
+    "execution_peak_bytes": 4659009,
+    "input_retained_bytes": 197192
+  },
+  {
+    "backend": "omeinsum",
+    "dimension": 64,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 269287424,
+      "input_bytes": 196608,
+      "largest_intermediate_bytes": 268435456,
+      "omeco_peak_bytes": 268566528,
+      "output_bytes": 65536,
+      "slices": 1,
+      "worker_buffer_bytes": 269025280,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "outer",
+    "labels": [],
+    "mode": "unsliced",
+    "tree": {
+      "args": [
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 1
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "iy": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "isleaf": false
+        },
+        {
+          "isleaf": true,
+          "tensorindex": 2
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 540278784,
+    "execution_peak_bytes": 537135828,
+    "input_retained_bytes": 197192
+  },
+  {
+    "backend": "tenferro",
+    "dimension": 128,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 2369536,
+      "input_bytes": 786432,
+      "largest_intermediate_bytes": 262144,
+      "omeco_peak_bytes": 266240,
+      "output_bytes": 262144,
+      "slices": 128,
+      "worker_buffer_bytes": 1320960,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "chain",
+    "labels": [
+      0
+    ],
+    "mode": "fixed_output",
+    "tree": {
+      "args": [
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 1
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "iy": [
+              0,
+              2
+            ]
+          },
+          "isleaf": false
+        },
+        {
+          "isleaf": true,
+          "tensorindex": 2
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 8126464,
+    "execution_peak_bytes": 848844,
+    "input_retained_bytes": 787016
+  },
+  {
+    "backend": "tenferro",
+    "dimension": 128,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 3670016,
+      "input_bytes": 786432,
+      "largest_intermediate_bytes": 262144,
+      "omeco_peak_bytes": 786432,
+      "output_bytes": 262144,
+      "slices": 1,
+      "worker_buffer_bytes": 2621440,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "chain",
+    "labels": [],
+    "mode": "unsliced",
+    "tree": {
+      "args": [
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 1
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "iy": [
+              0,
+              2
+            ]
+          },
+          "isleaf": false
+        },
+        {
+          "isleaf": true,
+          "tensorindex": 2
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 7913472,
+    "execution_peak_bytes": 5816844,
+    "input_retained_bytes": 787016
+  },
+  {
+    "backend": "tenferro",
+    "dimension": 256,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 9457664,
+      "input_bytes": 3145728,
+      "largest_intermediate_bytes": 1048576,
+      "omeco_peak_bytes": 1056768,
+      "output_bytes": 1048576,
+      "slices": 256,
+      "worker_buffer_bytes": 5263360,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "chain",
+    "labels": [
+      0
+    ],
+    "mode": "fixed_output",
+    "tree": {
+      "args": [
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 1
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "iy": [
+              0,
+              2
+            ]
+          },
+          "isleaf": false
+        },
+        {
+          "isleaf": true,
+          "tensorindex": 2
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 12926976,
+    "execution_peak_bytes": 3214284,
+    "input_retained_bytes": 3146312
+  },
+  {
+    "backend": "tenferro",
+    "dimension": 256,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 14680064,
+      "input_bytes": 3145728,
+      "largest_intermediate_bytes": 1048576,
+      "omeco_peak_bytes": 3145728,
+      "output_bytes": 1048576,
+      "slices": 1,
+      "worker_buffer_bytes": 10485760,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "chain",
+    "labels": [],
+    "mode": "unsliced",
+    "tree": {
+      "args": [
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 1
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "iy": [
+              0,
+              2
+            ]
+          },
+          "isleaf": false
+        },
+        {
+          "isleaf": true,
+          "tensorindex": 2
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 12713984,
+    "execution_peak_bytes": 8438284,
+    "input_retained_bytes": 3146312
+  },
+  {
+    "backend": "tenferro",
+    "dimension": 32,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 70160,
+      "input_bytes": 49152,
+      "largest_intermediate_bytes": 512,
+      "omeco_peak_bytes": 1040,
+      "output_bytes": 16384,
+      "slices": 1024,
+      "worker_buffer_bytes": 4624,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "chain",
+    "labels": [
+      0,
+      2
+    ],
+    "mode": "auto",
+    "tree": {
+      "args": [
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 1
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "iy": [
+              0,
+              2
+            ]
+          },
+          "isleaf": false
+        },
+        {
+          "isleaf": true,
+          "tensorindex": 2
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 6930432,
+    "execution_peak_bytes": 74724,
+    "input_retained_bytes": 49736
+  },
+  {
+    "backend": "tenferro",
+    "dimension": 32,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 150016,
+      "input_bytes": 49152,
+      "largest_intermediate_bytes": 16384,
+      "omeco_peak_bytes": 17408,
+      "output_bytes": 16384,
+      "slices": 32,
+      "worker_buffer_bytes": 84480,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "chain",
+    "labels": [
+      0
+    ],
+    "mode": "fixed_output",
+    "tree": {
+      "args": [
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 1
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "iy": [
+              0,
+              2
+            ]
+          },
+          "isleaf": false
+        },
+        {
+          "isleaf": true,
+          "tensorindex": 2
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 6619136,
+    "execution_peak_bytes": 106956,
+    "input_retained_bytes": 49736
+  },
+  {
+    "backend": "tenferro",
+    "dimension": 32,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 229376,
+      "input_bytes": 49152,
+      "largest_intermediate_bytes": 16384,
+      "omeco_peak_bytes": 49152,
+      "output_bytes": 16384,
+      "slices": 1,
+      "worker_buffer_bytes": 163840,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "chain",
+    "labels": [],
+    "mode": "unsliced",
+    "tree": {
+      "args": [
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 1
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "iy": [
+              0,
+              2
+            ]
+          },
+          "isleaf": false
+        },
+        {
+          "isleaf": true,
+          "tensorindex": 2
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 6422528,
+    "execution_peak_bytes": 4295854,
+    "input_retained_bytes": 49736
+  },
+  {
+    "backend": "tenferro",
+    "dimension": 32,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 673792,
+      "input_bytes": 49152,
+      "largest_intermediate_bytes": 524288,
+      "omeco_peak_bytes": 541184,
+      "output_bytes": 16384,
+      "slices": 32,
+      "worker_buffer_bytes": 608256,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "outer",
+    "labels": [
+      0
+    ],
+    "mode": "fixed_output",
+    "tree": {
+      "args": [
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 1
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "iy": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "isleaf": false
+        },
+        {
+          "isleaf": true,
+          "tensorindex": 2
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 8863744,
+    "execution_peak_bytes": 1696036,
+    "input_retained_bytes": 49736
+  },
+  {
+    "backend": "tenferro",
+    "dimension": 32,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 229376,
+      "input_bytes": 49152,
+      "largest_intermediate_bytes": 16384,
+      "omeco_peak_bytes": 65536,
+      "output_bytes": 16384,
+      "slices": 1,
+      "worker_buffer_bytes": 163840,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "outer",
+    "labels": [],
+    "mode": "greedy",
+    "tree": {
+      "args": [
+        {
+          "isleaf": true,
+          "tensorindex": 1
+        },
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 2
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "iy": [
+              0,
+              2
+            ]
+          },
+          "isleaf": false
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            2,
+            3
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 6750208,
+    "execution_peak_bytes": 4309924,
+    "input_retained_bytes": 49736
+  },
+  {
+    "backend": "tenferro",
+    "dimension": 32,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 16990208,
+      "input_bytes": 49152,
+      "largest_intermediate_bytes": 16777216,
+      "omeco_peak_bytes": 16809984,
+      "output_bytes": 16384,
+      "slices": 1,
+      "worker_buffer_bytes": 16924672,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "outer",
+    "labels": [],
+    "mode": "unsliced",
+    "tree": {
+      "args": [
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 1
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "iy": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "isleaf": false
+        },
+        {
+          "isleaf": true,
+          "tensorindex": 2
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 40468480,
+    "execution_peak_bytes": 33643476,
+    "input_retained_bytes": 49736
+  },
+  {
+    "backend": "tenferro",
+    "dimension": 64,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 4788224,
+      "input_bytes": 196608,
+      "largest_intermediate_bytes": 4194304,
+      "omeco_peak_bytes": 4260864,
+      "output_bytes": 65536,
+      "slices": 64,
+      "worker_buffer_bytes": 4526080,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "outer",
+    "labels": [
+      0
+    ],
+    "mode": "fixed_output",
+    "tree": {
+      "args": [
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 1
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "iy": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "isleaf": false
+        },
+        {
+          "isleaf": true,
+          "tensorindex": 2
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 20316160,
+    "execution_peak_bytes": 12903204,
+    "input_retained_bytes": 197192
+  },
+  {
+    "backend": "tenferro",
+    "dimension": 64,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 917504,
+      "input_bytes": 196608,
+      "largest_intermediate_bytes": 65536,
+      "omeco_peak_bytes": 262144,
+      "output_bytes": 65536,
+      "slices": 1,
+      "worker_buffer_bytes": 655360,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "outer",
+    "labels": [],
+    "mode": "greedy",
+    "tree": {
+      "args": [
+        {
+          "isleaf": true,
+          "tensorindex": 1
+        },
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 2
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "iy": [
+              0,
+              2
+            ]
+          },
+          "isleaf": false
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            2,
+            3
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 7143424,
+    "execution_peak_bytes": 4506980,
+    "input_retained_bytes": 197192
+  },
+  {
+    "backend": "tenferro",
+    "dimension": 64,
+    "estimate": {
+      "concurrent_slices": 1,
+      "estimated_total_bytes": 269287424,
+      "input_bytes": 196608,
+      "largest_intermediate_bytes": 268435456,
+      "omeco_peak_bytes": 268566528,
+      "output_bytes": 65536,
+      "slices": 1,
+      "worker_buffer_bytes": 269025280,
+      "workspace_reserved_bytes": 0
+    },
+    "kind": "outer",
+    "labels": [],
+    "mode": "unsliced",
+    "tree": {
+      "args": [
+        {
+          "args": [
+            {
+              "isleaf": true,
+              "tensorindex": 0
+            },
+            {
+              "isleaf": true,
+              "tensorindex": 1
+            }
+          ],
+          "eins": {
+            "ixs": [
+              [
+                0,
+                1
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "iy": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "isleaf": false
+        },
+        {
+          "isleaf": true,
+          "tensorindex": 2
+        }
+      ],
+      "eins": {
+        "ixs": [
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "iy": [
+          0,
+          3
+        ]
+      },
+      "isleaf": false
+    },
+    "peak_rss_bytes": 544063488,
+    "execution_peak_bytes": 537052980,
+    "input_retained_bytes": 197192
+  }
+]

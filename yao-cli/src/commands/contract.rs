@@ -45,25 +45,44 @@ pub fn contract_cmd(
     let tree: NestedEinsum<i32> = tree_json.into();
     let tn = dto.to_tensor_network()?;
     let output_dims: Vec<usize> = tn.code.iy.iter().map(|label| tn.size_dict[label]).collect();
+    let sliced = dto
+        .slice_plan
+        .as_ref()
+        .map(|p| {
+            yao_rs::slicing::SlicedPlan::new(&tn.code, &tn.size_dict, &tree, &p.labels, p.budget)
+        })
+        .transpose()
+        .map_err(anyhow::Error::msg)?;
     let result = match backend {
         #[cfg(feature = "omeinsum")]
         ContractionBackend::Omeinsum => {
             anyhow::ensure!(threads.is_none(), "--threads requires --backend tenferro");
             anyhow::ensure!(
-                omeinsum_tree_supported(&tree, true),
+                yao_rs::contractor::tree_supported(&tree),
                 "omeinsum supports binary trees and a single unary root; use --backend tenferro for this tree"
             );
-            yao_rs::contractor::contract_dm_with_tree(&tn, tree)
+            if let Some(plan) = &sliced {
+                yao_rs::contractor::contract_sliced(plan, &tn.tensors)
+                    .map_err(anyhow::Error::msg)?
+            } else {
+                yao_rs::contractor::contract_dm_with_tree(&tn, tree)
+            }
         }
         #[cfg(feature = "tenferro")]
         ContractionBackend::Tenferro => {
             let cpu = yao_rs::tenferro::CpuContractor::new(threads.map_or(1, |n| n.get()))
                 .map_err(anyhow::Error::msg)?;
-            let plan = cpu
-                .prepare(&tn.code, &tn.size_dict, Some(&tree))
-                .map_err(anyhow::Error::msg)?;
-            cpu.execute(&plan, &tn.tensors)
-                .map_err(anyhow::Error::msg)?
+            if let Some(plan) = &sliced {
+                let prepared = cpu.prepare_sliced(plan).map_err(anyhow::Error::msg)?;
+                cpu.execute_sliced(&prepared, &tn.tensors)
+                    .map_err(anyhow::Error::msg)?
+            } else {
+                let plan = cpu
+                    .prepare(&tn.code, &tn.size_dict, Some(&tree))
+                    .map_err(anyhow::Error::msg)?;
+                cpu.execute(&plan, &tn.tensors)
+                    .map_err(anyhow::Error::msg)?
+            }
         }
     };
 
@@ -113,17 +132,6 @@ pub fn contract_cmd(
             .join("\n");
         let json_value = serde_json::json!(data);
         out.emit(&format!("Tensor entries:\n{human}\n"), &json_value)
-    }
-}
-
-#[cfg(feature = "omeinsum")]
-fn omeinsum_tree_supported(tree: &NestedEinsum<i32>, root: bool) -> bool {
-    match tree {
-        NestedEinsum::Leaf { .. } => true,
-        NestedEinsum::Node { args, .. } => {
-            (root && (args.is_empty() || matches!(args.as_slice(), [NestedEinsum::Leaf { .. }])))
-                || (args.len() == 2 && args.iter().all(|arg| omeinsum_tree_supported(arg, false)))
-        }
     }
 }
 

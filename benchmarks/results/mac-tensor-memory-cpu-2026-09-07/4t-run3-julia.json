@@ -1,0 +1,88 @@
+{
+  "records": [
+    {
+      "median_ns": 3125.5,
+      "construction_median_ns": 45437.0,
+      "max_error": 1.3877787807814457e-17,
+      "id": "expectation_4_terms5",
+      "samples_ns": [
+        14334.0,
+        3958.0,
+        3375.0,
+        3292.0,
+        3083.0,
+        3000.0,
+        3167.0,
+        2875.0,
+        2875.0,
+        3084.0
+      ],
+      "allocations": 91,
+      "allocated_bytes": 4448
+    },
+    {
+      "median_ns": 40520.5,
+      "construction_median_ns": 47688.0,
+      "max_error": 5.003707553108401e-17,
+      "id": "expectation_dm_4_terms5",
+      "samples_ns": [
+        107041.0,
+        44833.0,
+        41792.0,
+        41166.0,
+        39875.0,
+        39208.0,
+        39500.0,
+        39750.0,
+        39167.0,
+        42166.0
+      ],
+      "allocations": 750,
+      "allocated_bytes": 79056
+    },
+    {
+      "median_ns": 4646.0,
+      "construction_median_ns": 75250.0,
+      "max_error": 5.551115123125783e-17,
+      "id": "expectation_6_terms5",
+      "samples_ns": [
+        19417.0,
+        5042.0,
+        4916.0,
+        4667.0,
+        4417.0,
+        4792.0,
+        4584.0,
+        4500.0,
+        4625.0,
+        4625.0
+      ],
+      "allocations": 109,
+      "allocated_bytes": 9824
+    },
+    {
+      "median_ns": 1.997354e6,
+      "construction_median_ns": 72917.0,
+      "max_error": 1.1188630228279524e-16,
+      "id": "expectation_dm_6_terms5",
+      "samples_ns": [
+        2.143041e6,
+        2.029e6,
+        2.019e6,
+        2.144667e6,
+        1.966167e6,
+        1.961791e6,
+        1.961667e6,
+        1.964375e6,
+        2.014583e6,
+        1.980125e6
+      ],
+      "allocations": 3101,
+      "allocated_bytes": 832752
+    }
+  ],
+  "julia": "1.12.4",
+  "blas": "LBTConfig([ILP64] libopenblas64_.dylib)",
+  "threads": 4,
+  "yao": "0.9.3"
+}

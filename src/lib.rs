@@ -51,6 +51,7 @@ pub mod parameters;
 #[cfg(feature = "qasm")]
 pub mod qasm;
 pub mod register;
+pub mod slicing;
 pub mod svg;
 #[cfg(feature = "tenferro")]
 pub mod tenferro;

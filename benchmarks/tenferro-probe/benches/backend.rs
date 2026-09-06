@@ -37,6 +37,69 @@ fn backend(c: &mut Criterion) {
                     })
                 });
             }
+            "expectation" | "expectation_dm" => {
+                let op = case.operator.as_ref().unwrap();
+                let noisy = case.mode == "expectation_dm";
+                let evaluate = || {
+                    if noisy {
+                        let mut dm = DensityMatrix::from_reg(&state);
+                        dm.apply(&circuit);
+                        yao_rs::expect::expect_dm(&dm, op)
+                    } else {
+                        yao_rs::expect::expect_arrayreg(&apply(&circuit, &state), op)
+                    }
+                };
+                let expected = evaluate();
+                group.bench_function("native", |b| b.iter(|| black_box(evaluate())));
+                use yao_tenferro_probe::tensor_memory as tm;
+                let tn = tm::network(&circuit, op, noisy);
+                group.bench_function("observable_export", |b| {
+                    b.iter(|| tm::network(black_box(&circuit), black_box(op), noisy))
+                });
+                let tree = yao_rs::contraction_plan::optimize_code(
+                    &tn.code,
+                    &tn.size_dict,
+                    &omeco::GreedyMethod::default(),
+                )
+                .unwrap();
+                let selector = tm::term_label(&tn, op.len()).unwrap();
+                for (name, labels) in [("unsliced", vec![]), ("term_sliced", vec![selector])] {
+                    let plan = yao_rs::slicing::SlicedPlan::new(
+                        &tn.code,
+                        &tn.size_dict,
+                        &tree,
+                        &labels,
+                        yao_rs::slicing::SliceBudget::default(),
+                    )
+                    .unwrap();
+                    tm::record_plan(&case.id, name, &plan).unwrap();
+                    let prepared = cpu.prepare_sliced(&plan).unwrap();
+                    let got =
+                        cpu.execute_sliced(&prepared, &tn.tensors).unwrap()[ndarray::IxDyn(&[])];
+                    assert!((got - expected).norm() < 1e-10);
+                    let got = yao_rs::contractor::contract_sliced(&plan, &tn.tensors).unwrap()
+                        [ndarray::IxDyn(&[])];
+                    assert!((got - expected).norm() < 1e-10);
+                    group.bench_function(format!("tenferro_{name}_prepare"), |b| {
+                        b.iter(|| cpu.prepare_sliced(black_box(&plan)).unwrap())
+                    });
+                    group.bench_function(format!("tenferro_{name}_warm"), |b| {
+                        b.iter(|| {
+                            cpu.execute_sliced(black_box(&prepared), black_box(&tn.tensors))
+                                .unwrap()
+                        })
+                    });
+                    group.bench_function(format!("omeinsum_{name}"), |b| {
+                        b.iter(|| {
+                            yao_rs::contractor::contract_sliced(
+                                black_box(&plan),
+                                black_box(&tn.tensors),
+                            )
+                            .unwrap()
+                        })
+                    });
+                }
+            }
             "gradient" => {
                 let op = OperatorPolynomial::single(0, Op::Z, 1.0.into());
                 group.bench_function("native", |b| {
@@ -141,6 +204,10 @@ fn backend(c: &mut Criterion) {
             });
         }
         group.finish();
+    }
+    if std::env::var("YAO_BENCH_SUITE").as_deref() == Ok("tensor-memory") {
+        matrix_slicing(c, &cpu);
+        return;
     }
     for n in [8, 12, 16] {
         let batch = 1usize << (n - 1);
@@ -276,4 +343,53 @@ fn supported(
             yao_rs::contractor::contract_dm_with_tree(black_box(&tn), black_box(&tree).clone())
         })
     });
+}
+
+fn matrix_slicing(c: &mut Criterion, cpu: &yao_rs::tenferro::CpuContractor) {
+    use yao_tenferro_probe::tensor_memory as tm;
+    for (kind, n, modes) in tm::matrix_workloads() {
+        let tn = if kind == "outer" {
+            tm::outer_network(n)
+        } else {
+            tm::matrix_network(n)
+        };
+        let baseline = tm::matrix_plan(&tn, "unsliced").unwrap();
+        let reference = yao_rs::contractor::contract_sliced(&baseline, &tn.tensors).unwrap();
+        let mut group = c.benchmark_group(format!("matrix_{kind}_{n}"));
+        for mode in modes {
+            let plan = tm::matrix_plan(&tn, mode).unwrap();
+            tm::record_plan(&format!("matrix_{kind}_{n}"), mode, &plan).unwrap();
+            let prepared = cpu.prepare_sliced(&plan).unwrap();
+            for result in [
+                cpu.execute_sliced(&prepared, &tn.tensors).unwrap(),
+                yao_rs::contractor::contract_sliced(&plan, &tn.tensors).unwrap(),
+            ] {
+                assert!(
+                    result
+                        .iter()
+                        .zip(&reference)
+                        .all(|(a, b)| (a - b).norm() < 1e-9)
+                );
+            }
+            group.bench_function(format!("plan_{mode}"), |b| {
+                b.iter(|| tm::matrix_plan(black_box(&tn), mode).unwrap())
+            });
+            group.bench_function(format!("tenferro_{mode}_prepare"), |b| {
+                b.iter(|| cpu.prepare_sliced(black_box(&plan)).unwrap())
+            });
+            group.bench_function(format!("tenferro_{mode}_warm"), |b| {
+                b.iter(|| {
+                    cpu.execute_sliced(black_box(&prepared), black_box(&tn.tensors))
+                        .unwrap()
+                })
+            });
+            group.bench_function(format!("omeinsum_{mode}"), |b| {
+                b.iter(|| {
+                    yao_rs::contractor::contract_sliced(black_box(&plan), black_box(&tn.tensors))
+                        .unwrap()
+                })
+            });
+        }
+        group.finish();
+    }
 }

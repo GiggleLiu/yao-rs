@@ -50,6 +50,9 @@ fn phase<T>(name: &str, f: impl FnOnce() -> T) -> T {
     out
 }
 fn main() -> Result<()> {
+    if std::env::args().nth(1).as_deref() == Some("tensor-memory") {
+        return tensor_memory();
+    }
     if std::env::args().nth(1).as_deref() == Some("circuit-ad") {
         return circuit_ad_memory();
     }
@@ -173,6 +176,59 @@ fn evolution_memory() -> Result<()> {
         "gates":bound.circuit().elements.len(), "gate_parameters":bound.circuit().num_params(),
         "physical_parameters":bound.parameters().len(), "state_bytes":(1usize<<n)*16,"norm_squared":norm,
         "note":"Isolated model construction and native execution; Rust heap excludes provider allocations. Timings include instrumentation. RSS includes startup and allocator retention."})
+    );
+    Ok(())
+}
+
+fn tensor_memory() -> Result<()> {
+    use yao_tenferro_probe::tensor_memory as tm;
+    let backend = std::env::args().nth(2).ok_or("expected backend")?;
+    let n: usize = std::env::args()
+        .nth(3)
+        .ok_or("expected matrix dimension")?
+        .parse()?;
+    let mode = std::env::args().nth(4).ok_or("expected slicing mode")?;
+    let kind = std::env::args().nth(5).unwrap_or("chain".into());
+    if !tm::matrix_workloads()
+        .iter()
+        .any(|(k, d, modes)| *k == kind && *d == n && modes.contains(&mode.as_str()))
+    {
+        return Err("unknown or out-of-bounds matrix memory fixture".into());
+    }
+    let tn = phase("matrix_inputs", || {
+        if kind == "outer" {
+            tm::outer_network(n)
+        } else {
+            tm::matrix_network(n)
+        }
+    });
+    let plan = phase("slice_planning", || tm::matrix_plan(&tn, &mode))?;
+    println!(
+        "{}",
+        json!({"dimension":n,"kind":kind,"mode":mode,"backend":backend,"labels":plan.slicing(),"estimate":plan.estimate(),"tree":omeco::json::NestedEinsumTree::from(plan.tree())})
+    );
+    let result = match backend.as_str() {
+        "tenferro" => {
+            let cpu = yao_rs::tenferro::CpuContractor::new(1)?;
+            let prepared = phase("slice_compilation", || cpu.prepare_sliced(&plan))?;
+            phase("slice_execution", || {
+                cpu.execute_sliced(&prepared, &tn.tensors)
+            })?
+        }
+        "omeinsum" => phase("slice_execution", || {
+            yao_rs::contractor::contract_sliced(&plan, &tn.tensors)
+        })?,
+        _ => return Err("unknown matrix backend".into()),
+    };
+    if result
+        .iter()
+        .any(|z| !z.re.is_finite() || !z.im.is_finite())
+    {
+        return Err("nonfinite matrix contraction result".into());
+    }
+    println!(
+        "{}",
+        json!({"status":"complete","checksum":result.iter().map(|z|z.norm_sqr()).sum::<f64>()})
     );
     Ok(())
 }

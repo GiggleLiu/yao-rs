@@ -42,7 +42,9 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: cargo test --workspace --locked ${{ matrix.features }}
       - if: matrix.features == '--all-features'
-        run: cargo run --example custom_loss --all-features --locked
+        run: |
+          cargo run --example custom_loss --all-features --locked
+          cargo run --example sliced_expectation --all-features --locked
 
   tenferro-probe:
     runs-on: ubuntu-latest
