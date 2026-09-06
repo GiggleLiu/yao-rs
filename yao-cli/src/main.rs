@@ -44,13 +44,13 @@ fn main() -> anyhow::Result<()> {
             | Commands::Example { .. }
             | Commands::Fetch { .. }
     );
-    #[cfg(feature = "omeinsum")]
-    let omeinsum_auto_json = matches!(
+    #[cfg(any(feature = "omeinsum", feature = "tenferro"))]
+    let contraction_auto_json = matches!(
         cli.command,
         Commands::Contract { .. } | Commands::Optimize { .. }
     );
-    #[cfg(not(feature = "omeinsum"))]
-    let omeinsum_auto_json = false;
+    #[cfg(not(any(feature = "omeinsum", feature = "tenferro")))]
+    let contraction_auto_json = false;
     #[cfg(feature = "qasm")]
     let qasm_auto_json = matches!(
         cli.command,
@@ -58,7 +58,7 @@ fn main() -> anyhow::Result<()> {
     );
     #[cfg(not(feature = "qasm"))]
     let qasm_auto_json = false;
-    let auto_json = base_auto_json || omeinsum_auto_json || qasm_auto_json;
+    let auto_json = base_auto_json || contraction_auto_json || qasm_auto_json;
 
     let out = OutputConfig {
         output: cli.output,
@@ -96,9 +96,13 @@ fn main() -> anyhow::Result<()> {
         } => commands::measure::measure(&input, shots, locs.as_deref(), seed, &out),
         Commands::Probs { input, locs } => commands::probs::probs(&input, locs.as_deref(), &out),
         Commands::Expect { input, op } => commands::expect::expect(&input, &op, &out),
-        #[cfg(feature = "omeinsum")]
-        Commands::Contract { input } => commands::contract::contract_cmd(&input, &out),
-        #[cfg(feature = "omeinsum")]
+        #[cfg(any(feature = "omeinsum", feature = "tenferro"))]
+        Commands::Contract {
+            input,
+            backend,
+            threads,
+        } => commands::contract::contract_cmd(&input, backend, threads, &out),
+        #[cfg(any(feature = "omeinsum", feature = "tenferro"))]
         Commands::Optimize {
             input,
             method,

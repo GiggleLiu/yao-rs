@@ -151,7 +151,7 @@ Examples:
     },
 
     /// Contract a pre-optimized tensor network
-    #[cfg(feature = "omeinsum")]
+    #[cfg(any(feature = "omeinsum", feature = "tenferro"))]
     #[command(after_help = "\
 Examples:
   yao toeinsum circuit.json | yao optimize - | yao contract -
@@ -160,10 +160,16 @@ Examples:
     Contract {
         /// Tensor network JSON file with contraction_order (use - for stdin)
         input: String,
+        /// Contraction backend (must be enabled when building the CLI)
+        #[arg(long, value_enum, default_value_t = ContractionBackend::default())]
+        backend: ContractionBackend,
+        /// Tenferro CPU thread count (defaults to 1)
+        #[arg(long)]
+        threads: Option<std::num::NonZeroUsize>,
     },
 
     /// Optimize contraction order for a tensor network
-    #[cfg(feature = "omeinsum")]
+    #[cfg(any(feature = "omeinsum", feature = "tenferro"))]
     #[command(after_help = "\
 Examples:
   yao optimize tn.json
@@ -315,4 +321,15 @@ pub enum TnMode {
     Overlap,
     /// State vector with |0⟩ boundary tensors
     State,
+}
+
+#[cfg(any(feature = "omeinsum", feature = "tenferro"))]
+#[derive(Debug, Clone, Copy, Default, ValueEnum)]
+pub enum ContractionBackend {
+    #[cfg(feature = "omeinsum")]
+    #[default]
+    Omeinsum,
+    #[cfg(feature = "tenferro")]
+    #[cfg_attr(not(feature = "omeinsum"), default)]
+    Tenferro,
 }

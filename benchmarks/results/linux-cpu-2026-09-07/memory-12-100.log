@@ -1,0 +1,32 @@
+{"allocated_bytes":15132,"diagnostic_ns":35402,"peak_additional_rust_heap_bytes":7856,"phase":"export","retained_additional_rust_heap_bytes":6672}
+{"allocated_bytes":90816,"diagnostic_ns":131516,"peak_additional_rust_heap_bytes":68672,"phase":"conversion","retained_additional_rust_heap_bytes":46592}
+{"allocated_bytes":285044,"diagnostic_ns":848539,"peak_additional_rust_heap_bytes":101807,"phase":"planning","retained_additional_rust_heap_bytes":92028}
+{"allocated_bytes":298977,"diagnostic_ns":702278,"peak_additional_rust_heap_bytes":191136,"phase":"first_execution","retained_additional_rust_heap_bytes":117008}
+{"allocated_bytes":249105,"diagnostic_ns":306170,"peak_additional_rust_heap_bytes":140400,"phase":"warm_execution","retained_additional_rust_heap_bytes":66272}
+{"allocated_bytes":137128,"diagnostic_ns":163004,"peak_additional_rust_heap_bytes":135564,"phase":"ad_input","retained_additional_rust_heap_bytes":135564}
+{"allocated_bytes":14272448,"diagnostic_ns":3952535,"peak_additional_rust_heap_bytes":373368,"phase":"ad_forward_tape","retained_additional_rust_heap_bytes":172760}
+{"allocated_bytes":6264631,"diagnostic_ns":5747696,"peak_additional_rust_heap_bytes":1574430,"phase":"ad_backward","retained_additional_rust_heap_bytes":948118}
+{"depth":100,"note":"Rust allocator instrumentation excludes provider allocations; timings include instrumentation. Not RSS.","operation":"conj","qubits":12,"state_bytes":65536}
+	Command being timed: "/home/jinguoliu/yao-rs-tenferro-work/target/probe/release/memory 12 100"
+	User time (seconds): 0.00
+	System time (seconds): 0.01
+	Percent of CPU this job got: 106%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.01
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 15168
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 1098
+	Voluntary context switches: 247
+	Involuntary context switches: 2
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 8
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

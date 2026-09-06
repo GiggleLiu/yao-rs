@@ -1,4 +1,4 @@
-#[cfg(feature = "omeinsum")]
+#[cfg(any(feature = "omeinsum", feature = "tenferro"))]
 pub mod contract;
 pub mod example;
 pub mod expect;
@@ -7,7 +7,7 @@ pub mod fetch;
 pub mod fromqasm;
 pub mod inspect;
 pub mod measure;
-#[cfg(feature = "omeinsum")]
+#[cfg(any(feature = "omeinsum", feature = "tenferro"))]
 pub mod optimize;
 pub mod probs;
 pub mod run;
@@ -38,7 +38,7 @@ pub fn load_circuit(path: &str) -> anyhow::Result<Circuit> {
     yao_rs::circuit_from_json(&json).map_err(|e| anyhow!("Failed to parse circuit: {e}"))
 }
 
-#[cfg(feature = "omeinsum")]
+#[cfg(any(feature = "omeinsum", feature = "tenferro"))]
 pub fn load_stdin_or_file(path: &str) -> anyhow::Result<String> {
     if path == "-" {
         let mut buf = String::new();

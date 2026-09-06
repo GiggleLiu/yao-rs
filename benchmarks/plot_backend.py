@@ -82,39 +82,60 @@ fig.savefig(a.directory / "ad-memory.svg")
 fig.savefig(a.directory / "ad-memory.png", dpi=180)
 
 plt.close(fig)
-fig, ax = plt.subplots(figsize=(8, 4), constrained_layout=True)
 lookup = {(r["id"], r["backend"]): r for r in data if r["threads"] == 1}
 cases = [("tensor_state_8", "8-qubit state"), ("noisy_4", "4-qubit density")]
-for offset, (backend, label) in enumerate(
+
+
+def plot_costs(filename, title, backends):
+    fig, ax = plt.subplots(figsize=(8, 4), constrained_layout=True)
+    width = 0.8 / len(backends)
+    for offset, (backend, label) in enumerate(backends):
+        rows = [lookup[(case, backend)] for case, _ in cases]
+        heights = [r["median_ns"] / 1000 for r in rows]
+        errors = [
+            [max(0, r["median_ns"] - r["min_run_median_ns"]) / 1000 for r in rows],
+            [max(0, r["max_run_median_ns"] - r["median_ns"]) / 1000 for r in rows],
+        ]
+        ax.bar(
+            [i + (offset - (len(backends) - 1) / 2) * width for i in range(len(cases))],
+            heights,
+            width=width,
+            label=label,
+            yerr=errors,
+            capsize=2,
+        )
+    ax.set(
+        xticks=range(len(cases)),
+        xticklabels=[label for _, label in cases],
+        ylabel="Time (µs)",
+        yscale="log",
+        title=title,
+    )
+    ax.legend(fontsize=8)
+    ax.grid(axis="y", alpha=0.2)
+    fig.savefig(a.directory / (filename + ".svg"))
+    fig.savefig(a.directory / (filename + ".png"), dpi=180)
+    plt.close(fig)
+
+
+plot_costs(
+    "tensor-costs",
+    "CPU circuit and contraction costs · 1 thread",
     [
         ("native", "Native circuit"),
         ("omeinsum", "omeinsum, from arrays"),
-        ("tenferro_from_arrays", "tenferro, from arrays"),
-        ("tenferro_warm", "tenferro, prepared"),
-    ]
-):
-    rows = [lookup[(case, backend)] for case, _ in cases]
-    heights = [r["median_ns"] / 1000 for r in rows]
-    errors = [
-        [max(0, r["median_ns"] - r["min_run_median_ns"]) / 1000 for r in rows],
-        [max(0, r["max_run_median_ns"] - r["median_ns"]) / 1000 for r in rows],
-    ]
-    ax.bar(
-        [i + (offset - 1.5) * 0.18 for i in range(len(cases))],
-        heights,
-        width=0.18,
-        label=label,
-        yerr=errors,
-        capsize=2,
-    )
-ax.set(
-    xticks=range(len(cases)),
-    xticklabels=[label for _, label in cases],
-    ylabel="Time (µs)",
-    yscale="log",
-    title="CPU circuit and contraction costs · 1 thread",
+        ("tenferro_from_arrays", "tenferro prototype, from arrays"),
+        ("tenferro_warm", "tenferro prototype, prepared"),
+    ],
 )
-ax.legend(fontsize=8)
-ax.grid(axis="y", alpha=0.2)
-fig.savefig(a.directory / "tensor-costs.svg")
-fig.savefig(a.directory / "tensor-costs.png", dpi=180)
+if ("tensor_state_8", "supported_warm") in lookup:
+    plot_costs(
+        "supported-costs",
+        "Same omeco tree · complex128 CPU · 1 thread",
+        [
+            ("omeinsum_fixed_tree", "omeinsum, from arrays"),
+            ("supported_from_arrays", "tenferro adapter, compile + execute"),
+            ("supported_warm", "tenferro adapter, prepared + array adaptation"),
+            ("supported_planning", "tenferro adapter, compile only"),
+        ],
+    )

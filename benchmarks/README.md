@@ -67,3 +67,22 @@ wall-clock performance thresholds.
 
 The legacy `make bench-*` and comparison commands remain available. The new
 shared-fixture runner is the reference for tenferro backend decisions.
+
+
+### Supported CPU adapter (PR #48)
+
+The fixture now also benchmarks `yao_rs::tenferro::CpuContractor`.
+`supported_planning` validates and compiles a supplied omeco greedy tree;
+`supported_warm` executes it with ndarray input/output adaptation;
+`supported_from_arrays` combines both phases. `omeinsum_fixed_tree` executes
+that identical tree, including omeinsum's internal preparation and adaptation.
+These phases exclude tree search and context creation. Each result is checked
+against the existing contractor before measurement. They are distinct from the
+`tenferro_*` prototype phases, which use tenferro's own automatic planning and
+owned inputs.
+
+For a smaller CPU follow-up sweep, use `--max-qubits 8` with the same runner.
+Run compilation/tests first and keep other build jobs off the measurement host
+during the final timing passes. Preserve each report's metadata and source
+hashes; do not overwrite the earlier 24-qubit baseline. `plot_backend.py` adds a
+separate `supported-costs.svg`/`.png` comparison when these phases are present.

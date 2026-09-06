@@ -8,8 +8,8 @@ validation targets the NVIDIA A800 host reachable as `ssh gpu`.
 
 | Milestone | Required evidence | Status |
 | --- | --- | --- |
-| 1. Published backend feasibility / CPU baseline | Complex/layout/AD/custom-operation tests; reproducible CPU report and memory measurements | Validated; [PR #47](https://github.com/GiggleLiu/yao-rs/pull/47) awaiting merge |
-| 2. Supported tenferro CPU backend | Library/CLI adapter, explicit and reusable plans, numerical/feature/package checks | Pending |
+| 1. Published backend feasibility / CPU baseline | Complex/layout/AD/custom-operation tests; reproducible CPU report and memory measurements | Merged [PR #47](https://github.com/GiggleLiu/yao-rs/pull/47) (`6bad156`) |
+| 2. Supported tenferro CPU backend | Library/CLI adapter, explicit and reusable plans, numerical/feature/package checks | Implemented in [PR #48](https://github.com/GiggleLiu/yao-rs/pull/48); validated, reports attached; awaiting merge |
 | 3. Hamiltonian evolution | Pauli rotations, model builders, Trotter/Suzuki, physical parameter bindings and convergence tests | Pending |
 | 4. Differentiable circuits | Custom losses/input-state VJP, tenferro integration, shared parameters, numerical and memory tests | Pending |
 | 5. Tensor memory / observables | Polynomial expectations, omeco slicing, estimates, versioned plans and budget tests | Pending |
@@ -89,8 +89,13 @@ workloads, raw samples/confidence intervals, pinned environments and plots.
 Every Julia output comparison passed; the largest absolute discrepancy was
 1.94e-14. `make check-all`, eight tenferro probe tests, fixture Clippy, four
 report-generator tests and all GitHub CI jobs passed before the results update.
-The x86-64 host completed the release build with Rust 1.96; its full benchmark
-report is still running and will be included in the CPU backend follow-up.
+The [x86-64 CPU report](../../benchmarks/results/linux-cpu-2026-09-07/report.md)
+now contains all 48 workloads and six independent processes per language.
+All 288 output comparisons passed (maximum error 2.16e-14). This shared
+Xeon Platinum 8378A host was not pinned to exclusive cores; use the raw run
+ranges. For example, one-thread QFT at 24 qubits takes 5.968 s in native Rust
+and 5.725 s in Yao; the 10-qubit noisy density case takes 1.318 s and 0.585 s.
+This report measures the PR #47 prototype at `6e804e8`, not the supported adapter.
 
 Measured one-thread examples (medians of three run medians):
 
@@ -119,3 +124,42 @@ thread controls, phase boundaries and the distinction between Rust heap and
 process RSS. GPU timings must later distinguish synchronized resident execution
 from transfer-inclusive execution, and report unsupported dtype/operations
 without silent CPU fallback.
+
+
+## Supported CPU adapter (PR #48)
+
+`yao_rs::tenferro::CpuContractor` owns an explicit faer thread configuration and
+CPU runtime. `PreparedContraction` holds fixed-shape compiled code without
+retaining input values. The scoped read-only runtime borrows compatible ndarray
+storage; the adapter copies noncontiguous/reversed inputs explicitly. Each
+omeco tree node becomes a distinct traced einsum, retaining its intermediate
+axes and grouping. Unary expressions and empty scalar networks are preserved.
+Library and CLI tree validation share one implementation. The CLI rejects
+nonbinary trees unsupported by the previous omeinsum provider rather than
+letting that provider panic.
+
+The [supported-adapter M4 report](../../benchmarks/results/mac-supported-cpu-2026-09-07/report.md)
+compares an identical omeco tree within each process, separates compilation
+from repeated execution, and retains three runs at one/four threads. All 114
+Yao comparisons for the 19 shared circuit cases passed (maximum error 1.80e-15);
+the supported adapter is also checked against the previous contractor before
+each benchmark. Source hashes match the recorded `b1b262c` commit.
+
+One-thread medians of run medians, including ndarray adaptation:
+
+| Workload | omeinsum, supplied tree | tenferro prepared | tenferro compile + execute |
+| --- | ---: | ---: | ---: |
+| 8-qubit tensor state | 74.24 µs | 502.26 µs | 824.54 µs |
+| 4-qubit density matrix | 111.27 µs | 425.48 µs | 600.52 µs |
+
+The traced runtime adapter has substantial overhead on these small networks;
+the prototype's prepared timing has a different execution/ownership boundary.
+The tensor-state case also varies substantially across processes, shown in the
+plots and raw samples. These measurements support keeping the default provider
+unchanged. They are not stable performance regression thresholds or evidence
+of a universal tenferro speedup. Runtime/graph overhead is an optimization
+opportunity for later backend work.
+
+Validation: `make check-all` (607 tests), tenferro-only and no-default-feature
+workspace tests, documentation builds, default/all-feature package verification,
+fixture/reporting checks, and Linux/macOS CI. CPU-only builds need no GPU runtime.

@@ -135,6 +135,11 @@ def backend_report(directory):
         "",
         f"Platform: {metadata['platform']}. Precision: complex128. Independent runs: {metadata['runs']}.",
         "",
+        *(
+            ["Measurement notes: " + " ".join(metadata["measurement_notes"]), ""]
+            if metadata.get("measurement_notes")
+            else []
+        ),
         "Times below are medians of per-process medians. Rust/Julia includes state copying; tensor phases are reported separately. A Julia/Rust ratio greater than one means native Rust was faster.",
         "",
         "| Threads | Case | Native Rust µs | Yao µs | Julia/Rust | Max output error |",
@@ -154,7 +159,7 @@ def backend_report(directory):
         "",
         "## Tensor and extension phases",
         "",
-        "Each row uses the named API boundary. `tenferro_from_arrays` includes conversion, automatic planning, execution and output conversion; `omeinsum` includes its conversion/planning/execution. `tenferro_warm` uses an already prepared plan. These are independent planning policies, not a fixed-tree comparison.",
+        "Each row uses the named API boundary. `tenferro_from_arrays` includes conversion, automatic planning, execution and output conversion; `omeinsum` includes its conversion/planning/execution. `tenferro_warm` uses an already prepared plan. Those prototype rows use independent planning policies. Where present, `supported_planning` compiles an existing omeco greedy tree; `supported_warm` runs the supported CPU adapter including ndarray input/output adaptation; `supported_from_arrays` combines those two phases. `omeinsum_fixed_tree` executes the identical tree, including its internal preparation. These supported rows exclude tree search and CPU context creation.",
         "",
         "| Threads | Case | Phase | Median µs | Range of run medians µs |",
         "| --- | --- | --- | ---: | ---: |",
@@ -180,6 +185,11 @@ def backend_report(directory):
         "![AD memory](ad-memory.svg)",
         "",
     ]
+    if any(row["backend"] == "supported_warm" for row in summary):
+        lines += [
+            "![Supported adapter, same contraction tree](supported-costs.svg)",
+            "",
+        ]
     (directory / "report.md").write_text("\n".join(lines))
     return summary
 

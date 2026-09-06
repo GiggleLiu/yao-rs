@@ -25,6 +25,7 @@ description = "Quantum circuit simulation, tensor-network export, and SVG render
 default = []
 parallel = ["rayon"]
 omeinsum = ["dep:omeinsum"]
+tenferro = ["dep:tenferro-cpu", "dep:tenferro-tensor", "dep:tenferro-runtime", "dep:tenferro-einsum"]
 qasm = ["dep:openqasm"]
 
 [dependencies]
@@ -34,6 +35,10 @@ faer = "0.24"
 ndarray = "0.17"
 omeco = "0.2"
 omeinsum = { version = "0.1", optional = true }
+tenferro-cpu = { version = "=0.4.0", optional = true }
+tenferro-tensor = { version = "=0.4.0", optional = true }
+tenferro-runtime = { version = "=0.4.0", optional = true }
+tenferro-einsum = { version = "=0.4.0", optional = true }
 rand = "0.10"
 rayon = { version = "1.10", optional = true }
 serde = { version = "1", features = ["derive"] }

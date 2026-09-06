@@ -37,6 +37,13 @@ fn contract_impl<L: Label>(
     size_dict: &HashMap<L, usize>,
     tree: Option<NestedEinsum<L>>,
 ) -> ArrayD<Complex64> {
+    if tensors_in.is_empty() {
+        assert!(
+            code.iy.is_empty(),
+            "Empty network cannot have output indices"
+        );
+        return ArrayD::from_elem(ndarray::IxDyn(&[]), Complex64::new(1., 0.));
+    }
     let tensors: Vec<Tensor<Complex64, Cpu>> = tensors_in.iter().map(ndarray_to_omeinsum).collect();
     let tensor_refs: Vec<&Tensor<Complex64, Cpu>> = tensors.iter().collect();
     let remapped = remap_network(code, size_dict, tree.as_ref());
@@ -47,7 +54,15 @@ fn contract_impl<L: Label>(
         remapped.size_dict.clone(),
     );
     if let Some(tree) = tree.as_ref() {
-        ein.set_contraction_tree(remap_tree(tree, &remapped.label_map));
+        // omeinsum applies the overall unary expression on a top-level leaf,
+        // but its tree executor only accepts binary internal nodes.
+        let unary_root = matches!(tree, NestedEinsum::Node { args, .. }
+            if args.len() == 1 && matches!(args[0], NestedEinsum::Leaf { tensor_index: 0 }));
+        if tensors.len() == 1 && unary_root {
+            ein.set_contraction_tree(NestedEinsum::leaf(0));
+        } else {
+            ein.set_contraction_tree(remap_tree(tree, &remapped.label_map));
+        }
     } else {
         ein.optimize_greedy();
     }
