@@ -17,7 +17,7 @@ rows = json.loads((a.directory / "summary.json").read_text())
 rows = [r for r in rows if r["threads"] == 1]
 lookup = {(r["id"], r["backend"]): r for r in rows}
 ids = sorted({r["id"] for r in rows if r["backend"] == "native"})
-fig, axes = plt.subplots(1, 2, figsize=(11, 4), constrained_layout=True)
+fig, axes = plt.subplots(1, 2, figsize=(11, 4), sharey=True, constrained_layout=True)
 for ax, noisy in zip(axes, [False, True]):
     selected = [case for case in ids if ("_dm_" in case) == noisy]
     for backend, label, color in [
@@ -49,7 +49,9 @@ for ax, noisy in zip(axes, [False, True]):
         title="Noisy density matrix" if noisy else "Pure state",
     )
     ax.grid(alpha=0.2)
-axes[0].legend(fontsize=7)
+fig.legend(
+    *axes[0].get_legend_handles_labels(), loc="outside lower center", ncol=3, fontsize=8
+)
 fig.suptitle("Five-term complex polynomial · 1 thread · bars = range of run medians")
 fig.savefig(a.directory / "observable-costs.svg")
 fig.savefig(a.directory / "observable-costs.png", dpi=180)
@@ -94,6 +96,8 @@ for ax, (kind, n) in zip(axes.flat, workloads):
             )
     ax.set(
         xscale="log",
+        yscale="log",
+        ylim=(1, 1024),
         xlabel="Contraction (ms)",
         ylabel="Process peak RSS (MiB)",
         title=f"{n} × {n} · {kind} path",

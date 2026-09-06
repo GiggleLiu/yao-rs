@@ -1,0 +1,24 @@
+{"allocated_bytes":787016,"diagnostic_ns":437625,"peak_additional_rust_heap_bytes":787016,"phase":"matrix_inputs","retained_additional_rust_heap_bytes":787016}
+{"allocated_bytes":2492,"diagnostic_ns":8708,"peak_additional_rust_heap_bytes":1572,"phase":"slice_planning","retained_additional_rust_heap_bytes":1048}
+{"backend":"tenferro","dimension":128,"estimate":{"concurrent_slices":1,"estimated_total_bytes":3670016,"input_bytes":786432,"largest_intermediate_bytes":262144,"omeco_peak_bytes":786432,"output_bytes":262144,"slices":1,"worker_buffer_bytes":2621440,"workspace_reserved_bytes":0},"kind":"chain","labels":[],"mode":"unsliced","tree":{"args":[{"args":[{"isleaf":true,"tensorindex":0},{"isleaf":true,"tensorindex":1}],"eins":{"ixs":[[0,1],[1,2]],"iy":[0,2]},"isleaf":false},{"isleaf":true,"tensorindex":2}],"eins":{"ixs":[[0,2],[2,3]],"iy":[0,3]},"isleaf":false}}
+{"allocated_bytes":31511,"diagnostic_ns":44959,"peak_additional_rust_heap_bytes":13440,"phase":"slice_compilation","retained_additional_rust_heap_bytes":3396}
+{"allocated_bytes":7221042,"diagnostic_ns":953250,"peak_additional_rust_heap_bytes":5816844,"phase":"slice_execution","retained_additional_rust_heap_bytes":4740760}
+{"checksum":6409.210671291981,"status":"complete"}
+        0.00 real         0.00 user         0.00 sys
+             7913472  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                 667  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+                   6  involuntary context switches
+            45871322  instructions retired
+            12752705  cycles elapsed
+             3457432  peak memory footprint

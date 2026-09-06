@@ -1,0 +1,24 @@
+{"allocated_bytes":197296,"diagnostic_ns":106584,"peak_additional_rust_heap_bytes":197296,"phase":"matrix_inputs","retained_additional_rust_heap_bytes":197192}
+{"allocated_bytes":10252,"diagnostic_ns":41250,"peak_additional_rust_heap_bytes":4484,"phase":"slice_planning","retained_additional_rust_heap_bytes":1392}
+{"backend":"tenferro","dimension":64,"estimate":{"concurrent_slices":1,"estimated_total_bytes":917504,"input_bytes":196608,"largest_intermediate_bytes":65536,"omeco_peak_bytes":262144,"output_bytes":65536,"slices":1,"worker_buffer_bytes":655360,"workspace_reserved_bytes":0},"kind":"outer","labels":[],"mode":"greedy","tree":{"args":[{"isleaf":true,"tensorindex":1},{"args":[{"isleaf":true,"tensorindex":0},{"isleaf":true,"tensorindex":2}],"eins":{"ixs":[[0,1],[1,2]],"iy":[0,2]},"isleaf":false}],"eins":{"ixs":[[2,3],[0,2]],"iy":[0,3]},"isleaf":false}}
+{"allocated_bytes":31759,"diagnostic_ns":49625,"peak_additional_rust_heap_bytes":13440,"phase":"slice_compilation","retained_additional_rust_heap_bytes":3396}
+{"allocated_bytes":4867706,"diagnostic_ns":342791,"peak_additional_rust_heap_bytes":4506980,"phase":"slice_execution","retained_additional_rust_heap_bytes":4413080}
+{"checksum":11137.956114973034,"status":"complete"}
+        0.00 real         0.00 user         0.00 sys
+             7143424  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                 620  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+                   6  involuntary context switches
+            26322934  instructions retired
+             8987481  cycles elapsed
+             2343320  peak memory footprint

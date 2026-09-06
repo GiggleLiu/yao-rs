@@ -99,3 +99,10 @@ The CPU benchmark suite compares identical fixed paths separately from automatic
 planning, with raw selected trees, execution times and isolated process peak RSS.
 Run it with `benchmarks/run_backend.py --suite tensor-memory`; see
 [benchmark methodology](https://github.com/GiggleLiu/yao-rs/blob/main/benchmarks/README.md).
+
+
+The [M4 CPU report](https://github.com/GiggleLiu/yao-rs/blob/main/benchmarks/results/mac-tensor-memory-cpu-2026-09-07/report.md)
+includes ordinary chains where slicing does not reduce RSS, a deliberately
+large-intermediate path where it does, and a greedy-order comparison that avoids
+the large intermediate altogether. Choose a good contraction order first; slice
+when the remaining tensor-memory tradeoff benefits the workload.

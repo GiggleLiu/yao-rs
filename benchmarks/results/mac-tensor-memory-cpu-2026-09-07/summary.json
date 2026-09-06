@@ -1,0 +1,1586 @@
+[
+  {
+    "threads": 1,
+    "id": "expectation_4_terms5",
+    "backend": "julia",
+    "median_ns": 3104.5,
+    "min_run_median_ns": 2854.0,
+    "max_run_median_ns": 3208.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_4_terms5",
+    "backend": "native",
+    "median_ns": 1292.5,
+    "min_run_median_ns": 1280.5695541760724,
+    "max_run_median_ns": 1360.8864700610543,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_4_terms5",
+    "backend": "observable_export",
+    "median_ns": 25632.26092117759,
+    "min_run_median_ns": 24881.03569788797,
+    "max_run_median_ns": 25928.436609686607,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_4_terms5",
+    "backend": "omeinsum_term_sliced",
+    "median_ns": 1063986.111111111,
+    "min_run_median_ns": 1034748.9680555556,
+    "max_run_median_ns": 1069082.9351851852,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_4_terms5",
+    "backend": "omeinsum_unsliced",
+    "median_ns": 204538.15000000002,
+    "min_run_median_ns": 203565.86710963456,
+    "max_run_median_ns": 210583.4534883721,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_4_terms5",
+    "backend": "tenferro_term_sliced_prepare",
+    "median_ns": 476049.325,
+    "min_run_median_ns": 463951.79285714286,
+    "max_run_median_ns": 476155.2083333334,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_4_terms5",
+    "backend": "tenferro_term_sliced_warm",
+    "median_ns": 4164482.7023809524,
+    "min_run_median_ns": 4015074.6309523806,
+    "max_run_median_ns": 4169762.7962962966,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_4_terms5",
+    "backend": "tenferro_unsliced_prepare",
+    "median_ns": 474641.12609649124,
+    "min_run_median_ns": 462040.49583333335,
+    "max_run_median_ns": 485047.2322368421,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_4_terms5",
+    "backend": "tenferro_unsliced_warm",
+    "median_ns": 830210.7159090908,
+    "min_run_median_ns": 803650.888095238,
+    "max_run_median_ns": 840165.5681818181,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_6_terms5",
+    "backend": "julia",
+    "median_ns": 4583.5,
+    "min_run_median_ns": 4479.0,
+    "max_run_median_ns": 4708.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_6_terms5",
+    "backend": "native",
+    "median_ns": 3519.8357483256054,
+    "min_run_median_ns": 3416.0499250655675,
+    "max_run_median_ns": 3528.7985468106995,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_6_terms5",
+    "backend": "observable_export",
+    "median_ns": 39035.54063829787,
+    "min_run_median_ns": 38003.30021008404,
+    "max_run_median_ns": 39382.47275246306,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_6_terms5",
+    "backend": "omeinsum_term_sliced",
+    "median_ns": 1788299.7444444443,
+    "min_run_median_ns": 1784742.4166666667,
+    "max_run_median_ns": 1832315.9791666665,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_6_terms5",
+    "backend": "omeinsum_unsliced",
+    "median_ns": 359768.4307692308,
+    "min_run_median_ns": 356457.6330128205,
+    "max_run_median_ns": 365774.17000000004,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_6_terms5",
+    "backend": "tenferro_term_sliced_prepare",
+    "median_ns": 959321.15,
+    "min_run_median_ns": 946501.665,
+    "max_run_median_ns": 969601.4750000001,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_6_terms5",
+    "backend": "tenferro_term_sliced_warm",
+    "median_ns": 6796955.572222222,
+    "min_run_median_ns": 6658317.708333333,
+    "max_run_median_ns": 6870765.875,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_6_terms5",
+    "backend": "tenferro_unsliced_prepare",
+    "median_ns": 962229.8644444444,
+    "min_run_median_ns": 958291.27,
+    "max_run_median_ns": 971537.9611111111,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_6_terms5",
+    "backend": "tenferro_unsliced_warm",
+    "median_ns": 1358483.369047619,
+    "min_run_median_ns": 1285575.53125,
+    "max_run_median_ns": 1364695.6020408163,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_dm_4_terms5",
+    "backend": "julia",
+    "median_ns": 40250.0,
+    "min_run_median_ns": 40187.5,
+    "max_run_median_ns": 41187.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_dm_4_terms5",
+    "backend": "native",
+    "median_ns": 17941.17752547028,
+    "min_run_median_ns": 17553.902115384615,
+    "max_run_median_ns": 18157.265865063462,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_dm_4_terms5",
+    "backend": "observable_export",
+    "median_ns": 15979.524427816901,
+    "min_run_median_ns": 15577.739331026529,
+    "max_run_median_ns": 16164.501693404634,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_dm_4_terms5",
+    "backend": "omeinsum_term_sliced",
+    "median_ns": 1043255.2083333333,
+    "min_run_median_ns": 1018502.9351851852,
+    "max_run_median_ns": 1046229.938271605,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_dm_4_terms5",
+    "backend": "omeinsum_unsliced",
+    "median_ns": 208353.53598484848,
+    "min_run_median_ns": 202704.74166666667,
+    "max_run_median_ns": 210268.82291666666,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_dm_4_terms5",
+    "backend": "tenferro_term_sliced_prepare",
+    "median_ns": 487721.36215538846,
+    "min_run_median_ns": 477023.11,
+    "max_run_median_ns": 489925.4342105263,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_dm_4_terms5",
+    "backend": "tenferro_term_sliced_warm",
+    "median_ns": 4237919.916666666,
+    "min_run_median_ns": 4083251.138888889,
+    "max_run_median_ns": 4307722.238095238,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_dm_4_terms5",
+    "backend": "tenferro_unsliced_prepare",
+    "median_ns": 485767.45175438595,
+    "min_run_median_ns": 473256.1296992481,
+    "max_run_median_ns": 489534.65263157897,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_dm_4_terms5",
+    "backend": "tenferro_unsliced_warm",
+    "median_ns": 850280.0643939395,
+    "min_run_median_ns": 819778.2214285714,
+    "max_run_median_ns": 860898.9621212122,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_dm_6_terms5",
+    "backend": "julia",
+    "median_ns": 234062.5,
+    "min_run_median_ns": 233687.0,
+    "max_run_median_ns": 239500.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_dm_6_terms5",
+    "backend": "native",
+    "median_ns": 280058.9425223214,
+    "min_run_median_ns": 274215.28787878784,
+    "max_run_median_ns": 285515.40454545454,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_dm_6_terms5",
+    "backend": "observable_export",
+    "median_ns": 23535.655216284988,
+    "min_run_median_ns": 23456.353190104164,
+    "max_run_median_ns": 23885.506277056276,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_dm_6_terms5",
+    "backend": "omeinsum_term_sliced",
+    "median_ns": 1799876.192857143,
+    "min_run_median_ns": 1795661.6800000002,
+    "max_run_median_ns": 1818803.9801587302,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_dm_6_terms5",
+    "backend": "omeinsum_unsliced",
+    "median_ns": 360423.9326923077,
+    "min_run_median_ns": 354670.53525641025,
+    "max_run_median_ns": 360427.62072649575,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_dm_6_terms5",
+    "backend": "tenferro_term_sliced_prepare",
+    "median_ns": 988299.3533333333,
+    "min_run_median_ns": 987116.5875,
+    "max_run_median_ns": 1002737.7976190476,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_dm_6_terms5",
+    "backend": "tenferro_term_sliced_warm",
+    "median_ns": 6748120.0,
+    "min_run_median_ns": 6694271.527777778,
+    "max_run_median_ns": 6854164.875,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_dm_6_terms5",
+    "backend": "tenferro_unsliced_prepare",
+    "median_ns": 984441.6666666667,
+    "min_run_median_ns": 967228.4857142858,
+    "max_run_median_ns": 987198.5535714286,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "expectation_dm_6_terms5",
+    "backend": "tenferro_unsliced_warm",
+    "median_ns": 1357313.25,
+    "min_run_median_ns": 1339318.5523809523,
+    "max_run_median_ns": 1376853.969387755,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_128",
+    "backend": "omeinsum_fixed_output",
+    "median_ns": 45637448.0,
+    "min_run_median_ns": 44790364.5,
+    "max_run_median_ns": 45774010.25,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_128",
+    "backend": "omeinsum_unsliced",
+    "median_ns": 1218109.125,
+    "min_run_median_ns": 1212863.1375,
+    "max_run_median_ns": 1228367.8385416665,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_128",
+    "backend": "plan_fixed_output",
+    "median_ns": 3483.047385620915,
+    "min_run_median_ns": 3474.651492063492,
+    "max_run_median_ns": 3553.730294731351,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_128",
+    "backend": "plan_unsliced",
+    "median_ns": 1760.3645998837435,
+    "min_run_median_ns": 1738.9662460102213,
+    "max_run_median_ns": 1787.799735397883,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_128",
+    "backend": "tenferro_fixed_output_prepare",
+    "median_ns": 5296.733198146003,
+    "min_run_median_ns": 5254.482403680277,
+    "max_run_median_ns": 5330.601077130217,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_128",
+    "backend": "tenferro_fixed_output_warm",
+    "median_ns": 4115870.35,
+    "min_run_median_ns": 4113053.694444444,
+    "max_run_median_ns": 4165897.4833333334,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_128",
+    "backend": "tenferro_unsliced_prepare",
+    "median_ns": 5275.909548711989,
+    "min_run_median_ns": 5125.580669710806,
+    "max_run_median_ns": 5330.8850907686365,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_128",
+    "backend": "tenferro_unsliced_warm",
+    "median_ns": 742800.3564102564,
+    "min_run_median_ns": 731230.0534188035,
+    "max_run_median_ns": 743880.4743589744,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_256",
+    "backend": "omeinsum_fixed_output",
+    "median_ns": 365035042.0,
+    "min_run_median_ns": 359753646.0,
+    "max_run_median_ns": 366353542.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_256",
+    "backend": "omeinsum_unsliced",
+    "median_ns": 7706671.544444445,
+    "min_run_median_ns": 7604847.333333334,
+    "max_run_median_ns": 7787518.041666666,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_256",
+    "backend": "plan_fixed_output",
+    "median_ns": 3530.6710312904343,
+    "min_run_median_ns": 3525.9775036046667,
+    "max_run_median_ns": 3560.3154354207436,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_256",
+    "backend": "plan_unsliced",
+    "median_ns": 1748.6150006420135,
+    "min_run_median_ns": 1728.2616668249145,
+    "max_run_median_ns": 1759.3274773895505,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_256",
+    "backend": "tenferro_fixed_output_prepare",
+    "median_ns": 5267.347908143386,
+    "min_run_median_ns": 5224.166686046512,
+    "max_run_median_ns": 5367.833529990166,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_256",
+    "backend": "tenferro_fixed_output_warm",
+    "median_ns": 15365794.642857142,
+    "min_run_median_ns": 15362530.395833332,
+    "max_run_median_ns": 15508535.416666668,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_256",
+    "backend": "tenferro_unsliced_prepare",
+    "median_ns": 5261.804256246369,
+    "min_run_median_ns": 5223.057035557036,
+    "max_run_median_ns": 5326.5072421217465,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_256",
+    "backend": "tenferro_unsliced_warm",
+    "median_ns": 5714060.791666666,
+    "min_run_median_ns": 5633653.6875,
+    "max_run_median_ns": 5737630.225,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_32",
+    "backend": "omeinsum_auto",
+    "median_ns": 5092232.625,
+    "min_run_median_ns": 5026938.5375,
+    "max_run_median_ns": 5229356.233333333,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_32",
+    "backend": "omeinsum_fixed_output",
+    "median_ns": 819722.3333333333,
+    "min_run_median_ns": 801420.4833333334,
+    "max_run_median_ns": 832331.7142857143,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_32",
+    "backend": "omeinsum_unsliced",
+    "median_ns": 47057.15544041451,
+    "min_run_median_ns": 45983.66959798995,
+    "max_run_median_ns": 47187.80263157895,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_32",
+    "backend": "plan_auto",
+    "median_ns": 25518.0822740113,
+    "min_run_median_ns": 25059.949188858278,
+    "max_run_median_ns": 25667.21586629002,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_32",
+    "backend": "plan_fixed_output",
+    "median_ns": 3535.430569034679,
+    "min_run_median_ns": 3444.2618311336905,
+    "max_run_median_ns": 3537.9497319688107,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_32",
+    "backend": "plan_unsliced",
+    "median_ns": 1759.370325619996,
+    "min_run_median_ns": 1739.5399316206544,
+    "max_run_median_ns": 1759.5052660574243,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_32",
+    "backend": "tenferro_auto_prepare",
+    "median_ns": 5266.126047786917,
+    "min_run_median_ns": 5253.17211201867,
+    "max_run_median_ns": 5350.499669700528,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_32",
+    "backend": "tenferro_auto_warm",
+    "median_ns": 22821104.166666664,
+    "min_run_median_ns": 22482083.333333336,
+    "max_run_median_ns": 23033243.166666668,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_32",
+    "backend": "tenferro_fixed_output_prepare",
+    "median_ns": 5268.658874834657,
+    "min_run_median_ns": 5266.837906446093,
+    "max_run_median_ns": 5373.387272021731,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_32",
+    "backend": "tenferro_fixed_output_warm",
+    "median_ns": 759562.8458333333,
+    "min_run_median_ns": 738848.1634615385,
+    "max_run_median_ns": 770801.0416666667,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_32",
+    "backend": "tenferro_unsliced_prepare",
+    "median_ns": 5280.346951100721,
+    "min_run_median_ns": 5211.013977404404,
+    "max_run_median_ns": 5373.987828818217,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_chain_32",
+    "backend": "tenferro_unsliced_warm",
+    "median_ns": 33999.2229477612,
+    "min_run_median_ns": 33975.26047794118,
+    "max_run_median_ns": 34479.07859848485,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_32",
+    "backend": "omeinsum_fixed_output",
+    "median_ns": 2686578.744047619,
+    "min_run_median_ns": 2592564.775,
+    "max_run_median_ns": 2694367.25,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_32",
+    "backend": "omeinsum_greedy",
+    "median_ns": 47879.822932330826,
+    "min_run_median_ns": 47818.93455497382,
+    "max_run_median_ns": 48579.65784832451,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_32",
+    "backend": "omeinsum_unsliced",
+    "median_ns": 1653261.2916666667,
+    "min_run_median_ns": 1624501.244047619,
+    "max_run_median_ns": 1666147.5694444445,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_32",
+    "backend": "plan_fixed_output",
+    "median_ns": 4001.577249600233,
+    "min_run_median_ns": 3925.3736219901366,
+    "max_run_median_ns": 4034.387946494504,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_32",
+    "backend": "plan_greedy",
+    "median_ns": 8071.755477258168,
+    "min_run_median_ns": 8003.181263671546,
+    "max_run_median_ns": 8234.386764705883,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_32",
+    "backend": "plan_unsliced",
+    "median_ns": 1978.1052065170009,
+    "min_run_median_ns": 1954.253145945946,
+    "max_run_median_ns": 2007.8392395414076,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_32",
+    "backend": "tenferro_fixed_output_prepare",
+    "median_ns": 5913.160466623461,
+    "min_run_median_ns": 5885.7009629868735,
+    "max_run_median_ns": 6005.622902531553,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_32",
+    "backend": "tenferro_fixed_output_warm",
+    "median_ns": 3401168.1166666667,
+    "min_run_median_ns": 3320862.0222222223,
+    "max_run_median_ns": 3401478.0857142857,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_32",
+    "backend": "tenferro_greedy_prepare",
+    "median_ns": 5581.173312883436,
+    "min_run_median_ns": 5576.783860502839,
+    "max_run_median_ns": 5676.15083539604,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_32",
+    "backend": "tenferro_greedy_warm",
+    "median_ns": 34849.39337928154,
+    "min_run_median_ns": 34290.83483840304,
+    "max_run_median_ns": 37258.11861732644,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_32",
+    "backend": "tenferro_unsliced_prepare",
+    "median_ns": 5867.041581945346,
+    "min_run_median_ns": 5866.184213350504,
+    "max_run_median_ns": 5957.144525225821,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_32",
+    "backend": "tenferro_unsliced_warm",
+    "median_ns": 1607733.5416666667,
+    "min_run_median_ns": 1585786.4555555554,
+    "max_run_median_ns": 1623766.201388889,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_64",
+    "backend": "omeinsum_fixed_output",
+    "median_ns": 23414402.666666664,
+    "min_run_median_ns": 23344597.166666664,
+    "max_run_median_ns": 23433270.666666664,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_64",
+    "backend": "omeinsum_greedy",
+    "median_ns": 225686.4207317073,
+    "min_run_median_ns": 219303.0225609756,
+    "max_run_median_ns": 226901.081300813,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_64",
+    "backend": "omeinsum_unsliced",
+    "median_ns": 26093916.75,
+    "min_run_median_ns": 25480218.75,
+    "max_run_median_ns": 26199521.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_64",
+    "backend": "plan_fixed_output",
+    "median_ns": 3971.566652097902,
+    "min_run_median_ns": 3944.583044232437,
+    "max_run_median_ns": 4024.681402783926,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_64",
+    "backend": "plan_greedy",
+    "median_ns": 8133.333333333334,
+    "min_run_median_ns": 8006.367749487856,
+    "max_run_median_ns": 8169.916275924256,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_64",
+    "backend": "plan_unsliced",
+    "median_ns": 1989.0665161195566,
+    "min_run_median_ns": 1978.2863723247578,
+    "max_run_median_ns": 1996.4447990282686,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_64",
+    "backend": "tenferro_fixed_output_prepare",
+    "median_ns": 5994.021809895833,
+    "min_run_median_ns": 5916.734543241695,
+    "max_run_median_ns": 6007.4690539137,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_64",
+    "backend": "tenferro_fixed_output_warm",
+    "median_ns": 27059989.5,
+    "min_run_median_ns": 26724249.75,
+    "max_run_median_ns": 27120052.25,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_64",
+    "backend": "tenferro_greedy_prepare",
+    "median_ns": 5558.576893004116,
+    "min_run_median_ns": 5534.960655054405,
+    "max_run_median_ns": 5683.268089053803,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_64",
+    "backend": "tenferro_greedy_warm",
+    "median_ns": 122424.54833333334,
+    "min_run_median_ns": 114802.69743303572,
+    "max_run_median_ns": 122805.99292237443,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_64",
+    "backend": "tenferro_unsliced_prepare",
+    "median_ns": 5976.254921259842,
+    "min_run_median_ns": 5937.197027687296,
+    "max_run_median_ns": 6021.24033894646,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "matrix_outer_64",
+    "backend": "tenferro_unsliced_warm",
+    "median_ns": 25823645.75,
+    "min_run_median_ns": 25789823.0,
+    "max_run_median_ns": 25883416.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_4_terms5",
+    "backend": "julia",
+    "median_ns": 3270.5,
+    "min_run_median_ns": 3125.5,
+    "max_run_median_ns": 3271.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_4_terms5",
+    "backend": "native",
+    "median_ns": 1319.3577341052205,
+    "min_run_median_ns": 1295.4396944824443,
+    "max_run_median_ns": 1383.718226973329,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_4_terms5",
+    "backend": "observable_export",
+    "median_ns": 26508.459297725025,
+    "min_run_median_ns": 26355.774926470585,
+    "max_run_median_ns": 28490.62287685775,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_4_terms5",
+    "backend": "omeinsum_term_sliced",
+    "median_ns": 1082765.0555555555,
+    "min_run_median_ns": 1071133.7999999998,
+    "max_run_median_ns": 1097517.849537037,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_4_terms5",
+    "backend": "omeinsum_unsliced",
+    "median_ns": 215880.38647959183,
+    "min_run_median_ns": 211933.66763565893,
+    "max_run_median_ns": 217341.31785714286,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_4_terms5",
+    "backend": "tenferro_term_sliced_prepare",
+    "median_ns": 484436.3483709273,
+    "min_run_median_ns": 482619.51754385966,
+    "max_run_median_ns": 485093.74890350876,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_4_terms5",
+    "backend": "tenferro_term_sliced_warm",
+    "median_ns": 7421436.425,
+    "min_run_median_ns": 7388648.138888889,
+    "max_run_median_ns": 7432412.553571429,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_4_terms5",
+    "backend": "tenferro_unsliced_prepare",
+    "median_ns": 486899.1411862991,
+    "min_run_median_ns": 484466.70350877196,
+    "max_run_median_ns": 486934.51754385966,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_4_terms5",
+    "backend": "tenferro_unsliced_warm",
+    "median_ns": 1499311.9270833335,
+    "min_run_median_ns": 1489468.9523809524,
+    "max_run_median_ns": 1500690.9722222222,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_6_terms5",
+    "backend": "julia",
+    "median_ns": 4458.5,
+    "min_run_median_ns": 4416.5,
+    "max_run_median_ns": 4646.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_6_terms5",
+    "backend": "native",
+    "median_ns": 3535.678098207327,
+    "min_run_median_ns": 3526.9483556518317,
+    "max_run_median_ns": 3633.829014126542,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_6_terms5",
+    "backend": "observable_export",
+    "median_ns": 39873.42474302497,
+    "min_run_median_ns": 39081.03300865801,
+    "max_run_median_ns": 39928.82264011799,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_6_terms5",
+    "backend": "omeinsum_term_sliced",
+    "median_ns": 1835504.7366666668,
+    "min_run_median_ns": 1823563.2000000002,
+    "max_run_median_ns": 1843789.5925,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_6_terms5",
+    "backend": "omeinsum_unsliced",
+    "median_ns": 364227.2216666667,
+    "min_run_median_ns": 363595.6666666666,
+    "max_run_median_ns": 364678.332,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_6_terms5",
+    "backend": "tenferro_term_sliced_prepare",
+    "median_ns": 979541.325,
+    "min_run_median_ns": 977989.7133333334,
+    "max_run_median_ns": 987178.625,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_6_terms5",
+    "backend": "tenferro_term_sliced_warm",
+    "median_ns": 11705476.5625,
+    "min_run_median_ns": 11656468.7,
+    "max_run_median_ns": 11716510.375,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_6_terms5",
+    "backend": "tenferro_unsliced_prepare",
+    "median_ns": 980759.7916666667,
+    "min_run_median_ns": 978233.675,
+    "max_run_median_ns": 983871.3625,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_6_terms5",
+    "backend": "tenferro_unsliced_warm",
+    "median_ns": 2331555.8303571427,
+    "min_run_median_ns": 2323641.1375,
+    "max_run_median_ns": 2354996.875,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_dm_4_terms5",
+    "backend": "julia",
+    "median_ns": 39646.0,
+    "min_run_median_ns": 39625.5,
+    "max_run_median_ns": 40520.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_dm_4_terms5",
+    "backend": "native",
+    "median_ns": 18384.812754065042,
+    "min_run_median_ns": 18167.63525,
+    "max_run_median_ns": 18440.595875591614,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_dm_4_terms5",
+    "backend": "observable_export",
+    "median_ns": 16315.164538530466,
+    "min_run_median_ns": 16201.835855855856,
+    "max_run_median_ns": 16911.873690696244,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_dm_4_terms5",
+    "backend": "omeinsum_term_sliced",
+    "median_ns": 1070462.5787037038,
+    "min_run_median_ns": 1039503.2513227513,
+    "max_run_median_ns": 1078295.9675925928,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_dm_4_terms5",
+    "backend": "omeinsum_unsliced",
+    "median_ns": 213423.61085271317,
+    "min_run_median_ns": 205107.26590909093,
+    "max_run_median_ns": 213765.08471760797,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_dm_4_terms5",
+    "backend": "tenferro_term_sliced_prepare",
+    "median_ns": 494096.4225146199,
+    "min_run_median_ns": 493627.3771929825,
+    "max_run_median_ns": 494712.5307017544,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_dm_4_terms5",
+    "backend": "tenferro_term_sliced_warm",
+    "median_ns": 7432377.116666667,
+    "min_run_median_ns": 7425383.016666667,
+    "max_run_median_ns": 7516757.638888889,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_dm_4_terms5",
+    "backend": "tenferro_unsliced_prepare",
+    "median_ns": 493541.48245614034,
+    "min_run_median_ns": 489929.09398496244,
+    "max_run_median_ns": 493896.98370927316,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_dm_4_terms5",
+    "backend": "tenferro_unsliced_warm",
+    "median_ns": 1484907.2265306122,
+    "min_run_median_ns": 1483768.8571428573,
+    "max_run_median_ns": 1498010.425,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_dm_6_terms5",
+    "backend": "julia",
+    "median_ns": 2002458.5,
+    "min_run_median_ns": 1997354.0,
+    "max_run_median_ns": 2003541.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_dm_6_terms5",
+    "backend": "native",
+    "median_ns": 284393.6234375,
+    "min_run_median_ns": 284190.8787878788,
+    "max_run_median_ns": 285049.9114583333,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_dm_6_terms5",
+    "backend": "observable_export",
+    "median_ns": 24212.782738095237,
+    "min_run_median_ns": 23762.059530026112,
+    "max_run_median_ns": 24370.52590595987,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_dm_6_terms5",
+    "backend": "omeinsum_term_sliced",
+    "median_ns": 1826535.3055555555,
+    "min_run_median_ns": 1792652.0833333333,
+    "max_run_median_ns": 1826718.9,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_dm_6_terms5",
+    "backend": "omeinsum_unsliced",
+    "median_ns": 363011.81,
+    "min_run_median_ns": 356304.5653846154,
+    "max_run_median_ns": 366747.4986666667,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_dm_6_terms5",
+    "backend": "tenferro_term_sliced_prepare",
+    "median_ns": 999433.9178571429,
+    "min_run_median_ns": 995734.725,
+    "max_run_median_ns": 1005132.5874999999,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_dm_6_terms5",
+    "backend": "tenferro_term_sliced_warm",
+    "median_ns": 11802635.3,
+    "min_run_median_ns": 11751679.05,
+    "max_run_median_ns": 11845816.683333334,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_dm_6_terms5",
+    "backend": "tenferro_unsliced_prepare",
+    "median_ns": 1000318.565,
+    "min_run_median_ns": 996137.8635714286,
+    "max_run_median_ns": 1000982.6555555556,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "expectation_dm_6_terms5",
+    "backend": "tenferro_unsliced_warm",
+    "median_ns": 2354625.5375,
+    "min_run_median_ns": 2348599.341666667,
+    "max_run_median_ns": 2367445.7125,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_128",
+    "backend": "omeinsum_fixed_output",
+    "median_ns": 46620333.5,
+    "min_run_median_ns": 46486531.25,
+    "max_run_median_ns": 46782625.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_128",
+    "backend": "omeinsum_unsliced",
+    "median_ns": 1251622.3958333335,
+    "min_run_median_ns": 1245684.375,
+    "max_run_median_ns": 1263898.8958333335,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_128",
+    "backend": "plan_fixed_output",
+    "median_ns": 3560.5566974789917,
+    "min_run_median_ns": 3558.9975042467004,
+    "max_run_median_ns": 3568.8786928104573,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_128",
+    "backend": "plan_unsliced",
+    "median_ns": 1782.2523790661046,
+    "min_run_median_ns": 1781.3913356927515,
+    "max_run_median_ns": 1788.639019071796,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_128",
+    "backend": "tenferro_fixed_output_prepare",
+    "median_ns": 5428.808124911686,
+    "min_run_median_ns": 5414.228706998814,
+    "max_run_median_ns": 5479.170763389288,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_128",
+    "backend": "tenferro_fixed_output_warm",
+    "median_ns": 7006835.680555556,
+    "min_run_median_ns": 6950397.191666666,
+    "max_run_median_ns": 7068429.986111111,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_128",
+    "backend": "tenferro_unsliced_prepare",
+    "median_ns": 5372.6969792487525,
+    "min_run_median_ns": 5314.266661787666,
+    "max_run_median_ns": 5403.924037887828,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_128",
+    "backend": "tenferro_unsliced_warm",
+    "median_ns": 278357.97421875,
+    "min_run_median_ns": 276146.74326599325,
+    "max_run_median_ns": 280209.6920454545,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_256",
+    "backend": "omeinsum_fixed_output",
+    "median_ns": 373215875.0,
+    "min_run_median_ns": 370323937.5,
+    "max_run_median_ns": 374808354.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_256",
+    "backend": "omeinsum_unsliced",
+    "median_ns": 7891968.75,
+    "min_run_median_ns": 7865778.65,
+    "max_run_median_ns": 7895260.041666666,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_256",
+    "backend": "plan_fixed_output",
+    "median_ns": 3570.342994216614,
+    "min_run_median_ns": 3557.6432818073717,
+    "max_run_median_ns": 3594.8986413349867,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_256",
+    "backend": "plan_unsliced",
+    "median_ns": 1782.8487422533494,
+    "min_run_median_ns": 1767.1701348039214,
+    "max_run_median_ns": 1800.656564665882,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_256",
+    "backend": "tenferro_fixed_output_prepare",
+    "median_ns": 5428.314701492538,
+    "min_run_median_ns": 5397.749240151969,
+    "max_run_median_ns": 5458.646245530394,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_256",
+    "backend": "tenferro_fixed_output_warm",
+    "median_ns": 20688243.166666668,
+    "min_run_median_ns": 20596541.666666664,
+    "max_run_median_ns": 20776708.166666668,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_256",
+    "backend": "tenferro_unsliced_prepare",
+    "median_ns": 5376.055489141263,
+    "min_run_median_ns": 5359.16507031384,
+    "max_run_median_ns": 5417.761305970149,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_256",
+    "backend": "tenferro_unsliced_warm",
+    "median_ns": 1654702.5916666668,
+    "min_run_median_ns": 1632035.675,
+    "max_run_median_ns": 1659227.4833333334,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_32",
+    "backend": "omeinsum_auto",
+    "median_ns": 5254708.142857143,
+    "min_run_median_ns": 5253410.347222222,
+    "max_run_median_ns": 5259703.517857143,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_32",
+    "backend": "omeinsum_fixed_output",
+    "median_ns": 839656.0173160173,
+    "min_run_median_ns": 837817.6681818182,
+    "max_run_median_ns": 840655.5818181818,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_32",
+    "backend": "omeinsum_unsliced",
+    "median_ns": 48055.596884498475,
+    "min_run_median_ns": 47997.87105064248,
+    "max_run_median_ns": 48363.02021276596,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_32",
+    "backend": "plan_auto",
+    "median_ns": 26022.540544412608,
+    "min_run_median_ns": 26017.65625,
+    "max_run_median_ns": 26078.355067243036,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_32",
+    "backend": "plan_fixed_output",
+    "median_ns": 3571.0252390438245,
+    "min_run_median_ns": 3539.535142522452,
+    "max_run_median_ns": 3578.019584647739,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_32",
+    "backend": "plan_unsliced",
+    "median_ns": 1778.6005824813212,
+    "min_run_median_ns": 1774.374667975139,
+    "max_run_median_ns": 1795.6050137923426,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_32",
+    "backend": "tenferro_auto_prepare",
+    "median_ns": 5350.61625967838,
+    "min_run_median_ns": 5348.460149953758,
+    "max_run_median_ns": 5358.99541674851,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_32",
+    "backend": "tenferro_auto_warm",
+    "median_ns": 48902521.0,
+    "min_run_median_ns": 48844041.5,
+    "max_run_median_ns": 49016249.75,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_32",
+    "backend": "tenferro_fixed_output_prepare",
+    "median_ns": 5390.415942028985,
+    "min_run_median_ns": 5383.69696969697,
+    "max_run_median_ns": 5433.295036139456,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_32",
+    "backend": "tenferro_fixed_output_warm",
+    "median_ns": 1517868.4571428571,
+    "min_run_median_ns": 1516073.4666666668,
+    "max_run_median_ns": 1863220.9464285714,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_32",
+    "backend": "tenferro_unsliced_prepare",
+    "median_ns": 5363.342578445519,
+    "min_run_median_ns": 5244.920539215686,
+    "max_run_median_ns": 5402.1816023738875,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_chain_32",
+    "backend": "tenferro_unsliced_warm",
+    "median_ns": 55844.52916666667,
+    "min_run_median_ns": 55800.671625766874,
+    "max_run_median_ns": 57015.85196969697,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_32",
+    "backend": "omeinsum_fixed_output",
+    "median_ns": 2733012.475,
+    "min_run_median_ns": 2730591.333333333,
+    "max_run_median_ns": 2746452.6,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_32",
+    "backend": "omeinsum_greedy",
+    "median_ns": 48638.16096256684,
+    "min_run_median_ns": 48620.25837837838,
+    "max_run_median_ns": 49291.17617753623,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_32",
+    "backend": "omeinsum_unsliced",
+    "median_ns": 1692949.6620370368,
+    "min_run_median_ns": 1681997.1666666665,
+    "max_run_median_ns": 1700266.25,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_32",
+    "backend": "plan_fixed_output",
+    "median_ns": 3992.4131108338534,
+    "min_run_median_ns": 3988.485969951392,
+    "max_run_median_ns": 4001.994739149496,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_32",
+    "backend": "plan_greedy",
+    "median_ns": 8179.912320143885,
+    "min_run_median_ns": 8153.509176142031,
+    "max_run_median_ns": 8203.594256756758,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_32",
+    "backend": "plan_unsliced",
+    "median_ns": 1991.681226725082,
+    "min_run_median_ns": 1972.2191605045673,
+    "max_run_median_ns": 1993.6385833699956,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_32",
+    "backend": "tenferro_fixed_output_prepare",
+    "median_ns": 6011.54117357002,
+    "min_run_median_ns": 5972.875400991543,
+    "max_run_median_ns": 6023.0573542501115,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_32",
+    "backend": "tenferro_fixed_output_warm",
+    "median_ns": 4421948.65,
+    "min_run_median_ns": 4416689.206349207,
+    "max_run_median_ns": 4422207.583333333,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_32",
+    "backend": "tenferro_greedy_prepare",
+    "median_ns": 5657.900262739404,
+    "min_run_median_ns": 5623.0741611721605,
+    "max_run_median_ns": 5663.050123685838,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_32",
+    "backend": "tenferro_greedy_warm",
+    "median_ns": 55547.120912220314,
+    "min_run_median_ns": 55281.51592082616,
+    "max_run_median_ns": 60368.282679738564,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_32",
+    "backend": "tenferro_unsliced_prepare",
+    "median_ns": 5952.71450936539,
+    "min_run_median_ns": 5888.772495088409,
+    "max_run_median_ns": 6019.705775577558,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_32",
+    "backend": "tenferro_unsliced_warm",
+    "median_ns": 918732.3,
+    "min_run_median_ns": 917781.0928571429,
+    "max_run_median_ns": 921419.28,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_64",
+    "backend": "omeinsum_fixed_output",
+    "median_ns": 23740822.75,
+    "min_run_median_ns": 23716271.0,
+    "max_run_median_ns": 23761041.75,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_64",
+    "backend": "omeinsum_greedy",
+    "median_ns": 230311.06666666665,
+    "min_run_median_ns": 226212.36341463414,
+    "max_run_median_ns": 230714.14791666667,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_64",
+    "backend": "omeinsum_unsliced",
+    "median_ns": 25998198.0,
+    "min_run_median_ns": 25642864.5,
+    "max_run_median_ns": 26143843.75,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_64",
+    "backend": "plan_fixed_output",
+    "median_ns": 3981.949022295322,
+    "min_run_median_ns": 3969.627747854951,
+    "max_run_median_ns": 4033.5560502621947,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_64",
+    "backend": "plan_greedy",
+    "median_ns": 8141.194407108722,
+    "min_run_median_ns": 8140.021057347671,
+    "max_run_median_ns": 8179.349412296564,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_64",
+    "backend": "plan_unsliced",
+    "median_ns": 1981.6058396808126,
+    "min_run_median_ns": 1979.5899693721287,
+    "max_run_median_ns": 2011.496148290804,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_64",
+    "backend": "tenferro_fixed_output_prepare",
+    "median_ns": 5972.621645874371,
+    "min_run_median_ns": 5967.371799080762,
+    "max_run_median_ns": 5978.897098603839,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_64",
+    "backend": "tenferro_fixed_output_warm",
+    "median_ns": 15636427.083333332,
+    "min_run_median_ns": 15609486.083333334,
+    "max_run_median_ns": 15800508.839285715,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_64",
+    "backend": "tenferro_greedy_prepare",
+    "median_ns": 5612.376387176326,
+    "min_run_median_ns": 5596.457847946045,
+    "max_run_median_ns": 5691.594181304894,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_64",
+    "backend": "tenferro_greedy_warm",
+    "median_ns": 107257.19437984496,
+    "min_run_median_ns": 100933.39538077403,
+    "max_run_median_ns": 108364.48015873015,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_64",
+    "backend": "tenferro_unsliced_prepare",
+    "median_ns": 6039.419309887193,
+    "min_run_median_ns": 6002.555155089559,
+    "max_run_median_ns": 6039.786885245901,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "matrix_outer_64",
+    "backend": "tenferro_unsliced_warm",
+    "median_ns": 18389354.166666664,
+    "min_run_median_ns": 18369680.5,
+    "max_run_median_ns": 18493076.5,
+    "runs": 3
+  }
+]

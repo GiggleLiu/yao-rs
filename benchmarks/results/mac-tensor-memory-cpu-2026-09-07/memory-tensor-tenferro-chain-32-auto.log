@@ -1,0 +1,24 @@
+{"allocated_bytes":49736,"diagnostic_ns":32584,"peak_additional_rust_heap_bytes":49736,"phase":"matrix_inputs","retained_additional_rust_heap_bytes":49736}
+{"allocated_bytes":92083,"diagnostic_ns":117917,"peak_additional_rust_heap_bytes":38546,"phase":"slice_planning","retained_additional_rust_heap_bytes":35280}
+{"backend":"tenferro","dimension":32,"estimate":{"concurrent_slices":1,"estimated_total_bytes":70160,"input_bytes":49152,"largest_intermediate_bytes":512,"omeco_peak_bytes":1040,"output_bytes":16384,"slices":1024,"worker_buffer_bytes":4624,"workspace_reserved_bytes":0},"kind":"chain","labels":[0,2],"mode":"auto","tree":{"args":[{"args":[{"isleaf":true,"tensorindex":0},{"isleaf":true,"tensorindex":1}],"eins":{"ixs":[[0,1],[1,2]],"iy":[0,2]},"isleaf":false},{"isleaf":true,"tensorindex":2}],"eins":{"ixs":[[0,2],[2,3]],"iy":[0,3]},"isleaf":false}}
+{"allocated_bytes":31519,"diagnostic_ns":44208,"peak_additional_rust_heap_bytes":13440,"phase":"slice_compilation","retained_additional_rust_heap_bytes":3404}
+{"allocated_bytes":119715022,"diagnostic_ns":24575416,"peak_additional_rust_heap_bytes":74724,"phase":"slice_execution","retained_additional_rust_heap_bytes":38568}
+{"checksum":16086.725798524649,"status":"complete"}
+        0.02 real         0.02 user         0.00 sys
+             6930432  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                 607  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+                  14  involuntary context switches
+           479492737  instructions retired
+           107219927  cycles elapsed
+             2294120  peak memory footprint

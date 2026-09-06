@@ -1,0 +1,24 @@
+{"allocated_bytes":787016,"diagnostic_ns":444250,"peak_additional_rust_heap_bytes":787016,"phase":"matrix_inputs","retained_additional_rust_heap_bytes":787016}
+{"allocated_bytes":4596,"diagnostic_ns":15750,"peak_additional_rust_heap_bytes":2664,"phase":"slice_planning","retained_additional_rust_heap_bytes":1064}
+{"backend":"tenferro","dimension":128,"estimate":{"concurrent_slices":1,"estimated_total_bytes":2369536,"input_bytes":786432,"largest_intermediate_bytes":262144,"omeco_peak_bytes":266240,"output_bytes":262144,"slices":128,"worker_buffer_bytes":1320960,"workspace_reserved_bytes":0},"kind":"chain","labels":[0],"mode":"fixed_output","tree":{"args":[{"args":[{"isleaf":true,"tensorindex":0},{"isleaf":true,"tensorindex":1}],"eins":{"ixs":[[0,1],[1,2]],"iy":[0,2]},"isleaf":false},{"isleaf":true,"tensorindex":2}],"eins":{"ixs":[[0,2],[2,3]],"iy":[0,3]},"isleaf":false}}
+{"allocated_bytes":31515,"diagnostic_ns":56209,"peak_additional_rust_heap_bytes":13440,"phase":"slice_compilation","retained_additional_rust_heap_bytes":3400}
+{"allocated_bytes":16169782,"diagnostic_ns":4686125,"peak_additional_rust_heap_bytes":848844,"phase":"slice_execution","retained_additional_rust_heap_bytes":286360}
+{"checksum":6409.210671291982,"status":"complete"}
+        0.00 real         0.00 user         0.00 sys
+             8126464  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                 680  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+                   5  involuntary context switches
+           134369742  instructions retired
+            27399751  cycles elapsed
+             3686808  peak memory footprint

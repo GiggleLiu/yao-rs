@@ -1,0 +1,23 @@
+{"allocated_bytes":49736,"diagnostic_ns":34125,"peak_additional_rust_heap_bytes":49736,"phase":"matrix_inputs","retained_additional_rust_heap_bytes":49736}
+{"allocated_bytes":2492,"diagnostic_ns":8875,"peak_additional_rust_heap_bytes":1572,"phase":"slice_planning","retained_additional_rust_heap_bytes":1048}
+{"backend":"omeinsum","dimension":32,"estimate":{"concurrent_slices":1,"estimated_total_bytes":229376,"input_bytes":49152,"largest_intermediate_bytes":16384,"omeco_peak_bytes":49152,"output_bytes":16384,"slices":1,"worker_buffer_bytes":163840,"workspace_reserved_bytes":0},"kind":"chain","labels":[],"mode":"unsliced","tree":{"args":[{"args":[{"isleaf":true,"tensorindex":0},{"isleaf":true,"tensorindex":1}],"eins":{"ixs":[[0,1],[1,2]],"iy":[0,2]},"isleaf":false},{"isleaf":true,"tensorindex":2}],"eins":{"ixs":[[0,2],[2,3]],"iy":[0,3]},"isleaf":false}}
+{"allocated_bytes":4385923,"diagnostic_ns":107625,"peak_additional_rust_heap_bytes":4297862,"phase":"slice_execution","retained_additional_rust_heap_bytes":4210688}
+{"checksum":16086.725798524647,"status":"complete"}
+        0.00 real         0.00 user         0.00 sys
+             3096576  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                 373  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+                   5  involuntary context switches
+            20584805  instructions retired
+             6538457  cycles elapsed
+             1540456  peak memory footprint

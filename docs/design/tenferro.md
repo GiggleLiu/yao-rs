@@ -12,7 +12,7 @@ validation targets the NVIDIA A800 host reachable as `ssh gpu`.
 | 2. Supported tenferro CPU backend | Library/CLI adapter, explicit and reusable plans, numerical/feature/package checks | Implemented in [PR #48](https://github.com/GiggleLiu/yao-rs/pull/48); merged (`3ec7e69`) |
 | 3. Hamiltonian evolution | Pauli rotations, model builders, Trotter/Suzuki, physical parameter bindings and convergence tests | Merged [PR #49](https://github.com/GiggleLiu/yao-rs/pull/49) (`a1f24f3`) |
 | 4. Differentiable circuits | Custom losses/input-state VJP, tenferro integration, shared parameters, numerical and memory tests | Merged [PR #50](https://github.com/GiggleLiu/yao-rs/pull/50) (`bd00084`) |
-| 5. Tensor memory / observables | Polynomial expectations, omeco slicing, estimates, versioned plans and budget tests | Implementing on `codex/tensor-memory` |
+| 5. Tensor memory / observables | Polynomial expectations, omeco slicing, estimates, versioned plans and budget tests | Implemented in [PR #51](https://github.com/GiggleLiu/yao-rs/pull/51); validation and CPU report complete |
 | 6. Noisy trajectories | Seeded Kraus sampling, uncertainty, exact-density comparisons and memory scaling | Pending |
 | 7. Matrix-free exponential action | Community implementation qualification, error/convergence diagnostics, Yao comparison | Pending |
 | 8. GPU execution | Resident tensor/circuit/AD execution, explicit transfers, correctness and timings via `ssh gpu` | Pending |
@@ -248,3 +248,56 @@ Rust 1.96 check of all workspace targets/features. Numerical tests include
 finite-difference step sweeps, real/imaginary input perturbations, JVP/VJP
 duality, non-real cotangents, active-low controls, FSim, shared and zero-time
 parameters, empty parameter tensors, and invalid derivative domains.
+
+
+## Tensor memory and polynomial expectations (PR #51)
+
+Pure/noisy polynomial expectations share their circuit tensors and a summed
+term-selection index. Identity/zero coefficients are preserved. `SlicedPlan`
+validates fixed slices, checked byte estimates and assignment limits; omeco
+TreeSA supplies optional automatic slicing/replanning. A single active slice
+makes reduction order deterministic and keeps concurrent tensor storage bounded.
+Tenferro prepares one reusable slice shape. CLI version-two plans retain their
+labels and limits; an actual preceding-version CLI rejects them before execution,
+with [recorded compatibility evidence](../../benchmarks/results/mac-tensor-memory-cpu-2026-09-07/reader-compatibility.json).
+
+The [tensor-memory M4 report](../../benchmarks/results/mac-tensor-memory-cpu-2026-09-07/report.md)
+contains three independent processes each at one/four threads. All 24 Yao
+complex-expectation comparisons pass (maximum discrepancy `1.12e-16`). The
+reference preserves complex values through Yao's sandwich/trace formulas;
+Yao's density formula builds a dense operator, while Rust applies each word.
+Measured sources are pinned at `8b91c3c`; later plot presentation changes have
+separate hashes. Selected execution trees are recorded per timing process.
+
+At six qubits, one-thread medians for the five-term pure expectation are
+3.52 µs native, 4.58 µs Yao, 359.77 µs omeinsum and 1358.48 µs prepared
+tenferro. The noisy density expectation takes 280.06/234.06 µs in native/Yao;
+its tensor contractions take 360.42/1357.31 µs. Slicing the five-term index on
+the same tree multiplies contraction work; tenferro takes about 6.75–6.80 ms.
+These small circuits favor specialized simulation and retain existing defaults.
+
+All 26 isolated matrix memory probes completed. For an ordinary 256-square
+matrix chain, tenferro's fixed output slicing changes its tensor estimate from
+14.00 to 9.02 MiB but RSS remains about 12 MiB; execution grows from 5.71 to
+15.37 ms. Slicing is not automatically a process-memory or time improvement.
+
+The separately labelled 64-square outer-product stress path intentionally
+creates a large intermediate. Tenferro RSS falls from 518.86 to 19.38 MiB with
+fixed output slicing, while execution changes from 25.82 to 27.06 ms. A greedy
+unsliced order avoids that intermediate: 6.81 MiB RSS and 0.122 ms. omeinsum
+shows the same qualitative result (515.25/11.61/3.70 MiB and
+26.09/23.41/0.226 ms for supplied/sliced/greedy paths). This is evidence for
+choosing a good order before slicing, not a comparison against an optimized
+unsliced baseline. Automatic TreeSA slicing is separately qualified at dimension
+32; it chooses 1024 assignments in these runs, with its actual trees recorded.
+
+The estimate is a tensor-storage model plus a user workspace reserve, not a
+hard RSS bound. The default zero reserve does not imply zero provider scratch;
+measured heap/RSS can exceed it. Raw records separate inputs, output, omeco's
+live tensor estimate, worker buffers, reserve, execution heap and process RSS.
+
+Validation: `make check-all` (643 tests), 11 fixture tests and Clippy, seven
+report tests, warnings-denied rustdoc/mdBook, runnable sliced-expectation example,
+Linux Rust 1.96 all-target/all-feature compilation, and CLI version/pipeline
+checks. GPU, stochastic trajectories and matrix-free evolution remain later
+milestones.

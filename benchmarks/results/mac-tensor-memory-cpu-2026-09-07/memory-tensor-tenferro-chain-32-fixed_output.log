@@ -1,0 +1,24 @@
+{"allocated_bytes":49736,"diagnostic_ns":33375,"peak_additional_rust_heap_bytes":49736,"phase":"matrix_inputs","retained_additional_rust_heap_bytes":49736}
+{"allocated_bytes":4596,"diagnostic_ns":13375,"peak_additional_rust_heap_bytes":2664,"phase":"slice_planning","retained_additional_rust_heap_bytes":1064}
+{"backend":"tenferro","dimension":32,"estimate":{"concurrent_slices":1,"estimated_total_bytes":150016,"input_bytes":49152,"largest_intermediate_bytes":16384,"omeco_peak_bytes":17408,"output_bytes":16384,"slices":32,"worker_buffer_bytes":84480,"workspace_reserved_bytes":0},"kind":"chain","labels":[0],"mode":"fixed_output","tree":{"args":[{"args":[{"isleaf":true,"tensorindex":0},{"isleaf":true,"tensorindex":1}],"eins":{"ixs":[[0,1],[1,2]],"iy":[0,2]},"isleaf":false},{"isleaf":true,"tensorindex":2}],"eins":{"ixs":[[0,2],[2,3]],"iy":[0,3]},"isleaf":false}}
+{"allocated_bytes":31515,"diagnostic_ns":45375,"peak_additional_rust_heap_bytes":13440,"phase":"slice_compilation","retained_additional_rust_heap_bytes":3400}
+{"allocated_bytes":3817174,"diagnostic_ns":1025416,"peak_additional_rust_heap_bytes":106956,"phase":"slice_execution","retained_additional_rust_heap_bytes":39064}
+{"checksum":16086.725798524647,"status":"complete"}
+        0.00 real         0.00 user         0.00 sys
+             6619136  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                 588  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+                   6  involuntary context switches
+            36967487  instructions retired
+            10537227  cycles elapsed
+             2163072  peak memory footprint
