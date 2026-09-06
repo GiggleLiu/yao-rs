@@ -129,7 +129,9 @@ Examples:
   yao run circuit.json --shots 1024
   yao run circuit.json --op \"Z(0)Z(1)\"
   yao run circuit.json --shots 100 --locs 0,1
+  yao run circuit.json --trajectories 4096 --op \"Z(0)\" --seed 7
   yao run circuit.json --output state.bin")]
+    #[command(group(clap::ArgGroup::new("sampling").args(["shots", "trajectories"]).multiple(false)))]
     Run {
         /// Circuit JSON file (use - for stdin)
         circuit: String,
@@ -139,8 +141,8 @@ Examples:
         /// Number of measurement shots (mutually exclusive with --op)
         #[arg(long, conflicts_with = "op")]
         shots: Option<usize>,
-        /// Seed for reproducible measurement (within the same version)
-        #[arg(long, requires = "shots")]
+        /// Seed for reproducible measurement or trajectories (within the same version)
+        #[arg(long, requires = "sampling")]
         seed: Option<u64>,
         /// Operator expression for expectation (mutually exclusive with --shots)
         #[arg(long, conflicts_with = "shots", allow_hyphen_values = true)]
@@ -148,6 +150,12 @@ Examples:
         /// Qubit indices for partial measurement (comma-separated, used with --shots)
         #[arg(long, value_delimiter = ',', requires = "shots")]
         locs: Option<Vec<usize>>,
+        /// Estimate --op with independent noisy trajectories (separate from shots)
+        #[arg(long, requires = "op", conflicts_with = "shots")]
+        trajectories: Option<usize>,
+        /// Concurrent trajectory workers; above one requires the parallel feature
+        #[arg(long, requires = "trajectories")]
+        threads: Option<usize>,
     },
 
     /// Contract a pre-optimized tensor network

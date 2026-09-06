@@ -12,8 +12,8 @@ validation targets the NVIDIA A800 host reachable as `ssh gpu`.
 | 2. Supported tenferro CPU backend | Library/CLI adapter, explicit and reusable plans, numerical/feature/package checks | Implemented in [PR #48](https://github.com/GiggleLiu/yao-rs/pull/48); merged (`3ec7e69`) |
 | 3. Hamiltonian evolution | Pauli rotations, model builders, Trotter/Suzuki, physical parameter bindings and convergence tests | Merged [PR #49](https://github.com/GiggleLiu/yao-rs/pull/49) (`a1f24f3`) |
 | 4. Differentiable circuits | Custom losses/input-state VJP, tenferro integration, shared parameters, numerical and memory tests | Merged [PR #50](https://github.com/GiggleLiu/yao-rs/pull/50) (`bd00084`) |
-| 5. Tensor memory / observables | Polynomial expectations, omeco slicing, estimates, versioned plans and budget tests | Implemented in [PR #51](https://github.com/GiggleLiu/yao-rs/pull/51); validation and CPU report complete |
-| 6. Noisy trajectories | Seeded Kraus sampling, uncertainty, exact-density comparisons and memory scaling | Pending |
+| 5. Tensor memory / observables | Polynomial expectations, omeco slicing, estimates, versioned plans and budget tests | Merged [PR #51](https://github.com/GiggleLiu/yao-rs/pull/51) (`53897a4`) |
+| 6. Noisy trajectories | Seeded Kraus sampling, uncertainty, exact-density comparisons and memory scaling | Implementing on `codex/noisy-trajectories` |
 | 7. Matrix-free exponential action | Community implementation qualification, error/convergence diagnostics, Yao comparison | Pending |
 | 8. GPU execution | Resident tensor/circuit/AD execution, explicit transfers, correctness and timings via `ssh gpu` | Pending |
 
@@ -301,3 +301,30 @@ report tests, warnings-denied rustdoc/mdBook, runnable sliced-expectation exampl
 Linux Rust 1.96 all-target/all-feature compilation, and CLI version/pipeline
 checks. GPU, stochastic trajectories and matrix-free evolution remain later
 milestones.
+
+
+## Seeded noisy trajectories (milestone 6)
+
+`TrajectoryCircuit` validates qubit/unitary structure and local CPTP Kraus maps,
+then samples normalized branches with native state-vector kernels. Rand's existing
+ChaCha8 streams use trajectory IDs; optional Rayon workers reduce scalar moments
+in trajectory order. Real/imaginary variance, standard error and covariance are
+streamed with bounded state buffers. The CLI selects this mode explicitly with
+`run --trajectories N --op ... --seed ...`; measurement shots stay separate.
+Built-in register-wide depolarization samples Pauli words without materializing
+its dense Kraus list.
+
+Thermal relaxation now matches analytic population/coherence decay, fixing the
+omitted survival factor in the former Julia-derived conversion. Tests cover
+positive infinite time constants and long durations without cancellation in the
+coherence amplitude. The historical Julia Kraus-entry fixture is superseded by
+physical channel-map tests; other channel comparisons remain intact.
+
+Implementation validation: `make check-all` (656 tests), 12 benchmark-fixture tests
+and Clippy, nine report tests, warnings-denied API docs/mdBook, a runnable noise
+example, CLI pure-input/density-input checks, and serial/parallel reproducibility.
+An independent embedded complex matrix qualifies three-target Kraus execution.
+The benchmark smoke test passes exact native/tenferro comparisons and all three
+Yao complex expectations (maximum discrepancy `3.13e-16`). Repeated CPU timings,
+accuracy and memory results are being collected; no performance conclusion is
+claimed from smoke timings.

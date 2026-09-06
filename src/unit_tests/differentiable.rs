@@ -1,4 +1,5 @@
 use super::*;
+use crate::Gate;
 use crate::{Op, OperatorPolynomial, control, expect_grad, put};
 
 fn state(n: usize, shift: f64) -> ArrayReg {

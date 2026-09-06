@@ -1,3 +1,4 @@
+use crate::NoiseChannel;
 use ndarray::Array2;
 use num_complex::Complex64;
 
@@ -457,24 +458,85 @@ fn test_kraus_matches_julia_phase_amp_damping_excited() {
     }
 }
 
+// The pinned Julia fixture used an incorrect conversion from T1/T2 to
+// phase-amplitude damping. Check the physical map instead of matching its Kraus
+// entries (different Kraus decompositions may describe the same channel).
 #[test]
-fn test_kraus_matches_julia_thermal_relaxation() {
-    use crate::noise::NoiseChannel;
-    let fixtures = load_noise_fixtures();
-    let fixture = &fixtures["kraus"]["thermal_relaxation_100_80_10_0.0"];
+fn thermal_relaxation_matches_population_and_coherence_decay() {
+    use crate::{ArrayReg, Circuit, DensityMatrix, Register, channel};
+    let input = ArrayReg::from_vec(1, vec![c(0.6, 0.), c(0., 0.8)]);
+    for (t1, t2) in [
+        (100., 80.),
+        (100., 150.),
+        (100., 200.),
+        (f64::INFINITY, 80.),
+        (f64::INFINITY, f64::INFINITY),
+    ] {
+        for time in [0., 1e-12, 10., 1000., 1e6] {
+            for excited_population in [0., 0.2, 1.] {
+                let noise = NoiseChannel::ThermalRelaxation {
+                    t1,
+                    t2,
+                    time,
+                    excited_population,
+                };
+                let kraus = noise.try_kraus_operators().unwrap();
+                verify_completeness(&kraus);
+                let circuit = Circuit::qubits(1, vec![channel(vec![0], noise)]).unwrap();
+                let mut dm = DensityMatrix::from_reg(&input);
+                dm.apply(&circuit);
+                let data = dm.state_data();
+                let population =
+                    excited_population + (0.64 - excited_population) * (-time / t1).exp();
+                let coherence = c(0., -0.48) * (-time / t2).exp();
+                assert!((data[3].re - population).abs() < 2e-14);
+                assert!((data[0].re - (1. - population)).abs() < 2e-14);
+                assert!((data[1] - coherence).norm() < 2e-14 * coherence.norm().max(1e-100));
+                assert!((data[2] - coherence.conj()).norm() < 2e-14 * coherence.norm().max(1e-100));
+            }
+        }
+    }
+}
 
-    let ch = NoiseChannel::ThermalRelaxation {
-        t1: 100.0,
-        t2: 80.0,
-        time: 10.0,
-        excited_population: 0.0,
-    };
-    let kraus = ch.kraus_operators();
-
-    assert_eq!(kraus.len(), fixture["num_kraus"].as_u64().unwrap() as usize);
-    for (i, k) in kraus.iter().enumerate() {
-        let expected = parse_matrix(&fixture["kraus"][i]);
-        assert_matrix_approx(k, &expected, 1e-10);
+#[test]
+fn fallible_kraus_validation_rejects_invalid_channels() {
+    for channel in [
+        NoiseChannel::BitFlip { p: f64::NAN },
+        NoiseChannel::Reset { p0: 0.6, p1: 0.5 },
+        NoiseChannel::Custom { kraus_ops: vec![] },
+        NoiseChannel::Custom {
+            kraus_ops: vec![Array2::zeros((2, 3))],
+        },
+        NoiseChannel::Custom {
+            kraus_ops: vec![Array2::eye(3)],
+        },
+        NoiseChannel::Custom {
+            kraus_ops: vec![Array2::zeros((2, 2))],
+        },
+        NoiseChannel::Coherent {
+            matrix: Array2::eye(2).mapv(|z: Complex64| z * 2.),
+        },
+        NoiseChannel::Coherent {
+            matrix: Array2::from_elem((2, 2), c(f64::NAN, 0.)),
+        },
+        NoiseChannel::ThermalRelaxation {
+            t1: 1.,
+            t2: 3.,
+            time: 1.,
+            excited_population: 0.,
+        },
+        NoiseChannel::ThermalRelaxation {
+            t1: 1.,
+            t2: 1.,
+            time: f64::INFINITY,
+            excited_population: 0.,
+        },
+        NoiseChannel::Depolarizing {
+            n: usize::MAX,
+            p: 0.1,
+        },
+    ] {
+        assert!(channel.try_kraus_operators().is_err(), "{channel:?}");
     }
 }
 

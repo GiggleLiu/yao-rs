@@ -9,7 +9,7 @@
 use crate::ad::{apply_generator, reverse_unitary};
 use crate::apply::dispatch_arrayreg_gate;
 use crate::parameters::{BoundCircuit, ParameterBinding};
-use crate::{ArrayReg, Circuit, CircuitElement, Gate};
+use crate::{ArrayReg, Circuit, CircuitElement};
 use num_complex::Complex64 as C;
 
 /// Validated unitary structure and physical bindings, reusable at new values.
@@ -47,38 +47,7 @@ impl DifferentiableCircuit {
                     return Err("Reversible circuit AD does not support noise channels".into());
                 }
                 CircuitElement::Gate(pg) => {
-                    if let Gate::Custom {
-                        matrix,
-                        is_diagonal,
-                        ..
-                    } = &pg.gate
-                    {
-                        if matrix
-                            .iter()
-                            .any(|z| !z.re.is_finite() || !z.im.is_finite())
-                        {
-                            return Err("Custom unitary matrix must be finite".into());
-                        }
-                        let n = matrix.nrows();
-                        for i in 0..n {
-                            for j in 0..n {
-                                if *is_diagonal && i != j && matrix[[i, j]] != C::new(0., 0.) {
-                                    return Err("Custom diagonal flag disagrees with matrix".into());
-                                }
-                                let gram: C =
-                                    (0..n).map(|k| matrix[[k, i]].conj() * matrix[[k, j]]).sum();
-                                if (gram - C::new(f64::from(i == j), 0.)).norm() > 1e-12
-                                    || !gram.re.is_finite()
-                                    || !gram.im.is_finite()
-                                {
-                                    return Err(
-                                        "Reversible circuit AD requires unitary custom matrices"
-                                            .into(),
-                                    );
-                                }
-                            }
-                        }
-                    }
+                    crate::apply::validate_unitary_gate(circuit.nbits, pg)?;
                 }
                 CircuitElement::Annotation(_) => {}
             }

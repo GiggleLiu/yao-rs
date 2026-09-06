@@ -51,6 +51,13 @@ fn backend(c: &mut Criterion) {
                 };
                 let expected = evaluate();
                 group.bench_function("native", |b| b.iter(|| black_box(evaluate())));
+                if std::env::var("YAO_BENCH_SUITE").as_deref() == Ok("trajectories") {
+                    trajectory_case(
+                        &mut group, &case.id, &circuit, &state, op, expected, threads, &cpu,
+                    );
+                    group.finish();
+                    continue;
+                }
                 use yao_tenferro_probe::tensor_memory as tm;
                 let tn = tm::network(&circuit, op, noisy);
                 group.bench_function("observable_export", |b| {
@@ -207,6 +214,10 @@ fn backend(c: &mut Criterion) {
     }
     if std::env::var("YAO_BENCH_SUITE").as_deref() == Ok("tensor-memory") {
         matrix_slicing(c, &cpu);
+        return;
+    }
+    if std::env::var("YAO_BENCH_SUITE").as_deref() == Ok("trajectories") {
+        large_trajectories(c, threads);
         return;
     }
     for n in [8, 12, 16] {
@@ -386,6 +397,110 @@ fn matrix_slicing(c: &mut Criterion, cpu: &yao_rs::tenferro::CpuContractor) {
             group.bench_function(format!("omeinsum_{mode}"), |b| {
                 b.iter(|| {
                     yao_rs::contractor::contract_sliced(black_box(&plan), black_box(&tn.tensors))
+                        .unwrap()
+                })
+            });
+        }
+        group.finish();
+    }
+}
+
+#[allow(clippy::too_many_arguments)]
+fn trajectory_case(
+    group: &mut criterion::BenchmarkGroup<'_, criterion::measurement::WallTime>,
+    id: &str,
+    circuit: &yao_rs::Circuit,
+    input: &yao_rs::ArrayReg,
+    op: &OperatorPolynomial,
+    expected: C,
+    threads: usize,
+    cpu: &yao_rs::tenferro::CpuContractor,
+) {
+    use yao_rs::trajectories::{TrajectoryCircuit, TrajectoryOptions};
+    use yao_tenferro_probe::trajectories as tr;
+    let simulator = TrajectoryCircuit::new(circuit.clone()).unwrap();
+    group.bench_function("trajectory_prepare", |b| {
+        b.iter(|| TrajectoryCircuit::new(black_box(circuit).clone()).unwrap())
+    });
+    for trajectories in tr::COUNTS {
+        let options = TrajectoryOptions {
+            trajectories,
+            seed: 19,
+            threads,
+        };
+        tr::record(id, &simulator, input, op, expected, options).unwrap();
+        group.bench_function(format!("trajectory_{trajectories}"), |b| {
+            b.iter(|| {
+                simulator
+                    .expectation(black_box(input), black_box(op), options)
+                    .unwrap()
+            })
+        });
+        if circuit.nbits == 6 {
+            for seed in [7, 42, 73, 101, 137, 211, 307] {
+                tr::record(
+                    id,
+                    &simulator,
+                    input,
+                    op,
+                    expected,
+                    TrajectoryOptions { seed, ..options },
+                )
+                .unwrap();
+            }
+        }
+    }
+    let tn = yao_tenferro_probe::tensor_memory::network(circuit, op, true);
+    let tree = yao_rs::contraction_plan::optimize_code(
+        &tn.code,
+        &tn.size_dict,
+        &omeco::GreedyMethod::default(),
+    )
+    .unwrap();
+    let plan = cpu.prepare(&tn.code, &tn.size_dict, Some(&tree)).unwrap();
+    let got = cpu.execute(&plan, &tn.tensors).unwrap()[ndarray::IxDyn(&[])];
+    assert!((got - expected).norm() < 1e-10);
+    group.bench_function("tenferro_exact_prepare", |b| {
+        b.iter(|| {
+            cpu.prepare(black_box(&tn.code), black_box(&tn.size_dict), Some(&tree))
+                .unwrap()
+        })
+    });
+    group.bench_function("tenferro_exact_warm", |b| {
+        b.iter(|| {
+            cpu.execute(black_box(&plan), black_box(&tn.tensors))
+                .unwrap()
+        })
+    });
+}
+fn large_trajectories(c: &mut Criterion, threads: usize) {
+    use yao_rs::trajectories::{TrajectoryCircuit, TrajectoryOptions};
+    use yao_tenferro_probe::trajectories as tr;
+    for n in [12, 16] {
+        let id = format!("product_noise_{n}");
+        let simulator = TrajectoryCircuit::new(tr::circuit(n, false).unwrap()).unwrap();
+        let input = yao_rs::ArrayReg::zero_state(n);
+        let op = tr::observable(n, false);
+        let mut group = c.benchmark_group(&id);
+        for trajectories in tr::LARGE_COUNTS {
+            let options = TrajectoryOptions {
+                trajectories,
+                seed: 19,
+                threads,
+            };
+            tr::record(
+                &id,
+                &simulator,
+                &input,
+                &op,
+                tr::product_expected(),
+                options,
+            )
+            .unwrap();
+            group.bench_function(format!("trajectory_{trajectories}"), |b| {
+                b.iter(|| {
+                    simulator
+                        .expectation(black_box(&input), black_box(&op), options)
                         .unwrap()
                 })
             });

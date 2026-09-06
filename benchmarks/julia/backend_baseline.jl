@@ -132,7 +132,10 @@ function main()
         end
         op=if haskey(case,"operator")
             polynomial=case["operator"]
-            paulis=Dict("I"=>I2,"X"=>X,"Y"=>Y,"Z"=>Z)
+            # Explicit matrices preserve Rust's Pu/Pd convention.
+            paulis=Dict("I"=>I2,"X"=>X,"Y"=>Y,"Z"=>Z,
+                "P0"=>matblock(ComplexF64[1 0;0 0]), "P1"=>matblock(ComplexF64[0 0;0 1]),
+                "Pu"=>matblock(ComplexF64[0 1;0 0]), "Pd"=>matblock(ComplexF64[0 0;1 0]))
             sum(complex(coefficient...)*chain(n,(put(n,n-site=>paulis[name]) for (site,name) in word["ops"])...) for (coefficient,word) in zip(polynomial["coeffs"],polynomial["opstrings"]))
         else
             mode == "custom_gradient" ? custom_target(n) : put(n,n=>Z)

@@ -15,6 +15,7 @@ pub mod simulate;
 pub mod toeinsum;
 #[cfg(feature = "qasm")]
 pub mod toqasm;
+mod trajectories;
 pub mod visualize;
 
 use anyhow::{Context, anyhow};

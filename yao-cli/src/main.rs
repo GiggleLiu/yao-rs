@@ -79,6 +79,8 @@ fn main() -> anyhow::Result<()> {
             seed,
             op,
             locs,
+            trajectories,
+            threads,
         } => commands::run::run(
             &circuit,
             input.as_deref(),
@@ -86,6 +88,8 @@ fn main() -> anyhow::Result<()> {
             op.as_deref(),
             locs.as_deref(),
             seed,
+            trajectories,
+            threads,
             &out,
         ),
         Commands::Measure {

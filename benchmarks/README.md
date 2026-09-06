@@ -186,3 +186,22 @@ then contract `C[j,k]`, producing an `n^4` intermediate. Fixed output slicing
 keeps that order; a separately named greedy unsliced plan demonstrates that
 better planning can avoid the intermediate entirely. This deliberately poor
 supplied path tests memory controls; it is not presented as an optimized baseline.
+
+
+### Noisy trajectories
+
+Run `benchmarks/run_backend.py RESULTS --suite trajectories --julia PATH_TO_JULIA`
+for repeated exact native/Yao density expectations, prepared tenferro expectation
+contractions and seeded trajectory ensembles. Three entangled fixtures use
+4/6/8 qubits and amplitude damping plus depolarization. The 6-qubit sample-count
+sweep uses eight seeds; other cases use one. Larger 12/16-qubit product fixtures
+have an analytic expectation and are explicitly simpler workloads.
+
+`*-trajectory-stats.jsonl` records means, references, errors, variances and
+standard errors. Repeated timing-process seeds are deduplicated for accuracy.
+Twenty trajectory and three exact-density memory probes report heap and isolated
+process RSS. The runner omits unrelated generic AD memory probes for this suite.
+Generate standalone figures using `uv run --with matplotlib benchmarks/plot_trajectories.py RESULTS`.
+Timing includes buffers, moment reduction and thread-pool creation; local channel
+preparation is separate. Compare time at achieved statistical error, not as if
+trajectories and exact density evolution had identical accuracy.

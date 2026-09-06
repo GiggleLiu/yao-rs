@@ -86,29 +86,39 @@ impl NoiseChannel {
 
     /// Validate parameter ranges for this noise channel.
     ///
-    /// Panics if parameters are outside their physical ranges.
-    fn validate_params(&self) {
+    /// Returns an error before constructing invalid matrices.
+    fn validate_params(&self) -> Result<(), String> {
+        macro_rules! ensure {
+            ($condition:expr, $($message:tt)*) => {
+                let valid: bool = $condition;
+                if !valid { return Err(format!($($message)*)); }
+            };
+        }
         match self {
             NoiseChannel::BitFlip { p } | NoiseChannel::PhaseFlip { p } => {
-                assert!(
+                ensure!(
                     (0.0..=1.0).contains(p),
                     "probability p={p} must be in [0, 1]"
                 );
             }
             NoiseChannel::PauliChannel { px, py, pz } => {
-                assert!(
+                ensure!(
                     *px >= 0.0 && *py >= 0.0 && *pz >= 0.0 && px + py + pz <= 1.0,
                     "Pauli probabilities (px={px}, py={py}, pz={pz}) must be non-negative and sum <= 1"
                 );
             }
-            NoiseChannel::Depolarizing { p, .. } => {
-                assert!(
+            NoiseChannel::Depolarizing { n, p } => {
+                ensure!(
+                    *n < usize::BITS as usize / 4 - 1,
+                    "Depolarizing Kraus storage exceeds addressable size"
+                );
+                ensure!(
                     (0.0..=1.0).contains(p),
                     "probability p={p} must be in [0, 1]"
                 );
             }
             NoiseChannel::Reset { p0, p1 } => {
-                assert!(
+                ensure!(
                     *p0 >= 0.0 && *p1 >= 0.0 && p0 + p1 <= 1.0,
                     "Reset probabilities (p0={p0}, p1={p1}) must be non-negative and sum <= 1"
                 );
@@ -118,11 +128,11 @@ impl NoiseChannel {
                 phase,
                 excited_population,
             } => {
-                assert!(
+                ensure!(
                     *amplitude >= 0.0 && *phase >= 0.0 && amplitude + phase <= 1.0,
                     "amplitude={amplitude} and phase={phase} must be non-negative and sum <= 1"
                 );
-                assert!(
+                ensure!(
                     (0.0..=1.0).contains(excited_population),
                     "excited_population={excited_population} must be in [0, 1]"
                 );
@@ -131,17 +141,17 @@ impl NoiseChannel {
                 gamma,
                 excited_population,
             } => {
-                assert!(
+                ensure!(
                     (0.0..=1.0).contains(gamma),
                     "gamma={gamma} must be in [0, 1]"
                 );
-                assert!(
+                ensure!(
                     (0.0..=1.0).contains(excited_population),
                     "excited_population={excited_population} must be in [0, 1]"
                 );
             }
             NoiseChannel::PhaseDamping { gamma } => {
-                assert!(
+                ensure!(
                     (0.0..=1.0).contains(gamma),
                     "gamma={gamma} must be in [0, 1]"
                 );
@@ -152,27 +162,31 @@ impl NoiseChannel {
                 time,
                 excited_population,
             } => {
-                assert!(*t1 > 0.0, "t1={t1} must be positive");
-                assert!(*t2 > 0.0, "t2={t2} must be positive");
-                assert!(*time >= 0.0, "time={time} must be non-negative");
-                assert!(
+                ensure!(*t1 > 0.0, "t1={t1} must be positive");
+                ensure!(*t2 > 0.0, "t2={t2} must be positive");
+                ensure!(
+                    *time >= 0.0 && time.is_finite(),
+                    "time={time} must be finite and non-negative"
+                );
+                ensure!(
                     *t2 <= 2.0 * t1,
                     "t2={t2} must be <= 2*t1={} (physics constraint)",
                     2.0 * t1
                 );
-                assert!(
+                ensure!(
                     (0.0..=1.0).contains(excited_population),
                     "excited_population={excited_population} must be in [0, 1]"
                 );
             }
             NoiseChannel::Custom { kraus_ops } => {
-                assert!(
+                ensure!(
                     !kraus_ops.is_empty(),
                     "Custom channel must have at least one Kraus operator"
                 );
             }
             NoiseChannel::Coherent { .. } => {}
         }
+        Ok(())
     }
 
     /// Construct Kraus operators for this channel.
@@ -181,7 +195,22 @@ impl NoiseChannel {
     ///
     /// Julia ref: errortypes.jl KrausChannel() conversions
     pub fn kraus_operators(&self) -> Vec<Array2<Complex64>> {
-        self.validate_params();
+        self.validate_params()
+            .unwrap_or_else(|error| panic!("{error}"));
+        self.kraus_unchecked()
+    }
+
+    /// Construct finite, square qubit Kraus operators and verify trace preservation.
+    /// The completeness relation is checked to `1e-12` per matrix entry.
+    /// This fallible entry point is suitable for stochastic simulation.
+    pub fn try_kraus_operators(&self) -> Result<Vec<Array2<Complex64>>, String> {
+        self.validate_params()?;
+        let operators = self.kraus_unchecked();
+        validate_kraus(&operators)?;
+        Ok(operators)
+    }
+
+    fn kraus_unchecked(&self) -> Vec<Array2<Complex64>> {
         match self {
             NoiseChannel::PhaseAmplitudeDamping {
                 amplitude,
@@ -205,11 +234,20 @@ impl NoiseChannel {
                 time,
                 excited_population,
             } => {
-                // Julia ref: errortypes.jl:223-229
-                let t_phi = (t1 * t2) / (2.0 * t1 - t2);
-                let a = 1.0 - (-time / t1).exp();
-                let b = 1.0 - (-time / t_phi).exp();
-                phase_amplitude_damping_kraus(a, b, *excited_population)
+                // Match population exp(-t/T1) and coherence exp(-t/T2).
+                // The old Julia-derived conversion omitted the survival factor
+                // in b and could produce a+b>1. Keep coherence explicitly to
+                // avoid cancellation in sqrt(1-a-b) at long times.
+                let x1 = time / t1;
+                let x2 = time / t2;
+                let a = -(-x1).exp_m1();
+                let survival = (-x1).exp();
+                let b = if survival == 0.0 {
+                    0.0
+                } else {
+                    survival * -(x1 - 2.0 * x2).min(0.0).exp_m1()
+                };
+                damping_kraus(a, b, *excited_population, (-x2).exp())
             }
             NoiseChannel::BitFlip { p } => {
                 // Julia ref: errortypes.jl:38 → MixedUnitaryChannel([I2, X], [1-p, p])
@@ -250,7 +288,7 @@ impl NoiseChannel {
             NoiseChannel::PauliChannel { px, py, pz } => {
                 // Julia ref: errortypes.jl:120
                 // K0 = sqrt(1-px-py-pz)*I, K1 = sqrt(px)*X, K2 = sqrt(py)*Y, K3 = sqrt(pz)*Z
-                let s0 = (1.0 - px - py - pz).sqrt();
+                let s0 = (1.0 - (px + py + pz)).sqrt();
                 let sx = px.sqrt();
                 let sy = py.sqrt();
                 let sz = pz.sqrt();
@@ -294,7 +332,7 @@ impl NoiseChannel {
             }
             NoiseChannel::Reset { p0, p1 } => {
                 // Julia ref: errortypes.jl:168-181
-                let s = (1.0 - p0 - p1).sqrt();
+                let s = (1.0 - (p0 + p1)).sqrt();
                 let mut ops = vec![
                     // K0 = sqrt(1-p0-p1) * I
                     Array2::from_shape_vec(
@@ -379,12 +417,48 @@ impl NoiseChannel {
     }
 }
 
+/// Validate one local CPTP map, without constructing a full-register operator.
+pub(crate) fn validate_kraus(operators: &[Array2<Complex64>]) -> Result<(), String> {
+    let d = operators
+        .first()
+        .ok_or("A channel requires at least one Kraus operator")?
+        .nrows();
+    if !d.is_power_of_two() || operators.iter().any(|k| k.dim() != (d, d)) {
+        return Err("Kraus operators must be square with the same power-of-two dimension".into());
+    }
+    if operators
+        .iter()
+        .flat_map(|k| k.iter())
+        .any(|z| !z.re.is_finite() || !z.im.is_finite())
+    {
+        return Err("Kraus operators must be finite".into());
+    }
+    for i in 0..d {
+        for j in 0..d {
+            let mut gram = Complex64::new(0., 0.);
+            for matrix in operators {
+                for row in 0..d {
+                    gram += matrix[[row, i]].conj() * matrix[[row, j]];
+                }
+            }
+            let error = (gram - Complex64::new(f64::from(i == j), 0.)).norm();
+            if !error.is_finite() || error > 1e-12 {
+                return Err("Kraus operators must preserve trace (sum K†K = I)".into());
+            }
+        }
+    }
+    Ok(())
+}
+
 /// Julia ref: errortypes.jl:271-296 KrausChannel(err::PhaseAmplitudeDampingError)
 fn phase_amplitude_damping_kraus(a: f64, b: f64, p1: f64) -> Vec<Array2<Complex64>> {
-    let mut ops = Vec::new();
-    let rest = (1.0 - a - b).sqrt();
+    damping_kraus(a, b, p1, (1.0 - a - b).max(0.0).sqrt())
+}
 
-    if (p1 - 1.0).abs() > f64::EPSILON {
+fn damping_kraus(a: f64, b: f64, p1: f64, rest: f64) -> Vec<Array2<Complex64>> {
+    let mut ops = Vec::new();
+
+    if p1 < 1.0 {
         // Damping to ground state
         let s = (1.0 - p1).sqrt();
         // A0
@@ -419,7 +493,7 @@ fn phase_amplitude_damping_kraus(a: f64, b: f64, p1: f64) -> Vec<Array2<Complex6
         }
     }
 
-    if p1.abs() > f64::EPSILON {
+    if p1 > 0.0 {
         // Damping to excited state
         let s = p1.sqrt();
         // B0

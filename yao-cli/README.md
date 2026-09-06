@@ -43,3 +43,12 @@ Tensor expectations support sums, including noisy circuits. Use
 active slice; they are not process RSS caps. Sliced plans use `yao-tn-v2` and are
 validated before contraction. See the
 [memory-control guide](https://giggleliu.github.io/yao-rs/tensor-memory.html).
+
+### Noisy trajectory expectations
+
+`yao run noisy.json --trajectories 4096 --op 'Z(0)' --seed 19` returns a
+Monte Carlo mean and standard error without constructing a density matrix.
+Trajectory count is separate from measurement `--shots`. Build with
+`--features parallel` to use `--threads 4`. See the
+[trajectory guide](../docs/src/trajectories.md) for normalization, uncertainty
+and reproducibility semantics.

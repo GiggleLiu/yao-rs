@@ -50,6 +50,9 @@ fn phase<T>(name: &str, f: impl FnOnce() -> T) -> T {
     out
 }
 fn main() -> Result<()> {
+    if std::env::args().nth(1).as_deref() == Some("trajectories") {
+        return trajectory_memory();
+    }
     if std::env::args().nth(1).as_deref() == Some("tensor-memory") {
         return tensor_memory();
     }
@@ -229,6 +232,66 @@ fn tensor_memory() -> Result<()> {
     println!(
         "{}",
         json!({"status":"complete","checksum":result.iter().map(|z|z.norm_sqr()).sum::<f64>()})
+    );
+    Ok(())
+}
+
+fn trajectory_memory() -> Result<()> {
+    use yao_rs::{
+        ArrayReg, DensityMatrix, Register,
+        trajectories::{TrajectoryCircuit, TrajectoryOptions},
+    };
+    use yao_tenferro_probe::trajectories as tr;
+    let backend = std::env::args()
+        .nth(2)
+        .ok_or("expected trajectory/density")?;
+    let n: usize = std::env::args().nth(3).ok_or("expected qubits")?.parse()?;
+    let count: usize = std::env::args()
+        .nth(4)
+        .ok_or("expected sample count")?
+        .parse()?;
+    let threads: usize = std::env::args().nth(5).ok_or("expected threads")?.parse()?;
+    if ![4, 8, 10, 12, 16].contains(&n)
+        || ![1, 4].contains(&threads)
+        || (backend == "density" && (n > 10 || count != 0 || threads != 1))
+        || (backend == "trajectory" && ![64, 256].contains(&count))
+        || !["trajectory", "density"].contains(&backend.as_str())
+    {
+        return Err("out-of-bounds trajectory memory fixture".into());
+    }
+    let entangled = n <= 8;
+    let circuit = phase("circuit", || tr::circuit(n, entangled))?;
+    let op = tr::observable(n, entangled);
+    let input = phase("input", || ArrayReg::zero_state(n));
+    let mean = if backend == "trajectory" {
+        let simulator = phase("trajectory_prepare", || TrajectoryCircuit::new(circuit))?;
+        let stats = phase("trajectory_execute", || {
+            simulator.expectation(
+                &input,
+                &op,
+                TrajectoryOptions {
+                    trajectories: count,
+                    seed: 19,
+                    threads,
+                },
+            )
+        })?;
+        println!("{}", json!({"statistics":stats}));
+        stats.mean
+    } else {
+        let mut density = phase("density_input", || DensityMatrix::from_reg(&input));
+        phase("density_execute", || {
+            density.apply(&circuit);
+            yao_rs::expect_dm(&density, &op)
+        })
+    };
+    if !mean.re.is_finite() || !mean.im.is_finite() {
+        return Err("nonfinite memory result".into());
+    }
+    println!(
+        "{}",
+        json!({"status":"complete","backend":backend,"qubits":n,"trajectories":count,"threads":threads,"state_bytes":(1usize<<n)*16,"mean":mean,
+        "note":"Rust heap instrumented; diagnostic times are not benchmark times. RSS includes process startup and allocator retention."})
     );
     Ok(())
 }
