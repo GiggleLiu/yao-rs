@@ -1,0 +1,27 @@
+{"allocated_bytes":18084,"diagnostic_ns":24416,"peak_additional_rust_heap_bytes":8080,"phase":"export","retained_additional_rust_heap_bytes":7752}
+{"allocated_bytes":91520,"diagnostic_ns":39792,"peak_additional_rust_heap_bytes":68672,"phase":"conversion","retained_additional_rust_heap_bytes":47104}
+{"allocated_bytes":376852,"diagnostic_ns":365917,"peak_additional_rust_heap_bytes":124515,"phase":"planning","retained_additional_rust_heap_bytes":119712}
+{"allocated_bytes":1915628,"diagnostic_ns":579708,"peak_additional_rust_heap_bytes":1765280,"phase":"first_execution","retained_additional_rust_heap_bytes":1669856}
+{"allocated_bytes":1295884,"diagnostic_ns":454583,"peak_additional_rust_heap_bytes":1144816,"phase":"warm_execution","retained_additional_rust_heap_bytes":1049344}
+{"allocated_bytes":2103560,"diagnostic_ns":146667,"peak_additional_rust_heap_bytes":2101996,"phase":"ad_input","retained_additional_rust_heap_bytes":2101996}
+{"allocated_bytes":66977646,"diagnostic_ns":6170708,"peak_additional_rust_heap_bytes":15795924,"phase":"ad_forward_tape","retained_additional_rust_heap_bytes":10549276}
+{"allocated_bytes":40165950,"diagnostic_ns":12748667,"peak_additional_rust_heap_bytes":37814090,"phase":"ad_backward","retained_additional_rust_heap_bytes":25848106}
+{"depth":10,"note":"Rust allocator instrumentation excludes provider allocations; timings include instrumentation. Not RSS.","operation":"scaled_sin","qubits":16,"state_bytes":1048576}
+        0.02 real         0.01 user         0.00 sys
+            62898176  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                4021  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+                  15  involuntary context switches
+           474536571  instructions retired
+            87677170  cycles elapsed
+            56852936  peak memory footprint

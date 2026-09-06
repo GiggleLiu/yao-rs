@@ -1,0 +1,23 @@
+{"allocated_bytes":1696,"diagnostic_ns":7375,"peak_additional_rust_heap_bytes":1120,"phase":"model","retained_additional_rust_heap_bytes":880}
+{"allocated_bytes":2359744,"diagnostic_ns":647125,"peak_additional_rust_heap_bytes":1128704,"phase":"circuit_construction","retained_additional_rust_heap_bytes":413824}
+{"allocated_bytes":128,"diagnostic_ns":83,"peak_additional_rust_heap_bytes":128,"phase":"state_input","retained_additional_rust_heap_bytes":128}
+{"allocated_bytes":103040,"diagnostic_ns":96666,"peak_additional_rust_heap_bytes":192,"phase":"native_execution","retained_additional_rust_heap_bytes":128}
+{"gate_parameters":576,"gates":2112,"model":"heisenberg","norm_squared":1.0000000000001195,"note":"Isolated model construction and native execution; Rust heap excludes provider allocations. Timings include instrumentation. RSS includes startup and allocator retention.","order":2,"physical_parameters":5,"qubits":3,"state_bytes":128,"steps":16}
+        0.00 real         0.00 user         0.00 sys
+             3489792  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                 394  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+                   6  involuntary context switches
+            32125713  instructions retired
+             7669917  cycles elapsed
+             2556288  peak memory footprint
