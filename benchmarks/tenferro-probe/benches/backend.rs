@@ -1,0 +1,159 @@
+use criterion::{Criterion, criterion_group, criterion_main};
+use num_complex::Complex64 as C;
+use std::{hint::black_box, time::Duration};
+use tenferro_ad::{EagerRuntime, EagerTensor};
+use tenferro_cpu::CpuBackend;
+use tenferro_tensor::Tensor;
+use yao_rs::einsum::{circuit_to_einsum_dm, circuit_to_einsum_with_boundary};
+use yao_rs::{DensityMatrix, Op, OperatorPolynomial, Register, apply, expect_grad};
+use yao_tenferro_probe::{
+    cases, convert, execute, extension::prepared_x, output_array, prepare, subscripts,
+};
+
+fn backend(c: &mut Criterion) {
+    let threads = std::env::var("YAO_BENCH_THREADS")
+        .unwrap_or("1".into())
+        .parse()
+        .unwrap();
+    let mut backend = CpuBackend::with_threads(threads).unwrap();
+    for case in cases().unwrap() {
+        let circuit = case.circuit().unwrap();
+        let state = case.initial(circuit.nbits);
+        let mut group = c.benchmark_group(&case.id);
+        match case.mode.as_str() {
+            "state" => {
+                group.bench_function("native", |b| {
+                    b.iter(|| apply(black_box(&circuit), black_box(&state)))
+                });
+            }
+            "density" => {
+                let dm = DensityMatrix::from_reg(&state);
+                group.bench_function("native", |b| {
+                    b.iter(|| {
+                        let mut out = black_box(&dm).clone();
+                        out.apply(black_box(&circuit));
+                        black_box(out)
+                    })
+                });
+            }
+            "gradient" => {
+                let op = OperatorPolynomial::single(0, Op::Z, 1.0.into());
+                group.bench_function("native", |b| {
+                    b.iter(|| expect_grad(black_box(&op), black_box(&circuit), black_box(&state)))
+                });
+            }
+            _ => panic!("unknown mode"),
+        }
+        if case.tensor {
+            let (arrays, code, old) = if case.mode == "density" {
+                let tn = circuit_to_einsum_dm(&circuit);
+                let code = subscripts(&tn.code).unwrap();
+                let old = yao_rs::contractor::contract_dm(&tn);
+                group.bench_function("omeinsum", |b| {
+                    b.iter(|| yao_rs::contractor::contract_dm(black_box(&tn)))
+                });
+                (tn.tensors, code, old)
+            } else {
+                let tn = circuit_to_einsum_with_boundary(&circuit, &[]);
+                let code = subscripts(&tn.code).unwrap();
+                let old = yao_rs::contractor::contract(&tn);
+                group.bench_function("omeinsum", |b| {
+                    b.iter(|| yao_rs::contractor::contract(black_box(&tn)))
+                });
+                (tn.tensors, code, old)
+            };
+            let tensors = convert(&arrays).unwrap();
+            let plan = prepare(&tensors, &code).unwrap();
+            let got = output_array(&execute(&plan, &tensors, &mut backend).unwrap()).unwrap();
+            assert_eq!(old.shape(), got.shape());
+            assert!(
+                old.iter()
+                    .zip(got.iter())
+                    .all(|(a, b)| (a - b).norm() < 1e-10)
+            );
+            group.bench_function("conversion", |b| {
+                b.iter(|| convert(black_box(&arrays)).unwrap())
+            });
+            group.bench_function("planning", |b| {
+                b.iter(|| prepare(black_box(&tensors), black_box(&code)).unwrap())
+            });
+            group.bench_function("tenferro_warm", |b| {
+                b.iter(|| execute(black_box(&plan), black_box(&tensors), &mut backend).unwrap())
+            });
+            group.bench_function("tenferro_from_arrays", |b| {
+                b.iter(|| {
+                    let tensors = convert(black_box(&arrays)).unwrap();
+                    let plan = prepare(&tensors, &code).unwrap();
+                    output_array(&execute(&plan, &tensors, &mut backend).unwrap()).unwrap()
+                })
+            });
+        }
+        group.finish();
+    }
+    for n in [8, 12, 16] {
+        let batch = 1usize << (n - 1);
+        let input =
+            Tensor::from_vec_col_major(vec![2, batch], vec![C::new(0.3, 0.4); 2 * batch]).unwrap();
+        let x = Tensor::from_vec_col_major(
+            vec![2, 2],
+            vec![
+                C::new(0., 0.),
+                C::new(1., 0.),
+                C::new(1., 0.),
+                C::new(0., 0.),
+            ],
+        )
+        .unwrap();
+        let tensors = vec![x, input];
+        let input = &tensors[1];
+        let plan = prepare(
+            &tensors,
+            &tenferro_einsum::EinsumSubscripts::new(&[&[0, 1], &[1, 2]], &[0, 2]),
+        )
+        .unwrap();
+        let (runtime, program) = prepared_x(batch, threads).unwrap();
+        let mut group = c.benchmark_group(format!("extension_{n}"));
+        group.bench_function("composed", |b| {
+            b.iter(|| execute(&plan, &tensors, &mut backend).unwrap())
+        });
+        group.bench_function("custom", |b| {
+            b.iter(|| runtime.run_compiled(&program, &[black_box(input)]).unwrap())
+        });
+        group.bench_function("custom_prepare", |b| {
+            b.iter(|| prepared_x(black_box(batch), threads).unwrap())
+        });
+        let ctx =
+            EagerRuntime::with_cpu_backend(CpuBackend::with_threads(threads).unwrap()).unwrap();
+        // Includes graph construction, forward and backward; never retains one graph per iteration.
+        group.bench_function("complex_ad", |b| {
+            b.iter(|| {
+                let x = EagerTensor::requires_grad_in(
+                    Tensor::from_vec_col_major(
+                        input.shape().to_vec(),
+                        input.as_slice::<C>().unwrap().to_vec(),
+                    )
+                    .unwrap(),
+                    ctx.clone(),
+                )
+                .unwrap();
+                let magnitude = x.abs().unwrap();
+                let loss = magnitude
+                    .mul(&magnitude)
+                    .unwrap()
+                    .reduce_sum(Some(&[0, 1]))
+                    .unwrap();
+                ctx.grad(&loss, &x).unwrap()
+            })
+        });
+        group.finish();
+    }
+}
+fn configuration() -> Criterion {
+    Criterion::default()
+        .sample_size(10)
+        .warm_up_time(Duration::from_millis(200))
+        .measurement_time(Duration::from_millis(500))
+        .without_plots()
+}
+criterion_group! {name=benches;config=configuration();targets=backend}
+criterion_main!(benches);
