@@ -1,0 +1,99 @@
+//! Shared validation of explicit tensor contraction trees.
+
+use omeco::{CodeOptimizer, EinCode, Label, NestedEinsum};
+use std::collections::{HashMap, HashSet};
+
+/// Optimize a network, retaining unary traces, diagonals and permutations.
+///
+/// omeco's single-input optimizer returns a leaf without applying the output
+/// expression. For zero or one input there is no ordering decision: use one
+/// node carrying the complete expression. Larger networks use `optimizer`.
+/// Validate dimensions before invoking an optimizer.
+pub fn optimize_code<L: Label, O: CodeOptimizer>(
+    code: &EinCode<L>,
+    sizes: &HashMap<L, usize>,
+    optimizer: &O,
+) -> Option<NestedEinsum<L>> {
+    if code.ixs.len() <= 1 {
+        Some(NestedEinsum::node(
+            (0..code.ixs.len()).map(NestedEinsum::leaf).collect(),
+            code.clone(),
+        ))
+    } else {
+        omeco::optimize_code(code, sizes, optimizer)
+    }
+}
+
+/// Validate a contraction tree against its complete network expression.
+///
+/// Every input must occur exactly once, child outputs must match parent inputs,
+/// and no node may sum an index still needed elsewhere. Output order matters.
+/// This validates semantics; dimension and allocation checks belong to the
+/// executor. Repeated input labels (traces/diagonals) are allowed.
+pub fn validate_tree<L: Label>(tree: &NestedEinsum<L>, code: &EinCode<L>) -> Result<(), String> {
+    let mut visited = HashSet::new();
+    let labels = visit(tree, code, &mut visited)?;
+    if visited.len() != code.ixs.len() {
+        return Err("Contraction order must use every input exactly once".into());
+    }
+    if labels != code.iy {
+        return Err("Contraction order output does not match network output".into());
+    }
+    Ok(())
+}
+
+fn visit<L: Label>(
+    tree: &NestedEinsum<L>,
+    code: &EinCode<L>,
+    visited: &mut HashSet<usize>,
+) -> Result<Vec<L>, String> {
+    match tree {
+        NestedEinsum::Leaf { tensor_index } => {
+            let labels = code.ixs.get(*tensor_index).ok_or_else(|| {
+                format!("Contraction tensor index {tensor_index} is out of range")
+            })?;
+            if !visited.insert(*tensor_index) {
+                return Err(format!("Contraction order repeats tensor {tensor_index}"));
+            }
+            Ok(labels.clone())
+        }
+        NestedEinsum::Node { args, eins } => {
+            if args.len() != eins.ixs.len() {
+                return Err("Contraction node input count mismatch".into());
+            }
+            // An empty node is the scalar multiplicative identity, and is valid
+            // only for the complete empty network.
+            if args.is_empty() && (!code.ixs.is_empty() || !eins.iy.is_empty()) {
+                return Err("Invalid empty contraction node".into());
+            }
+            let previous = visited.clone();
+            for (arg, expected) in args.iter().zip(&eins.ixs) {
+                if visit(arg, code, visited)? != *expected {
+                    return Err("Contraction node indices disagree with child output".into());
+                }
+            }
+            let labels: HashSet<_> = eins.ixs.iter().flatten().collect();
+            let mut outputs = HashSet::new();
+            for label in &eins.iy {
+                if !labels.contains(label) || !outputs.insert(label) {
+                    return Err(format!("Invalid contraction output label {label:?}"));
+                }
+            }
+            let subtree: HashSet<_> = visited.difference(&previous).copied().collect();
+            for label in code.iy.iter().chain(
+                code.ixs
+                    .iter()
+                    .enumerate()
+                    .filter(|(i, _)| !subtree.contains(i))
+                    .flat_map(|(_, legs)| legs),
+            ) {
+                if labels.contains(label) && !outputs.contains(label) {
+                    return Err(format!(
+                        "Contraction order eliminates required label {label:?}"
+                    ));
+                }
+            }
+            Ok(eins.iy.clone())
+        }
+    }
+}

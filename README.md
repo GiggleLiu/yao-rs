@@ -48,7 +48,11 @@ assert!((p[3] - 0.5).abs() < 1e-12);
 Qubit 0 is the most significant bit of a state-vector index. Library features
 are opt-in: `qasm` enables OpenQASM 2.0, `omeinsum` enables native tensor
 contraction, and `parallel` enables Rayon operations. The CLI enables `qasm`
-and `omeinsum` by default.
+and `omeinsum` by default. The optional `tenferro` feature adds complex128 CPU
+contraction with explicit threads and reusable plans (Rust 1.96 or newer).
+Install from this checkout with `cargo install --path yao-cli --features tenferro --locked`,
+then select `yao contract tn.json --backend tenferro --threads 4`.
+See [tensor-network execution](docs/src/tensor-networks.md#tenferro-cpu-execution).
 
 ## CLI
 

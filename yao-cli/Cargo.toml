@@ -17,6 +17,7 @@ path = "src/main.rs"
 default = ["qasm", "omeinsum"]
 qasm = ["yao-rs/qasm"]
 omeinsum = ["yao-rs/omeinsum"]
+tenferro = ["yao-rs/tenferro"]
 
 [dependencies]
 yao-rs = { path = "..", version = "0.1.0", default-features = false }

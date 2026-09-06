@@ -3,11 +3,11 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use yao_rs::{TensorNetwork, TensorNetworkDM};
 
-#[cfg(any(feature = "omeinsum", test))]
+#[cfg(any(feature = "omeinsum", feature = "tenferro", test))]
 use ndarray::ArrayD;
-#[cfg(any(feature = "omeinsum", test))]
+#[cfg(any(feature = "omeinsum", feature = "tenferro", test))]
 use num_complex::Complex64;
-#[cfg(any(feature = "omeinsum", test))]
+#[cfg(any(feature = "omeinsum", feature = "tenferro", test))]
 use omeco::EinCode;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -85,7 +85,7 @@ impl TensorNetworkDto {
     ///
     /// Pure-mode labels remain positive; density-matrix mode uses negative labels
     /// for bra legs.
-    #[cfg(any(feature = "omeinsum", test))]
+    #[cfg(any(feature = "omeinsum", feature = "tenferro", test))]
     pub fn to_tensor_network(&self) -> anyhow::Result<TensorNetworkDM> {
         anyhow::ensure!(
             self.format == "yao-tn-v1",
@@ -151,16 +151,12 @@ impl TensorNetworkDto {
             anyhow::ensure!(outputs.insert(label), "Duplicate output label {label}");
         }
         if let Some(tree) = &self.contraction_order {
-            let mut visited = std::collections::HashSet::new();
-            let labels = validate_tree(tree, &ixs, &iy, &mut visited)?;
-            anyhow::ensure!(
-                visited.len() == ixs.len(),
-                "Contraction order must use every input exactly once"
-            );
-            anyhow::ensure!(
-                labels == iy,
-                "Contraction order output does not match network output"
-            );
+            validate_tree_flags(tree)?;
+            yao_rs::contraction_plan::validate_tree(
+                &tree.clone().into(),
+                &EinCode::new(ixs.clone(), iy.clone()),
+            )
+            .map_err(anyhow::Error::msg)?;
         }
         Ok(TensorNetworkDM {
             code: EinCode::new(ixs, iy),
@@ -170,7 +166,7 @@ impl TensorNetworkDto {
     }
 }
 
-#[cfg(any(feature = "omeinsum", test))]
+#[cfg(any(feature = "omeinsum", feature = "tenferro", test))]
 fn reconstruct_tensors(tensor_dtos: &[TensorDto]) -> anyhow::Result<Vec<ArrayD<Complex64>>> {
     tensor_dtos
         .iter()
@@ -209,67 +205,20 @@ fn reconstruct_tensors(tensor_dtos: &[TensorDto]) -> anyhow::Result<Vec<ArrayD<C
         .collect()
 }
 
-#[cfg(any(feature = "omeinsum", test))]
-fn validate_tree(
-    tree: &NestedEinsumTree<i32>,
-    inputs: &[Vec<i32>],
-    network_outputs: &[i32],
-    visited: &mut std::collections::HashSet<usize>,
-) -> anyhow::Result<Vec<i32>> {
+#[cfg(any(feature = "omeinsum", feature = "tenferro", test))]
+fn validate_tree_flags(tree: &NestedEinsumTree<i32>) -> anyhow::Result<()> {
     match tree {
-        NestedEinsumTree::Leaf {
-            isleaf,
-            tensor_index,
-        } => {
-            anyhow::ensure!(*isleaf, "Invalid contraction leaf flag");
-            let labels = inputs.get(*tensor_index).ok_or_else(|| {
-                anyhow::anyhow!("Contraction tensor index {tensor_index} is out of range")
-            })?;
-            anyhow::ensure!(
-                visited.insert(*tensor_index),
-                "Contraction order repeats tensor {tensor_index}"
-            );
-            Ok(labels.clone())
+        NestedEinsumTree::Leaf { isleaf, .. } => {
+            anyhow::ensure!(*isleaf, "Invalid contraction leaf flag")
         }
-        NestedEinsumTree::Node { isleaf, args, eins } => {
-            anyhow::ensure!(!isleaf && !args.is_empty(), "Invalid contraction node");
-            anyhow::ensure!(
-                args.len() == eins.ixs.len(),
-                "Contraction node input count mismatch"
-            );
-            let previously_visited = visited.clone();
-            for (arg, expected) in args.iter().zip(&eins.ixs) {
-                anyhow::ensure!(
-                    validate_tree(arg, inputs, network_outputs, visited)? == *expected,
-                    "Contraction node indices disagree with child output"
-                );
+        NestedEinsumTree::Node { isleaf, args, .. } => {
+            anyhow::ensure!(!isleaf, "Invalid contraction node flag");
+            for arg in args {
+                validate_tree_flags(arg)?;
             }
-            let labels: std::collections::HashSet<_> = eins.ixs.iter().flatten().collect();
-            let mut outputs = std::collections::HashSet::new();
-            for label in &eins.iy {
-                anyhow::ensure!(
-                    labels.contains(label) && outputs.insert(label),
-                    "Invalid contraction output label {label}"
-                );
-            }
-            // An index needed outside this subtree cannot be summed away here.
-            let subtree: std::collections::HashSet<_> =
-                visited.difference(&previously_visited).copied().collect();
-            for label in network_outputs.iter().chain(
-                inputs
-                    .iter()
-                    .enumerate()
-                    .filter(|(i, _)| !subtree.contains(i))
-                    .flat_map(|(_, legs)| legs),
-            ) {
-                anyhow::ensure!(
-                    !labels.contains(label) || outputs.contains(label),
-                    "Contraction order eliminates required label {label}"
-                );
-            }
-            Ok(eins.iy.clone())
         }
     }
+    Ok(())
 }
 
 fn tensors_from_network(tensors: &[ndarray::ArrayD<num_complex::Complex64>]) -> Vec<TensorDto> {

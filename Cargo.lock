@@ -12,6 +12,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "allocator-api2"
+version = "0.2.21"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
+
+[[package]]
 name = "anes"
 version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -316,6 +322,12 @@ name = "colorchoice"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1d07550c9036bf2ae0c684c4297d503f838287c83c53686d05370d0e139ae570"
+
+[[package]]
+name = "computegraph"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "450efd17194c59515cc81b1eb553d98c59e407c095a918c84aefbd71bec1eecc"
 
 [[package]]
 name = "cpufeatures"
@@ -629,6 +641,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
 
 [[package]]
+name = "foldhash"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d9c4f5dac5e15c24eb999c26181a6ca40b39fe946cbe4c263c7209467bc83af2"
+
+[[package]]
 name = "gemm"
 version = "0.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -818,6 +836,17 @@ dependencies = [
 
 [[package]]
 name = "hashbrown"
+version = "0.15.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9229cfe53dfd69f0609a49f65461bd93001ea1ef889cd5529dd176593f5338a1"
+dependencies = [
+ "allocator-api2",
+ "equivalent",
+ "foldhash",
+]
+
+[[package]]
+name = "hashbrown"
 version = "0.16.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "841d1cc9bed7f9236f321df977030373f4a4163ae1a7dbfe1a51a2c1a51d9100"
@@ -841,7 +870,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7714e70437a7dc3ac8eb7e6f8df75fd8eb422675fc7678aff7364301092b1017"
 dependencies = [
  "equivalent",
- "hashbrown",
+ "hashbrown 0.16.1",
 ]
 
 [[package]]
@@ -1011,6 +1040,15 @@ dependencies = [
  "scoped-tls",
  "tracing",
  "tracing-subscriber",
+]
+
+[[package]]
+name = "lru"
+version = "0.12.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "234cf4f4a04dc1f57e24b96cc0cd600cf2af460d4161ac5ecdd0af8e1f3b2a38"
+dependencies = [
+ "hashbrown 0.15.5",
 ]
 
 [[package]]
@@ -1258,8 +1296,8 @@ dependencies = [
  "num-complex",
  "num-traits",
  "omeco",
- "strided-perm",
- "strided-view",
+ "strided-perm 0.3.0",
+ "strided-view 0.3.0",
 ]
 
 [[package]]
@@ -1890,12 +1928,38 @@ dependencies = [
 ]
 
 [[package]]
+name = "strided-kernel"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "abed72012bc316aba5de8153787f89bf6423617f97f94a9ae48bbdec68a66b29"
+dependencies = [
+ "num-complex",
+ "num-traits",
+ "pulp",
+ "rayon",
+ "smallvec",
+ "strided-perm 0.4.0",
+ "strided-view 0.4.0",
+]
+
+[[package]]
 name = "strided-perm"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e6b0821ceb0ec2d4d1b7854adaf8ac64fff292d0aa295be2aeefaceb656f05eb"
 dependencies = [
- "strided-view",
+ "strided-view 0.3.0",
+]
+
+[[package]]
+name = "strided-perm"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "49d635c8e1853df952562bf01883c8610a31272a50feb8ab665ec3e2176543e4"
+dependencies = [
+ "rayon",
+ "strided-view 0.4.0",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -1909,6 +1973,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "strided-traits"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "347528b47e14b4eec120162c61e161058a776e3fe24a77056bb9b1bb54eb0307"
+dependencies = [
+ "num-complex",
+ "num-traits",
+]
+
+[[package]]
 name = "strided-view"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1916,7 +1990,19 @@ checksum = "b85fc00197753754faf203c458837f316ebfcc58704f05dab4a64ec30edde076"
 dependencies = [
  "num-complex",
  "num-traits",
- "strided-traits",
+ "strided-traits 0.3.0",
+ "thiserror 1.0.69",
+]
+
+[[package]]
+name = "strided-view"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "28f1714ae2d186b4bdb1d9beec78ed827b90e81281afaeeb7d464a98d5efa700"
+dependencies = [
+ "num-complex",
+ "num-traits",
+ "strided-traits 0.4.0",
  "thiserror 1.0.69",
 ]
 
@@ -1991,6 +2077,150 @@ dependencies = [
  "libc",
  "thiserror 1.0.69",
  "walkdir",
+]
+
+[[package]]
+name = "tenferro-ad"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "27783db6df2c83108ef843565af3dbb7abae53497130f3820b1938a7b448f449"
+dependencies = [
+ "computegraph",
+ "lru",
+ "num-complex",
+ "num-traits",
+ "tenferro-cpu",
+ "tenferro-internal-ops",
+ "tenferro-runtime",
+ "tenferro-tensor",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "tenferro-core-ops"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0f6eae1e094d1fa40ba314829cfb6d18e87ec6c6292545f70ee33bae6c4e36fa"
+
+[[package]]
+name = "tenferro-cpu"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f2cfa9052e882f15f163717040897aca6d86cf2fd3400fd4d265f4714532c393"
+dependencies = [
+ "faer",
+ "lru",
+ "num-complex",
+ "num-traits",
+ "rayon",
+ "smallvec",
+ "strided-kernel",
+ "tenferro-core-ops",
+ "tenferro-internal-cpu-kernels",
+ "tenferro-runtime",
+ "tenferro-tensor",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "tenferro-einsum"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1ce08ca6c632d7692e3d9835a17d35a4ff7a3a8e10eefc2b57f7c3fb6d11caef"
+dependencies = [
+ "computegraph",
+ "lru",
+ "omeco",
+ "smallvec",
+ "tenferro-ad",
+ "tenferro-cpu",
+ "tenferro-internal-extension-macros",
+ "tenferro-internal-ops",
+ "tenferro-runtime",
+ "tenferro-tensor",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "tenferro-internal-cpu-kernels"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "63a7a242153db1f8e6ebf6090c1484f6a8c062a1b272622423b1c72f49c93426"
+dependencies = [
+ "num-complex",
+ "num-traits",
+ "strided-kernel",
+ "tenferro-tensor",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "tenferro-internal-extension-macros"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9de411174c648865c8f515bc2849049233aa9e360bc72ee778ff9fbaddce1cbe"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.114",
+]
+
+[[package]]
+name = "tenferro-internal-ops"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b605bb97cf317fa628dfc0cf48e186d06c168f946ff034a1c927c1ec9e49534b"
+dependencies = [
+ "computegraph",
+ "num-complex",
+ "tenferro-core-ops",
+ "tenferro-internal-extension-macros",
+ "tenferro-tensor",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "tenferro-runtime"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f9566cc4f1619ee5d153d3e9b5c1d3d6f20d3dc3b9478f975bba84079ccf1fde"
+dependencies = [
+ "computegraph",
+ "lru",
+ "num-complex",
+ "num-traits",
+ "smallvec",
+ "tenferro-core-ops",
+ "tenferro-internal-extension-macros",
+ "tenferro-internal-ops",
+ "tenferro-tensor",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "tenferro-tensor"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6e0498e553c7227a97ecb880bb34806b21898ad0509a9e9b67f5958bb4623a44"
+dependencies = [
+ "num-complex",
+ "num-traits",
+ "smallvec",
+ "strided-kernel",
+ "tenferro-core-ops",
+ "tenferro-tensor-core",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "tenferro-tensor-core"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b380aecdc3caeb53e69a33d519caa6fae20d2a111fc3fad31700742b51d71858"
+dependencies = [
+ "num-complex",
+ "smallvec",
+ "thiserror 2.0.18",
 ]
 
 [[package]]
@@ -2405,6 +2635,10 @@ dependencies = [
  "rayon",
  "serde",
  "serde_json",
+ "tenferro-cpu",
+ "tenferro-einsum",
+ "tenferro-runtime",
+ "tenferro-tensor",
 ]
 
 [[package]]

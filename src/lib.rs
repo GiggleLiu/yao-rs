@@ -20,6 +20,7 @@
 //! # Features
 //! - `qasm`: OpenQASM 2.0 import and export.
 //! - `omeinsum`: native tensor-network contraction.
+//! - `tenferro`: tenferro CPU contraction with reusable plans (Rust 1.96+).
 //! - `parallel`: Rayon operations.
 //!
 //! All features are optional. Qudit circuits support tensor-network export;
@@ -28,6 +29,7 @@
 pub mod ad;
 pub mod apply;
 pub mod circuit;
+pub mod contraction_plan;
 
 #[cfg(feature = "omeinsum")]
 pub mod contractor;
@@ -45,6 +47,8 @@ pub mod operator;
 pub mod qasm;
 pub mod register;
 pub mod svg;
+#[cfg(feature = "tenferro")]
+pub mod tenferro;
 pub mod tensors;
 
 pub use ad::expect_grad;

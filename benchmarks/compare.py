@@ -154,7 +154,7 @@ def backend_report(directory):
         "",
         "## Tensor and extension phases",
         "",
-        "Each row uses the named API boundary. `tenferro_from_arrays` includes conversion, automatic planning, execution and output conversion; `omeinsum` includes its conversion/planning/execution. `tenferro_warm` uses an already prepared plan. These are independent planning policies, not a fixed-tree comparison.",
+        "Each row uses the named API boundary. `tenferro_from_arrays` includes conversion, automatic planning, execution and output conversion; `omeinsum` includes its conversion/planning/execution. `tenferro_warm` uses an already prepared plan. Those prototype rows use independent planning policies. Where present, `supported_planning` compiles an existing omeco greedy tree; `supported_warm` runs the supported CPU adapter including ndarray input/output adaptation; `supported_from_arrays` combines those two phases. `omeinsum_fixed_tree` executes the identical tree, including its internal preparation. These supported rows exclude tree search and CPU context creation.",
         "",
         "| Threads | Case | Phase | Median µs | Range of run medians µs |",
         "| --- | --- | --- | ---: | ---: |",

@@ -2,7 +2,8 @@ use crate::output::OutputConfig;
 use crate::tn_dto::TensorNetworkDto;
 use anyhow::{Result, bail};
 use omeco::json::NestedEinsumTree;
-use omeco::{GreedyMethod, TreeSA, optimize_code};
+use omeco::{GreedyMethod, TreeSA};
+use yao_rs::contraction_plan::optimize_code;
 
 #[allow(clippy::too_many_arguments)]
 pub fn optimize_cmd(

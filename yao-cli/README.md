@@ -18,6 +18,17 @@ The installed binary is `yao`. Use `yao --help` for commands and
 by default. The development version can be installed from a checkout with
 `cargo install --path yao-cli --locked`.
 
+For the optional tenferro CPU backend (Rust 1.96+), install the development
+checkout with `cargo install --path yao-cli --features tenferro --locked`:
+
+```sh
+yao toeinsum bell.json --mode state | yao optimize - | yao contract - --backend tenferro --threads 4
+```
+
+The default backend remains omeinsum when both are built. A build with
+`--no-default-features --features tenferro` uses tenferro by default.
+`--threads` is a positive tenferro thread count, defaulting to 1.
+
 Circuits with channels automatically use a density matrix. State files retain
 their representation across pipelines. `--seed` on `run --shots` and `measure`
 reproduces sampling within the same binary version.

@@ -16,6 +16,7 @@ fn backend(c: &mut Criterion) {
         .parse()
         .unwrap();
     let mut backend = CpuBackend::with_threads(threads).unwrap();
+    let cpu = yao_rs::tenferro::CpuContractor::new(threads).unwrap();
     for case in cases().unwrap() {
         let circuit = case.circuit().unwrap();
         let state = case.initial(circuit.nbits);
@@ -62,6 +63,7 @@ fn backend(c: &mut Criterion) {
                 });
                 (tn.tensors, code, old)
             };
+            supported(&mut group, &cpu, &arrays, &code, &old);
             let tensors = convert(&arrays).unwrap();
             let plan = prepare(&tensors, &code).unwrap();
             let got = output_array(&execute(&plan, &tensors, &mut backend).unwrap()).unwrap();
@@ -157,3 +159,71 @@ fn configuration() -> Criterion {
 }
 criterion_group! {name=benches;config=configuration();targets=backend}
 criterion_main!(benches);
+
+// Fixed-tree comparisons include ndarray input/output adaptation in both providers.
+fn supported(
+    group: &mut criterion::BenchmarkGroup<'_, criterion::measurement::WallTime>,
+    cpu: &yao_rs::tenferro::CpuContractor,
+    arrays: &[ndarray::ArrayD<C>],
+    subs: &tenferro_einsum::EinsumSubscripts,
+    reference: &ndarray::ArrayD<C>,
+) {
+    let code = omeco::EinCode::new(
+        subs.inputs
+            .iter()
+            .map(|xs| xs.iter().map(|&x| i32::try_from(x).unwrap()).collect())
+            .collect(),
+        subs.output
+            .iter()
+            .map(|&x| i32::try_from(x).unwrap())
+            .collect(),
+    );
+    let sizes = code
+        .ixs
+        .iter()
+        .zip(arrays)
+        .flat_map(|(xs, a)| xs.iter().copied().zip(a.shape().iter().copied()))
+        .collect();
+    let tree =
+        yao_rs::contraction_plan::optimize_code(&code, &sizes, &omeco::GreedyMethod::default())
+            .unwrap();
+    let plan = cpu.prepare(&code, &sizes, Some(&tree)).unwrap();
+    let got = cpu.execute(&plan, arrays).unwrap();
+    assert_eq!(got.shape(), reference.shape());
+    assert!(
+        got.iter()
+            .zip(reference)
+            .all(|(a, b)| (a - b).norm() < 1e-10)
+    );
+    group.bench_function("supported_planning", |b| {
+        b.iter(|| {
+            cpu.prepare(black_box(&code), black_box(&sizes), Some(black_box(&tree)))
+                .unwrap()
+        })
+    });
+    group.bench_function("supported_warm", |b| {
+        b.iter(|| cpu.execute(black_box(&plan), black_box(arrays)).unwrap())
+    });
+    group.bench_function("supported_from_arrays", |b| {
+        b.iter(|| {
+            let plan = cpu.prepare(&code, &sizes, Some(&tree)).unwrap();
+            cpu.execute(&plan, black_box(arrays)).unwrap()
+        })
+    });
+    let tn = yao_rs::TensorNetworkDM {
+        code,
+        size_dict: sizes,
+        tensors: arrays.to_vec(),
+    };
+    let got = yao_rs::contractor::contract_dm_with_tree(&tn, tree.clone());
+    assert!(
+        got.iter()
+            .zip(reference)
+            .all(|(a, b)| (a - b).norm() < 1e-10)
+    );
+    group.bench_function("omeinsum_fixed_tree", |b| {
+        b.iter(|| {
+            yao_rs::contractor::contract_dm_with_tree(black_box(&tn), black_box(&tree).clone())
+        })
+    });
+}

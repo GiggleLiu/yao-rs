@@ -186,7 +186,7 @@ fn pure_state_format_is_backward_compatible_and_seeded() {
     );
 }
 
-#[cfg(feature = "omeinsum")]
+#[cfg(any(feature = "omeinsum", feature = "tenferro"))]
 #[test]
 fn malformed_tensor_networks_are_errors() {
     let valid = json!({"format":"yao-tn-v1", "mode":"pure",

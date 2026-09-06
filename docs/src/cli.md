@@ -185,7 +185,7 @@ See [Tensor Network JSON Format](#tensor-network-json-format) below for the outp
 
 ### `yao optimize`
 
-Optimize contraction order for a tensor network. Requires the `omeinsum` feature.
+Optimize contraction order for a tensor network. Requires either the `omeinsum` or `tenferro` feature.
 
 ```bash
 yao optimize tn.json
@@ -210,13 +210,28 @@ Adds a `contraction_order` field to the TN JSON, ready for `yao contract`.
 
 ### `yao contract`
 
-Contract a pre-optimized tensor network. Requires the `omeinsum` feature. Input must have a `contraction_order` field (produced by `yao optimize`).
+Contract a pre-optimized tensor network. Requires either the `omeinsum` or `tenferro` feature. Input must have a `contraction_order` field (produced by `yao optimize`).
 
 ```bash
 yao toeinsum circuit.json | yao optimize - | yao contract -
 yao toeinsum circuit.json --mode overlap | yao optimize - | yao contract -
 yao toeinsum circuit.json --op "Z(0)Z(1)" | yao optimize - | yao contract -
 ```
+
+Build with `cargo install --path yao-cli --features tenferro --locked` (Rust
+1.96+) to select the tenferro CPU provider:
+
+```bash
+yao contract tn.json --backend tenferro --threads 4
+```
+
+`--backend` accepts providers enabled at build time. The default is `omeinsum`
+when available, otherwise `tenferro`. `--threads` accepts a positive integer and
+requires tenferro; its default is 1. Both providers execute the serialized
+contraction order. Tenferro reports invalid shapes/plans as errors and supports
+complex128 tensors, qudit exports and exact noisy density-matrix networks.
+This option selects tensor contraction; direct `simulate`/`run` use the existing
+register kernels.
 
 ### `yao fromqasm`
 
