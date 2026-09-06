@@ -54,6 +54,26 @@ def collect_criterion():
     return records
 
 
+def measure_evolution_memory(output, env):
+    """Separate processes: model/circuit construction and native execution heap/RSS."""
+    for model in ["ising", "heisenberg"]:
+        for n in [3, 12]:
+            for steps in [1, 16]:
+                run(
+                    [
+                        "/usr/bin/time",
+                        "-l" if sys.platform == "darwin" else "-v",
+                        str(TARGET / "release/memory"),
+                        "evolution",
+                        model,
+                        str(n),
+                        str(steps),
+                    ],
+                    env,
+                    output / f"memory-evolution-{model}-{n}-{steps}.log",
+                )
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("output", type=Path)
@@ -219,6 +239,8 @@ def main():
             env,
             output / f"memory-nonlinear-16-{depth}.log",
         )
+    if a.suite == "evolution":
+        measure_evolution_memory(output, env)
     run(
         [sys.executable, "benchmarks/compare.py", "--backend-results", str(output)], env
     )

@@ -103,3 +103,7 @@ that exponential. Timings cover execution of the same lowered circuits, with
 construction measured separately; they do not benchmark adaptive Krylov action.
 Two additional zero-state cases exercise both tensor contractors, including
 the supported tenferro adapter with the same supplied tree as omeinsum.
+The runner also measures model/circuit construction and native execution heap
+in separate processes at 3/12 qubits and 1/16 second-order steps. Each raw
+`memory-evolution-*.log` includes phase heap accounting and process peak RSS.
+`compare.py` generates the memory table alongside the accuracy/cost comparison.

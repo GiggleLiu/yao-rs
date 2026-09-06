@@ -76,6 +76,40 @@ def main():
         )
 
 
+def evolution_memory_rows(directory):
+    """Read phase heap bytes and platform-specific time(1) peak RSS units."""
+    import re
+
+    rows = []
+    for path in sorted(Path(directory).glob("memory-evolution-*.log")):
+        text = path.read_text()
+        records = [
+            json.loads(line) for line in text.splitlines() if line.startswith("{")
+        ]
+        metadata = next(row for row in records if "model" in row)
+        phases = {row["phase"]: row for row in records if "phase" in row}
+        mac = re.search(r"(\d+)\s+maximum resident set size", text)
+        linux = re.search(r"Maximum resident set size \(kbytes\):\s*(\d+)", text)
+        if not mac and not linux:
+            raise ValueError(f"Missing peak RSS in {path}")
+        rows.append(
+            dict(
+                model=metadata["model"],
+                qubits=metadata["qubits"],
+                steps=metadata["steps"],
+                gates=metadata["gates"],
+                circuit_retained_bytes=phases["circuit_construction"][
+                    "retained_additional_rust_heap_bytes"
+                ],
+                execution_peak_bytes=phases["native_execution"][
+                    "peak_additional_rust_heap_bytes"
+                ],
+                peak_rss_bytes=int(mac[1]) if mac else int(linux[1]) * 1024,
+            )
+        )
+    return rows
+
+
 def backend_report(directory):
     """Compare medians of independent runs; preserve individual confidence intervals."""
     import statistics
@@ -225,6 +259,24 @@ def backend_report(directory):
                 "![Supported adapter, same contraction tree](supported-costs.svg)",
                 "",
             ]
+    memory = evolution_memory_rows(directory)
+    if memory:
+        (directory / "evolution-memory.json").write_text(
+            json.dumps(memory, indent=2) + "\n"
+        )
+        lines += [
+            "## Product-formula memory",
+            "",
+            "Second-order formulas, isolated native processes. Retained circuit heap is measured after construction; execution peak is additional Rust heap above the existing circuit/input state. Whole-process RSS includes startup and allocator retention. These small workloads do not establish a large-state memory limit. Allocation-instrumented times are diagnostic only.",
+            "",
+            "| Model | Qubits | Steps | Gates | Circuit retained KiB | Execution peak KiB | Process peak RSS MiB |",
+            "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+        ]
+        for row in memory:
+            lines.append(
+                f"| {row['model']} | {row['qubits']} | {row['steps']} | {row['gates']} | {row['circuit_retained_bytes'] / 1024:.2f} | {row['execution_peak_bytes'] / 1024:.2f} | {row['peak_rss_bytes'] / 1048576:.2f} |"
+            )
+        lines.append("")
     (directory / "report.md").write_text("\n".join(lines))
     return summary
 

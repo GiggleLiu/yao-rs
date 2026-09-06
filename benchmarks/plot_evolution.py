@@ -8,6 +8,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FuncFormatter, LogLocator, NullFormatter
 
 p = argparse.ArgumentParser()
 p.add_argument("directory", type=Path)
@@ -34,15 +35,28 @@ for ax, model in zip(axes, ["ising", "heisenberg"]):
                 ),
                 key=lambda r: cases[r["id"]]["steps"],
             )
-            ax.plot(
+            ax.errorbar(
                 [r["median_ns"] / 1000 for r in selected],
                 [r["relative_state_error"] for r in selected],
-                style,
+                xerr=[
+                    [
+                        (r["median_ns"] - r["min_run_median_ns"]) / 1000
+                        for r in selected
+                    ],
+                    [
+                        (r["max_run_median_ns"] - r["median_ns"]) / 1000
+                        for r in selected
+                    ],
+                ],
+                linestyle=style,
+                capsize=2,
                 color=color,
                 marker="o",
                 label=f"{'Rust' if backend == 'native' else 'Yao'} · order {order}",
             )
             for r in selected:
+                if backend == "julia":
+                    continue
                 ax.annotate(
                     str(cases[r["id"]]["steps"]),
                     (r["median_ns"] / 1000, r["relative_state_error"]),
@@ -58,7 +72,12 @@ for ax, model in zip(axes, ["ising", "heisenberg"]):
         title=f"{model.title()} · 3 qubits · t = 0.8",
     )
     ax.grid(alpha=0.2)
+    ax.xaxis.set_major_locator(LogLocator(base=10, subs=(1, 2, 5)))
+    ax.xaxis.set_major_formatter(FuncFormatter(lambda value, _: f"{value:g}"))
+    ax.xaxis.set_minor_formatter(NullFormatter())
     ax.legend(fontsize=8)
-fig.suptitle("Identical product formulas · complex128 · 1 thread · labels = steps")
+fig.suptitle(
+    "Same formulas · complex128 · 1 thread · labels = steps · bars = run range"
+)
 fig.savefig(a.directory / "evolution-error-time.svg")
 fig.savefig(a.directory / "evolution-error-time.png", dpi=180)

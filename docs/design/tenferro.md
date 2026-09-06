@@ -10,7 +10,7 @@ validation targets the NVIDIA A800 host reachable as `ssh gpu`.
 | --- | --- | --- |
 | 1. Published backend feasibility / CPU baseline | Complex/layout/AD/custom-operation tests; reproducible CPU report and memory measurements | Merged [PR #47](https://github.com/GiggleLiu/yao-rs/pull/47) (`6bad156`) |
 | 2. Supported tenferro CPU backend | Library/CLI adapter, explicit and reusable plans, numerical/feature/package checks | Implemented in [PR #48](https://github.com/GiggleLiu/yao-rs/pull/48); merged (`3ec7e69`) |
-| 3. Hamiltonian evolution | Pauli rotations, model builders, Trotter/Suzuki, physical parameter bindings and convergence tests | Implementing on `codex/hamiltonian-evolution` |
+| 3. Hamiltonian evolution | Pauli rotations, model builders, Trotter/Suzuki, physical parameter bindings and convergence tests | Implemented in [PR #49](https://github.com/GiggleLiu/yao-rs/pull/49); validation and CPU report complete |
 | 4. Differentiable circuits | Custom losses/input-state VJP, tenferro integration, shared parameters, numerical and memory tests | Pending |
 | 5. Tensor memory / observables | Polynomial expectations, omeco slicing, estimates, versioned plans and budget tests | Pending |
 | 6. Noisy trajectories | Seeded Kraus sampling, uncertainty, exact-density comparisons and memory scaling | Pending |
@@ -163,3 +163,38 @@ opportunity for later backend work.
 Validation: `make check-all` (607 tests), tenferro-only and no-default-feature
 workspace tests, documentation builds, default/all-feature package verification,
 fixture/reporting checks, and Linux/macOS CI. CPU-only builds need no GPU runtime.
+
+## Hamiltonian evolution (PR #49)
+
+Pauli rotations, Ising/XYZ builders and first/second-order product formulas
+lower to the existing small gates. `BoundCircuit` exposes fixed/scaled/product
+bindings and their first-order Jacobian actions. Time and couplings stay shared
+across expanded gates; zero time retains the graph for differentiation. Identity
+terms retain global phase, including under control. No full Hamiltonian matrix
+is constructed by the library builders or native simulation.
+
+The [evolution M4 report](../../benchmarks/results/mac-evolution-cpu-2026-09-07/report.md)
+contains 22 shared cases, three independent runs at one/four threads, and 132
+passing Yao state comparisons (maximum discrepancy 5.70e-14). A separately built
+dense Yao Hamiltonian supplies the exact exponential oracle for three-qubit
+accuracy checks. Doubling steps from 8 to 16 reduces first-order error by about
+two and second-order error by about four for both noncommuting models.
+
+At 16 second-order steps, one-thread native/Yao execution medians are
+12.01/10.56 µs for Ising and 53.09/76.02 µs for XYZ, with relative errors
+3.94e-4 and 8.41e-4 respectively. These are identical lowered formulas, not
+adaptive Krylov comparisons. The zero-state XYZ tensor workload takes 0.70 ms
+with omeinsum's supplied tree and 3.67 ms with prepared tenferro using the same
+tree; tenferro compilation plus execution takes 8.54 ms. Native kernels remain
+the appropriate low-overhead path for these small states.
+
+Isolated memory probes separate circuit storage and execution heap from RSS.
+At 12 qubits, XYZ circuit storage grows from 101.15 KiB at one step to
+1616.38 KiB at 16 steps, while additional native execution heap stays at
+64.06 KiB. The execution path does not retain a state per gate. These small
+cases do not establish a large-state memory limit; raw logs include process RSS.
+
+Validation: `make check-all` (618 tests), no-default-feature tests, warnings-denied
+rustdoc and mdBook, the native/tenferro example, fixture Clippy, and five report
+tests. Timing sources are pinned at `2c97de3`; later memory/report source hashes
+are recorded separately. GPU execution remains a later milestone.

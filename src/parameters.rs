@@ -196,12 +196,11 @@ impl BoundCircuit {
         {
             return Err("State-vector application does not support channels".into());
         }
-        let angles = self.circuit.parameters();
-        if self
-            .identity_slots
-            .as_ref()
-            .is_some_and(|slots| slots.iter().all(|&i| angles[i] == 0.))
-        {
+        if self.identity_slots.as_ref().is_some_and(|slots| {
+            slots
+                .iter()
+                .all(|&i| self.bindings[i].value(&self.parameters) == 0.)
+        }) {
             return Ok(input.clone());
         }
         Ok(apply(&self.circuit, input))

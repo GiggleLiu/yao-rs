@@ -102,3 +102,11 @@ the current circuit and physical vector unchanged.
 These Jacobians compose with the existing unitary `expect_grad`; they do not
 implement a second general differentiation engine. A later milestone adds
 custom losses and input-state VJPs through tenferro.
+
+## CPU comparison
+
+The [recorded CPU report](https://github.com/GiggleLiu/yao-rs/blob/main/benchmarks/results/mac-evolution-cpu-2026-09-07/report.md)
+compares the same Ising/XYZ circuits with Yao.jl, separates approximation error
+from cross-language agreement, and includes execution costs and isolated memory
+measurements. The sweep uses 1–16 product steps and three runs each at one/four
+threads. Reproduce it with the evolution suite in `benchmarks/README.md`.
