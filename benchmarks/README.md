@@ -205,3 +205,33 @@ Generate standalone figures using `uv run --with matplotlib benchmarks/plot_traj
 Timing includes buffers, moment reduction and thread-pool creation; local channel
 preparation is separate. Compare time at achieved statistical error, not as if
 trajectories and exact density evolution had identical accuracy.
+
+### Matrix-free Krylov evolution
+
+Run `benchmarks/run_backend.py RESULTS --suite krylov --julia PATH_TO_JULIA`.
+The suite compares adaptive Rust evolution with pinned Yao `TimeEvolution` for
+Ising/XYZ models at 4/8/12/16 qubits, using relative tolerances 1e-4/1e-7/1e-10.
+Rust caps each basis at 20 vectors; Yao retains its public eager/default basis
+policy (up to 1000 vectors). Model construction is excluded from execution;
+state/work buffers and Rust mask preparation are included. Both use complex128.
+Rust vector kernels are serial; one/four-thread runs also record surrounding
+provider settings. These are distinct solver policies with distinct achieved
+errors, not equal-accuracy speedups inferred from the nominal tolerance.
+
+Small oracles use an independent Yao dense exponential. Larger oracles use
+KrylovKit at tol=1e-13 and require agreement with a separate Rust solve at
+rtol=1e-13/basis cap 40. Diagnostics qualify convergence outside timing and
+record actual state errors. Asymmetric complex inputs are checked at four
+qubits; the size/tolerance sweep uses a zero state. Four-qubit Suzuki circuits
+with 2/8/32 steps add tenferro and omeinsum execution at explicitly reported
+product-formula errors on that same zero input. No adaptive tenferro Krylov
+backend is implied by those tensor timings.
+
+Twenty-four isolated memory probes vary model, qubits and basis cap (8/20/40)
+at rtol=1e-8. They separate additional execution heap from whole-process RSS.
+Generate standalone plots with
+`uv run --with matplotlib benchmarks/plot_krylov.py RESULTS`.
+
+The [recorded M4 report](results/mac-krylov-cpu-2026-09-07/report.md) includes
+all 32 cases in six timing processes and all 24 memory probes, with raw
+convergence diagnostics and standalone error/time and memory figures.

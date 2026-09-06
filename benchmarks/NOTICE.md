@@ -8,7 +8,11 @@ uses the same upstream `apply_back` API with a squared-distance seed and returns
 both state and parameter cotangents. The density-matrix branch of
 `complex_expectation` adapts `expect` in YaoBlocks `src/blocktools.jl` at the
 same commit, retaining the complex trace instead of applying `safe_real`.
-The pure-state branch calls upstream `sandwich`. Upstream license:
+The pure-state branch calls upstream `sandwich`. The `qualified_krylov` helper
+exposes the `BlockMap`/`exponentiate` call from
+`src/primitive/time_evolution.jl` at the same commit, retaining its solver
+options and returning convergence diagnostics outside benchmark timing.
+Upstream license:
 
 ```text
 Copyright (c) 2019 QuantumBFS

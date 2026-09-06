@@ -18,7 +18,7 @@ which differentiation and noise workflows are implemented.
 | Noise channels | Density-matrix channel execution | Exact density matrices and seeded Kraus trajectories with streaming uncertainty; noisy CLI simulation |
 | Measurement / sampling | Register operations and in-circuit measurement blocks | Register operations and CLI sampling |
 | Circuit visualization | YaoPlots | Built-in SVG rendering |
-| Hamiltonian evolution | TimeEvolution and Krylov exponential action | Pauli rotations, Ising/XYZ models, first/second order product formulas with shared physical parameters; Krylov action planned |
+| Hamiltonian evolution | TimeEvolution and Krylov exponential action | Pauli rotations, Ising/XYZ models, product formulas with shared physical parameters; adaptive Hermitian Krylov action with complex callbacks and convergence diagnostics |
 
 The tensor optimization entries are verified against the local Yao source
 commit `31c7c1333b14b1e89123c511eff5742e7ac24edd`, including

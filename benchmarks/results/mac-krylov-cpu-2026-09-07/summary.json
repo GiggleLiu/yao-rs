@@ -1,0 +1,2254 @@
+[
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_12q_tol10",
+    "backend": "julia",
+    "median_ns": 19279645.5,
+    "min_run_median_ns": 18973062.0,
+    "max_run_median_ns": 19285250.0,
+    "runs": 3,
+    "relative_state_error": 1.1818533701428737e-10
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_12q_tol10",
+    "backend": "native",
+    "median_ns": 18745291.666666664,
+    "min_run_median_ns": 18505597.333333336,
+    "max_run_median_ns": 18779833.333333336,
+    "runs": 3,
+    "relative_state_error": 6.339424245896308e-11
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_12q_tol4",
+    "backend": "julia",
+    "median_ns": 11856042.0,
+    "min_run_median_ns": 11829042.0,
+    "max_run_median_ns": 12179521.0,
+    "runs": 3,
+    "relative_state_error": 0.00030490796233494636
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_12q_tol4",
+    "backend": "native",
+    "median_ns": 8902701.5375,
+    "min_run_median_ns": 8895958.325,
+    "max_run_median_ns": 8955583.033333333,
+    "runs": 3,
+    "relative_state_error": 2.0036432622181984e-05
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_12q_tol7",
+    "backend": "julia",
+    "median_ns": 15628792.0,
+    "min_run_median_ns": 15308229.5,
+    "max_run_median_ns": 15754646.0,
+    "runs": 3,
+    "relative_state_error": 3.0537703241355e-07
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_12q_tol7",
+    "backend": "native",
+    "median_ns": 13333610.75,
+    "min_run_median_ns": 13269702.371428572,
+    "max_run_median_ns": 13362869.023809524,
+    "runs": 3,
+    "relative_state_error": 4.035551432329846e-08
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_16q_tol10",
+    "backend": "julia",
+    "median_ns": 631622875.0,
+    "min_run_median_ns": 630590042.0,
+    "max_run_median_ns": 636044792.0,
+    "runs": 3,
+    "relative_state_error": 1.6344756834583016e-10
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_16q_tol10",
+    "backend": "native",
+    "median_ns": 506873604.0,
+    "min_run_median_ns": 505634458.5,
+    "max_run_median_ns": 507962458.0,
+    "runs": 3,
+    "relative_state_error": 6.01923361034064e-11
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_16q_tol4",
+    "backend": "julia",
+    "median_ns": 450008021.0,
+    "min_run_median_ns": 445498000.0,
+    "max_run_median_ns": 454874791.5,
+    "runs": 3,
+    "relative_state_error": 0.00021625677153736545
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_16q_tol4",
+    "backend": "native",
+    "median_ns": 245551041.5,
+    "min_run_median_ns": 244786333.0,
+    "max_run_median_ns": 246056083.5,
+    "runs": 3,
+    "relative_state_error": 2.181730953552025e-05
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_16q_tol7",
+    "backend": "julia",
+    "median_ns": 511124000.0,
+    "min_run_median_ns": 505420541.5,
+    "max_run_median_ns": 513910312.5,
+    "runs": 3,
+    "relative_state_error": 2.8562374332425095e-07
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_16q_tol7",
+    "backend": "native",
+    "median_ns": 354420646.0,
+    "min_run_median_ns": 353100063.0,
+    "max_run_median_ns": 358398083.5,
+    "runs": 3,
+    "relative_state_error": 4.637538746697646e-08
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_4q_asymmetric",
+    "backend": "julia",
+    "median_ns": 107416.5,
+    "min_run_median_ns": 107229.0,
+    "max_run_median_ns": 109250.0,
+    "runs": 3,
+    "relative_state_error": 9.154229635489429e-16
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_4q_asymmetric",
+    "backend": "native",
+    "median_ns": 13679.521846219748,
+    "min_run_median_ns": 13652.860860860861,
+    "max_run_median_ns": 13716.662406015039,
+    "runs": 3,
+    "relative_state_error": 1.7274266276495404e-15
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_4q_tol10",
+    "backend": "julia",
+    "median_ns": 31604.0,
+    "min_run_median_ns": 30250.0,
+    "max_run_median_ns": 32167.0,
+    "runs": 3,
+    "relative_state_error": 3.1140098378119704e-16
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_4q_tol10",
+    "backend": "native",
+    "median_ns": 3240.991863735872,
+    "min_run_median_ns": 3237.3412839681973,
+    "max_run_median_ns": 3264.4200891199407,
+    "runs": 3,
+    "relative_state_error": 8.437820525416214e-16
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_4q_tol4",
+    "backend": "julia",
+    "median_ns": 31604.0,
+    "min_run_median_ns": 30479.0,
+    "max_run_median_ns": 32333.0,
+    "runs": 3,
+    "relative_state_error": 3.1140098378119704e-16
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_4q_tol4",
+    "backend": "native",
+    "median_ns": 3243.5510494485948,
+    "min_run_median_ns": 3242.2838044758537,
+    "max_run_median_ns": 3246.4265054528214,
+    "runs": 3,
+    "relative_state_error": 8.437820525416214e-16
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_4q_tol7",
+    "backend": "julia",
+    "median_ns": 30396.0,
+    "min_run_median_ns": 29999.5,
+    "max_run_median_ns": 30895.5,
+    "runs": 3,
+    "relative_state_error": 3.1140098378119704e-16
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_4q_tol7",
+    "backend": "native",
+    "median_ns": 3239.9268340455837,
+    "min_run_median_ns": 3235.608927940657,
+    "max_run_median_ns": 3263.5568443175507,
+    "runs": 3,
+    "relative_state_error": 8.437820525416214e-16
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_8q_tol10",
+    "backend": "julia",
+    "median_ns": 817625.0,
+    "min_run_median_ns": 797791.5,
+    "max_run_median_ns": 821479.0,
+    "runs": 3,
+    "relative_state_error": 2.117999030100773e-15
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_8q_tol10",
+    "backend": "native",
+    "median_ns": 252777.53472222222,
+    "min_run_median_ns": 251512.63657407407,
+    "max_run_median_ns": 252844.3698198198,
+    "runs": 3,
+    "relative_state_error": 2.494001304895335e-15
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_8q_tol4",
+    "backend": "julia",
+    "median_ns": 519166.5,
+    "min_run_median_ns": 516833.5,
+    "max_run_median_ns": 534687.5,
+    "runs": 3,
+    "relative_state_error": 0.00040473096462018837
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_8q_tol4",
+    "backend": "native",
+    "median_ns": 213934.642248062,
+    "min_run_median_ns": 213631.85215946846,
+    "max_run_median_ns": 214245.36589147287,
+    "runs": 3,
+    "relative_state_error": 3.511449360793342e-06
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_8q_tol7",
+    "backend": "julia",
+    "median_ns": 736854.0,
+    "min_run_median_ns": 725646.0,
+    "max_run_median_ns": 739104.5,
+    "runs": 3,
+    "relative_state_error": 7.274474347240478e-08
+  },
+  {
+    "threads": 1,
+    "id": "krylov_heisenberg_8q_tol7",
+    "backend": "native",
+    "median_ns": 252360.8054054054,
+    "min_run_median_ns": 252230.63063063062,
+    "max_run_median_ns": 252447.02083333334,
+    "runs": 3,
+    "relative_state_error": 2.494001304895335e-15
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_12q_tol10",
+    "backend": "julia",
+    "median_ns": 8956708.0,
+    "min_run_median_ns": 8948125.0,
+    "max_run_median_ns": 8973229.5,
+    "runs": 3,
+    "relative_state_error": 1.951092732553093e-10
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_12q_tol10",
+    "backend": "native",
+    "median_ns": 11932893.385714285,
+    "min_run_median_ns": 11909425.347222222,
+    "max_run_median_ns": 11981063.25,
+    "runs": 3,
+    "relative_state_error": 6.35863341499951e-11
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_12q_tol4",
+    "backend": "julia",
+    "median_ns": 5583896.0,
+    "min_run_median_ns": 5456812.5,
+    "max_run_median_ns": 5585187.5,
+    "runs": 3,
+    "relative_state_error": 0.00020132675856022943
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_12q_tol4",
+    "backend": "native",
+    "median_ns": 5506701.96875,
+    "min_run_median_ns": 5446707.138888889,
+    "max_run_median_ns": 5513491.579365079,
+    "runs": 3,
+    "relative_state_error": 2.4267322127809436e-05
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_12q_tol7",
+    "backend": "julia",
+    "median_ns": 7278375.0,
+    "min_run_median_ns": 7262771.0,
+    "max_run_median_ns": 7300792.0,
+    "runs": 3,
+    "relative_state_error": 1.9384970900524253e-07
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_12q_tol7",
+    "backend": "native",
+    "median_ns": 8447074.983333334,
+    "min_run_median_ns": 8388146.825,
+    "max_run_median_ns": 8449328.675,
+    "runs": 3,
+    "relative_state_error": 4.063801788705405e-08
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_16q_tol10",
+    "backend": "julia",
+    "median_ns": 282380979.0,
+    "min_run_median_ns": 279275375.0,
+    "max_run_median_ns": 282447895.5,
+    "runs": 3,
+    "relative_state_error": 4.273540595145473e-10
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_16q_tol10",
+    "backend": "native",
+    "median_ns": 273934604.0,
+    "min_run_median_ns": 271612979.5,
+    "max_run_median_ns": 273951999.5,
+    "runs": 3,
+    "relative_state_error": 5.673969116881748e-11
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_16q_tol4",
+    "backend": "julia",
+    "median_ns": 217743250.0,
+    "min_run_median_ns": 216768292.0,
+    "max_run_median_ns": 218722125.0,
+    "runs": 3,
+    "relative_state_error": 0.0003001388160312544
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_16q_tol4",
+    "backend": "native",
+    "median_ns": 132281770.5,
+    "min_run_median_ns": 131259437.5,
+    "max_run_median_ns": 132494416.5,
+    "runs": 3,
+    "relative_state_error": 1.4674273979500964e-05
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_16q_tol7",
+    "backend": "julia",
+    "median_ns": 260831145.5,
+    "min_run_median_ns": 253816375.0,
+    "max_run_median_ns": 274301291.0,
+    "runs": 3,
+    "relative_state_error": 1.6430518218030252e-07
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_16q_tol7",
+    "backend": "native",
+    "median_ns": 191996395.5,
+    "min_run_median_ns": 190394500.5,
+    "max_run_median_ns": 192080833.0,
+    "runs": 3,
+    "relative_state_error": 3.7564443661033204e-08
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_4q_asymmetric",
+    "backend": "julia",
+    "median_ns": 71020.5,
+    "min_run_median_ns": 68521.0,
+    "max_run_median_ns": 71166.5,
+    "runs": 3,
+    "relative_state_error": 7.255218229103159e-11
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_4q_asymmetric",
+    "backend": "native",
+    "median_ns": 11818.616993828307,
+    "min_run_median_ns": 11363.355359372214,
+    "max_run_median_ns": 11828.878604193971,
+    "runs": 3,
+    "relative_state_error": 2.33247731167361e-11
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_4q_tol10",
+    "backend": "julia",
+    "median_ns": 59604.0,
+    "min_run_median_ns": 56729.5,
+    "max_run_median_ns": 59979.5,
+    "runs": 3,
+    "relative_state_error": 7.010716121088678e-16
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_4q_tol10",
+    "backend": "native",
+    "median_ns": 8983.491252605025,
+    "min_run_median_ns": 8701.32268292683,
+    "max_run_median_ns": 9050.967657746944,
+    "runs": 3,
+    "relative_state_error": 1.4740789515594868e-15
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_4q_tol4",
+    "backend": "julia",
+    "median_ns": 26979.5,
+    "min_run_median_ns": 26041.5,
+    "max_run_median_ns": 27000.0,
+    "runs": 3,
+    "relative_state_error": 7.73425397752969e-05
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_4q_tol4",
+    "backend": "native",
+    "median_ns": 5559.61589790898,
+    "min_run_median_ns": 5349.0527156862745,
+    "max_run_median_ns": 5589.402716049382,
+    "runs": 3,
+    "relative_state_error": 2.509353761753121e-05
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_4q_tol7",
+    "backend": "julia",
+    "median_ns": 49020.5,
+    "min_run_median_ns": 48625.0,
+    "max_run_median_ns": 49312.5,
+    "runs": 3,
+    "relative_state_error": 1.927797037884143e-09
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_4q_tol7",
+    "backend": "native",
+    "median_ns": 7692.411382978724,
+    "min_run_median_ns": 7349.417138237672,
+    "max_run_median_ns": 7704.041369047619,
+    "runs": 3,
+    "relative_state_error": 4.326537143266042e-08
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_8q_tol10",
+    "backend": "julia",
+    "median_ns": 863812.5,
+    "min_run_median_ns": 855416.5,
+    "max_run_median_ns": 870520.5,
+    "runs": 3,
+    "relative_state_error": 3.3775069332007775e-10
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_8q_tol10",
+    "backend": "native",
+    "median_ns": 424862.6893939394,
+    "min_run_median_ns": 418733.4267676768,
+    "max_run_median_ns": 425534.4772727273,
+    "runs": 3,
+    "relative_state_error": 3.4586542356234644e-11
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_8q_tol4",
+    "backend": "julia",
+    "median_ns": 442083.5,
+    "min_run_median_ns": 439958.5,
+    "max_run_median_ns": 449062.5,
+    "runs": 3,
+    "relative_state_error": 0.00036925572505685616
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_8q_tol4",
+    "backend": "native",
+    "median_ns": 196758.31357649443,
+    "min_run_median_ns": 195034.74468085106,
+    "max_run_median_ns": 196846.49787234043,
+    "runs": 3,
+    "relative_state_error": 2.46015818606671e-05
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_8q_tol7",
+    "backend": "julia",
+    "median_ns": 672542.0,
+    "min_run_median_ns": 657333.0,
+    "max_run_median_ns": 702125.0,
+    "runs": 3,
+    "relative_state_error": 4.045817047142987e-07
+  },
+  {
+    "threads": 1,
+    "id": "krylov_ising_8q_tol7",
+    "backend": "native",
+    "median_ns": 310593.75,
+    "min_run_median_ns": 308523.0361111111,
+    "max_run_median_ns": 312545.1034482758,
+    "runs": 3,
+    "relative_state_error": 3.542891269754906e-08
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "conversion",
+    "median_ns": 223091.8492063492,
+    "min_run_median_ns": 222609.1219512195,
+    "max_run_median_ns": 223502.0243902439,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "julia",
+    "median_ns": 13062.0,
+    "min_run_median_ns": 12667.0,
+    "max_run_median_ns": 13438.0,
+    "runs": 3,
+    "relative_state_error": 0.011947360884471799
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "native",
+    "median_ns": 11046.561325301205,
+    "min_run_median_ns": 10908.453169085045,
+    "max_run_median_ns": 12791.645231958762,
+    "runs": 3,
+    "relative_state_error": 0.011947360884471793
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "omeinsum",
+    "median_ns": 6256687.8,
+    "min_run_median_ns": 6256022.157142857,
+    "max_run_median_ns": 6442158.854166666,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 1042059.4691358025,
+    "min_run_median_ns": 1019549.2083333334,
+    "max_run_median_ns": 1052154.1666666665,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "planning",
+    "median_ns": 8417233.464285715,
+    "min_run_median_ns": 8264689.291666666,
+    "max_run_median_ns": 8432581.86607143,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "supported_from_arrays",
+    "median_ns": 11707962.2,
+    "min_run_median_ns": 11690133.0,
+    "max_run_median_ns": 11771420.166666668,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "supported_planning",
+    "median_ns": 6402621.416666666,
+    "min_run_median_ns": 6392219.645833334,
+    "max_run_median_ns": 6599325.989583334,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "supported_warm",
+    "median_ns": 5358374.291666666,
+    "min_run_median_ns": 5257713.5,
+    "max_run_median_ns": 5391834.35,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 9803168.75,
+    "min_run_median_ns": 9759356.042857144,
+    "max_run_median_ns": 9851332.3,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "tenferro_warm",
+    "median_ns": 1247588.940625,
+    "min_run_median_ns": 1214984.375,
+    "max_run_median_ns": 1269834.375,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "conversion",
+    "median_ns": 4343899.333333334,
+    "min_run_median_ns": 4320589.608333333,
+    "max_run_median_ns": 4357343.875,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "julia",
+    "median_ns": 222999.5,
+    "min_run_median_ns": 217771.0,
+    "max_run_median_ns": 223146.0,
+    "runs": 3,
+    "relative_state_error": 4.5651632366589316e-05
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "native",
+    "median_ns": 175532.49807692308,
+    "min_run_median_ns": 173898.4375,
+    "max_run_median_ns": 176287.2786057692,
+    "runs": 3,
+    "relative_state_error": 4.565163236574417e-05
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "omeinsum",
+    "median_ns": 2575531583.5,
+    "min_run_median_ns": 2573355542.0,
+    "max_run_median_ns": 2725422333.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 16774715.083333334,
+    "min_run_median_ns": 16730583.1,
+    "max_run_median_ns": 17682034.64285714,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "planning",
+    "median_ns": 3079050896.0,
+    "min_run_median_ns": 3047217625.5,
+    "max_run_median_ns": 3274337208.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "supported_from_arrays",
+    "median_ns": 1441529479.0,
+    "min_run_median_ns": 1438816208.0,
+    "max_run_median_ns": 1466202541.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "supported_planning",
+    "median_ns": 1335022979.5,
+    "min_run_median_ns": 1331985437.5,
+    "max_run_median_ns": 1366038354.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "supported_warm",
+    "median_ns": 96238770.5,
+    "min_run_median_ns": 95527812.0,
+    "max_run_median_ns": 99615541.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 3110446417.0,
+    "min_run_median_ns": 3095540333.0,
+    "max_run_median_ns": 3318584312.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "tenferro_warm",
+    "median_ns": 22686145.833333332,
+    "min_run_median_ns": 22403298.666666664,
+    "max_run_median_ns": 23081166.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "conversion",
+    "median_ns": 882643.0,
+    "min_run_median_ns": 872847.7705627705,
+    "max_run_median_ns": 882666.4772727273,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "julia",
+    "median_ns": 54583.5,
+    "min_run_median_ns": 54062.5,
+    "max_run_median_ns": 58438.0,
+    "runs": 3,
+    "relative_state_error": 0.0007313449915250711
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "native",
+    "median_ns": 43936.8972575829,
+    "min_run_median_ns": 43897.46955128205,
+    "max_run_median_ns": 45313.80778894472,
+    "runs": 3,
+    "relative_state_error": 0.0007313449915252706
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "omeinsum",
+    "median_ns": 72839874.5,
+    "min_run_median_ns": 70766083.0,
+    "max_run_median_ns": 73152166.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 4210871.925925925,
+    "min_run_median_ns": 4175664.388888889,
+    "max_run_median_ns": 4219729.166666666,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "planning",
+    "median_ns": 107868271.0,
+    "min_run_median_ns": 105702479.0,
+    "max_run_median_ns": 110529270.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "supported_from_arrays",
+    "median_ns": 110522583.0,
+    "min_run_median_ns": 110225146.0,
+    "max_run_median_ns": 111861833.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "supported_planning",
+    "median_ns": 88809104.0,
+    "min_run_median_ns": 87365708.5,
+    "max_run_median_ns": 89118812.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "supported_warm",
+    "median_ns": 22668284.833333336,
+    "min_run_median_ns": 22641458.333333336,
+    "max_run_median_ns": 22765895.833333336,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 113098187.5,
+    "min_run_median_ns": 113081167.0,
+    "max_run_median_ns": 115277895.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "tenferro_warm",
+    "median_ns": 5118658.864583334,
+    "min_run_median_ns": 5106823.991666667,
+    "max_run_median_ns": 5202579.21875,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "conversion",
+    "median_ns": 53949.72426470588,
+    "min_run_median_ns": 52812.95314285714,
+    "max_run_median_ns": 53972.50665680473,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "julia",
+    "median_ns": 2312.5,
+    "min_run_median_ns": 2292.0,
+    "max_run_median_ns": 2333.0,
+    "runs": 3,
+    "relative_state_error": 0.03169673514279843
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "native",
+    "median_ns": 2508.406739373602,
+    "min_run_median_ns": 2504.5428176795576,
+    "max_run_median_ns": 2622.160268626917,
+    "runs": 3,
+    "relative_state_error": 0.03169673514279837
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "omeinsum",
+    "median_ns": 981521.5222222223,
+    "min_run_median_ns": 978218.4547619047,
+    "max_run_median_ns": 984782.8148148148,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 231402.29083333333,
+    "min_run_median_ns": 227019.3225,
+    "max_run_median_ns": 232163.10625,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "planning",
+    "median_ns": 1094209.7206349205,
+    "min_run_median_ns": 1093585.5177469137,
+    "max_run_median_ns": 1098653.0013227514,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "supported_from_arrays",
+    "median_ns": 1476484.9333333333,
+    "min_run_median_ns": 1450619.4196428573,
+    "max_run_median_ns": 1483964.25,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "supported_planning",
+    "median_ns": 568821.346875,
+    "min_run_median_ns": 567452.34375,
+    "max_run_median_ns": 568919.265625,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "supported_warm",
+    "median_ns": 901210.6988636365,
+    "min_run_median_ns": 891641.2651515151,
+    "max_run_median_ns": 901682.7727272727,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 1433316.9761904762,
+    "min_run_median_ns": 1417978.285714286,
+    "max_run_median_ns": 1443766.7874149662,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "tenferro_warm",
+    "median_ns": 265163.70229591837,
+    "min_run_median_ns": 261471.64285714284,
+    "max_run_median_ns": 284217.6640625,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "conversion",
+    "median_ns": 852247.5363636364,
+    "min_run_median_ns": 840255.4954545454,
+    "max_run_median_ns": 853557.8303030303,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "julia",
+    "median_ns": 37124.5,
+    "min_run_median_ns": 35500.0,
+    "max_run_median_ns": 37458.0,
+    "runs": 3,
+    "relative_state_error": 0.00011962523389334245
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "native",
+    "median_ns": 39936.51069321534,
+    "min_run_median_ns": 39785.85515873016,
+    "max_run_median_ns": 43790.73945121952,
+    "runs": 3,
+    "relative_state_error": 0.00011962523389279179
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "omeinsum",
+    "median_ns": 271824041.5,
+    "min_run_median_ns": 271472354.0,
+    "max_run_median_ns": 292570833.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 3795261.3333333335,
+    "min_run_median_ns": 3773907.722222222,
+    "max_run_median_ns": 3813446.479166667,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "planning",
+    "median_ns": 304666583.0,
+    "min_run_median_ns": 300908749.5,
+    "max_run_median_ns": 312615479.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "supported_from_arrays",
+    "median_ns": 102853771.5,
+    "min_run_median_ns": 102466958.5,
+    "max_run_median_ns": 103700270.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "supported_planning",
+    "median_ns": 81080458.5,
+    "min_run_median_ns": 81012938.0,
+    "max_run_median_ns": 81117250.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "supported_warm",
+    "median_ns": 20532604.166666668,
+    "min_run_median_ns": 20347909.666666664,
+    "max_run_median_ns": 20846986.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 309372270.5,
+    "min_run_median_ns": 307349791.5,
+    "max_run_median_ns": 310263395.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "tenferro_warm",
+    "median_ns": 4344425.347222222,
+    "min_run_median_ns": 4310343.896825397,
+    "max_run_median_ns": 4376672.25,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "conversion",
+    "median_ns": 214389.05523255814,
+    "min_run_median_ns": 211603.27435064933,
+    "max_run_median_ns": 214955.8104651163,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "julia",
+    "median_ns": 9375.0,
+    "min_run_median_ns": 8458.5,
+    "max_run_median_ns": 9792.0,
+    "runs": 3,
+    "relative_state_error": 0.0019178155186791632
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "native",
+    "median_ns": 9930.178633879781,
+    "min_run_median_ns": 9795.283460977389,
+    "max_run_median_ns": 10068.74172278339,
+    "runs": 3,
+    "relative_state_error": 0.0019178155186796932
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "omeinsum",
+    "median_ns": 9380937.520833332,
+    "min_run_median_ns": 9359526.041666668,
+    "max_run_median_ns": 9423031.598214285,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 935994.45,
+    "min_run_median_ns": 935193.9333333333,
+    "max_run_median_ns": 993101.3372222222,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "planning",
+    "median_ns": 11368014.0,
+    "min_run_median_ns": 11367973.875,
+    "max_run_median_ns": 11444004.275,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "supported_from_arrays",
+    "median_ns": 10836622.047619049,
+    "min_run_median_ns": 10677144.125,
+    "max_run_median_ns": 10845197.083333332,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "supported_planning",
+    "median_ns": 5933574.85,
+    "min_run_median_ns": 5901421.875,
+    "max_run_median_ns": 5937230.46875,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "supported_warm",
+    "median_ns": 4832066.6375,
+    "min_run_median_ns": 4791569.333333334,
+    "max_run_median_ns": 4901668.45,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 12687735.55,
+    "min_run_median_ns": 12645676.388888888,
+    "max_run_median_ns": 12985091.7,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "tenferro_warm",
+    "median_ns": 1120092.3055555555,
+    "min_run_median_ns": 1090156.8416666666,
+    "max_run_median_ns": 1123653.0401234566,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_12q_tol10",
+    "backend": "julia",
+    "median_ns": 109402084.0,
+    "min_run_median_ns": 105572292.0,
+    "max_run_median_ns": 116524375.0,
+    "runs": 3,
+    "relative_state_error": 1.181853369955666e-10
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_12q_tol10",
+    "backend": "native",
+    "median_ns": 18722805.5,
+    "min_run_median_ns": 18683548.666666668,
+    "max_run_median_ns": 18725007.0,
+    "runs": 3,
+    "relative_state_error": 6.339424321292597e-11
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_12q_tol4",
+    "backend": "julia",
+    "median_ns": 78038500.0,
+    "min_run_median_ns": 69131708.0,
+    "max_run_median_ns": 78452084.0,
+    "runs": 3,
+    "relative_state_error": 0.0003049079623349512
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_12q_tol4",
+    "backend": "native",
+    "median_ns": 8948339.95,
+    "min_run_median_ns": 8933707.25,
+    "max_run_median_ns": 8950298.32142857,
+    "runs": 3,
+    "relative_state_error": 2.0036432622178e-05
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_12q_tol7",
+    "backend": "julia",
+    "median_ns": 97983083.5,
+    "min_run_median_ns": 92423604.0,
+    "max_run_median_ns": 101842312.5,
+    "runs": 3,
+    "relative_state_error": 3.0537703241259926e-07
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_12q_tol7",
+    "backend": "native",
+    "median_ns": 13375947.722222222,
+    "min_run_median_ns": 13342851.214285715,
+    "max_run_median_ns": 13410325.314285714,
+    "runs": 3,
+    "relative_state_error": 4.0355514318332046e-08
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_16q_tol10",
+    "backend": "julia",
+    "median_ns": 672238166.0,
+    "min_run_median_ns": 650506167.0,
+    "max_run_median_ns": 689345250.0,
+    "runs": 3,
+    "relative_state_error": 1.634475684787048e-10
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_16q_tol10",
+    "backend": "native",
+    "median_ns": 507121291.5,
+    "min_run_median_ns": 507087333.5,
+    "max_run_median_ns": 507722270.5,
+    "runs": 3,
+    "relative_state_error": 6.019342431891649e-11
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_16q_tol4",
+    "backend": "julia",
+    "median_ns": 475924166.5,
+    "min_run_median_ns": 470929917.0,
+    "max_run_median_ns": 490879104.0,
+    "runs": 3,
+    "relative_state_error": 0.00021625677153736385
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_16q_tol4",
+    "backend": "native",
+    "median_ns": 245701271.0,
+    "min_run_median_ns": 245508917.0,
+    "max_run_median_ns": 245799979.0,
+    "runs": 3,
+    "relative_state_error": 2.181730953515332e-05
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_16q_tol7",
+    "backend": "julia",
+    "median_ns": 575795083.0,
+    "min_run_median_ns": 525351292.0,
+    "max_run_median_ns": 630977625.0,
+    "runs": 3,
+    "relative_state_error": 2.856237433258042e-07
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_16q_tol7",
+    "backend": "native",
+    "median_ns": 355515791.5,
+    "min_run_median_ns": 354552500.0,
+    "max_run_median_ns": 356400583.5,
+    "runs": 3,
+    "relative_state_error": 4.6375388388203274e-08
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_4q_asymmetric",
+    "backend": "julia",
+    "median_ns": 203958.5,
+    "min_run_median_ns": 203854.5,
+    "max_run_median_ns": 205041.5,
+    "runs": 3,
+    "relative_state_error": 6.41418550225287e-16
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_4q_asymmetric",
+    "backend": "native",
+    "median_ns": 13832.816058686472,
+    "min_run_median_ns": 13702.739205397302,
+    "max_run_median_ns": 13852.239123541349,
+    "runs": 3,
+    "relative_state_error": 1.7274266276495404e-15
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_4q_tol10",
+    "backend": "julia",
+    "median_ns": 119646.0,
+    "min_run_median_ns": 93229.0,
+    "max_run_median_ns": 123624.5,
+    "runs": 3,
+    "relative_state_error": 3.105494195215809e-16
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_4q_tol10",
+    "backend": "native",
+    "median_ns": 3264.70920754911,
+    "min_run_median_ns": 3231.9395083579157,
+    "max_run_median_ns": 3270.512423698384,
+    "runs": 3,
+    "relative_state_error": 8.437820525416214e-16
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_4q_tol4",
+    "backend": "julia",
+    "median_ns": 116562.5,
+    "min_run_median_ns": 93291.5,
+    "max_run_median_ns": 119792.0,
+    "runs": 3,
+    "relative_state_error": 3.105494195215809e-16
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_4q_tol4",
+    "backend": "native",
+    "median_ns": 3245.3203125,
+    "min_run_median_ns": 3233.326403823178,
+    "max_run_median_ns": 3253.0176973044854,
+    "runs": 3,
+    "relative_state_error": 8.437820525416214e-16
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_4q_tol7",
+    "backend": "julia",
+    "median_ns": 112875.5,
+    "min_run_median_ns": 95396.0,
+    "max_run_median_ns": 118875.0,
+    "runs": 3,
+    "relative_state_error": 3.105494195215809e-16
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_4q_tol7",
+    "backend": "native",
+    "median_ns": 3266.1735389028327,
+    "min_run_median_ns": 3237.609102244389,
+    "max_run_median_ns": 3277.448288601326,
+    "runs": 3,
+    "relative_state_error": 8.437820525416214e-16
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_8q_tol10",
+    "backend": "julia",
+    "median_ns": 934167.0,
+    "min_run_median_ns": 918646.0,
+    "max_run_median_ns": 951208.0,
+    "runs": 3,
+    "relative_state_error": 2.0927632352293766e-15
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_8q_tol10",
+    "backend": "native",
+    "median_ns": 254433.96006944444,
+    "min_run_median_ns": 253903.18998015873,
+    "max_run_median_ns": 255646.30026455026,
+    "runs": 3,
+    "relative_state_error": 2.461459791036109e-15
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_8q_tol4",
+    "backend": "julia",
+    "median_ns": 731541.5,
+    "min_run_median_ns": 730500.0,
+    "max_run_median_ns": 737979.0,
+    "runs": 3,
+    "relative_state_error": 0.0004047309646201639
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_8q_tol4",
+    "backend": "native",
+    "median_ns": 215664.49069767442,
+    "min_run_median_ns": 214644.05066445182,
+    "max_run_median_ns": 216544.93023255814,
+    "runs": 3,
+    "relative_state_error": 3.511449360840269e-06
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_8q_tol7",
+    "backend": "julia",
+    "median_ns": 868791.5,
+    "min_run_median_ns": 836146.0,
+    "max_run_median_ns": 876021.0,
+    "runs": 3,
+    "relative_state_error": 7.274474343700238e-08
+  },
+  {
+    "threads": 4,
+    "id": "krylov_heisenberg_8q_tol7",
+    "backend": "native",
+    "median_ns": 252983.27993827162,
+    "min_run_median_ns": 252980.9451388889,
+    "max_run_median_ns": 256361.65509259258,
+    "runs": 3,
+    "relative_state_error": 2.461459791036109e-15
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_12q_tol10",
+    "backend": "julia",
+    "median_ns": 50430250.0,
+    "min_run_median_ns": 47531938.0,
+    "max_run_median_ns": 51043208.5,
+    "runs": 3,
+    "relative_state_error": 1.9510927352688497e-10
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_12q_tol10",
+    "backend": "native",
+    "median_ns": 12002331.25,
+    "min_run_median_ns": 11989864.5,
+    "max_run_median_ns": 12030742.145833332,
+    "runs": 3,
+    "relative_state_error": 6.358633576652314e-11
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_12q_tol4",
+    "backend": "julia",
+    "median_ns": 33370333.5,
+    "min_run_median_ns": 32516146.0,
+    "max_run_median_ns": 34504666.5,
+    "runs": 3,
+    "relative_state_error": 0.00020132675856022794
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_12q_tol4",
+    "backend": "native",
+    "median_ns": 5541217.0,
+    "min_run_median_ns": 5538014.125,
+    "max_run_median_ns": 5549430.803571429,
+    "runs": 3,
+    "relative_state_error": 2.426732212781041e-05
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_12q_tol7",
+    "backend": "julia",
+    "median_ns": 42463437.5,
+    "min_run_median_ns": 38930750.0,
+    "max_run_median_ns": 42552479.0,
+    "runs": 3,
+    "relative_state_error": 1.938497090052892e-07
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_12q_tol7",
+    "backend": "native",
+    "median_ns": 8486499.9375,
+    "min_run_median_ns": 8481468.738095239,
+    "max_run_median_ns": 8499357.85,
+    "runs": 3,
+    "relative_state_error": 4.063801788899124e-08
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_16q_tol10",
+    "backend": "julia",
+    "median_ns": 300631729.0,
+    "min_run_median_ns": 292285062.5,
+    "max_run_median_ns": 301782792.0,
+    "runs": 3,
+    "relative_state_error": 4.2735405920299087e-10
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_16q_tol10",
+    "backend": "native",
+    "median_ns": 274156125.0,
+    "min_run_median_ns": 274082333.5,
+    "max_run_median_ns": 274252666.5,
+    "runs": 3,
+    "relative_state_error": 5.67400840940505e-11
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_16q_tol4",
+    "backend": "julia",
+    "median_ns": 211075125.0,
+    "min_run_median_ns": 176563667.0,
+    "max_run_median_ns": 211733583.0,
+    "runs": 3,
+    "relative_state_error": 0.00030013881603125654
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_16q_tol4",
+    "backend": "native",
+    "median_ns": 132694146.0,
+    "min_run_median_ns": 132550542.0,
+    "max_run_median_ns": 132768667.0,
+    "runs": 3,
+    "relative_state_error": 1.4674273980477146e-05
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_16q_tol7",
+    "backend": "julia",
+    "median_ns": 259462542.0,
+    "min_run_median_ns": 259314833.5,
+    "max_run_median_ns": 264411562.0,
+    "runs": 3,
+    "relative_state_error": 1.64305182177609e-07
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_16q_tol7",
+    "backend": "native",
+    "median_ns": 192333958.5,
+    "min_run_median_ns": 192129645.5,
+    "max_run_median_ns": 192348229.5,
+    "runs": 3,
+    "relative_state_error": 3.756443787791914e-08
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_4q_asymmetric",
+    "backend": "julia",
+    "median_ns": 166125.0,
+    "min_run_median_ns": 162604.0,
+    "max_run_median_ns": 168062.5,
+    "runs": 3,
+    "relative_state_error": 7.25522034472975e-11
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_4q_asymmetric",
+    "backend": "native",
+    "median_ns": 11982.757827616535,
+    "min_run_median_ns": 11953.156504599212,
+    "max_run_median_ns": 12027.105366492146,
+    "runs": 3,
+    "relative_state_error": 2.33247731167361e-11
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_4q_tol10",
+    "backend": "julia",
+    "median_ns": 156208.5,
+    "min_run_median_ns": 154791.5,
+    "max_run_median_ns": 164250.5,
+    "runs": 3,
+    "relative_state_error": 7.00316927280346e-16
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_4q_tol10",
+    "backend": "native",
+    "median_ns": 9153.714231873655,
+    "min_run_median_ns": 9065.562420201448,
+    "max_run_median_ns": 9179.170866935485,
+    "runs": 3,
+    "relative_state_error": 1.4740789515594868e-15
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_4q_tol4",
+    "backend": "julia",
+    "median_ns": 122062.5,
+    "min_run_median_ns": 80562.5,
+    "max_run_median_ns": 129145.5,
+    "runs": 3,
+    "relative_state_error": 7.734253977529284e-05
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_4q_tol4",
+    "backend": "native",
+    "median_ns": 5628.336896929824,
+    "min_run_median_ns": 5610.017846153846,
+    "max_run_median_ns": 5631.114253788672,
+    "runs": 3,
+    "relative_state_error": 2.509353761753121e-05
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_4q_tol7",
+    "backend": "julia",
+    "median_ns": 142229.0,
+    "min_run_median_ns": 142208.5,
+    "max_run_median_ns": 145187.5,
+    "runs": 3,
+    "relative_state_error": 1.927797032213867e-09
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_4q_tol7",
+    "backend": "native",
+    "median_ns": 7754.462617220801,
+    "min_run_median_ns": 7701.333787234043,
+    "max_run_median_ns": 7780.733475783476,
+    "runs": 3,
+    "relative_state_error": 4.326537143266042e-08
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_8q_tol10",
+    "backend": "julia",
+    "median_ns": 945417.0,
+    "min_run_median_ns": 943437.5,
+    "max_run_median_ns": 955145.5,
+    "runs": 3,
+    "relative_state_error": 3.377507027077489e-10
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_8q_tol10",
+    "backend": "native",
+    "median_ns": 428571.875,
+    "min_run_median_ns": 426226.48484848486,
+    "max_run_median_ns": 428606.955762987,
+    "runs": 3,
+    "relative_state_error": 3.45865646076426e-11
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_8q_tol4",
+    "backend": "julia",
+    "median_ns": 536958.5,
+    "min_run_median_ns": 525666.5,
+    "max_run_median_ns": 556354.5,
+    "runs": 3,
+    "relative_state_error": 0.0003692557250568374
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_8q_tol4",
+    "backend": "native",
+    "median_ns": 198783.32336956522,
+    "min_run_median_ns": 197143.5609042553,
+    "max_run_median_ns": 199095.65289855073,
+    "runs": 3,
+    "relative_state_error": 2.460158186068464e-05
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_8q_tol7",
+    "backend": "julia",
+    "median_ns": 692833.0,
+    "min_run_median_ns": 688208.5,
+    "max_run_median_ns": 693104.0,
+    "runs": 3,
+    "relative_state_error": 4.045817047057413e-07
+  },
+  {
+    "threads": 4,
+    "id": "krylov_ising_8q_tol7",
+    "backend": "native",
+    "median_ns": 314524.4011494253,
+    "min_run_median_ns": 312865.8308333333,
+    "max_run_median_ns": 314694.1699507389,
+    "runs": 3,
+    "relative_state_error": 3.542891271010627e-08
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "conversion",
+    "median_ns": 224305.15487804878,
+    "min_run_median_ns": 223387.99477351917,
+    "max_run_median_ns": 224546.08780487807,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "julia",
+    "median_ns": 13833.5,
+    "min_run_median_ns": 12562.0,
+    "max_run_median_ns": 14750.0,
+    "runs": 3,
+    "relative_state_error": 0.011947360884471799
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "native",
+    "median_ns": 10975.295038244767,
+    "min_run_median_ns": 10958.767981749867,
+    "max_run_median_ns": 11020.575955284552,
+    "runs": 3,
+    "relative_state_error": 0.011947360884471793
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "omeinsum",
+    "median_ns": 6306537.866666667,
+    "min_run_median_ns": 6229689.625,
+    "max_run_median_ns": 6372947.875,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 1039893.5185185184,
+    "min_run_median_ns": 1031823.611111111,
+    "max_run_median_ns": 1053111.35,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "planning",
+    "median_ns": 8340885.392857143,
+    "min_run_median_ns": 8334757.3,
+    "max_run_median_ns": 8506783.075396825,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "supported_from_arrays",
+    "median_ns": 15720864.6,
+    "min_run_median_ns": 15662053.294444444,
+    "max_run_median_ns": 15781164.041666668,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "supported_planning",
+    "median_ns": 6435796.404761905,
+    "min_run_median_ns": 6372191.541666666,
+    "max_run_median_ns": 6504204.85,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "supported_warm",
+    "median_ns": 9241604.2,
+    "min_run_median_ns": 9213996.875,
+    "max_run_median_ns": 9444166.65,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 9949698.805555556,
+    "min_run_median_ns": 9837245.333333334,
+    "max_run_median_ns": 9968511.50892857,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "tenferro_warm",
+    "median_ns": 1237450.9479166665,
+    "min_run_median_ns": 1206684.921875,
+    "max_run_median_ns": 1249148.3526785714,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "conversion",
+    "median_ns": 4398198.680555556,
+    "min_run_median_ns": 4344476.4,
+    "max_run_median_ns": 4477498.25,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "julia",
+    "median_ns": 228375.0,
+    "min_run_median_ns": 218333.0,
+    "max_run_median_ns": 230416.5,
+    "runs": 3,
+    "relative_state_error": 4.5651632366589316e-05
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "native",
+    "median_ns": 175413.86004273506,
+    "min_run_median_ns": 173957.53333333333,
+    "max_run_median_ns": 177790.63770604396,
+    "runs": 3,
+    "relative_state_error": 4.565163236574417e-05
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "omeinsum",
+    "median_ns": 2576444125.0,
+    "min_run_median_ns": 2568126687.5,
+    "max_run_median_ns": 2630626604.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 17029495.6,
+    "min_run_median_ns": 16868543.70238095,
+    "max_run_median_ns": 17046376.75,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "planning",
+    "median_ns": 3117292792.0,
+    "min_run_median_ns": 3106709291.5,
+    "max_run_median_ns": 3127657833.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "supported_from_arrays",
+    "median_ns": 1515641229.0,
+    "min_run_median_ns": 1501093458.5,
+    "max_run_median_ns": 1516827542.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "supported_planning",
+    "median_ns": 1338298625.0,
+    "min_run_median_ns": 1336396395.5,
+    "max_run_median_ns": 1360670270.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "supported_warm",
+    "median_ns": 158321041.5,
+    "min_run_median_ns": 157635541.5,
+    "max_run_median_ns": 159078667.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 3121135645.5,
+    "min_run_median_ns": 3120527917.0,
+    "max_run_median_ns": 3175498291.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "tenferro_warm",
+    "median_ns": 22348402.666666664,
+    "min_run_median_ns": 22194673.5,
+    "max_run_median_ns": 22537840.333333336,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "conversion",
+    "median_ns": 893560.606060606,
+    "min_run_median_ns": 885812.6818181819,
+    "max_run_median_ns": 895891.0170454546,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "julia",
+    "median_ns": 56958.5,
+    "min_run_median_ns": 56708.5,
+    "max_run_median_ns": 57521.0,
+    "runs": 3,
+    "relative_state_error": 0.0007313449915250711
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "native",
+    "median_ns": 44176.937560386476,
+    "min_run_median_ns": 44133.78004807692,
+    "max_run_median_ns": 44344.73190943044,
+    "runs": 3,
+    "relative_state_error": 0.0007313449915252706
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "omeinsum",
+    "median_ns": 72263458.5,
+    "min_run_median_ns": 72131042.0,
+    "max_run_median_ns": 74489854.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 4225965.333333333,
+    "min_run_median_ns": 4208694.083333333,
+    "max_run_median_ns": 4241799.836309524,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "planning",
+    "median_ns": 105779104.5,
+    "min_run_median_ns": 105316917.0,
+    "max_run_median_ns": 106067396.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "supported_from_arrays",
+    "median_ns": 125993750.0,
+    "min_run_median_ns": 125935188.0,
+    "max_run_median_ns": 126266291.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "supported_planning",
+    "median_ns": 87297437.0,
+    "min_run_median_ns": 87219729.0,
+    "max_run_median_ns": 89267875.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "supported_warm",
+    "median_ns": 38316802.25,
+    "min_run_median_ns": 38297969.0,
+    "max_run_median_ns": 38460427.25,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 111381500.0,
+    "min_run_median_ns": 111343083.0,
+    "max_run_median_ns": 112944604.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "tenferro_warm",
+    "median_ns": 5075050.75,
+    "min_run_median_ns": 5058659.152777778,
+    "max_run_median_ns": 5157965.166666666,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "conversion",
+    "median_ns": 54115.01479289941,
+    "min_run_median_ns": 53733.19044117647,
+    "max_run_median_ns": 54624.30038265306,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "julia",
+    "median_ns": 2270.5,
+    "min_run_median_ns": 2250.0,
+    "max_run_median_ns": 2396.0,
+    "runs": 3,
+    "relative_state_error": 0.03169673514279843
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "native",
+    "median_ns": 2527.4707373200235,
+    "min_run_median_ns": 2522.941936987323,
+    "max_run_median_ns": 2560.0474065223502,
+    "runs": 3,
+    "relative_state_error": 0.03169673514279837
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "omeinsum",
+    "median_ns": 994165.1383333334,
+    "min_run_median_ns": 993142.725,
+    "max_run_median_ns": 995668.1764285715,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 234646.98660714284,
+    "min_run_median_ns": 233203.125,
+    "max_run_median_ns": 237669.53792735044,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "planning",
+    "median_ns": 1110486.449404762,
+    "min_run_median_ns": 1105355.9629629632,
+    "max_run_median_ns": 1110614.461111111,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "supported_from_arrays",
+    "median_ns": 2181969.715555555,
+    "min_run_median_ns": 2171915.7527777776,
+    "max_run_median_ns": 2182205.5595238097,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "supported_planning",
+    "median_ns": 574404.9609375,
+    "min_run_median_ns": 567609.7921006945,
+    "max_run_median_ns": 579664.932638889,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "supported_warm",
+    "median_ns": 1629668.2145833333,
+    "min_run_median_ns": 1622801.2777777778,
+    "max_run_median_ns": 1648659.4305555555,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 1460708.660714286,
+    "min_run_median_ns": 1459366.2698412698,
+    "max_run_median_ns": 1460720.7227891157,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "tenferro_warm",
+    "median_ns": 275903.97138047137,
+    "min_run_median_ns": 273225.75757575757,
+    "max_run_median_ns": 277263.4981060606,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "conversion",
+    "median_ns": 858754.7272727273,
+    "min_run_median_ns": 849945.117965368,
+    "max_run_median_ns": 861339.0827922078,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "julia",
+    "median_ns": 34354.0,
+    "min_run_median_ns": 34250.0,
+    "max_run_median_ns": 35041.0,
+    "runs": 3,
+    "relative_state_error": 0.00011962523389334245
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "native",
+    "median_ns": 40071.082605531294,
+    "min_run_median_ns": 39930.173637218046,
+    "max_run_median_ns": 40190.48776309349,
+    "runs": 3,
+    "relative_state_error": 0.00011962523389279179
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "omeinsum",
+    "median_ns": 274320771.0,
+    "min_run_median_ns": 271414208.5,
+    "max_run_median_ns": 276782375.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 3797484.472222222,
+    "min_run_median_ns": 3784968.625,
+    "max_run_median_ns": 3814331.583333333,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "planning",
+    "median_ns": 300880396.0,
+    "min_run_median_ns": 299864334.0,
+    "max_run_median_ns": 301858208.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "supported_from_arrays",
+    "median_ns": 118134645.5,
+    "min_run_median_ns": 117971687.5,
+    "max_run_median_ns": 118357104.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "supported_planning",
+    "median_ns": 81492083.5,
+    "min_run_median_ns": 81226500.0,
+    "max_run_median_ns": 82101188.0,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "supported_warm",
+    "median_ns": 35940302.0,
+    "min_run_median_ns": 35917197.75,
+    "max_run_median_ns": 36065448.25,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 305547562.5,
+    "min_run_median_ns": 303859417.0,
+    "max_run_median_ns": 308001916.5,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "tenferro_warm",
+    "median_ns": 4283896.783333333,
+    "min_run_median_ns": 4271497.416666666,
+    "max_run_median_ns": 4388276.391666667,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "conversion",
+    "median_ns": 215893.48255813954,
+    "min_run_median_ns": 215437.20697674417,
+    "max_run_median_ns": 216533.0149501661,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "julia",
+    "median_ns": 8708.5,
+    "min_run_median_ns": 8625.0,
+    "max_run_median_ns": 9020.5,
+    "runs": 3,
+    "relative_state_error": 0.0019178155186791632
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "native",
+    "median_ns": 10000.823013245034,
+    "min_run_median_ns": 9955.958885209713,
+    "max_run_median_ns": 10011.287855579869,
+    "runs": 3,
+    "relative_state_error": 0.0019178155186796932
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "omeinsum",
+    "median_ns": 9462824.111111112,
+    "min_run_median_ns": 9339776.455357142,
+    "max_run_median_ns": 9666297.95,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 943861.6699999999,
+    "min_run_median_ns": 943402.2428571428,
+    "max_run_median_ns": 953670.6345238094,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "planning",
+    "median_ns": 11470314.777777778,
+    "min_run_median_ns": 11387135.4375,
+    "max_run_median_ns": 11543004.291666668,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "supported_from_arrays",
+    "median_ns": 14793017.15,
+    "min_run_median_ns": 14737734.420634922,
+    "max_run_median_ns": 14878258.083333332,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "supported_planning",
+    "median_ns": 5946041.625,
+    "min_run_median_ns": 5944319.416666666,
+    "max_run_median_ns": 5946565.958333334,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "supported_warm",
+    "median_ns": 8774624.256944444,
+    "min_run_median_ns": 8731756.072916668,
+    "max_run_median_ns": 8843869.625,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 12849031.4375,
+    "min_run_median_ns": 12704054.933333334,
+    "max_run_median_ns": 12903692.166666668,
+    "runs": 3
+  },
+  {
+    "threads": 4,
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "tenferro_warm",
+    "median_ns": 1085823.449404762,
+    "min_run_median_ns": 1082139.2658730159,
+    "max_run_median_ns": 1091043.5291005292,
+    "runs": 3
+  }
+]

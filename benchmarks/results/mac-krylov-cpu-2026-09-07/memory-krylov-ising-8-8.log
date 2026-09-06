@@ -1,0 +1,22 @@
+{"allocated_bytes":1536,"diagnostic_ns":5958,"peak_additional_rust_heap_bytes":928,"phase":"model","retained_additional_rust_heap_bytes":848}
+{"allocated_bytes":4096,"diagnostic_ns":959,"peak_additional_rust_heap_bytes":4096,"phase":"state_input","retained_additional_rust_heap_bytes":4096}
+{"allocated_bytes":143241,"diagnostic_ns":1855834,"peak_additional_rust_heap_bytes":83208,"phase":"krylov_execute","retained_additional_rust_heap_bytes":38312}
+{"info":{"estimated_error":9.663715218253206e-9,"matvecs":143,"max_krylov_dim":8,"steps":18,"time_reached":2.1,"tolerance":1e-8},"krylov_dim":8,"model":"ising","norm_squared":0.999999999999997,"note":"Rust heap instrumentation; timings are diagnostic. RSS includes input, startup and allocator retention.","qubits":8,"rtol":1e-8,"state_bytes":4096,"status":"complete","time":2.1}
+        0.00 real         0.00 user         0.00 sys
+             3047424  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                 371  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+                  14  involuntary context switches
+            43608074  instructions retired
+            10352438  cycles elapsed
+             1622400  peak memory footprint

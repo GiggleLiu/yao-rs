@@ -22,6 +22,15 @@ fn backend(c: &mut Criterion) {
         let state = case.initial(circuit.nbits);
         let mut group = c.benchmark_group(&case.id);
         match case.mode.as_str() {
+            "krylov" => {
+                let spec = case.krylov.as_ref().unwrap();
+                let h = spec.model(circuit.nbits).unwrap();
+                let got = spec.execute(&h, &state).unwrap();
+                yao_tenferro_probe::krylov::record(&case.id, &got).unwrap();
+                group.bench_function("native", |b| {
+                    b.iter(|| spec.execute(black_box(&h), black_box(&state)).unwrap())
+                });
+            }
             "state" => {
                 group.bench_function("native", |b| {
                     b.iter(|| apply(black_box(&circuit), black_box(&state)))
@@ -218,6 +227,9 @@ fn backend(c: &mut Criterion) {
     }
     if std::env::var("YAO_BENCH_SUITE").as_deref() == Ok("trajectories") {
         large_trajectories(c, threads);
+        return;
+    }
+    if std::env::var("YAO_BENCH_SUITE").as_deref() == Ok("krylov") {
         return;
     }
     for n in [8, 12, 16] {

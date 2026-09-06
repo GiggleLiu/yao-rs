@@ -214,6 +214,70 @@ def evolution_memory_rows(directory):
     return rows
 
 
+def krylov_diagnostics(directory, metadata, cases):
+    """Require completed full-time diagnostics for every measured Krylov case."""
+    import math
+
+    directory = Path(directory)
+    expected = {c["id"]: c["krylov"] for c in cases if c["mode"] == "krylov"}
+    names = {f"{t}t-run{r}-krylov-stats.jsonl" for t in metadata["threads"]
+             for r in range(1, metadata["runs"] + 1)}
+    if {p.name for p in directory.glob("*-krylov-stats.jsonl")} != names:
+        raise ValueError("Missing Krylov diagnostic processes")
+    rows = []
+    for name in sorted(names):
+        records = [json.loads(line) for line in (directory / name).read_text().splitlines()]
+        if len(records) != len(expected) or {r["id"] for r in records} != set(expected):
+            raise ValueError("Missing or duplicate Krylov workload diagnostics")
+        threads = int(name.split("t-", 1)[0])
+        for row in records:
+            info, spec = row["info"], expected[row["id"]]
+            if row["status"] != "complete" or info["time_reached"] != spec["time"]:
+                raise ValueError("Krylov diagnostic did not reach requested time")
+            if (not all(math.isfinite(v) for v in info.values())
+                    or not 0 <= info["estimated_error"] <= info["tolerance"]
+                    or not 0 < info["tolerance"] <= spec["rtol"] * (1 + 1e-12)
+                    or info["matvecs"] < 1 or info["steps"] < 1
+                    or not 1 <= info["max_krylov_dim"] <= spec["krylov_dim"]):
+                raise ValueError("Invalid Krylov convergence diagnostic")
+            rows.append(dict(row, threads=threads, process=name))
+        julia = json.loads((directory / name.replace("-krylov-stats.jsonl", "-julia.json")).read_text())
+        selected = [r for r in julia["records"] if r["id"] in expected]
+        if len(selected) != len(expected) or {r["id"] for r in selected} != set(expected):
+            raise ValueError("Missing Krylov Julia qualification")
+        for row in selected:
+            vals = [row[k] for k in ("approximation_error", "yao_approximation_error", "tight_reference_error")]
+            if (not all(math.isfinite(x) and x >= 0 for x in vals)
+                    or row["tight_reference_error"] >= 1e-11
+                    or row["yao_krylov"]["converged"] != 1):
+                raise ValueError("Invalid Krylov Julia qualification")
+    return rows
+
+
+def krylov_memory_rows(directory):
+    import math
+
+    rows = []
+    for path in sorted(Path(directory).glob("memory-krylov-*.log")):
+        text = path.read_text()
+        records = [json.loads(line) for line in text.splitlines() if line.startswith("{")]
+        complete = [r for r in records if r.get("status") == "complete"]
+        if len(complete) != 1:
+            raise ValueError("Incomplete Krylov memory probe")
+        row = complete[0]
+        if row["info"]["time_reached"] != row["time"]:
+            raise ValueError("Krylov memory probe returned a partial state")
+        error, tolerance = row["info"]["estimated_error"], row["info"]["tolerance"]
+        if not math.isfinite(error) or not math.isfinite(tolerance) or not 0 <= error <= tolerance:
+            raise ValueError("Invalid Krylov memory error estimate")
+        phases = {r["phase"]: r for r in records if "phase" in r}
+        row.update(peak_rss_bytes=peak_rss_bytes(text),
+                   execution_peak_bytes=phases["krylov_execute"]["peak_additional_rust_heap_bytes"],
+                   execution_retained_bytes=phases["krylov_execute"]["retained_additional_rust_heap_bytes"])
+        rows.append(row)
+    return sorted(rows, key=lambda r: (r["model"], r["qubits"], r["krylov_dim"]))
+
+
 def backend_report(directory):
     """Compare medians of independent runs; preserve individual confidence intervals."""
     import statistics
@@ -292,7 +356,9 @@ def backend_report(directory):
             if metadata.get("measurement_notes")
             else []
         ),
-        "Times below are medians of per-process medians. Rust/Julia includes state copying; tensor phases are reported separately. A Julia/Rust ratio greater than one means native Rust was faster.",
+        ("Times below are medians of per-process medians and include solver output allocation. Julia/Rust ratios compare different solver policies at the listed tolerances; consult achieved errors below before comparing efficiency. Product-formula rows compare the same circuit. Tensor phases are separate."
+         if metadata.get("suite") == "krylov" else
+         "Times below are medians of per-process medians. Rust/Julia includes state copying; tensor phases are reported separately. A Julia/Rust ratio greater than one means native Rust was faster."),
         "",
         "| Threads | Case | Native Rust µs | Yao µs | Julia/Rust | Max output error |",
         "| --- | --- | ---: | ---: | ---: | ---: |",
@@ -330,9 +396,11 @@ def backend_report(directory):
     ]
     if approximation_errors:
         lines += [
-            "## Product-formula accuracy",
+            "## Evolution accuracy" if metadata.get("suite") == "krylov" else "## Product-formula accuracy",
             "",
-            "Relative state error is measured against a dense exponential of the Hamiltonian built independently with Yao Pauli blocks. Timings compare the same lowered product formula on the same input; they exclude Hamiltonian/circuit construction and do not compare against adaptive Krylov execution.",
+            ("Krylov rows time the public Rust adaptive solver and Yao TimeEvolution on the same state/Hamiltonian. Model construction is excluded; solver buffers and Rust Pauli-mask preparation are included. Tolerances have different meanings: Rust targets a final norm error, whereas Yao/KrylovKit uses its own estimate and time scaling. Compare achieved errors, not the timing ratio alone. Four/eight-qubit oracles use a dense exponential; larger oracles use KrylovKit at tol=1e-13, independently checked against tighter Rust results. Product rows use the same four-qubit zero state and Suzuki circuit in both languages. Their tensor phases provide tenferro/omeinsum costs for that product approximation, not an adaptive tenferro Krylov implementation."
+             if metadata.get("suite") == "krylov" else
+             "Relative state error is measured against a dense exponential of the Hamiltonian built independently with Yao Pauli blocks. Timings compare the same lowered product formula on the same input; they exclude Hamiltonian/circuit construction and do not compare against adaptive Krylov execution."),
             "",
             "| Threads | Case | Native µs | Yao µs | Native relative error | Yao relative error |",
             "| --- | --- | ---: | ---: | ---: | ---: |",
@@ -345,9 +413,29 @@ def backend_report(directory):
                 )
         lines += [
             "",
-            "![Product-formula error versus execution time](evolution-error-time.svg)",
+            "![Evolution error versus execution time](krylov-error-time.svg)" if metadata.get("suite") == "krylov" else "![Product-formula error versus execution time](evolution-error-time.svg)",
             "",
         ]
+    if metadata.get("suite") == "krylov":
+        cases = json.loads(case_path.read_text())
+        diagnostics = krylov_diagnostics(directory, metadata, cases)
+        memory_rows = krylov_memory_rows(directory)
+        required = {(model, n, k) for model in ("ising", "heisenberg")
+                    for n in (4, 8, 12, 16) for k in (8, 20, 40)}
+        if len(memory_rows) != len(required) or {(r["model"], r["qubits"], r["krylov_dim"]) for r in memory_rows} != required:
+            raise ValueError("Missing or duplicate Krylov memory workloads")
+        (directory / "krylov-diagnostics.json").write_text(json.dumps(diagnostics, indent=2) + "\n")
+        (directory / "krylov-memory.json").write_text(json.dumps(memory_rows, indent=2) + "\n")
+        lines += ["## Krylov convergence and memory", "",
+                  "Raw per-process Krylov diagnostics record completed time, operator applications, accepted steps, maximum basis dimension, truncation/defect estimate and tolerance. Julia records include its own convergence diagnostics and the discrepancy between tight references. Floating-point roundoff is not certified by either reported estimate.", "",
+                  "| Model | Qubits | Basis cap | Basis used | Steps | Matvecs | Additional execution heap MiB | Process peak RSS MiB |",
+                  "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |"]
+        for r in memory_rows:
+            i = r["info"]
+            lines.append(f"| {r['model']} | {r['qubits']} | {r['krylov_dim']} | {i['max_krylov_dim']} | {i['steps']} | {i['matvecs']} | {r['execution_peak_bytes']/2**20:.3f} | {r['peak_rss_bytes']/2**20:.3f} |")
+        lines += ["", "Memory probes use rtol=1e-8. The input state is already live before execution; additional heap includes basis/work/output storage. RSS includes input, startup and allocator retention. Instrumented times are excluded from timing tables.", "",
+                  "![Krylov basis memory](krylov-memory.svg)", ""]
+        lines += ["![Four-qubit product formulas and adaptive evolution](krylov-product-comparison.svg)", ""]
     elif metadata.get("suite") == "circuit-ad":
         lines += [
             "## Circuit AD costs and memory",
@@ -374,7 +462,7 @@ def backend_report(directory):
             "![Contraction time and memory](slicing-tradeoff.svg)",
             "",
         ]
-    elif metadata.get("suite") != "trajectories":
+    elif not approximation_errors and metadata.get("suite") != "trajectories":
         lines += [
             "## Plots",
             "",

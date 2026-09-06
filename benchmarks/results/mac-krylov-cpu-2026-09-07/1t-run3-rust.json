@@ -1,0 +1,6502 @@
+[
+  {
+    "id": "krylov_heisenberg_12q_tol10",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 18725466.8,
+          "upper_bound": 18815195.900000002
+        },
+        "point_estimate": 18771537.533333335,
+        "standard_error": 22942.57657609085
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 18714347.333333332,
+          "upper_bound": 18838416.666666668
+        },
+        "point_estimate": 18779833.333333336,
+        "standard_error": 29057.65952263404
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 10223.762318492856,
+          "upper_bound": 134298.84761571977
+        },
+        "point_estimate": 87936.7109388113,
+        "standard_error": 31475.685509865747
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 43318.21621449207,
+          "upper_bound": 95689.63193689384
+        },
+        "point_estimate": 76489.96372157891,
+        "standard_error": 13442.992551050065
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0
+      ],
+      "times": [
+        56040334.0,
+        55923042.0,
+        56159375.0,
+        56245750.0,
+        56587667.0,
+        56343500.0,
+        56368875.0,
+        56626833.0,
+        56515250.0,
+        56335500.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_heisenberg_12q_tol4",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 8877512.452777777,
+          "upper_bound": 8919052.995427085
+        },
+        "point_estimate": 8897775.408829365,
+        "standard_error": 10622.373512033933
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 8871854.0,
+          "upper_bound": 8922909.666666666
+        },
+        "point_estimate": 8895958.325,
+        "standard_error": 13117.396148841983
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 4274.743439107305,
+          "upper_bound": 59861.66245390987
+        },
+        "point_estimate": 37847.565028070945,
+        "standard_error": 14305.559219735425
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 8869503.748971194,
+          "upper_bound": 8934353.366217729
+        },
+        "point_estimate": 8902156.148051947,
+        "standard_error": 16659.79761590354
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 18429.283247851396,
+          "upper_bound": 45027.07182429515
+        },
+        "point_estimate": 35549.27876707407,
+        "standard_error": 6654.832590639855
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0,
+        12.0,
+        14.0,
+        16.0,
+        18.0,
+        20.0
+      ],
+      "times": [
+        17787000.0,
+        35487416.0,
+        53274583.0,
+        70949916.0,
+        88988416.0,
+        107074916.0,
+        125400750.0,
+        143120667.0,
+        159158833.0,
+        177968333.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_heisenberg_12q_tol7",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 13310856.261666667,
+          "upper_bound": 13392980.010392856
+        },
+        "point_estimate": 13356991.191428572,
+        "standard_error": 21251.334377955944
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 13336755.25,
+          "upper_bound": 13407400.0
+        },
+        "point_estimate": 13362869.023809524,
+        "standard_error": 19612.558606533297
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 12453.691518903332,
+          "upper_bound": 94848.98914109364
+        },
+        "point_estimate": 43822.76238699166,
+        "standard_error": 19958.452657596587
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 13342500.781321185,
+          "upper_bound": 13385027.812785795
+        },
+        "point_estimate": 13358160.28051948,
+        "standard_error": 10903.267337100357
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 26765.032087730182,
+          "upper_bound": 101975.5507885641
+        },
+        "point_estimate": 70852.43595424552,
+        "standard_error": 23007.606321469524
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        1.0,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        9.0,
+        10.0
+      ],
+      "times": [
+        13182291.0,
+        26693333.0,
+        40297000.0,
+        53685417.0,
+        67037000.0,
+        80325041.0,
+        93574458.0,
+        106694042.0,
+        120221625.0,
+        133298667.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_heisenberg_16q_tol10",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 506680074.6,
+          "upper_bound": 507808262.3
+        },
+        "point_estimate": 507187529.1,
+        "standard_error": 291064.95638542
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 506460812.5,
+          "upper_bound": 507751125.5
+        },
+        "point_estimate": 506873604.0,
+        "standard_error": 379618.7241749904
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 86607.56006240845,
+          "upper_bound": 1549534.1733902693
+        },
+        "point_estimate": 802518.7636524439,
+        "standard_error": 359507.1469757441
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 417972.1745022271,
+          "upper_bound": 1345142.1121411875
+        },
+        "point_estimate": 976266.7626178422,
+        "standard_error": 265396.67930897005
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        509429708.0,
+        507967084.0,
+        506724166.0,
+        506463041.0,
+        506517000.0,
+        506404625.0,
+        507023042.0,
+        507535167.0,
+        507551458.0,
+        506260000.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_heisenberg_16q_tol4",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 245287504.0,
+          "upper_bound": 246826616.35500002
+        },
+        "point_estimate": 245959108.2,
+        "standard_error": 401231.82798717613
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 245086250.0,
+          "upper_bound": 246656271.0
+        },
+        "point_estimate": 245551041.5,
+        "standard_error": 309075.7683694305
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 125711.87566816807,
+          "upper_bound": 1545641.6071593761
+        },
+        "point_estimate": 516747.6187258959,
+        "standard_error": 368259.98264885874
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 291448.91840192396,
+          "upper_bound": 1841724.887930926
+        },
+        "point_estimate": 1338350.4617445893,
+        "standard_error": 425544.2617046257
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        245783333.0,
+        244839542.0,
+        245086250.0,
+        245488333.0,
+        245716000.0,
+        249081583.0,
+        245006916.0,
+        245613750.0,
+        247596542.0,
+        245378833.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_heisenberg_16q_tol7",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 358112949.9775,
+          "upper_bound": 358518904.3
+        },
+        "point_estimate": 358320387.7,
+        "standard_error": 104150.75217220043
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 357958334.0,
+          "upper_bound": 358611750.0
+        },
+        "point_estimate": 358398083.5,
+        "standard_error": 160489.6020375159
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 89418.56961250305,
+          "upper_bound": 583557.2800397873
+        },
+        "point_estimate": 365924.2060035467,
+        "standard_error": 133771.44556274838
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 200510.03717051123,
+          "upper_bound": 415051.98603025085
+        },
+        "point_estimate": 346155.2732504912,
+        "standard_error": 53185.56739100919
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        357958334.0,
+        358678042.0,
+        358453750.0,
+        358792333.0,
+        357821042.0,
+        357856709.0,
+        358611750.0,
+        358226459.0,
+        358342417.0,
+        358463041.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_heisenberg_4q_asymmetric",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 13680.85735535267,
+          "upper_bound": 13732.19001378446
+        },
+        "point_estimate": 13707.626979412817,
+        "standard_error": 13.176655142576635
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 13672.775689223057,
+          "upper_bound": 13742.216541353384
+        },
+        "point_estimate": 13716.662406015039,
+        "standard_error": 15.612331675221572
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 6.622790803473954,
+          "upper_bound": 72.21762121788178
+        },
+        "point_estimate": 38.308766951463156,
+        "standard_error": 16.45734041574786
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 13675.573901835378,
+          "upper_bound": 13737.794639839925
+        },
+        "point_estimate": 13716.841894346255,
+        "standard_error": 16.38449379775005
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 21.338465641127048,
+          "upper_bound": 56.61977967269446
+        },
+        "point_estimate": 43.92849074912747,
+        "standard_error": 9.05277038863732
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        665.0,
+        1330.0,
+        1995.0,
+        2660.0,
+        3325.0,
+        3990.0,
+        4655.0,
+        5320.0,
+        5985.0,
+        6650.0
+      ],
+      "times": [
+        9155958.0,
+        18211000.0,
+        27237875.0,
+        36416833.0,
+        45609000.0,
+        54728166.0,
+        63420375.0,
+        73018417.0,
+        82247166.0,
+        91416708.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_heisenberg_4q_tol10",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3229.015345291835,
+          "upper_bound": 3242.8938135125695
+        },
+        "point_estimate": 3236.6485154968377,
+        "standard_error": 3.5517969952832145
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3227.5906727647107,
+          "upper_bound": 3244.345473984319
+        },
+        "point_estimate": 3240.991863735872,
+        "standard_error": 3.8257854617014866
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 0.13546469110930703,
+          "upper_bound": 16.003423290366097
+        },
+        "point_estimate": 5.016669915391294,
+        "standard_error": 3.7595494122090107
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3222.7832911102573,
+          "upper_bound": 3241.864665019607
+        },
+        "point_estimate": 3232.1501402375243,
+        "standard_error": 5.086806971482027
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3.1544431799831245,
+          "upper_bound": 14.93786865048979
+        },
+        "point_estimate": 11.846915252728333,
+        "standard_error": 3.106448566915555
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        2806.0,
+        5612.0,
+        8418.0,
+        11224.0,
+        14030.0,
+        16836.0,
+        19642.0,
+        22448.0,
+        25254.0,
+        28060.0
+      ],
+      "times": [
+        9078167.0,
+        18224042.0,
+        27310375.0,
+        36415209.0,
+        45518167.0,
+        54105541.0,
+        63629333.0,
+        72788333.0,
+        81783500.0,
+        90261833.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_heisenberg_4q_tol4",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3241.116960082415,
+          "upper_bound": 3249.1845070086765
+        },
+        "point_estimate": 3244.78620548243,
+        "standard_error": 2.074269982264087
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3239.8612593383136,
+          "upper_bound": 3248.6078995217204
+        },
+        "point_estimate": 3243.5510494485948,
+        "standard_error": 2.4095076085465474
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 0.5817530312939764,
+          "upper_bound": 9.971860530896684
+        },
+        "point_estimate": 5.014488291444526,
+        "standard_error": 2.5880725531627076
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3242.416863560775,
+          "upper_bound": 3255.136758959617
+        },
+        "point_estimate": 3249.391186757035,
+        "standard_error": 3.376651751198383
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 2.7820355191779425,
+          "upper_bound": 9.422148782189867
+        },
+        "point_estimate": 6.905113226097341,
+        "standard_error": 1.8629206008750214
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        2811.0,
+        5622.0,
+        8433.0,
+        11244.0,
+        14055.0,
+        16866.0,
+        19677.0,
+        22488.0,
+        25299.0,
+        28110.0
+      ],
+      "times": [
+        9099333.0,
+        18225000.0,
+        27321750.0,
+        36426292.0,
+        45624750.0,
+        54743875.0,
+        63859208.0,
+        72871833.0,
+        82257250.0,
+        91649375.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_heisenberg_4q_tol7",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3250.212355460385,
+          "upper_bound": 3271.3016578237766
+        },
+        "point_estimate": 3261.023912284875,
+        "standard_error": 5.434298064010707
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3248.8363668807992,
+          "upper_bound": 3276.024000713776
+        },
+        "point_estimate": 3263.5568443175507,
+        "standard_error": 10.493790691529359
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 0.8726662930960998,
+          "upper_bound": 35.745133793186994
+        },
+        "point_estimate": 19.614304392437734,
+        "standard_error": 10.045688217223088
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3258.6701365771146,
+          "upper_bound": 3275.811875858657
+        },
+        "point_estimate": 3270.781949813213,
+        "standard_error": 4.511933162665221
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 11.21403944397843,
+          "upper_bound": 22.852118338884296
+        },
+        "point_estimate": 18.16403712280984,
+        "standard_error": 3.228613499769137
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        2802.0,
+        5604.0,
+        8406.0,
+        11208.0,
+        14010.0,
+        16812.0,
+        19614.0,
+        22416.0,
+        25218.0,
+        28020.0
+      ],
+      "times": [
+        9113292.0,
+        18213417.0,
+        27324375.0,
+        36393416.0,
+        45200291.0,
+        55163125.0,
+        64278375.0,
+        73409708.0,
+        82581125.0,
+        91789791.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_heisenberg_8q_tol10",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 252492.65250628305,
+          "upper_bound": 252943.1062249228
+        },
+        "point_estimate": 252719.43816688712,
+        "standard_error": 115.1807052691879
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 252421.875,
+          "upper_bound": 253019.67708333334
+        },
+        "point_estimate": 252777.53472222222,
+        "standard_error": 159.01093176135643
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 116.3211462682184,
+          "upper_bound": 659.7858166198013
+        },
+        "point_estimate": 362.0636362804329,
+        "standard_error": 143.32476119122202
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 252515.71465201466,
+          "upper_bound": 253160.12902726146
+        },
+        "point_estimate": 252850.8170995671,
+        "standard_error": 172.14392861115206
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 214.48601659293743,
+          "upper_bound": 492.69784654843585
+        },
+        "point_estimate": 384.73469983669884,
+        "standard_error": 71.7169558184116
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        36.0,
+        72.0,
+        108.0,
+        144.0,
+        180.0,
+        216.0,
+        252.0,
+        288.0,
+        324.0,
+        360.0
+      ],
+      "times": [
+        9074500.0,
+        18174375.0,
+        27276833.0,
+        36388458.0,
+        45516041.0,
+        54617208.0,
+        63762000.0,
+        72869667.0,
+        82088375.0,
+        90833458.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_heisenberg_8q_tol4",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 213991.59371317824,
+          "upper_bound": 214537.5486014673
+        },
+        "point_estimate": 214256.36688907346,
+        "standard_error": 140.1335727909744
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 213828.0,
+          "upper_bound": 214631.88279808048
+        },
+        "point_estimate": 214245.36589147287,
+        "standard_error": 221.17877743502626
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 84.53405780153602,
+          "upper_bound": 828.5592319568353
+        },
+        "point_estimate": 546.0875423980586,
+        "standard_error": 191.88224247853725
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 214116.26775009156,
+          "upper_bound": 214715.33538958145
+        },
+        "point_estimate": 214437.18441558443,
+        "standard_error": 150.09312033383654
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 271.10615539810476,
+          "upper_bound": 572.8496262558758
+        },
+        "point_estimate": 466.4895730751735,
+        "standard_error": 77.82584647705036
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        43.0,
+        86.0,
+        129.0,
+        172.0,
+        215.0,
+        258.0,
+        301.0,
+        344.0,
+        387.0,
+        430.0
+      ],
+      "times": [
+        9224958.0,
+        18381166.0,
+        27623417.0,
+        36760959.0,
+        45974000.0,
+        55191750.0,
+        64665833.0,
+        73980709.0,
+        82983292.0,
+        92172958.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_heisenberg_8q_tol7",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 251645.92102102103,
+          "upper_bound": 252449.24600075078
+        },
+        "point_estimate": 252110.36591591593,
+        "standard_error": 210.48419731001624
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 251911.31756756757,
+          "upper_bound": 252478.15405405406
+        },
+        "point_estimate": 252360.8054054054,
+        "standard_error": 189.4716759255743
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 17.530742932003346,
+          "upper_bound": 742.4152760086779
+        },
+        "point_estimate": 373.15438526707317,
+        "standard_error": 207.94452418897433
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 251496.7547224644,
+          "upper_bound": 252356.89485614648
+        },
+        "point_estimate": 252009.72874692874,
+        "standard_error": 219.55323952558484
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 216.78708437806333,
+          "upper_bound": 1028.432223223767
+        },
+        "point_estimate": 700.5875646110851,
+        "standard_error": 253.76906362364963
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        37.0,
+        74.0,
+        111.0,
+        148.0,
+        185.0,
+        222.0,
+        259.0,
+        296.0,
+        333.0,
+        370.0
+      ],
+      "times": [
+        9334333.0,
+        18683250.0,
+        28065167.0,
+        37368250.0,
+        46701833.0,
+        55569250.0,
+        65226000.0,
+        74587500.0,
+        83907833.0,
+        93413209.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_ising_12q_tol10",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 11927024.476190476,
+          "upper_bound": 11984954.271388888
+        },
+        "point_estimate": 11960504.294246033,
+        "standard_error": 15142.62112587086
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 11943634.714285715,
+          "upper_bound": 11990140.625
+        },
+        "point_estimate": 11981063.25,
+        "standard_error": 11648.855880480762
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3762.0150665436013,
+          "upper_bound": 56784.979225197814
+        },
+        "point_estimate": 16443.18684140872,
+        "standard_error": 13730.52141610228
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 11949941.338607594,
+          "upper_bound": 11987797.700548118
+        },
+        "point_estimate": 11975409.633766234,
+        "standard_error": 10077.939761346726
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 9663.928203046444,
+          "upper_bound": 72703.91012087127
+        },
+        "point_estimate": 50443.1449374707,
+        "standard_error": 17986.960677510066
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        1.0,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        9.0,
+        10.0
+      ],
+      "times": [
+        11995917.0,
+        23667625.0,
+        35869042.0,
+        47884792.0,
+        59930250.0,
+        71862084.0,
+        83412500.0,
+        95921125.0,
+        107940416.0,
+        119851125.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_ising_12q_tol4",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 5498448.330203373,
+          "upper_bound": 5518007.350426587
+        },
+        "point_estimate": 5509356.43045635,
+        "standard_error": 5063.4868950529535
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 5502013.575,
+          "upper_bound": 5518638.833333333
+        },
+        "point_estimate": 5513491.579365079,
+        "standard_error": 3869.213553700625
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1461.122130310094,
+          "upper_bound": 23372.95560504717
+        },
+        "point_estimate": 6956.09653275437,
+        "standard_error": 5466.967320435976
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 5502202.809045226,
+          "upper_bound": 5514848.54319853
+        },
+        "point_estimate": 5510658.231168831,
+        "standard_error": 3266.2214065283983
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 4318.309607956083,
+          "upper_bound": 23709.948251307407
+        },
+        "point_estimate": 16874.905640864177,
+        "standard_error": 5312.23921852412
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0,
+        12.0,
+        14.0,
+        16.0,
+        18.0,
+        20.0
+      ],
+      "times": [
+        11038666.0,
+        22118791.0,
+        33111833.0,
+        43751917.0,
+        54939959.0,
+        66120375.0,
+        77157167.0,
+        88148083.0,
+        99283625.0,
+        110332792.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_ising_12q_tol7",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 8434062.309845734,
+          "upper_bound": 8458679.173576884
+        },
+        "point_estimate": 8446233.773908729,
+        "standard_error": 6303.105542593398
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 8425354.166666666,
+          "upper_bound": 8461814.67857143
+        },
+        "point_estimate": 8449328.675,
+        "standard_error": 9072.362712546435
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3303.608686350287,
+          "upper_bound": 37185.55531149373
+        },
+        "point_estimate": 25994.34297184088,
+        "standard_error": 8730.615122155334
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 8430534.439415017,
+          "upper_bound": 8448970.189591078
+        },
+        "point_estimate": 8440030.9,
+        "standard_error": 4714.386500598229
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 12527.989559419962,
+          "upper_bound": 25746.06355480854
+        },
+        "point_estimate": 21003.089531918926,
+        "standard_error": 3382.1462552983926
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0,
+        12.0,
+        14.0,
+        16.0,
+        18.0,
+        20.0
+      ],
+      "times": [
+        16958375.0,
+        33886458.0,
+        50501833.0,
+        67608792.0,
+        84602334.0,
+        101104250.0,
+        118328208.0,
+        134748083.0,
+        151857875.0,
+        168951167.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_ising_16q_tol10",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 273846541.585,
+          "upper_bound": 274049042.4325
+        },
+        "point_estimate": 273943487.6,
+        "standard_error": 51811.16852795347
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 273817875.0,
+          "upper_bound": 274036021.0
+        },
+        "point_estimate": 273934604.0,
+        "standard_error": 54621.044180785175
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 37065.74064195156,
+          "upper_bound": 292565.900605917
+        },
+        "point_estimate": 158020.69429457188,
+        "standard_error": 65453.18224649255
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 85321.43946900872,
+          "upper_bound": 228665.8694242905
+        },
+        "point_estimate": 172766.1130502417,
+        "standard_error": 38135.312005432876
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        273817875.0,
+        273697750.0,
+        273761125.0,
+        274109375.0,
+        273912666.0,
+        273962667.0,
+        273895584.0,
+        274290250.0,
+        274031042.0,
+        273956542.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_ising_16q_tol4",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 132378062.6,
+          "upper_bound": 132647637.6
+        },
+        "point_estimate": 132516229.3,
+        "standard_error": 69270.34326315143
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 132324542.0,
+          "upper_bound": 132743458.5
+        },
+        "point_estimate": 132494416.5,
+        "standard_error": 116791.43079253595
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 34718.043583631516,
+          "upper_bound": 396873.48045408726
+        },
+        "point_estimate": 348689.72260951996,
+        "standard_error": 110139.49202389212
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 140797.3672852424,
+          "upper_bound": 276367.4437317482
+        },
+        "point_estimate": 230911.10830603674,
+        "standard_error": 34262.78006152388
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        132150625.0,
+        132740959.0,
+        132718250.0,
+        132768667.0,
+        132780125.0,
+        132506125.0,
+        132233292.0,
+        132324542.0,
+        132457000.0,
+        132482708.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_ising_16q_tol7",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 191863082.69,
+          "upper_bound": 192226741.715
+        },
+        "point_estimate": 192045670.7,
+        "standard_error": 93358.66925062238
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 191744375.0,
+          "upper_bound": 192280416.0
+        },
+        "point_estimate": 192080833.0,
+        "standard_error": 122551.22309714304
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 51984.40287709236,
+          "upper_bound": 555697.7439343929
+        },
+        "point_estimate": 359098.3157247305,
+        "standard_error": 137272.75459647336
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 180439.04035399013,
+          "upper_bound": 387521.80795567634
+        },
+        "point_estimate": 311915.66946391494,
+        "standard_error": 52922.24897692939
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        192543125.0,
+        192280416.0,
+        192126334.0,
+        191636000.0,
+        191744375.0,
+        192365667.0,
+        191598666.0,
+        192056208.0,
+        192000458.0,
+        192105458.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_ising_4q_asymmetric",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 11694.584421264224,
+          "upper_bound": 11859.07851390709
+        },
+        "point_estimate": 11786.633906155734,
+        "standard_error": 42.89844363039342
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 11750.964744429883,
+          "upper_bound": 11849.25575734881
+        },
+        "point_estimate": 11828.878604193971,
+        "standard_error": 27.904275910000948
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 9.102588304976885,
+          "upper_bound": 184.2037089621465
+        },
+        "point_estimate": 38.82203252178037,
+        "standard_error": 44.66302090885333
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 11797.21528270038,
+          "upper_bound": 11838.245936337205
+        },
+        "point_estimate": 11824.051202532723,
+        "standard_error": 10.696948735530158
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 37.53920855827607,
+          "upper_bound": 206.9046463702629
+        },
+        "point_estimate": 143.41682270288567,
+        "standard_error": 49.25230938137662
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        763.0,
+        1526.0,
+        2289.0,
+        3052.0,
+        3815.0,
+        4578.0,
+        5341.0,
+        6104.0,
+        6867.0,
+        7630.0
+      ],
+      "times": [
+        9134666.0,
+        17443125.0,
+        26778792.0,
+        35888916.0,
+        45028541.0,
+        54274000.0,
+        63286875.0,
+        72262250.0,
+        81306625.0,
+        90180875.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_ising_4q_tol10",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 9036.82023471298,
+          "upper_bound": 9057.529449360516
+        },
+        "point_estimate": 9048.26091140057,
+        "standard_error": 5.360858129898005
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 9039.72428500637,
+          "upper_bound": 9059.801387512389
+        },
+        "point_estimate": 9050.967657746944,
+        "standard_error": 3.6868039434491338
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 0.2478906596233825,
+          "upper_bound": 25.48132378943951
+        },
+        "point_estimate": 5.939779408919097,
+        "standard_error": 7.388010644757866
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 9023.203487972227,
+          "upper_bound": 9059.527418407502
+        },
+        "point_estimate": 9042.005292626105,
+        "standard_error": 9.615214429752799
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 5.529356775529396,
+          "upper_bound": 24.53130613078359
+        },
+        "point_estimate": 17.833015640901202,
+        "standard_error": 5.231592899348242
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        1009.0,
+        2018.0,
+        3027.0,
+        4036.0,
+        5045.0,
+        6054.0,
+        7063.0,
+        8072.0,
+        9081.0,
+        10090.0
+      ],
+      "times": [
+        9149750.0,
+        18274750.0,
+        27397333.0,
+        36542250.0,
+        45662042.0,
+        54790209.0,
+        63925000.0,
+        72880166.0,
+        81795875.0,
+        91471167.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_ising_4q_tol4",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 5589.40722015175,
+          "upper_bound": 5635.159705246913
+        },
+        "point_estimate": 5611.682092421125,
+        "standard_error": 11.689513967785029
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 5578.915157750343,
+          "upper_bound": 5654.74537037037
+        },
+        "point_estimate": 5589.402716049382,
+        "standard_error": 24.5785821699396
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 4.592246646866382,
+          "upper_bound": 60.49348544865996
+        },
+        "point_estimate": 21.392075810028906,
+        "standard_error": 17.175676913939846
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 5581.922037167245,
+          "upper_bound": 5602.055477506374
+        },
+        "point_estimate": 5588.4902501202505,
+        "standard_error": 5.241046754482564
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 24.32102735227337,
+          "upper_bound": 42.74710862444774
+        },
+        "point_estimate": 38.88626906920214,
+        "standard_error": 4.826765798307065
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        1620.0,
+        3240.0,
+        4860.0,
+        6480.0,
+        8100.0,
+        9720.0,
+        11340.0,
+        12960.0,
+        14580.0,
+        16200.0
+      ],
+      "times": [
+        9170042.0,
+        18321375.0,
+        27527167.0,
+        36580167.0,
+        45129500.0,
+        54284000.0,
+        63401583.0,
+        72296125.0,
+        81340583.0,
+        90522958.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_ising_4q_tol7",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 7670.23509188034,
+          "upper_bound": 7730.067264583332
+        },
+        "point_estimate": 7700.520182641432,
+        "standard_error": 15.367763580145597
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 7649.857606837607,
+          "upper_bound": 7750.106837606838
+        },
+        "point_estimate": 7704.041369047619,
+        "standard_error": 28.47911401563711
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 5.0818120465308025,
+          "upper_bound": 85.76661858631077
+        },
+        "point_estimate": 68.40880785601404,
+        "standard_error": 20.9275486714374
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 7652.821483971613,
+          "upper_bound": 7702.937545743688
+        },
+        "point_estimate": 7672.109670329671,
+        "standard_error": 12.741923031891208
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 33.465891328346466,
+          "upper_bound": 59.74811532015307
+        },
+        "point_estimate": 51.260328172824515,
+        "standard_error": 6.766103821401605
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        1170.0,
+        2340.0,
+        3510.0,
+        4680.0,
+        5850.0,
+        7020.0,
+        8190.0,
+        9360.0,
+        10530.0,
+        11700.0
+      ],
+      "times": [
+        9067625.0,
+        18174084.0,
+        27179875.0,
+        36271208.0,
+        44618208.0,
+        53823834.0,
+        63108125.0,
+        72096083.0,
+        80474292.0,
+        89503334.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_ising_8q_tol10",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 425012.73881696427,
+          "upper_bound": 427044.434280303
+        },
+        "point_estimate": 426026.2921807359,
+        "standard_error": 505.6476171667427
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 425281.7272727273,
+          "upper_bound": 428085.6515151515
+        },
+        "point_estimate": 425534.4772727273,
+        "standard_error": 697.4888398666897
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 39.258011803016586,
+          "upper_bound": 3566.018773054152
+        },
+        "point_estimate": 513.6254204267832,
+        "standard_error": 975.5129296465948
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 424754.81246237207,
+          "upper_bound": 427890.1111413537
+        },
+        "point_estimate": 426831.3970484061,
+        "standard_error": 795.7880255156736
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 869.1683033857591,
+          "upper_bound": 2165.536087336903
+        },
+        "point_estimate": 1681.0961835342987,
+        "standard_error": 333.4993998916494
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        22.0,
+        44.0,
+        66.0,
+        88.0,
+        110.0,
+        132.0,
+        154.0,
+        176.0,
+        198.0,
+        220.0
+      ],
+      "times": [
+        9365917.0,
+        18740167.0,
+        28072667.0,
+        37425917.0,
+        46788000.0,
+        56129042.0,
+        65132792.0,
+        75349417.0,
+        84760959.0,
+        94220625.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_ising_8q_tol4",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 196727.65948159405,
+          "upper_bound": 196973.3123031915
+        },
+        "point_estimate": 196847.30412191828,
+        "standard_error": 62.96532047531356
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 196657.5059101655,
+          "upper_bound": 197009.3085106383
+        },
+        "point_estimate": 196846.49787234043,
+        "standard_error": 98.13836459343432
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 42.75261785804849,
+          "upper_bound": 376.61456671796367
+        },
+        "point_estimate": 248.02434236973758,
+        "standard_error": 81.90769521548
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 196664.26504271853,
+          "upper_bound": 197066.20458265138
+        },
+        "point_estimate": 196840.48770378556,
+        "standard_error": 114.17413044706473
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 122.35338553730334,
+          "upper_bound": 264.6124514412128
+        },
+        "point_estimate": 210.41859780239358,
+        "standard_error": 37.43387348496954
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        47.0,
+        94.0,
+        141.0,
+        188.0,
+        235.0,
+        282.0,
+        329.0,
+        376.0,
+        423.0,
+        470.0
+      ],
+      "times": [
+        9256750.0,
+        18507708.0,
+        27771041.0,
+        37048500.0,
+        46248584.0,
+        55432875.0,
+        64695625.0,
+        73959542.0,
+        83186125.0,
+        92698833.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_ising_8q_tol7",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 312013.89091009856,
+          "upper_bound": 312737.0840722496
+        },
+        "point_estimate": 312376.2186699508,
+        "standard_error": 183.60579373620584
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 311951.2413793103,
+          "upper_bound": 312676.4827586207
+        },
+        "point_estimate": 312545.1034482758,
+        "standard_error": 196.30635396006335
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 11.930182546830364,
+          "upper_bound": 1153.0614550463365
+        },
+        "point_estimate": 256.7752385447919,
+        "standard_error": 301.62810852883104
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 311689.9366297408,
+          "upper_bound": 312553.44066855236
+        },
+        "point_estimate": 312003.59453649796,
+        "standard_error": 200.09970206212324
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 292.2073857260575,
+          "upper_bound": 812.2850011155726
+        },
+        "point_estimate": 612.4875166174946,
+        "standard_error": 133.5094201163495
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        29.0,
+        58.0,
+        87.0,
+        116.0,
+        145.0,
+        174.0,
+        203.0,
+        232.0,
+        261.0,
+        290.0
+      ],
+      "times": [
+        9063916.0,
+        18183625.0,
+        27203417.0,
+        36231042.0,
+        45318500.0,
+        54405708.0,
+        63449167.0,
+        72283292.0,
+        81271875.0,
+        90467042.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "conversion",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 222578.44651521157,
+          "upper_bound": 223756.22270181405
+        },
+        "point_estimate": 223159.02796674226,
+        "standard_error": 302.32704840573103
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 222171.62797619047,
+          "upper_bound": 224162.00238095238
+        },
+        "point_estimate": 223091.8492063492,
+        "standard_error": 597.1670650236763
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 144.53349410071147,
+          "upper_bound": 1641.625420260097
+        },
+        "point_estimate": 1445.705591000254,
+        "standard_error": 430.5969478008591
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 223136.3533146112,
+          "upper_bound": 224145.92550085572
+        },
+        "point_estimate": 223805.49653679653,
+        "standard_error": 259.7406794395763
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 670.630053401176,
+          "upper_bound": 1150.1714640362866
+        },
+        "point_estimate": 1008.2246676526082,
+        "standard_error": 123.92637367156208
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        42.0,
+        84.0,
+        126.0,
+        168.0,
+        210.0,
+        252.0,
+        294.0,
+        336.0,
+        378.0,
+        420.0
+      ],
+      "times": [
+        9359125.0,
+        18652750.0,
+        27994292.0,
+        37344167.0,
+        46624042.0,
+        56283542.0,
+        65992667.0,
+        75413334.0,
+        84594833.0,
+        94148041.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 10892.485089198142,
+          "upper_bound": 10968.206720263286
+        },
+        "point_estimate": 10926.267915251146,
+        "standard_error": 19.60459707268304
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 10877.01523579202,
+          "upper_bound": 10962.341663307807
+        },
+        "point_estimate": 10908.453169085045,
+        "standard_error": 19.58216154816705
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 6.715211292509879,
+          "upper_bound": 90.17900894313627
+        },
+        "point_estimate": 49.73120148408256,
+        "standard_error": 21.42283118764275
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 10886.401521943902,
+          "upper_bound": 11019.070486102568
+        },
+        "point_estimate": 10955.763268895555,
+        "standard_error": 36.15213381144683
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 25.113592523367878,
+          "upper_bound": 91.22283986268158
+        },
+        "point_estimate": 65.34904430297594,
+        "standard_error": 19.012685312115266
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        827.0,
+        1654.0,
+        2481.0,
+        3308.0,
+        4135.0,
+        4962.0,
+        5789.0,
+        6616.0,
+        7443.0,
+        8270.0
+      ],
+      "times": [
+        9072583.0,
+        18073875.0,
+        27042166.0,
+        35911916.0,
+        44976458.0,
+        54126208.0,
+        62942666.0,
+        72172375.0,
+        81592709.0,
+        91631417.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "omeinsum",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 6121647.004316965,
+          "upper_bound": 6360578.898683036
+        },
+        "point_estimate": 6251905.337242064,
+        "standard_error": 60278.43634511611
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 6217244.8125,
+          "upper_bound": 6337954.2
+        },
+        "point_estimate": 6256687.8,
+        "standard_error": 34243.29075464446
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 10744.16005717031,
+          "upper_bound": 266974.77334775054
+        },
+        "point_estimate": 58555.40642168345,
+        "standard_error": 58283.20525058874
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 6235157.883116883,
+          "upper_bound": 6321206.050743197
+        },
+        "point_estimate": 6276428.69090909,
+        "standard_error": 22710.47022499992
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 45185.472759326854,
+          "upper_bound": 296314.3094371652
+        },
+        "point_estimate": 201295.18511474808,
+        "standard_error": 68385.99227039149
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0,
+        12.0,
+        14.0,
+        16.0,
+        18.0,
+        20.0
+      ],
+      "times": [
+        11536166.0,
+        25457416.0,
+        39463708.0,
+        49737125.0,
+        62470041.0,
+        75196458.0,
+        88089209.0,
+        99475917.0,
+        112167542.0,
+        126759084.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "omeinsum_fixed_tree",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1019088.967548501,
+          "upper_bound": 1022227.5968209875
+        },
+        "point_estimate": 1020485.2727028219,
+        "standard_error": 810.4299353389197
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1018761.1402116402,
+          "upper_bound": 1022219.6777777778
+        },
+        "point_estimate": 1019549.2083333334,
+        "standard_error": 744.3058725789148
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 273.4058493127809,
+          "upper_bound": 3381.4975466331
+        },
+        "point_estimate": 1173.3497532429465,
+        "standard_error": 779.106292722935
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1018852.3575677314,
+          "upper_bound": 1022723.9194309072
+        },
+        "point_estimate": 1020706.4311688312,
+        "standard_error": 1084.5348937947338
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 610.8360085993195,
+          "upper_bound": 3538.162088169263
+        },
+        "point_estimate": 2701.6429005957184,
+        "standard_error": 785.6223209187247
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        9.0,
+        18.0,
+        27.0,
+        36.0,
+        45.0,
+        54.0,
+        63.0,
+        72.0,
+        81.0,
+        90.0
+      ],
+      "times": [
+        9236625.0,
+        18345084.0,
+        27497834.0,
+        36717375.0,
+        45897250.0,
+        55013166.0,
+        64202291.0,
+        73324333.0,
+        82647958.0,
+        92205042.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "planning",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 8155258.225238095,
+          "upper_bound": 8318600.796547619
+        },
+        "point_estimate": 8237534.4569047615,
+        "standard_error": 41735.46589947411
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 8138163.25,
+          "upper_bound": 8317352.1
+        },
+        "point_estimate": 8264689.291666666,
+        "standard_error": 46291.82736021602
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 19137.88230523564,
+          "upper_bound": 252006.45019099172
+        },
+        "point_estimate": 105644.48966443547,
+        "standard_error": 59056.67837849857
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 8195871.684564394,
+          "upper_bound": 8329054.9048723895
+        },
+        "point_estimate": 8263380.679220779,
+        "standard_error": 34385.06710274281
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 70106.15376785811,
+          "upper_bound": 183276.28095201903
+        },
+        "point_estimate": 139037.55726999862,
+        "standard_error": 28985.256360024156
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0,
+        12.0,
+        14.0,
+        16.0,
+        18.0,
+        20.0
+      ],
+      "times": [
+        16008666.0,
+        33048667.0,
+        48432709.0,
+        67898625.0,
+        82879834.0,
+        99206542.0,
+        116199500.0,
+        130292958.0,
+        147675750.0,
+        166934416.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "supported_from_arrays",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 11759667.962147817,
+          "upper_bound": 11811225.953123014
+        },
+        "point_estimate": 11784142.520515874,
+        "standard_error": 13244.868708720058
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 11756675.0,
+          "upper_bound": 11818015.625
+        },
+        "point_estimate": 11771420.166666668,
+        "standard_error": 15949.238370638164
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 7365.803769232683,
+          "upper_bound": 75605.74163272977
+        },
+        "point_estimate": 30186.68856407895,
+        "standard_error": 17664.22509698349
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 11774456.658291457,
+          "upper_bound": 11844692.434267486
+        },
+        "point_estimate": 11815910.036363637,
+        "standard_error": 18167.82952133255
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 20993.67382044824,
+          "upper_bound": 58514.2311457606
+        },
+        "point_estimate": 44159.2694777083,
+        "standard_error": 9889.754733560047
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        1.0,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        9.0,
+        10.0
+      ],
+      "times": [
+        11719416.0,
+        23552458.0,
+        35299834.0,
+        47058375.0,
+        58783375.0,
+        70505958.0,
+        82542000.0,
+        94544125.0,
+        106412833.0,
+        118735291.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "supported_planning",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 6395700.662574405,
+          "upper_bound": 6407552.266986111
+        },
+        "point_estimate": 6401831.149246031,
+        "standard_error": 3033.5583567070044
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 6394489.583333333,
+          "upper_bound": 6409950.0
+        },
+        "point_estimate": 6402621.416666666,
+        "standard_error": 4032.2025934413796
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3500.5729753521764,
+          "upper_bound": 17216.729259341817
+        },
+        "point_estimate": 10938.78322079787,
+        "standard_error": 3505.7254221779276
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 6391627.988215488,
+          "upper_bound": 6409758.174846626
+        },
+        "point_estimate": 6401863.089610389,
+        "standard_error": 4627.876102515294
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 5500.4437670578,
+          "upper_bound": 12973.93075270727
+        },
+        "point_estimate": 10114.281954851946,
+        "standard_error": 1949.0991706880322
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0,
+        12.0,
+        14.0,
+        16.0,
+        18.0,
+        20.0
+      ],
+      "times": [
+        12824875.0,
+        25605166.0,
+        38423708.0,
+        51193833.0,
+        64092458.0,
+        76733875.0,
+        89359458.0,
+        102267208.0,
+        115482334.0,
+        128149250.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "supported_warm",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 5343869.452318949,
+          "upper_bound": 5392822.692222222
+        },
+        "point_estimate": 5373191.592400795,
+        "standard_error": 13197.098668558563
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 5365878.634920635,
+          "upper_bound": 5397690.916666667
+        },
+        "point_estimate": 5391834.35,
+        "standard_error": 9711.65923133924
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1840.709642319951,
+          "upper_bound": 37782.74319797202
+        },
+        "point_estimate": 11006.210632101254,
+        "standard_error": 10308.361270409607
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 5299149.29147982,
+          "upper_bound": 5386684.703125
+        },
+        "point_estimate": 5344051.038961039,
+        "standard_error": 24921.987911034197
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 9223.702202659526,
+          "upper_bound": 66144.1797385977
+        },
+        "point_estimate": 43978.35834170567,
+        "standard_error": 18316.043720080706
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0,
+        12.0,
+        14.0,
+        16.0,
+        18.0,
+        20.0
+      ],
+      "times": [
+        10796292.0,
+        21570458.0,
+        32376708.0,
+        43202959.0,
+        53910542.0,
+        64772291.0,
+        75238208.0,
+        85906209.0,
+        96436792.0,
+        105100542.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "tenferro_from_arrays",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 9642050.805422617,
+          "upper_bound": 9805916.102297619
+        },
+        "point_estimate": 9728759.065238098,
+        "standard_error": 42302.844884977996
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 9620590.291666668,
+          "upper_bound": 9816200.575
+        },
+        "point_estimate": 9759356.042857144,
+        "standard_error": 42938.22787037358
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 19934.038491101728,
+          "upper_bound": 233498.6940545699
+        },
+        "point_estimate": 87658.84699374391,
+        "standard_error": 53209.85689645279
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 9718102.922874626,
+          "upper_bound": 9854805.357690077
+        },
+        "point_estimate": 9801332.083116883,
+        "standard_error": 34428.901329023334
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 50763.70017213648,
+          "upper_bound": 180674.33662568047
+        },
+        "point_estimate": 140650.52972578708,
+        "standard_error": 32355.168101278156
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        1.0,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        9.0,
+        10.0
+      ],
+      "times": [
+        9469167.0,
+        19624917.0,
+        29198167.0,
+        38033833.0,
+        48783709.0,
+        58165250.0,
+        68333792.0,
+        78422042.0,
+        89275167.0,
+        98296459.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps2",
+    "backend": "tenferro_warm",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1242946.0835312502,
+          "upper_bound": 1248346.9286979164
+        },
+        "point_estimate": 1246101.3890277776,
+        "standard_error": 1425.3652401909471
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1245098.95,
+          "upper_bound": 1248734.375
+        },
+        "point_estimate": 1247588.940625,
+        "standard_error": 920.6122035640049
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 295.0451166369596,
+          "upper_bound": 4691.9424385763705
+        },
+        "point_estimate": 1838.501700901591,
+        "standard_error": 1235.9625415212452
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1245259.8602941176,
+          "upper_bound": 1248319.5349520785
+        },
+        "point_estimate": 1246944.276948052,
+        "standard_error": 801.882156334893
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1137.3456219639293,
+          "upper_bound": 7044.664106811426
+        },
+        "point_estimate": 4759.564774165571,
+        "standard_error": 1802.6529759080129
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        8.0,
+        16.0,
+        24.0,
+        32.0,
+        40.0,
+        48.0,
+        56.0,
+        64.0,
+        72.0,
+        80.0
+      ],
+      "times": [
+        9977459.0,
+        20008625.0,
+        29609250.0,
+        39797583.0,
+        49904459.0,
+        59902292.0,
+        69929125.0,
+        79844250.0,
+        89922500.0,
+        99607916.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "conversion",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 4286757.128736111,
+          "upper_bound": 4374299.908333333
+        },
+        "point_estimate": 4329100.145555556,
+        "standard_error": 22369.91262545502
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 4269234.611111111,
+          "upper_bound": 4377713.541666667
+        },
+        "point_estimate": 4320589.608333333,
+        "standard_error": 20033.417325532773
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 8548.9803232248,
+          "upper_bound": 139781.41583338435
+        },
+        "point_estimate": 34314.28219079948,
+        "standard_error": 37471.92165286551
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 4249544.92449568,
+          "upper_bound": 4403146.361361361
+        },
+        "point_estimate": 4313012.848484849,
+        "standard_error": 39496.44514165114
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 34480.719932416454,
+          "upper_bound": 97631.61529040438
+        },
+        "point_estimate": 74536.6803336188,
+        "standard_error": 16268.505087861105
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        3.0,
+        6.0,
+        9.0,
+        12.0,
+        15.0,
+        18.0,
+        21.0,
+        24.0,
+        27.0,
+        30.0
+      ],
+      "times": [
+        13051875.0,
+        25995250.0,
+        38758459.0,
+        51790417.0,
+        64879667.0,
+        77478042.0,
+        93891875.0,
+        106149250.0,
+        114263292.0,
+        126897708.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 174662.24734655445,
+          "upper_bound": 176663.7162820513
+        },
+        "point_estimate": 175649.25594551285,
+        "standard_error": 515.1079311013362
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 173989.58653846153,
+          "upper_bound": 177334.01923076922
+        },
+        "point_estimate": 175532.49807692308,
+        "standard_error": 1016.5903201060314
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 218.9008965944882,
+          "upper_bound": 2665.1445219150255
+        },
+        "point_estimate": 2363.159340545538,
+        "standard_error": 726.4428746287863
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 175709.64958607688,
+          "upper_bound": 177421.93391430334
+        },
+        "point_estimate": 176735.82477522478,
+        "standard_error": 443.4607374012072
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1131.1227173385453,
+          "upper_bound": 1959.2069648609174
+        },
+        "point_estimate": 1717.1724890449657,
+        "standard_error": 213.20211091382058
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        52.0,
+        104.0,
+        156.0,
+        208.0,
+        260.0,
+        312.0,
+        364.0,
+        416.0,
+        468.0,
+        520.0
+      ],
+      "times": [
+        9060500.0,
+        18094917.0,
+        27126458.0,
+        36130750.0,
+        45442709.0,
+        55500000.0,
+        64549583.0,
+        73396125.0,
+        82501542.0,
+        92535500.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "omeinsum",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 2555586400.0,
+          "upper_bound": 2613261749.9
+        },
+        "point_estimate": 2583526150.0,
+        "standard_error": 14736936.539752511
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 2540213500.0,
+          "upper_bound": 2642201625.0
+        },
+        "point_estimate": 2575531583.5,
+        "standard_error": 24301617.7919106
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 9082839.616647363,
+          "upper_bound": 82102586.63858771
+        },
+        "point_estimate": 57984855.62056303,
+        "standard_error": 20555204.51798637
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 25264605.117120977,
+          "upper_bound": 58131432.486312695
+        },
+        "point_estimate": 49185523.21147236,
+        "standard_error": 7667804.98099508
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        2642201625.0,
+        2529289167.0,
+        2660807625.0,
+        2531300917.0,
+        2549126083.0,
+        2642367333.0,
+        2541541750.0,
+        2567282042.0,
+        2583781125.0,
+        2587563833.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "omeinsum_fixed_tree",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 16754882.007853175,
+          "upper_bound": 16836744.521031745
+        },
+        "point_estimate": 16794452.420198414,
+        "standard_error": 20994.262788843622
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 16733982.666666668,
+          "upper_bound": 16852292.063492063
+        },
+        "point_estimate": 16774715.083333334,
+        "standard_error": 38847.3829362047
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 7292.618045530938,
+          "upper_bound": 113949.10397699954
+        },
+        "point_estimate": 80753.98355633122,
+        "standard_error": 30188.56728260948
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 16787752.924603175,
+          "upper_bound": 16882425.360655736
+        },
+        "point_estimate": 16846950.005194806,
+        "standard_error": 24328.03458618462
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 42407.13981537038,
+          "upper_bound": 85621.3359381289
+        },
+        "point_estimate": 70058.46946448133,
+        "standard_error": 11321.203337684352
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        1.0,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        9.0,
+        10.0
+      ],
+      "times": [
+        16749458.0,
+        33484458.0,
+        50177209.0,
+        66960458.0,
+        83573791.0,
+        100799833.0,
+        117903209.0,
+        134785875.0,
+        151751417.0,
+        169194375.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "planning",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3071574351.2825,
+          "upper_bound": 3089441129.8849998
+        },
+        "point_estimate": 3080244500.0,
+        "standard_error": 4590947.214333197
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3070599500.0,
+          "upper_bound": 3092886333.5
+        },
+        "point_estimate": 3079050896.0,
+        "standard_error": 4777443.063445135
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 2337133.5335075855,
+          "upper_bound": 27197710.148844123
+        },
+        "point_estimate": 9383808.152604103,
+        "standard_error": 6527963.430510095
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 6524548.156270428,
+          "upper_bound": 19771534.426893413
+        },
+        "point_estimate": 15267648.22065086,
+        "standard_error": 3226047.3839302147
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        3105382917.0,
+        3081492500.0,
+        3080974125.0,
+        3067590958.0,
+        3077127667.0,
+        3071835166.0,
+        3073608042.0,
+        3084126875.0,
+        3104280167.0,
+        3056026583.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "supported_from_arrays",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1437144134.0025,
+          "upper_bound": 1443188082.2975
+        },
+        "point_estimate": 1440026833.1,
+        "standard_error": 1541287.363649967
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1437743750.0,
+          "upper_bound": 1443281437.5
+        },
+        "point_estimate": 1438816208.0,
+        "standard_error": 1234142.7337786802
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 452934.2919588089,
+          "upper_bound": 9291978.875434399
+        },
+        "point_estimate": 2053494.3673431873,
+        "standard_error": 2192174.8428794728
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1455430.3432471862,
+          "upper_bound": 6970505.148980818
+        },
+        "point_estimate": 5163973.677848236,
+        "standard_error": 1297696.6584626944
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        1431386458.0,
+        1437743750.0,
+        1438821250.0,
+        1446408041.0,
+        1438811166.0,
+        1437384708.0,
+        1438210250.0,
+        1441069416.0,
+        1450278458.0,
+        1440154834.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "supported_planning",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1331358830.2875001,
+          "upper_bound": 1338088289.02
+        },
+        "point_estimate": 1334205554.1,
+        "standard_error": 1757454.5466994229
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1330737875.0,
+          "upper_bound": 1337021083.0
+        },
+        "point_estimate": 1331985437.5,
+        "standard_error": 1551661.6096170575
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 631371.1291909218,
+          "upper_bound": 7298066.49453342
+        },
+        "point_estimate": 2197398.4859883785,
+        "standard_error": 1673783.2944516994
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1299121.8733560918,
+          "upper_bound": 8499536.991376985
+        },
+        "point_estimate": 5860599.051030618,
+        "standard_error": 2043690.1617013467
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        1331589583.0,
+        1337586458.0,
+        1332751083.0,
+        1329433667.0,
+        1331291958.0,
+        1332381292.0,
+        1337021083.0,
+        1330268750.0,
+        1330737875.0,
+        1348993792.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "supported_warm",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 95457218.6225,
+          "upper_bound": 96468200.4175
+        },
+        "point_estimate": 95969358.4,
+        "standard_error": 258348.19189676965
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 95162833.0,
+          "upper_bound": 96452083.0
+        },
+        "point_estimate": 96238770.5,
+        "standard_error": 350651.5428927538
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 84942.60029196739,
+          "upper_bound": 1622397.2903966904
+        },
+        "point_estimate": 576051.6176730394,
+        "standard_error": 415760.77885666373
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 454453.0916717708,
+          "upper_bound": 1114663.396036231
+        },
+        "point_estimate": 862637.5298418218,
+        "standard_error": 166596.31224341594
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        95733292.0,
+        96393791.0,
+        94543834.0,
+        95162833.0,
+        95006292.0,
+        96312041.0,
+        96510375.0,
+        97455417.0,
+        96165500.0,
+        96410209.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "tenferro_from_arrays",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3102441221.25,
+          "upper_bound": 3203410776.595
+        },
+        "point_estimate": 3147491137.5,
+        "standard_error": 26132983.78035843
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3090488333.0,
+          "upper_bound": 3189827125.0
+        },
+        "point_estimate": 3110446417.0,
+        "standard_error": 26911548.61131942
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 10129555.939364433,
+          "upper_bound": 124324130.21690547
+        },
+        "point_estimate": 39915823.37305248,
+        "standard_error": 30302523.29869612
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 24345001.554714106,
+          "upper_bound": 118465874.26650867
+        },
+        "point_estimate": 87257999.73115736,
+        "standard_error": 24535465.994276993
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        3185815917.0,
+        3244393708.0,
+        3345228083.0,
+        3099561833.0,
+        3135260542.0,
+        3107666417.0,
+        3081414833.0,
+        3071238000.0,
+        3113226417.0,
+        3091105625.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps32",
+    "backend": "tenferro_warm",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 22384645.833333332,
+          "upper_bound": 22865493.099999998
+        },
+        "point_estimate": 22595123.633333333,
+        "standard_error": 124776.38586152368
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 22313270.833333336,
+          "upper_bound": 22775708.333333332
+        },
+        "point_estimate": 22403298.666666664,
+        "standard_error": 141133.22909828252
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 17430.680790541715,
+          "upper_bound": 578234.4990342893
+        },
+        "point_estimate": 251908.31442772882,
+        "standard_error": 142682.1916728356
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 155828.15667124005,
+          "upper_bound": 590698.8840838562
+        },
+        "point_estimate": 415864.7892072983,
+        "standard_error": 130569.18581376417
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0
+      ],
+      "times": [
+        66687000.0,
+        67250292.0,
+        67098959.0,
+        67166292.0,
+        68168833.0,
+        70825500.0,
+        68485417.0,
+        68288583.0,
+        67169500.0,
+        66713333.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "conversion",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 881859.957729798,
+          "upper_bound": 888815.7518614717
+        },
+        "point_estimate": 885249.373910534,
+        "standard_error": 1789.3447062440725
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 880350.3636363636,
+          "upper_bound": 892162.1272727273
+        },
+        "point_estimate": 882666.4772727273,
+        "standard_error": 3213.590516715828
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 505.12855012306113,
+          "upper_bound": 9378.088416687628
+        },
+        "point_estimate": 5852.426742310818,
+        "standard_error": 2452.9091523619604
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 882303.6205295265,
+          "upper_bound": 890533.6348770786
+        },
+        "point_estimate": 885820.4167650532,
+        "standard_error": 2088.623182776579
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3685.855978497065,
+          "upper_bound": 6969.976279809427
+        },
+        "point_estimate": 5960.966936657365,
+        "standard_error": 838.0408492708459
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        11.0,
+        22.0,
+        33.0,
+        44.0,
+        55.0,
+        66.0,
+        77.0,
+        88.0,
+        99.0,
+        110.0
+      ],
+      "times": [
+        9704542.0,
+        19367708.0,
+        29119875.0,
+        38609667.0,
+        49068917.0,
+        58997542.0,
+        68708334.0,
+        78210958.0,
+        87114625.0,
+        97120375.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 43680.79908424908,
+          "upper_bound": 43980.94704035027
+        },
+        "point_estimate": 43839.257385531135,
+        "standard_error": 77.51671381249778
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 43637.91328983517,
+          "upper_bound": 43982.6217948718
+        },
+        "point_estimate": 43897.46955128205,
+        "standard_error": 62.92406798121942
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 9.587598627867447,
+          "upper_bound": 432.1901285290187
+        },
+        "point_estimate": 66.97563919555364,
+        "standard_error": 117.8883743128042
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 43861.649150268335,
+          "upper_bound": 43980.55224857827
+        },
+        "point_estimate": 43907.62556193806,
+        "standard_error": 30.08880912375793
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 80.64829474892115,
+          "upper_bound": 335.90113603135
+        },
+        "point_estimate": 257.76445991121693,
+        "standard_error": 61.83285389315143
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        208.0,
+        416.0,
+        624.0,
+        832.0,
+        1040.0,
+        1248.0,
+        1456.0,
+        1664.0,
+        1872.0,
+        2080.0
+      ],
+      "times": [
+        9022916.0,
+        18061125.0,
+        27395167.0,
+        36654666.0,
+        45985458.0,
+        54798625.0,
+        63859666.0,
+        73037000.0,
+        82077708.0,
+        91344125.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "omeinsum",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 70509375.57000001,
+          "upper_bound": 72522528.02499999
+        },
+        "point_estimate": 71369941.5,
+        "standard_error": 523435.2304623324
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 70431708.0,
+          "upper_bound": 72015917.0
+        },
+        "point_estimate": 70766083.0,
+        "standard_error": 413567.63215708913
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 89635.02920866013,
+          "upper_bound": 2019795.6112414598
+        },
+        "point_estimate": 769685.8459353447,
+        "standard_error": 512116.6835817272
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 536240.3507359674,
+          "upper_bound": 2525379.767704291
+        },
+        "point_estimate": 1741454.460192096,
+        "standard_error": 601117.79734893
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        70781083.0,
+        75751708.0,
+        72015917.0,
+        70431708.0,
+        69545875.0,
+        70751083.0,
+        70690167.0,
+        70193958.0,
+        71232250.0,
+        72305666.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "omeinsum_fixed_tree",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 4213526.737875,
+          "upper_bound": 4225143.863333332
+        },
+        "point_estimate": 4219080.051666667,
+        "standard_error": 2956.041761021426
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 4214230.916666666,
+          "upper_bound": 4222214.5
+        },
+        "point_estimate": 4219729.166666666,
+        "standard_error": 2420.425850251268
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 432.4249923240724,
+          "upper_bound": 15232.664554566605
+        },
+        "point_estimate": 7082.380074262619,
+        "standard_error": 3454.5980511787056
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 4213324.423455124,
+          "upper_bound": 4232470.204187242
+        },
+        "point_estimate": 4224093.136796537,
+        "standard_error": 5047.561431150242
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3156.747817421244,
+          "upper_bound": 13841.850985890838
+        },
+        "point_estimate": 9877.343679195383,
+        "standard_error": 2855.0241789819383
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        3.0,
+        6.0,
+        9.0,
+        12.0,
+        15.0,
+        18.0,
+        21.0,
+        24.0,
+        27.0,
+        30.0
+      ],
+      "times": [
+        12659250.0,
+        25318250.0,
+        37931250.0,
+        50566542.0,
+        63218250.0,
+        75625125.0,
+        88626125.0,
+        101326666.0,
+        114051708.0,
+        127216833.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "planning",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 105038587.3,
+          "upper_bound": 108941960.91250001
+        },
+        "point_estimate": 106914195.7,
+        "standard_error": 1002513.0576192075
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 104404916.0,
+          "upper_bound": 110843167.0
+        },
+        "point_estimate": 105702479.0,
+        "standard_error": 1722154.2865440147
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 242127.84950137138,
+          "upper_bound": 5234748.734817104
+        },
+        "point_estimate": 2371480.9270977974,
+        "standard_error": 1464968.7212565776
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1730318.274338173,
+          "upper_bound": 3974006.3027135953
+        },
+        "point_estimate": 3359134.2381237014,
+        "standard_error": 538704.500946814
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        110979750.0,
+        112343750.0,
+        107444042.0,
+        110843167.0,
+        104578041.0,
+        106673416.0,
+        104404916.0,
+        104244958.0,
+        102898375.0,
+        104731542.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "supported_from_arrays",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 110332237.4,
+          "upper_bound": 111026733.2
+        },
+        "point_estimate": 110647612.4,
+        "standard_error": 178871.71208663416
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 110257958.0,
+          "upper_bound": 111014375.0
+        },
+        "point_estimate": 110522583.0,
+        "standard_error": 167273.64080416498
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 13838.588154315948,
+          "upper_bound": 864417.312553525
+        },
+        "point_estimate": 489844.3596035242,
+        "standard_error": 239897.6855732032
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 238685.14781544474,
+          "upper_bound": 822574.7186905124
+        },
+        "point_estimate": 597305.9474371758,
+        "standard_error": 164045.9770728136
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        112008458.0,
+        111098958.0,
+        110257958.0,
+        110527250.0,
+        110536083.0,
+        110461500.0,
+        110517916.0,
+        111014375.0,
+        110126417.0,
+        109927209.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "supported_planning",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 87282856.7225,
+          "upper_bound": 87771100.0
+        },
+        "point_estimate": 87488112.5,
+        "standard_error": 127773.66385394394
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 87221958.0,
+          "upper_bound": 87598459.0
+        },
+        "point_estimate": 87365708.5,
+        "standard_error": 112122.47767252513
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 57296.558582782745,
+          "upper_bound": 474833.77617001534
+        },
+        "point_estimate": 251331.08883798122,
+        "standard_error": 106571.88610018631
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 135367.97766285998,
+          "upper_bound": 625250.7230338686
+        },
+        "point_estimate": 425051.9367876642,
+        "standard_error": 153837.35709243317
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        88579083.0,
+        87407167.0,
+        87598459.0,
+        87551583.0,
+        87212542.0,
+        87221958.0,
+        87060250.0,
+        87324250.0,
+        87296958.0,
+        87628875.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "supported_warm",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 22541044.499999996,
+          "upper_bound": 22791715.3
+        },
+        "point_estimate": 22666465.333333336,
+        "standard_error": 64016.41639294281
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 22450007.0,
+          "upper_bound": 22882764.0
+        },
+        "point_estimate": 22668284.833333336,
+        "standard_error": 146343.63240321304
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 13497.837260361805,
+          "upper_bound": 330619.7941303226
+        },
+        "point_estimate": 306918.9509510994,
+        "standard_error": 96266.18458707485
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 148388.63417120697,
+          "upper_bound": 233821.41700939694
+        },
+        "point_estimate": 213867.58146538236,
+        "standard_error": 21940.232854027297
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0
+      ],
+      "times": [
+        67412417.0,
+        67406208.0,
+        67287625.0,
+        68315042.0,
+        68648292.0,
+        68582166.0,
+        68699417.0,
+        68701167.0,
+        67694667.0,
+        67246959.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "tenferro_from_arrays",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 112081109.94500001,
+          "upper_bound": 113583416.805
+        },
+        "point_estimate": 112841945.8,
+        "standard_error": 385255.25350670784
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 111568625.0,
+          "upper_bound": 114081771.0
+        },
+        "point_estimate": 113098187.5,
+        "standard_error": 714905.1223448075
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 319407.631829381,
+          "upper_bound": 2044629.902100563
+        },
+        "point_estimate": 1846053.4268260002,
+        "standard_error": 484214.7708364486
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 823675.8353312914,
+          "upper_bound": 1504102.628275378
+        },
+        "point_estimate": 1285721.2411800278,
+        "standard_error": 172690.04080602693
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        114354542.0,
+        113809000.0,
+        114362500.0,
+        112808500.0,
+        113387875.0,
+        110957291.0,
+        111864250.0,
+        111273000.0,
+        113818750.0,
+        111783750.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_heisenberg_4q_steps8",
+    "backend": "tenferro_warm",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 5085739.043095238,
+          "upper_bound": 5120190.27592262
+        },
+        "point_estimate": 5106428.520178571,
+        "standard_error": 9284.737131887327
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 5100859.375,
+          "upper_bound": 5123548.791666666
+        },
+        "point_estimate": 5118658.864583334,
+        "standard_error": 7041.974521997335
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 891.8964029158708,
+          "upper_bound": 27567.216810584297
+        },
+        "point_estimate": 11805.464834159951,
+        "standard_error": 6729.327370386286
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 5056439.99984625,
+          "upper_bound": 5123884.925297361
+        },
+        "point_estimate": 5095354.719480519,
+        "standard_error": 20254.302737294005
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 7443.1318442361335,
+          "upper_bound": 46691.033266854094
+        },
+        "point_estimate": 30946.528552931817,
+        "standard_error": 12966.695325241788
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0,
+        12.0,
+        14.0,
+        16.0,
+        18.0,
+        20.0
+      ],
+      "times": [
+        10243084.0,
+        20401667.0,
+        30698875.0,
+        40806875.0,
+        51058208.0,
+        61506667.0,
+        71708584.0,
+        81933417.0,
+        92298375.0,
+        100460875.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "conversion",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 53813.782463585434,
+          "upper_bound": 54045.748783024035
+        },
+        "point_estimate": 53932.716975023344,
+        "standard_error": 59.38080807534537
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 53781.10117647059,
+          "upper_bound": 54098.84453781512
+        },
+        "point_estimate": 53949.72426470588,
+        "standard_error": 78.0308863163096
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 32.38674233678589,
+          "upper_bound": 347.10870416111277
+        },
+        "point_estimate": 207.1798492629943,
+        "standard_error": 77.85167011692604
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 53840.72983961166,
+          "upper_bound": 54128.89386189258
+        },
+        "point_estimate": 54015.86982429335,
+        "standard_error": 73.09880926904172
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 112.59004391491412,
+          "upper_bound": 250.93286645564683
+        },
+        "point_estimate": 197.71924916899246,
+        "standard_error": 35.91411463239885
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        170.0,
+        340.0,
+        510.0,
+        680.0,
+        850.0,
+        1020.0,
+        1190.0,
+        1360.0,
+        1530.0,
+        1700.0
+      ],
+      "times": [
+        9151916.0,
+        18345500.0,
+        27447875.0,
+        36680625.0,
+        45668292.0,
+        54652875.0,
+        64377625.0,
+        73706917.0,
+        82901542.0,
+        91775834.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 2499.306149194291,
+          "upper_bound": 2521.2404661448745
+        },
+        "point_estimate": 2509.194528238183,
+        "standard_error": 5.643660536814417
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 2495.2497513812154,
+          "upper_bound": 2519.8969751381214
+        },
+        "point_estimate": 2504.5428176795576,
+        "standard_error": 6.161303936058615
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3.0963495214561383,
+          "upper_bound": 27.365280141241335
+        },
+        "point_estimate": 13.227030682300414,
+        "standard_error": 6.341173481674543
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 2494.4064468232045,
+          "upper_bound": 2506.6166725634816
+        },
+        "point_estimate": 2498.736535122336,
+        "standard_error": 3.127735644385909
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 7.328937585586485,
+          "upper_bound": 25.856721707982498
+        },
+        "point_estimate": 18.82678690745714,
+        "standard_error": 5.2176702803094726
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        3620.0,
+        7240.0,
+        10860.0,
+        14480.0,
+        18100.0,
+        21720.0,
+        25340.0,
+        28960.0,
+        32580.0,
+        36200.0
+      ],
+      "times": [
+        9239334.0,
+        18293875.0,
+        27139250.0,
+        36311584.0,
+        45485583.0,
+        54584375.0,
+        63384958.0,
+        72069208.0,
+        81281666.0,
+        90328041.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "omeinsum",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 977130.6787136905,
+          "upper_bound": 988872.108404762
+        },
+        "point_estimate": 982567.8952420636,
+        "standard_error": 2994.1928641084487
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 976770.8333333334,
+          "upper_bound": 986115.625
+        },
+        "point_estimate": 981521.5222222223,
+        "standard_error": 2515.089633389883
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1556.3082550367299,
+          "upper_bound": 14663.068177178444
+        },
+        "point_estimate": 6927.293939515919,
+        "standard_error": 3169.286368580539
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 978008.1596248476,
+          "upper_bound": 985303.1643203446
+        },
+        "point_estimate": 982119.0919480519,
+        "standard_error": 1885.4347607933112
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3495.789982798941,
+          "upper_bound": 14219.550406676795
+        },
+        "point_estimate": 9963.561671279735,
+        "standard_error": 2896.446721522428
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        10.0,
+        20.0,
+        30.0,
+        40.0,
+        50.0,
+        60.0,
+        70.0,
+        80.0,
+        90.0,
+        100.0
+      ],
+      "times": [
+        10052208.0,
+        19337375.0,
+        29422333.0,
+        39444625.0,
+        49009959.0,
+        58606250.0,
+        68941709.0,
+        78029833.0,
+        88406875.0,
+        98720625.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "omeinsum_fixed_tree",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 231766.09761904762,
+          "upper_bound": 232572.72917906748
+        },
+        "point_estimate": 232169.9856746032,
+        "standard_error": 207.03146610179547
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 231508.30625,
+          "upper_bound": 232848.86527777778
+        },
+        "point_estimate": 232163.10625,
+        "standard_error": 470.7629570729734
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 91.63394462316366,
+          "upper_bound": 1067.0898585553614
+        },
+        "point_estimate": 897.1663986554167,
+        "standard_error": 292.14261458133166
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 232005.3167857143,
+          "upper_bound": 232822.37732142856
+        },
+        "point_estimate": 232566.06292207792,
+        "standard_error": 208.67121978269796
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 482.8501117655437,
+          "upper_bound": 756.8466248018567
+        },
+        "point_estimate": 689.4197502643492,
+        "standard_error": 70.66633934603848
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        40.0,
+        80.0,
+        120.0,
+        160.0,
+        200.0,
+        240.0,
+        280.0,
+        320.0,
+        360.0,
+        400.0
+      ],
+      "times": [
+        9304500.0,
+        18527208.0,
+        27759583.0,
+        37057958.0,
+        46280875.0,
+        55611291.0,
+        65175416.0,
+        74537792.0,
+        83796167.0,
+        93188000.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "planning",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1096185.08089914,
+          "upper_bound": 1105437.552037037
+        },
+        "point_estimate": 1100730.9103571428,
+        "standard_error": 2369.301658288524
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1094188.638888889,
+          "upper_bound": 1108209.775462963
+        },
+        "point_estimate": 1098653.0013227514,
+        "standard_error": 3926.0891955513002
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 2126.7161205764705,
+          "upper_bound": 12974.808936317742
+        },
+        "point_estimate": 8626.205935743114,
+        "standard_error": 2936.083244990254
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1098112.5138047137,
+          "upper_bound": 1107433.8520719288
+        },
+        "point_estimate": 1103883.737950938,
+        "standard_error": 2353.2576862114856
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 4717.944948881212,
+          "upper_bound": 9410.811630692206
+        },
+        "point_estimate": 7893.970679164062,
+        "standard_error": 1186.7483706361681
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        9.0,
+        18.0,
+        27.0,
+        36.0,
+        45.0,
+        54.0,
+        63.0,
+        72.0,
+        81.0,
+        90.0
+      ],
+      "times": [
+        9866667.0,
+        19677208.0,
+        30030375.0,
+        39390791.0,
+        49054083.0,
+        59413417.0,
+        69114625.0,
+        80035541.0,
+        89490000.0,
+        99683416.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "supported_from_arrays",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1475112.699404762,
+          "upper_bound": 1485904.9923847788
+        },
+        "point_estimate": 1480106.5391099774,
+        "standard_error": 2775.6533423567353
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1474399.4603174604,
+          "upper_bound": 1488914.6666666667
+        },
+        "point_estimate": 1476484.9333333333,
+        "standard_error": 3478.907816785093
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 556.687924045276,
+          "upper_bound": 14589.242640989085
+        },
+        "point_estimate": 3281.599430906602,
+        "standard_error": 3762.759417772116
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1471921.32278481,
+          "upper_bound": 1477624.707762557
+        },
+        "point_estimate": 1474202.8567717997,
+        "standard_error": 1502.3432667401014
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3257.4655801413414,
+          "upper_bound": 11984.992666815868
+        },
+        "point_estimate": 9273.591762827142,
+        "standard_error": 2133.040261063915
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        7.0,
+        14.0,
+        21.0,
+        28.0,
+        35.0,
+        42.0,
+        49.0,
+        56.0,
+        63.0,
+        70.0
+      ],
+      "times": [
+        10427542.0,
+        20987709.0,
+        31267208.0,
+        41374042.0,
+        51678042.0,
+        62011084.0,
+        72269833.0,
+        82552041.0,
+        92887166.0,
+        102852958.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "supported_planning",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 566748.2769742063,
+          "upper_bound": 568027.2558072917
+        },
+        "point_estimate": 567386.5287599206,
+        "standard_error": 326.1566408158651
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 566725.0094246031,
+          "upper_bound": 568011.80625
+        },
+        "point_estimate": 567452.34375,
+        "standard_error": 291.56074051139177
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 49.046260379323854,
+          "upper_bound": 1900.5541725084186
+        },
+        "point_estimate": 765.438567660749,
+        "standard_error": 480.39640414627723
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 566266.2813914734,
+          "upper_bound": 567451.6690658194
+        },
+        "point_estimate": 566932.5681818182,
+        "standard_error": 308.56898444608953
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 504.9546757666064,
+          "upper_bound": 1444.756286542843
+        },
+        "point_estimate": 1085.6893323848922,
+        "standard_error": 237.56940939295816
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        16.0,
+        32.0,
+        48.0,
+        64.0,
+        80.0,
+        96.0,
+        112.0,
+        128.0,
+        144.0,
+        160.0
+      ],
+      "times": [
+        9109750.0,
+        18170500.0,
+        27289833.0,
+        36274916.0,
+        45398834.0,
+        54473625.0,
+        63422666.0,
+        72384500.0,
+        81673375.0,
+        90795375.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "supported_warm",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 900367.2933333333,
+          "upper_bound": 903467.6312229438
+        },
+        "point_estimate": 901732.9679329004,
+        "standard_error": 800.2376283568532
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 900337.8909090909,
+          "upper_bound": 902666.6212121212
+        },
+        "point_estimate": 901210.6988636365,
+        "standard_error": 486.2030256927741
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 204.28149750959238,
+          "upper_bound": 3577.336273762409
+        },
+        "point_estimate": 965.3657701340688,
+        "standard_error": 851.0358989705603
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 901093.3967223252,
+          "upper_bound": 904671.1278112271
+        },
+        "point_estimate": 902778.1770956316,
+        "standard_error": 914.3969636633533
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 607.8584647537,
+          "upper_bound": 3816.89293809135
+        },
+        "point_estimate": 2674.9926155638263,
+        "standard_error": 880.7307108285468
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        11.0,
+        22.0,
+        33.0,
+        44.0,
+        55.0,
+        66.0,
+        77.0,
+        88.0,
+        99.0,
+        110.0
+      ],
+      "times": [
+        9880375.0,
+        19805583.0,
+        29754125.0,
+        39638959.0,
+        49518584.0,
+        59469750.0,
+        69934625.0,
+        79320083.0,
+        89254041.0,
+        99415500.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "tenferro_from_arrays",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1436888.3936530612,
+          "upper_bound": 1445365.1415306123
+        },
+        "point_estimate": 1441307.5742687075,
+        "standard_error": 2171.0347994729673
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1435196.4285714286,
+          "upper_bound": 1446952.3839285714
+        },
+        "point_estimate": 1443766.7874149662,
+        "standard_error": 3014.2370880247877
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 875.2653755323479,
+          "upper_bound": 11461.465016518317
+        },
+        "point_estimate": 7613.765084828629,
+        "standard_error": 2989.1458755129834
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1437998.0787968151,
+          "upper_bound": 1445435.1758848524
+        },
+        "point_estimate": 1441133.3484230055,
+        "standard_error": 1886.9656095299376
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3878.7732699542444,
+          "upper_bound": 9162.357017518365
+        },
+        "point_estimate": 7255.047797197401,
+        "standard_error": 1356.0501358340944
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        7.0,
+        14.0,
+        21.0,
+        28.0,
+        35.0,
+        42.0,
+        49.0,
+        56.0,
+        63.0,
+        70.0
+      ],
+      "times": [
+        10035666.0,
+        20235625.0,
+        29985375.0,
+        40571250.0,
+        50777833.0,
+        60638875.0,
+        70743791.0,
+        80916167.0,
+        90417375.0,
+        100709167.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps2",
+    "backend": "tenferro_warm",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 264995.9320176021,
+          "upper_bound": 266030.14995158726
+        },
+        "point_estimate": 265470.6689512472,
+        "standard_error": 266.2430140629371
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 264800.9485714286,
+          "upper_bound": 266187.2042857143
+        },
+        "point_estimate": 265163.70229591837,
+        "standard_error": 330.9308956349023
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 73.15242403461733,
+          "upper_bound": 1301.8498568875216
+        },
+        "point_estimate": 566.7618378665373,
+        "standard_error": 325.2020652582502
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 264947.8698735744,
+          "upper_bound": 266628.1738154484
+        },
+        "point_estimate": 265956.8773283859,
+        "standard_error": 442.3275916049619
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 279.003513970962,
+          "upper_bound": 1098.4494172100037
+        },
+        "point_estimate": 887.4220122580111,
+        "standard_error": 204.0221617247875
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        35.0,
+        70.0,
+        105.0,
+        140.0,
+        175.0,
+        210.0,
+        245.0,
+        280.0,
+        315.0,
+        350.0
+      ],
+      "times": [
+        9304459.0,
+        18576292.0,
+        27793417.0,
+        37079417.0,
+        46340166.0,
+        55600000.0,
+        64958875.0,
+        74252959.0,
+        84120167.0,
+        93449583.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "conversion",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 848268.9167564934,
+          "upper_bound": 853754.2648841991
+        },
+        "point_estimate": 851366.9512012986,
+        "standard_error": 1420.69463426673
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 849468.5590909091,
+          "upper_bound": 854209.7291666667
+        },
+        "point_estimate": 853557.8303030303,
+        "standard_error": 1261.8935681799674
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 189.18360755038964,
+          "upper_bound": 6290.520058775459
+        },
+        "point_estimate": 1258.3146083423076,
+        "standard_error": 1486.33595438802
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 848768.1964035964,
+          "upper_bound": 854215.4026258655
+        },
+        "point_estimate": 851914.7190082645,
+        "standard_error": 1640.8308138195625
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 702.1809784829649,
+          "upper_bound": 6557.821403997148
+        },
+        "point_estimate": 4724.413979307471,
+        "standard_error": 1516.2814433675107
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        11.0,
+        22.0,
+        33.0,
+        44.0,
+        55.0,
+        66.0,
+        77.0,
+        88.0,
+        99.0,
+        110.0
+      ],
+      "times": [
+        9241917.0,
+        18707375.0,
+        28160042.0,
+        37526750.0,
+        46957958.0,
+        56407000.0,
+        65760792.0,
+        75202875.0,
+        84530292.0,
+        93066208.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 39684.10125104429,
+          "upper_bound": 39859.456046365915
+        },
+        "point_estimate": 39772.198539055986,
+        "standard_error": 44.89963065063388
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 39650.379385964916,
+          "upper_bound": 39892.032127192986
+        },
+        "point_estimate": 39785.85515873016,
+        "standard_error": 49.78973436534739
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 20.179136264557393,
+          "upper_bound": 253.89632926437162
+        },
+        "point_estimate": 135.62375877640665,
+        "standard_error": 70.95641331862
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 39713.41064270151,
+          "upper_bound": 39914.65784761238
+        },
+        "point_estimate": 39819.15930735931,
+        "standard_error": 52.876003471131995
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 76.72027355871215,
+          "upper_bound": 193.6247622857119
+        },
+        "point_estimate": 149.10484206860406,
+        "standard_error": 29.79637845456252
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        228.0,
+        456.0,
+        684.0,
+        912.0,
+        1140.0,
+        1368.0,
+        1596.0,
+        1824.0,
+        2052.0,
+        2280.0
+      ],
+      "times": [
+        9082000.0,
+        18014208.0,
+        27115750.0,
+        36300333.0,
+        45588167.0,
+        54371333.0,
+        63476667.0,
+        72322292.0,
+        81668292.0,
+        91156834.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "omeinsum",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 269535366.6,
+          "upper_bound": 277241940.28749996
+        },
+        "point_estimate": 273276837.4,
+        "standard_error": 1979022.3349172485
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 267579125.0,
+          "upper_bound": 281070750.0
+        },
+        "point_estimate": 271472354.0,
+        "standard_error": 3345049.505688688
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1191021.4846551418,
+          "upper_bound": 10572050.503608584
+        },
+        "point_estimate": 6072605.695089698,
+        "standard_error": 2569888.868778996
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3749730.071523068,
+          "upper_bound": 7716649.026051943
+        },
+        "point_estimate": 6575436.840449887,
+        "standard_error": 977008.5983916578
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        270933375.0,
+        275338833.0,
+        282657125.0,
+        267173750.0,
+        269178666.0,
+        281070750.0,
+        264971625.0,
+        267579125.0,
+        272011333.0,
+        281853792.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "omeinsum_fixed_tree",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3811253.5290155425,
+          "upper_bound": 3850495.181703704
+        },
+        "point_estimate": 3830120.818346561,
+        "standard_error": 10035.345954953897
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3806466.685714286,
+          "upper_bound": 3860805.5833333335
+        },
+        "point_estimate": 3813446.479166667,
+        "standard_error": 18052.368353205835
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1836.3461701759227,
+          "upper_bound": 48431.763873497264
+        },
+        "point_estimate": 26295.461085662682,
+        "standard_error": 14448.043399275455
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3797839.522285114,
+          "upper_bound": 3822833.2922173273
+        },
+        "point_estimate": 3807497.9212121214,
+        "standard_error": 6462.95734568222
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 19667.15786747224,
+          "upper_bound": 39982.64109411139
+        },
+        "point_estimate": 33371.04052961508,
+        "standard_error": 5143.858527503652
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        3.0,
+        6.0,
+        9.0,
+        12.0,
+        15.0,
+        18.0,
+        21.0,
+        24.0,
+        27.0,
+        30.0
+      ],
+      "times": [
+        11657042.0,
+        23204791.0,
+        34677125.0,
+        46329667.0,
+        57056917.0,
+        68718417.0,
+        79991917.0,
+        91420875.0,
+        102783334.0,
+        113628792.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "planning",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 301873108.6225,
+          "upper_bound": 314766241.7
+        },
+        "point_estimate": 307856375.0,
+        "standard_error": 3315106.678834848
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 299398375.5,
+          "upper_bound": 315269395.5
+        },
+        "point_estimate": 304666583.0,
+        "standard_error": 4521578.79755045
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1540729.753446579,
+          "upper_bound": 18705962.385302782
+        },
+        "point_estimate": 11600417.427751422,
+        "standard_error": 4024995.1860909234
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 5439839.264636515,
+          "upper_bound": 14748696.188211396
+        },
+        "point_estimate": 11105606.801422404,
+        "standard_error": 2582761.032932388
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        312872416.0,
+        331541292.0,
+        297223667.0,
+        300255417.0,
+        301573084.0,
+        295186125.0,
+        312912208.0,
+        302333833.0,
+        306999333.0,
+        317666375.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "supported_from_arrays",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 103149606.115,
+          "upper_bound": 104781002.38749999
+        },
+        "point_estimate": 103927604.1,
+        "standard_error": 418422.61028768576
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 102629292.0,
+          "upper_bound": 105044520.5
+        },
+        "point_estimate": 103700270.5,
+        "standard_error": 738539.5411736905
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 29992.997467517853,
+          "upper_bound": 2621173.742964864
+        },
+        "point_estimate": 1554381.5340042114,
+        "standard_error": 713031.2542654496
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 801224.5362180421,
+          "upper_bound": 1754675.1155518126
+        },
+        "point_estimate": 1397884.7834917065,
+        "standard_error": 254491.3549779028
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        104136416.0,
+        104658083.0,
+        104693209.0,
+        106571417.0,
+        105430958.0,
+        103264125.0,
+        102674417.0,
+        102629292.0,
+        102618041.0,
+        102600083.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "supported_planning",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 80996416.3,
+          "upper_bound": 81447413.74249999
+        },
+        "point_estimate": 81192370.8,
+        "standard_error": 117172.79190973143
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 80966208.0,
+          "upper_bound": 81334250.0
+        },
+        "point_estimate": 81117250.5,
+        "standard_error": 77795.89541687715
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 26440.687930583954,
+          "upper_bound": 523976.03489756584
+        },
+        "point_estimate": 156045.12982964516,
+        "standard_error": 125738.79562513354
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 104389.07673569274,
+          "upper_bound": 558784.1317889425
+        },
+        "point_estimate": 390959.071044755,
+        "standard_error": 130048.48083472489
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        81153083.0,
+        81170917.0,
+        81057791.0,
+        80966208.0,
+        80920541.0,
+        80753333.0,
+        81091209.0,
+        82151917.0,
+        81515417.0,
+        81143292.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "supported_warm",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 20674431.979166668,
+          "upper_bound": 20978091.061666667
+        },
+        "point_estimate": 20823226.4,
+        "standard_error": 77740.71940627994
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 20577652.666666668,
+          "upper_bound": 21019458.5
+        },
+        "point_estimate": 20846986.0,
+        "standard_error": 99534.31441794215
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 28550.427693131347,
+          "upper_bound": 455168.57011914253
+        },
+        "point_estimate": 286594.72921192646,
+        "standard_error": 113274.5014522496
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 144062.13560302655,
+          "upper_bound": 328262.4982582186
+        },
+        "point_estimate": 258326.10249869816,
+        "standard_error": 48092.890355391035
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0
+      ],
+      "times": [
+        62189125.0,
+        62631000.0,
+        62738959.0,
+        63827667.0,
+        63377792.0,
+        62746542.0,
+        62450916.0,
+        61324125.0,
+        61732958.0,
+        61677708.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "tenferro_from_arrays",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 303353999.9925,
+          "upper_bound": 313742720.7
+        },
+        "point_estimate": 308107500.0,
+        "standard_error": 2668893.0948156943
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 300563750.0,
+          "upper_bound": 313413375.0
+        },
+        "point_estimate": 307349791.5,
+        "standard_error": 2959973.039663963
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1292580.324152112,
+          "upper_bound": 13620831.283181906
+        },
+        "point_estimate": 8331161.429992318,
+        "standard_error": 3623070.4707104196
+      },
+      "slope": null,
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 3758671.6437949263,
+          "upper_bound": 11982584.624658631
+        },
+        "point_estimate": 8937194.460749935,
+        "standard_error": 2253281.3684878126
+      }
+    },
+    "sample": {
+      "sampling_mode": "Flat",
+      "iters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        309808625.0,
+        302897250.0,
+        308790500.0,
+        318036250.0,
+        327543458.0,
+        299662000.0,
+        299073584.0,
+        306634625.0,
+        308064958.0,
+        300563750.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps32",
+    "backend": "tenferro_warm",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 4341067.707950396,
+          "upper_bound": 4348706.831222222
+        },
+        "point_estimate": 4344615.839920634,
+        "standard_error": 1931.4034464605134
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 4342284.722222222,
+          "upper_bound": 4346087.5
+        },
+        "point_estimate": 4344425.347222222,
+        "standard_error": 978.1842606118871
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 118.36089789959453,
+          "upper_bound": 8545.900398280104
+        },
+        "point_estimate": 2462.2320246197314,
+        "standard_error": 1949.4480567423661
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 4339854.176167334,
+          "upper_bound": 4352897.462820262
+        },
+        "point_estimate": 4346738.057142857,
+        "standard_error": 3345.125310706217
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1303.8349962705988,
+          "upper_bound": 9242.929461597161
+        },
+        "point_estimate": 6414.270892790479,
+        "standard_error": 2111.496102946396
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        3.0,
+        6.0,
+        9.0,
+        12.0,
+        15.0,
+        18.0,
+        21.0,
+        24.0,
+        27.0,
+        30.0
+      ],
+      "times": [
+        13025458.0,
+        26069000.0,
+        39096625.0,
+        52138958.0,
+        65148667.0,
+        78161125.0,
+        91001083.0,
+        104274750.0,
+        117706125.0,
+        130420250.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "conversion",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 214296.93289405684,
+          "upper_bound": 216081.16499999998
+        },
+        "point_estimate": 215135.2088242894,
+        "standard_error": 457.8398979059766
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 213900.1976744186,
+          "upper_bound": 216434.59302325582
+        },
+        "point_estimate": 214389.05523255814,
+        "standard_error": 716.5187490917998
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 193.95165981247155,
+          "upper_bound": 2474.442116534987
+        },
+        "point_estimate": 1008.7613094164784,
+        "standard_error": 644.0573435293841
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 214714.67358378056,
+          "upper_bound": 217102.69639838836
+        },
+        "point_estimate": 216264.39093929325,
+        "standard_error": 604.7778996720211
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 751.9452345963194,
+          "upper_bound": 1845.5335251081694
+        },
+        "point_estimate": 1523.3916575421172,
+        "standard_error": 276.87157281127367
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        43.0,
+        86.0,
+        129.0,
+        172.0,
+        215.0,
+        258.0,
+        301.0,
+        344.0,
+        387.0,
+        430.0
+      ],
+      "times": [
+        9223792.0,
+        18395417.0,
+        27565125.0,
+        36854667.0,
+        46062708.0,
+        55143416.0,
+        64883791.0,
+        74453500.0,
+        84045250.0,
+        93673250.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "native",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 9867.912277777777,
+          "upper_bound": 9961.201885018214
+        },
+        "point_estimate": 9914.57166332726,
+        "standard_error": 24.039811130683965
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 9833.270765027322,
+          "upper_bound": 9988.801844262294
+        },
+        "point_estimate": 9930.178633879781,
+        "standard_error": 40.14754875387528
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 5.054972770001822,
+          "upper_bound": 134.83854281196483
+        },
+        "point_estimate": 116.92318100616625,
+        "standard_error": 35.006133573256704
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 9917.076948145155,
+          "upper_bound": 9974.857843249647
+        },
+        "point_estimate": 9944.45112199276,
+        "standard_error": 14.668252490001247
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 50.24809867677531,
+          "upper_bound": 96.04344886119779
+        },
+        "point_estimate": 79.82862830616031,
+        "standard_error": 11.833769208807313
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        915.0,
+        1830.0,
+        2745.0,
+        3660.0,
+        4575.0,
+        5490.0,
+        6405.0,
+        7320.0,
+        8235.0,
+        9150.0
+      ],
+      "times": [
+        9011792.0,
+        17957542.0,
+        26935208.0,
+        36064458.0,
+        45862250.0,
+        55041875.0,
+        63711417.0,
+        72856459.0,
+        81970834.0,
+        90705959.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "omeinsum",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 9256224.128925595,
+          "upper_bound": 9456049.309729168
+        },
+        "point_estimate": 9355489.032738093,
+        "standard_error": 51272.48092161249
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 9187750.0,
+          "upper_bound": 9486762.25
+        },
+        "point_estimate": 9380937.520833332,
+        "standard_error": 91593.1121911513
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 25235.33415198326,
+          "upper_bound": 297025.5057292437
+        },
+        "point_estimate": 211914.61180776384,
+        "standard_error": 70962.32322532586
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 9250900.82363372,
+          "upper_bound": 9481732.373656172
+        },
+        "point_estimate": 9339373.387012986,
+        "standard_error": 58888.97841566583
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 109737.88273122816,
+          "upper_bound": 206526.28398351936
+        },
+        "point_estimate": 170924.40292271232,
+        "standard_error": 25174.643351652707
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        1.0,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        9.0,
+        10.0
+      ],
+      "times": [
+        9165875.0,
+        18263666.0,
+        28105625.0,
+        38013292.0,
+        48160542.0,
+        56821209.0,
+        66391292.0,
+        75146667.0,
+        82689750.0,
+        92174541.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "omeinsum_fixed_tree",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 934939.9796428572,
+          "upper_bound": 940152.6993339285
+        },
+        "point_estimate": 937009.5209603173,
+        "standard_error": 1400.7626400907334
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 935619.825,
+          "upper_bound": 936484.375
+        },
+        "point_estimate": 935994.45,
+        "standard_error": 381.92975937098663
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 107.59969308974085,
+          "upper_bound": 3141.5243267267538
+        },
+        "point_estimate": 596.9058689027783,
+        "standard_error": 706.1046438486044
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 934838.5571428571,
+          "upper_bound": 944778.8632911392
+        },
+        "point_estimate": 939386.2667532468,
+        "standard_error": 2895.92784536406
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 301.40090206366676,
+          "upper_bound": 7087.310140974466
+        },
+        "point_estimate": 4664.420760617541,
+        "standard_error": 2167.827046052992
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        10.0,
+        20.0,
+        30.0,
+        40.0,
+        50.0,
+        60.0,
+        70.0,
+        80.0,
+        90.0,
+        100.0
+      ],
+      "times": [
+        9353334.0,
+        18718750.0,
+        28081542.0,
+        37436250.0,
+        46783958.0,
+        55934791.0,
+        65554250.0,
+        74918750.0,
+        84253709.0,
+        94981500.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "planning",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 11307710.220238093,
+          "upper_bound": 11546782.769255953
+        },
+        "point_estimate": 11411763.436904762,
+        "standard_error": 62196.59811578715
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 11285670.166666668,
+          "upper_bound": 11475139.267857142
+        },
+        "point_estimate": 11368014.0,
+        "standard_error": 49006.6234172307
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 33196.61361064256,
+          "upper_bound": 253100.57190656662
+        },
+        "point_estimate": 123658.1040546298,
+        "standard_error": 58125.7270534713
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 11251591.205426939,
+          "upper_bound": 11411233.24530042
+        },
+        "point_estimate": 11320719.942857143,
+        "standard_error": 41760.624939819434
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 66143.1200015808,
+          "upper_bound": 296783.2866571166
+        },
+        "point_estimate": 206966.04679541689,
+        "standard_error": 68354.74698420553
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        1.0,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        9.0,
+        10.0
+      ],
+      "times": [
+        11922250.0,
+        22573625.0,
+        34038209.0,
+        46237709.0,
+        57268125.0,
+        67935542.0,
+        79735959.0,
+        89990000.0,
+        102509625.0,
+        111973000.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "supported_from_arrays",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 10822272.696434524,
+          "upper_bound": 10892986.423333334
+        },
+        "point_estimate": 10854939.246190477,
+        "standard_error": 18143.649676580684
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 10810841.7,
+          "upper_bound": 10888916.666666666
+        },
+        "point_estimate": 10836622.047619049,
+        "standard_error": 21240.81993965398
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 9825.325930564399,
+          "upper_bound": 96507.0654116571
+        },
+        "point_estimate": 57759.129774570465,
+        "standard_error": 21777.591003639423
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 10834189.97515209,
+          "upper_bound": 10940982.957925955
+        },
+        "point_estimate": 10895495.012987014,
+        "standard_error": 27297.565616303717
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 27980.063576636956,
+          "upper_bound": 81613.9050661575
+        },
+        "point_estimate": 60588.43139878442,
+        "standard_error": 14898.256207815277
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        1.0,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        9.0,
+        10.0
+      ],
+      "times": [
+        10871416.0,
+        21566042.0,
+        32380500.0,
+        43276583.0,
+        54140917.0,
+        64981750.0,
+        75900667.0,
+        87240958.0,
+        98000250.0,
+        109868458.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "supported_planning",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 5932499.277633929,
+          "upper_bound": 6061217.208194445
+        },
+        "point_estimate": 5989212.067162698,
+        "standard_error": 32791.6589247278
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 5925806.010416666,
+          "upper_bound": 6069781.25
+        },
+        "point_estimate": 5933574.85,
+        "standard_error": 34177.196162622036
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 2849.9113260716085,
+          "upper_bound": 142893.87502312675
+        },
+        "point_estimate": 19036.25934328884,
+        "standard_error": 31997.463868272822
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 5927173.957379053,
+          "upper_bound": 5998327.115523466
+        },
+        "point_estimate": 5948019.92987013,
+        "standard_error": 18886.017735410856
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 12740.69805314352,
+          "upper_bound": 136498.163244414
+        },
+        "point_estimate": 109309.18701889132,
+        "standard_error": 31398.501617626338
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0,
+        12.0,
+        14.0,
+        16.0,
+        18.0,
+        20.0
+      ],
+      "times": [
+        11872416.0,
+        23797083.0,
+        37158042.0,
+        49522334.0,
+        60002458.0,
+        71136250.0,
+        82788250.0,
+        94777459.0,
+        106687750.0,
+        118618834.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "supported_warm",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 4812073.32,
+          "upper_bound": 4833141.983333332
+        },
+        "point_estimate": 4822756.424166666,
+        "standard_error": 5395.26546955504
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 4802875.0,
+          "upper_bound": 4837849.0
+        },
+        "point_estimate": 4832066.6375,
+        "standard_error": 11597.910174582106
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1620.055523738127,
+          "upper_bound": 27341.398302093377
+        },
+        "point_estimate": 13092.883610054345,
+        "standard_error": 7643.191193645505
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 4804383.158857832,
+          "upper_bound": 4826720.7469352735
+        },
+        "point_estimate": 4814356.54025974,
+        "standard_error": 5808.359374948812
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 11383.987646602358,
+          "upper_bound": 19644.2124427123
+        },
+        "point_estimate": 17925.98124517722,
+        "standard_error": 2128.0086789890006
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0,
+        12.0,
+        14.0,
+        16.0,
+        18.0,
+        20.0
+      ],
+      "times": [
+        9670750.0,
+        19361292.0,
+        29048834.0,
+        38677583.0,
+        48368833.0,
+        57608584.0,
+        67240250.0,
+        76893000.0,
+        86399541.0,
+        96588708.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "tenferro_from_arrays",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 12485912.959999999,
+          "upper_bound": 12792385.011631945
+        },
+        "point_estimate": 12637099.800277777,
+        "standard_error": 78530.26358971273
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 12385729.0,
+          "upper_bound": 12816174.4875
+        },
+        "point_estimate": 12645676.388888888,
+        "standard_error": 112536.58246809234
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 66114.32192623615,
+          "upper_bound": 479072.71481975913
+        },
+        "point_estimate": 277606.3536173366,
+        "standard_error": 101751.86365290867
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 12638475.233171219,
+          "upper_bound": 12887711.901855819
+        },
+        "point_estimate": 12764663.301298702,
+        "standard_error": 62486.869504556555
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 152592.04192000692,
+          "upper_bound": 332699.8725751027
+        },
+        "point_estimate": 261964.26933460517,
+        "standard_error": 47461.53489045051
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        1.0,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        9.0,
+        10.0
+      ],
+      "times": [
+        12296542.0,
+        24771458.0,
+        36963750.0,
+        51167875.0,
+        62977250.0,
+        75219375.0,
+        91806708.0,
+        102990959.0,
+        114263125.0,
+        127584791.0
+      ]
+    }
+  },
+  {
+    "id": "krylov_product_ising_4q_steps8",
+    "backend": "tenferro_warm",
+    "estimates": {
+      "mean": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1115003.4682539683,
+          "upper_bound": 1124558.1302358906
+        },
+        "point_estimate": 1120201.5096119929,
+        "standard_error": 2453.453625672931
+      },
+      "median": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1115582.8777777778,
+          "upper_bound": 1124631.9444444445
+        },
+        "point_estimate": 1123653.0401234566,
+        "standard_error": 2513.1914755347184
+      },
+      "median_abs_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 406.43477945085294,
+          "upper_bound": 12495.334274459632
+        },
+        "point_estimate": 2743.271204630484,
+        "standard_error": 3555.769093270244
+      },
+      "slope": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 1118378.9694227518,
+          "upper_bound": 1124779.827978581
+        },
+        "point_estimate": 1121790.5870129871,
+        "standard_error": 1794.2638007453104
+      },
+      "std_dev": {
+        "confidence_interval": {
+          "confidence_level": 0.95,
+          "lower_bound": 2866.8717959966584,
+          "upper_bound": 11085.067636310989
+        },
+        "point_estimate": 8183.1677089587365,
+        "standard_error": 2164.031071585397
+      }
+    },
+    "sample": {
+      "sampling_mode": "Linear",
+      "iters": [
+        9.0,
+        18.0,
+        27.0,
+        36.0,
+        45.0,
+        54.0,
+        63.0,
+        72.0,
+        81.0,
+        90.0
+      ],
+      "times": [
+        10008084.0,
+        19838458.0,
+        30265833.0,
+        40702500.0,
+        50609583.0,
+        60688917.0,
+        70818875.0,
+        80973500.0,
+        90998417.0,
+        100402459.0
+      ]
+    }
+  }
+]

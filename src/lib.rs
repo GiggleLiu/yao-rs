@@ -39,6 +39,7 @@ pub mod contractor;
 pub mod density_matrix;
 pub mod easybuild;
 pub mod einsum;
+pub mod evolution;
 pub mod expect;
 pub mod gate;
 pub mod hamiltonian;

@@ -193,7 +193,7 @@ def main():
     p.add_argument("--max-qubits", type=int, default=24)
     p.add_argument("--julia", default="julia")
     p.add_argument(
-        "--suite", choices=["circuits", "evolution", "circuit-ad", "tensor-memory", "trajectories"], default="circuits"
+        "--suite", choices=["circuits", "evolution", "circuit-ad", "tensor-memory", "trajectories", "krylov"], default="circuits"
     )
     a = p.parse_args()
     if min(a.threads) < 1 or a.runs < 1 or not 4 <= a.max_qubits <= 24:
@@ -235,6 +235,8 @@ def main():
         run([str(TARGET / "release/memory_cases"), str(cases)], env)
     elif a.suite == "trajectories":
         run([str(TARGET / "release/trajectory_cases"), str(cases)], env)
+    elif a.suite == "krylov":
+        run([str(TARGET / "release/krylov_cases"), str(cases)], env)
     run(
         ["cargo", "bench", "--locked", "--manifest-path", str(MANIFEST), "--no-run"],
         env,
@@ -316,6 +318,7 @@ def main():
             print(prefix, flush=True)
             env["YAO_BENCH_PLAN_LOG"] = str(output / (prefix + "-plans.jsonl"))
             env["YAO_BENCH_STATS_LOG"] = str(output / (prefix + "-trajectory-stats.jsonl"))
+            env["YAO_BENCH_KRYLOV_LOG"] = str(output / (prefix + "-krylov-stats.jsonl"))
             # Criterion's output directory is shared; remove only previous benchmark results.
             shutil.rmtree(TARGET / "criterion", ignore_errors=True)
             run(
@@ -346,7 +349,7 @@ def main():
                 env,
                 output / (prefix + "-julia.log"),
             )
-    if a.suite != "trajectories":
+    if a.suite not in ("trajectories", "krylov"):
         for n in [8, 12, 16]:
             for depth in [10, 100]:
                 prefix = f"memory-{n}-{depth}"
@@ -371,6 +374,13 @@ def main():
         measure_tensor_memory(output, env)
     elif a.suite == "trajectories":
         measure_trajectory_memory(output, env)
+    elif a.suite == "krylov":
+        timer = ["/usr/bin/time", "-l" if sys.platform == "darwin" else "-v"]
+        for model in ("ising", "heisenberg"):
+            for n in (4, 8, 12, 16):
+                for k in (8, 20, 40):
+                    run(timer + [str(TARGET / "release/memory"), "krylov", model, str(n), str(k)],
+                        env, output / f"memory-krylov-{model}-{n}-{k}.log")
     run(
         [sys.executable, "benchmarks/compare.py", "--backend-results", str(output)], env
     )

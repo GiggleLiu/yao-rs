@@ -20,6 +20,54 @@ runner = load("run_backend")
 
 
 class BackendReportTests(unittest.TestCase):
+    def test_krylov_diagnostics_reject_partial_missing_and_bad_oracles(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp)
+            meta = dict(threads=[1], runs=1)
+            cases = [dict(id="krylov", mode="krylov", krylov=dict(time=2.1, rtol=1e-7, krylov_dim=20))]
+            stats = path / "1t-run1-krylov-stats.jsonl"
+            julia = path / "1t-run1-julia.json"
+            info = dict(time_reached=2.1, matvecs=20, steps=1, max_krylov_dim=20,
+                        tolerance=1e-7, estimated_error=1e-8)
+            record = dict(id="krylov", status="complete", info=info)
+            oracle = dict(id="krylov", approximation_error=1e-9, yao_approximation_error=1e-8,
+                          tight_reference_error=1e-13, yao_krylov=dict(converged=1))
+            with self.assertRaisesRegex(ValueError, "Missing Krylov diagnostic"):
+                compare.krylov_diagnostics(path, meta, cases)
+            stats.write_text(json.dumps(record) + "\n")
+            julia.write_text(json.dumps(dict(records=[oracle])))
+            self.assertEqual(len(compare.krylov_diagnostics(path, meta, cases)), 1)
+            info["time_reached"] = 1.
+            stats.write_text(json.dumps(record) + "\n")
+            with self.assertRaisesRegex(ValueError, "requested time"):
+                compare.krylov_diagnostics(path, meta, cases)
+            info["time_reached"] = 2.1
+            stats.write_text(json.dumps(record) + "\n")
+            oracle["tight_reference_error"] = float("nan")
+            julia.write_text(json.dumps(dict(records=[oracle])))
+            with self.assertRaisesRegex(ValueError, "Invalid Krylov Julia"):
+                compare.krylov_diagnostics(path, meta, cases)
+            stats.write_text(json.dumps(record) + "\n" + json.dumps(record) + "\n")
+            with self.assertRaisesRegex(ValueError, "duplicate"):
+                compare.krylov_diagnostics(path, meta, cases)
+
+    def test_krylov_memory_requires_full_time_and_separates_heap_rss(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "memory-krylov-test.log"
+            phase = dict(phase="krylov_execute", peak_additional_rust_heap_bytes=512,
+                         retained_additional_rust_heap_bytes=128)
+            info = dict(status="complete", model="ising", qubits=8, krylov_dim=20, time=2.1,
+                        info=dict(time_reached=2.1, estimated_error=1e-9, tolerance=1e-8))
+            prefix = json.dumps(phase) + "\n4096 maximum resident set size\n"
+            path.write_text(prefix + json.dumps(info) + "\n")
+            (row,) = compare.krylov_memory_rows(temp)
+            self.assertEqual(row["execution_peak_bytes"], 512)
+            self.assertEqual(row["peak_rss_bytes"], 4096)
+            info["info"]["time_reached"] = 0.
+            path.write_text(prefix + json.dumps(info) + "\n")
+            with self.assertRaisesRegex(ValueError, "partial state"):
+                compare.krylov_memory_rows(temp)
+
     def test_trajectory_error_and_unique_seeds(self):
         with tempfile.TemporaryDirectory() as temp:
             path = Path(temp)/"1t-run1-trajectory-stats.jsonl"
