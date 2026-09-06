@@ -38,7 +38,9 @@ pub type NoisyData = HashMap<String, NoisyEntry>;
 
 /// Convert interleaved [re0, im0, re1, im1, ...] to Vec<Complex64>.
 pub fn interleaved_to_complex(data: &[f64]) -> Vec<Complex64> {
-    data.chunks_exact(2)
+    data.as_chunks::<2>()
+        .0
+        .iter()
         .map(|chunk| Complex64::new(chunk[0], chunk[1]))
         .collect()
 }

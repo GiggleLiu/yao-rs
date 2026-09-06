@@ -178,7 +178,9 @@ pub fn read_state_from_reader(reader: &mut impl BufRead) -> anyhow::Result<State
     );
 
     let data: Vec<Complex64> = buf
-        .chunks_exact(16)
+        .as_chunks::<16>()
+        .0
+        .iter()
         .map(|chunk| {
             let re = f64::from_le_bytes(chunk[0..8].try_into().unwrap());
             let im = f64::from_le_bytes(chunk[8..16].try_into().unwrap());
