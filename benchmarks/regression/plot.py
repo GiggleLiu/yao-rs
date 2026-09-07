@@ -17,12 +17,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("results")
     parser.add_argument("output")
+    parser.add_argument("--stacked", action="store_true", help="Stack panels for narrow screens")
     args = parser.parse_args()
     data = json.load(open(args.results))
     rows = data["records"]
     plt.rcParams.update({"font.family": "sans-serif", "font.size": 10,
                          "svg.fonttype": "none", "svg.hashsalt": "yao-curated-cpu"})
-    fig, axes = plt.subplots(1, 2, figsize=(10, 3.8), layout="constrained")
+    shape, size = ((2, 1), (5.2, 7.2)) if args.stacked else ((1, 2), (10, 3.8))
+    fig, axes = plt.subplots(*shape, figsize=size, layout="constrained")
     styles = [
         ("yao-rs, direct", "#729888", "--", ["native"], ["execute"]),
         ("yao-rs, fastest mode", "#087b57", "-", ["native"], ["execute", "fused2_execute", "fused4_execute"]),

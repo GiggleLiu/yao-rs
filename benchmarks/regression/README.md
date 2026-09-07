@@ -112,3 +112,5 @@ regression or full run:
 uv run --frozen --project benchmarks/regression/environment \
   python benchmarks/regression/plot.py path/to/results.json chart.svg
 ```
+
+Add `--stacked` to produce the narrow-screen layout.

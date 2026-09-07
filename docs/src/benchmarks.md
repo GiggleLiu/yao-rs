@@ -12,7 +12,10 @@ The measured [source snapshot](https://github.com/GiggleLiu/yao-rs/commit/22364f
 independent processes per implementation, with execution order counterbalanced.
 Times below are medians of process medians; lower is better.
 
-![QFT and 100-layer circuit execution times on Apple M4, comparing direct and fastest measured yao-rs modes with Yao.jl and Qulacs.](static/benchmark-cpu-scaling.svg)
+<picture>
+  <source media="(max-width: 600px)" srcset="static/benchmark-cpu-scaling-mobile.svg">
+  <img src="static/benchmark-cpu-scaling.svg" alt="QFT and 100-layer circuit execution times on Apple M4, comparing direct and fastest measured yao-rs modes with Yao.jl and Qulacs.">
+</picture>
 
 The vertical axes are logarithmic. “Fastest mode” selects direct execution or
 a prepared circuit: yao-rs offers two- and four-qubit fusion; Qulacs uses direct
