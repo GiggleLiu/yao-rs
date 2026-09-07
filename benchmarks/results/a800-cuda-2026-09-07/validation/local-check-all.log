@@ -1,0 +1,759 @@
+cargo fmt --all -- --check
+cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
+    Finished `dev` profile [unoptimized] target(s) in 0.47s
+cargo test --workspace --all-features --locked
+warning: linker stderr: ld: __eh_frame section too large (max 16MB) to encode dwarf unwind offsets in compact unwind table, performance of exception handling might be affected
+  |
+  = note: `#[warn(linker_messages)]` on by default
+
+warning: `yao-rs` (example "cuda_loss") generated 1 warning
+warning: `yao-rs` (example "sliced_expectation") generated 1 warning (1 duplicate)
+warning: `yao-rs` (example "custom_loss") generated 1 warning (1 duplicate)
+warning: `yao-rs` (example "hamiltonian") generated 1 warning (1 duplicate)
+warning: `yao-cli` (bin "yao") generated 1 warning (1 duplicate)
+warning: `yao-rs` (lib test) generated 1 warning (1 duplicate)
+    Finished `test` profile [unoptimized] target(s) in 0.22s
+     Running unittests src/lib.rs (target/debug/deps/bitbasis-c5f37cf6bc92f7e8)
+
+running 26 tests
+test bit_ops::tests::test_allone ... ok
+test bit_ops::tests::test_baddrs ... ok
+test bit_ops::tests::test_anyone ... ok
+test bit_ops::tests::test_flip ... ok
+test bit_ops::tests::test_indicator ... ok
+test bit_ops::tests::test_bmask_range ... ok
+test bit_ops::tests::test_breflect ... ok
+test bit_ops::tests::test_ismatch ... ok
+test bit_ops::tests::test_btruncate ... ok
+test bit_ops::tests::test_neg ... ok
+test bit_ops::tests::test_bmask ... ok
+test bit_ops::tests::test_readbit ... ok
+test bit_ops::tests::test_setbit ... ok
+test bit_ops::tests::test_swapbits ... ok
+test bitstr::tests::test_bitstr_display ... ok
+test bitstr::tests::test_bitstr_metadata_and_conversions ... ok
+test bitstr::tests::test_bitstr_new_truncates ... ok
+test bitstr::tests::test_bitstr_onehot ... ok
+test bitstr::tests::test_bitstr_readbit ... ok
+test iterate_control::tests::test_controller ... ok
+test iterate_control::tests::test_itercontrol_all_free ... ok
+test iterate_control::tests::test_itercontrol_all_locked ... ok
+test iterate_control::tests::test_itercontrol_basic ... ok
+test iterate_control::tests::test_itercontrol_get ... ok
+test iterate_control::tests::test_itercontrol_len ... ok
+test iterate_control::tests::test_itercontrol_more_than_eight_chunks ... ok
+
+test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/yao-216c61d5e73a1694)
+
+running 29 tests
+test commands::optimize::tests::test_parse_betas ... ok
+test commands::contract::tests::test_index_to_mixed_radix_formats_non_binary_digits ... ok
+test commands::expect::tests::computes_zz_expectation_for_bell_state ... ok
+test commands::expect::tests::computes_z_expectation_for_one_state ... ok
+test commands::expect::tests::computes_x_expectation_for_plus_state ... ok
+test commands::expect::tests::computes_sum_operator_on_two_qubits ... ok
+test commands::optimize::tests::test_parse_betas_invalid ... ok
+test commands::contract::tests::test_mixed_radix_qudit_state ... ok
+test commands::contract::tests::test_as_standard_layout_fixes_column_major_iteration ... ok
+test operator_parser::tests::test_coeff ... ok
+test operator_parser::tests::test_difference ... ok
+test operator_parser::tests::test_multi_site ... ok
+test operator_parser::tests::test_error_on_invalid ... ok
+test commands::tests::test_format_expectation_shows_operator_name ... ok
+test operator_parser::tests::test_negative_leading_term ... ok
+test commands::tests::test_format_expectation_complex_value ... ok
+test operator_parser::tests::test_projectors ... ok
+test operator_parser::tests::test_raising_lowering ... ok
+test operator_parser::tests::test_single_op ... ok
+test operator_parser::tests::test_sum ... ok
+test state_io::tests::test_state_round_trip_bytes ... ok
+test state_io::tests::test_rejects_mismatched_dims_and_num_elements ... ok
+test tn_dto::tests::test_tn_dto_round_trip ... ok
+test tn_dto::tests::test_tn_dto_contraction_order_serialization ... ok
+test state_io::tests::test_state_round_trip_file ... ok
+test tn_dto::tests::test_tn_dto_to_tensor_network_round_trip ... ok
+test tn_dto::tests::test_tn_dto_to_tensor_network_round_trip_density_matrix_labels ... ok
+test commands::optimize::tests::test_optimize_adds_contraction_order ... ok
+test commands::optimize::tests::test_optimize_accepts_density_matrix_mode ... ok
+
+test result: ok. 29 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/integration.rs (target/debug/deps/integration-b421841bd7893dc9)
+
+running 18 tests
+test cli_plotter_removes_stale_plot_files ... ok
+test algorithm_examples_are_script_workflows_not_builtin_examples ... ok
+test cli_script_qaoa_maxcut_line4_runs ... ok
+test cli_script_phase_estimation_z_outputs_phase_bit ... ok
+test cli_script_bernstein_vazirani_outputs_secret_probability ... ok
+test cli_script_hadamard_test_z_runs ... ok
+test cli_script_grover_amplifies_marked_state ... ok
+test cli_visualization_docs_reference_commands_and_generated_artifacts ... ok
+test cli_script_qcbm_static_outputs_distribution ... ok
+test visualize_rejects_non_svg_output_extension ... ok
+test visualize_requires_output_argument ... ok
+test visualize_writes_svg_in_default_build ... ok
+test inspect_and_toeinsum_emit_expected_json ... ok
+test cli_script_swap_test_runs ... ok
+test cli_script_artifact_mode_keeps_stdout_json_only ... ok
+test simulate_measure_probs_and_expect_pipeline ... ok
+test cli_artifact_generator_removes_stale_generated_files ... ok
+test cli_artifact_generator_writes_manifest_svg_and_results ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.66s
+
+     Running tests/pipeline.rs (target/debug/deps/pipeline-be77e8c05046bed7)
+
+running 9 tests
+test test_contract_formats_mixed_radix_state_indices ... ok
+test rejects_unavailable_backend_and_zero_threads ... ok
+test nonbinary_tree_is_explicitly_supported_or_rejected_by_backend ... ok
+test test_contract_rejects_unoptimized_tn ... ok
+test test_pipeline_overlap ... ok
+test test_pipeline_state ... ok
+test test_pipeline_density_matrix_mode ... ok
+test tenferro_unary_and_empty_network_cli ... ok
+test tenferro_pipeline_matches_default_for_every_mode ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s
+
+     Running tests/release_quality.rs (target/debug/deps/release_quality-7014b6908d3ee9f0)
+
+running 8 tests
+test state_payload_validation_handles_zero_qubits_and_nonfinite_values ... ok
+test pure_state_format_is_backward_compatible_and_seeded ... ok
+test saved_density_state_can_continue_through_a_noiseless_circuit ... ok
+test damping_and_entanglement_match_analytic_results ... ok
+test malformed_state_headers_fail_without_panicking ... ok
+test malformed_tensor_networks_are_errors ... ok
+test invalid_locations_and_operators_are_errors ... ok
+test noisy_simulation_pipelines_and_seed_agree ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/slicing.rs (target/debug/deps/slicing-6cd430e1d1a393dc)
+
+running 3 tests
+test invalid_versions_slices_estimates_and_impossible_budgets_fail_before_execution ... ok
+test multi_term_noisy_observable_pipeline_matches_direct_simulation ... ok
+test fixed_and_automatic_plans_roundtrip_preserve_execution_and_limits ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+     Running tests/trajectories.rs (target/debug/deps/trajectories-ae968ef31064b970)
+
+running 3 tests
+test trajectory_mode_reads_pure_input_and_rejects_density_input ... ok
+test conflicting_and_invalid_trajectory_options_fail_without_panics ... ok
+test trajectory_statistics_are_seeded_and_separate_from_exact_results ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+     Running unittests src/lib.rs (target/debug/deps/yao_rs-34d2f352511e7754)
+
+running 357 tests
+test circuit::tests::circuit_dispatch_round_trips ... ok
+test circuit::tests::circuit_parameters_walk_tree ... ok
+test circuit::tests::circuit_with_no_params_returns_empty ... ok
+test ad::tests::phase_on_plus_vs_x ... ok
+test ad::tests::rz_on_plus_vs_x ... ok
+test ad::tests::ry_on_zero_vs_x ... ok
+test ad::tests::rx_on_zero_vs_z ... ok
+test circuit::tests::test_circuit_dagger_empty ... ok
+test circuit::tests::test_circuit_dagger_preserves_dims ... ok
+test circuit::tests::test_circuit_dagger_preserves_control_locs ... ok
+test circuit::tests::test_circuit_dagger_reverses_order ... ok
+test circuit::tests::test_circuit_dagger_rotation_sequence ... ok
+test circuit::tests::test_circuit_dagger_single_gate ... ok
+test circuit::tests::test_circuit_display_empty ... ok
+test ad::tests::gradient_ordering_matches_circuit_parameters ... ok
+test circuit::tests::test_circuit_display_multi_control ... ok
+test circuit::tests::test_circuit_display_controlled_gate ... ok
+test circuit::tests::test_circuit_display_multi_target ... ok
+test circuit::tests::test_circuit_display_single_gate ... ok
+test circuit::tests::test_circuit_error_display_loc_out_of_range ... ok
+test circuit::tests::test_circuit_error_display_matrix_size_mismatch ... ok
+test circuit::tests::test_circuit_display_with_label ... ok
+test circuit::tests::test_circuit_error_display_control_config_mismatch ... ok
+test circuit::tests::test_circuit_display_qft_3qubit ... ok
+test circuit::tests::test_circuit_error_display_control_not_qubit ... ok
+test circuit::tests::test_circuit_error_display_overlapping_locs ... ok
+test circuit::tests::test_circuit_error_is_error_trait ... ok
+test circuit::tests::test_clone_circuit ... ok
+test circuit::tests::test_circuit_with_labels ... ok
+test circuit::tests::test_control_in_circuit ... ok
+test circuit::tests::test_circuit_error_display_named_gate_not_qubit ... ok
+test circuit::tests::test_control_cnot ... ok
+test circuit::tests::test_clone_positioned_gate ... ok
+test circuit::tests::test_control_toffoli ... ok
+test circuit::tests::test_gate_dagger_custom ... ok
+test circuit::tests::test_gate_dagger_double_gives_original_rotation ... ok
+test circuit::tests::test_gate_dagger_fsim ... ok
+test circuit::tests::test_gate_dagger_hermitian ... ok
+test circuit::tests::test_gate_dagger_phase ... ok
+test ad::tests::matches_yao_jl_reference_gradient ... ok
+test circuit::tests::test_gate_dagger_rotation ... ok
+test circuit::tests::test_gate_dagger_s_gate ... ok
+test circuit::tests::test_gate_dagger_t_gate ... ok
+test circuit::tests::test_invalid_control_config_length_mismatch ... ok
+test circuit::tests::test_invalid_control_config_too_many ... ok
+test circuit::tests::test_invalid_control_loc_out_of_range ... ok
+test circuit::tests::test_invalid_control_on_qutrit ... ok
+test circuit::tests::test_invalid_loc_out_of_range ... ok
+test circuit::tests::test_invalid_matrix_size_mismatch ... ok
+test circuit::tests::test_invalid_named_h_gate_on_qutrit ... ok
+test circuit::tests::test_invalid_qubit_gate_on_qutrit ... ok
+test circuit::tests::test_invalid_overlapping_locs ... ok
+test circuit::tests::test_label_annotation ... ok
+test circuit::tests::test_label_validation ... ok
+test circuit::tests::test_num_sites ... ok
+test circuit::tests::test_positioned_gate_all_locs_no_controls ... ok
+test circuit::tests::test_positioned_gate_all_locs_swap ... ok
+test circuit::tests::test_positioned_gate_all_locs_with_controls ... ok
+test circuit::tests::test_positioned_gate_new ... ok
+test circuit::tests::test_put_in_circuit ... ok
+test circuit::tests::test_put_multi_site_gate ... ok
+test circuit::tests::test_put_single_gate ... ok
+test circuit::tests::test_second_gate_fails_validation ... ok
+test circuit::tests::test_qft_circuit_builds ... ok
+test circuit::tests::test_total_dim_mixed ... ok
+test circuit::tests::test_total_dim_qubits ... ok
+test circuit::tests::test_total_dim_qutrits ... ok
+test circuit::tests::test_valid_cnot ... ok
+test circuit::tests::test_valid_controlled_with_false_config ... ok
+test circuit::tests::test_valid_custom_gate_with_qubit_control ... ok
+test circuit::tests::test_valid_custom_qudit_gate_on_two_qutrits ... ok
+test circuit::tests::test_valid_custom_single_qutrit_gate ... ok
+test circuit::tests::test_valid_empty_circuit ... ok
+test circuit::tests::test_valid_multi_gate_circuit ... ok
+test circuit::tests::test_valid_rotation_gates ... ok
+test circuit::tests::test_valid_single_qubit_gate ... ok
+test circuit::tests::test_valid_swap_gate ... ok
+test circuit::tests::test_valid_toffoli ... ok
+test circuit::tests_noise::test_circuit_channel_loc_validation ... ok
+test circuit::tests_noise::test_apply_skips_channels ... ok
+test circuit::tests_noise::test_circuit_with_noise_channel ... ok
+test ad::tests::active_low_control_gradient_matches_independent_finite_difference ... ok
+test ad::tests::finite_difference_cross_check ... ok
+test contractor::tests::test_contract_h_gate ... ok
+test contractor::tests::test_contract_bell_state ... ok
+test contractor::tests::test_contract_dm_with_tree ... ok
+test contractor::tests::test_contract_dm_identity ... ok
+test contractor::tests::test_contract_dm_h_gate ... ok
+test contractor::tests::test_contract_dm_bell_state ... ok
+test contractor::tests::test_contract_identity ... ok
+test contractor::tests::test_contract_phase_gate ... ok
+test contractor::tests::test_contract_cz_shared_labels ... ok
+test contractor::tests::test_contract_result_follows_input_convention ... ok
+test contractor::tests::test_contract_rx_gate ... ok
+test contractor::tests::test_contract_s_gate ... ok
+test contractor::tests::test_contract_ry_gate ... ok
+test contractor::tests::test_contract_state_vector ... ok
+test contractor::tests::test_contract_t_gate ... ok
+test contractor::tests::test_contract_y_gate ... ok
+test contractor::tests::test_contract_two_qubit_state ... ok
+test contractor::tests::test_contract_z_gate ... ok
+test cuda::tests::cuda_all_gate_families_match_native_with_ordered_targets_and_controls ... ignored, requires CUDA hardware; run explicitly on the GPU host
+test cuda::tests::cuda_contraction_circuits_qudits_and_exact_noise_match_cpu ... ignored, requires CUDA hardware; run explicitly on the GPU host
+test cuda::tests::cuda_contraction_unary_hyperedges_gradients_and_explicit_order ... ignored, requires CUDA hardware; run explicitly on the GPU host
+test cuda::tests::cuda_custom_loss_and_gpu_parameter_update_preserve_residency ... ignored, requires CUDA hardware; run explicitly on the GPU host
+test cuda::tests::cuda_empty_parameters_scalar_phase_and_many_controls ... ignored, requires CUDA hardware; run explicitly on the GPU host
+test cuda::tests::cuda_physical_and_complex_input_derivatives_match_native_and_differences ... ignored, requires CUDA hardware; run explicitly on the GPU host
+test contractor::tests::test_contract_with_tree ... ok
+test cuda::tests::cuda_rejects_host_tensors_bad_shapes_and_foreign_contexts ... ignored, requires CUDA hardware; run explicitly on the GPU host
+test density_matrix::tests::test_mixed_state_purity ... ok
+test density_matrix::tests::test_partial_trace_bell_state ... ok
+test density_matrix::tests::test_pure_state_purity ... ok
+test density_matrix::tests::test_pure_state_trace ... ok
+test contractor::tests::test_contract_overlap ... ok
+test density_matrix::tests::test_zero_state_density_matrix ... ok
+test contractor::tests::test_contract_mixed_gates ... ok
+test density_matrix::tests::test_dm_apply_with_noise_channel ... ok
+test contractor::tests::test_contract_qft_3qubit ... ok
+test contractor::tests::test_contract_ghz_4qubit ... ok
+test differentiable::tests::joint_loss_gradient_preserves_global_phase_and_shared_squared_parameters ... ok
+test differentiable::tests::fixed_only_empty_and_unitary_custom_circuits ... ok
+test differentiable::tests::hermitian_expectation_uses_twice_h_psi_seed ... ok
+test differentiable::tests::rejects_nonunitary_channels_and_bad_inputs ... ok
+test easybuild::tests::test_general_u2_unitary ... ok
+test differentiable::tests::jvp_vjp_duality_and_directional_finite_difference ... ok
+test easybuild::tests::test_general_u4_unitary ... ok
+test easybuild::tests::test_hadamard_test_circuit ... ok
+test easybuild::tests::test_pair_ring ... ok
+test easybuild::tests::test_pair_square_periodic ... ok
+test easybuild::tests::test_pair_square_non_periodic ... ok
+test easybuild::tests::test_marked_state_grover_amplifies_marked_state ... ok
+test easybuild::tests::test_bernstein_vazirani_recovers_secret ... ok
+test easybuild::tests::test_phase_estimation_circuit ... ok
+test easybuild::tests::test_phase_estimation_powers_correct ... ok
+test easybuild::tests::test_qaoa_maxcut_ansatz_builds_and_preserves_norm ... ok
+test easybuild::tests::test_qft_norm_preserved ... ok
+test easybuild::tests::test_qft_uniform_superposition ... ok
+test easybuild::tests::test_swap_test_circuit ... ok
+test easybuild::tests::test_rand_supremacy2d_deterministic_with_seed ... ok
+test cuda::tests::cuda_plan_shape_and_tree_validation_does_not_initialize_cuda ... ok
+test easybuild::tests::test_variational_circuit_structure ... ok
+test einsum::observable_tests::polynomial_export_shares_circuit_and_zero_has_valid_shapes ... ok
+test easybuild::tests::test_rand_supremacy2d_structure ... ok
+test differentiable::tests::arbitrary_cotangent_matches_all_parameter_and_complex_input_differences ... ok
+test density_matrix::tests::test_von_neumann_entropy_maximally_mixed_qubit ... ok
+test evolution::tests::exact_zero_identity_and_pauli_invariant_subspaces ... ok
+test easybuild::tests::test_rand_google53_structure ... ok
+test differentiable::tests::shared_time_and_couplings_at_zero_and_nonzero ... ok
+test evolution::tests::pauli_masks_match_independent_tensor_product_action ... ok
+test evolution::tests::complex_callbacks_match_dense_exponential_and_preserve_norm ... ok
+test evolution::tests::validation_callback_failures_and_nonhermitian_rejection ... ok
+test evolution::tests::work_limit_mid_basis_does_not_advance_state ... ok
+test evolution::tests::scaling_shift_and_roundoff_limits_are_explicit ... ok
+test expect::ordering_tests::density_expectations_match_pure_on_asymmetric_complex_states ... ok
+test expect::tests::test_expect_dm_matches_pure ... ok
+test expect::tests::test_expect_x_zero_state ... ok
+test expect::tests::test_expect_z_plus_state ... ok
+test expect::tests::test_expect_z_zero_state ... ok
+test evolution::tests::work_limit_returns_partial_time_and_can_resume ... ok
+test gate::tests::generator_matrix_matches_finite_difference ... ok
+test evolution::tests::adaptive_restarts_and_tolerance_refinement ... ok
+test gate::tests::get_and_set_params_round_trip ... ok
+test gate::tests::num_params_covers_all_variants ... ok
+test einsum::observable_tests::weighted_identity_handles_qudits_and_empty_registers ... ok
+test gate::tests::generator_matrix_rejects_non_parametric - should panic ... ok
+test gate::tests::set_params_rejects_wrong_length - should panic ... ok
+test hamiltonian::tests::identity_global_phase_is_visible_under_control ... ok
+test hamiltonian::tests::analytic_pauli_rotations_and_identity_phase ... ok
+test circuit::tests::dispatch_rejects_wrong_length - should panic ... ok
+test einsum::observable_tests::invalid_observables_and_channels_are_rejected ... ok
+test gate::tests::generator_matrix_rejects_bad_index - should panic ... ok
+test ad::tests::rejects_channels - should panic ... ok
+test instruct_qubit::tests::test_apply_3q_custom_gate ... ok
+test instruct_qubit::tests::test_apply_inplace_uses_qubit_path ... ok
+test hamiltonian::tests::validation_model_conventions_and_large_words ... ok
+test instruct_qubit::tests::test_instruct_1q_controlled_active_low ... ok
+test instruct_qubit::tests::test_instruct_1q_diag_controlled_active_low ... ok
+test instruct_qubit::tests::test_instruct_1q_diag_controlled_cz_via_ctrl ... ok
+test instruct_qubit::tests::test_instruct_1q_diag_z_gate ... ok
+test hamiltonian::tests::commuting_sums_negative_time_and_zero_hamiltonian ... ok
+test instruct_qubit::tests::test_instruct_2q_diag_controlled_3q ... ok
+test instruct_qubit::tests::test_instruct_2q_diag_cz ... ok
+test instruct_qubit::tests::test_all_julia_ground_truth ... ok
+test instruct_qubit::tests::test_controlled_from_julia_data ... ok
+test instruct_qubit::tests::test_instruct_1q_from_julia_data ... ok
+test json::tests::test_from_json_custom_empty_matrix ... ok
+test json::tests::test_from_json_circuit_validation_error ... ok
+test json::tests::test_from_json_custom_missing_matrix ... ok
+test json::tests::test_from_json_custom_ragged_matrix ... ok
+test json::tests::test_from_json_fsim_insufficient_params ... ok
+test json::tests::test_from_json_fsim_missing_params ... ok
+test json::tests::test_from_json_malformed ... ok
+test json::tests::test_from_json_phase_empty_params ... ok
+test json::tests::test_from_json_phase_missing_params ... ok
+test json::tests::test_from_json_rx_missing_params ... ok
+test json::tests::test_from_json_ry_missing_params ... ok
+test json::tests::test_from_json_rz_missing_params ... ok
+test json::tests::test_from_json_unknown_gate ... ok
+test json::tests::test_json_label_structure ... ok
+test json::tests::test_json_structure ... ok
+test json::tests::test_roundtrip_all_named_gates ... ok
+test json::tests::test_roundtrip_control_configs_default ... ok
+test json::tests::test_roundtrip_controlled_gate ... ok
+test instruct_qubit::tests::test_instruct_2q_from_julia_data ... ok
+test json::tests::test_roundtrip_custom_diagonal ... ok
+test json::tests::test_roundtrip_custom_gate ... ok
+test json::tests::test_roundtrip_fsim ... ok
+test json::tests::test_roundtrip_label ... ok
+test json::tests::test_roundtrip_matrix_channel ... ok
+test json::tests::test_roundtrip_named_gates ... ok
+test json::tests::test_roundtrip_new_gates ... ok
+test json::tests::test_roundtrip_reset_channel ... ok
+test json::tests::test_roundtrip_ry_rz ... ok
+test json::tests::test_roundtrip_scalar_noise_channel ... ok
+test noise::tests::fallible_kraus_validation_rejects_invalid_channels ... ok
+test noise::tests::test_coherent_kraus ... ok
+test noise::tests::test_amplitude_damping_kraus ... ok
+test noise::tests::test_bit_flip_kraus ... ok
+test noise::tests::test_depolarizing_single_qubit_kraus ... ok
+test noise::tests::test_depolarizing_two_qubit_kraus ... ok
+test noise::tests::test_kraus_matches_julia_bit_flip ... ok
+test noise::tests::test_kraus_matches_julia_amplitude_damping ... ok
+test instruct_qubit::tests::test_regression_20_random_2q_gates ... ok
+test noise::tests::test_kraus_matches_julia_phase_amp_damping ... ok
+test noise::tests::test_kraus_matches_julia_pauli_channel ... ok
+test noise::tests::test_kraus_matches_julia_phase_damping ... ok
+test noise::tests::test_noise_channel_num_qubits ... ok
+test noise::tests::test_kraus_matches_julia_phase_amp_damping_excited ... ok
+test noise::tests::test_phase_amplitude_damping_kraus ... ok
+test noise::tests::test_pauli_channel_kraus ... ok
+test noise::tests::test_kraus_matches_julia_phase_flip ... ok
+test noise::tests::test_phase_amplitude_damping_with_excited_pop ... ok
+test noise::tests::test_phase_damping_kraus ... ok
+test noise::tests::test_phase_flip_kraus ... ok
+test noise::tests::test_reset_only_p0 ... ok
+test noise::tests::test_reset_kraus ... ok
+test noise::tests::test_superop_from_kraus ... ok
+test noise::tests::test_thermal_relaxation_kraus ... ok
+test operator::tests::test_op_x_matrix ... ok
+test operator::tests::test_op_z_matrix ... ok
+test operator::tests::test_operator_polynomial_add ... ok
+test operator::tests::test_operator_polynomial_json_roundtrip ... ok
+test operator::tests::test_operator_polynomial_single ... ok
+test operator::tests::test_operator_string_creation ... ok
+test operator::tests::test_operator_string_identity ... ok
+test parameters::tests::fixed_only_and_empty_bindings ... ok
+test parameters::tests::rejected_dispatch_is_atomic_and_invalid_bindings_fail ... ok
+test parameters::tests::shared_product_jacobian_and_duality ... ok
+test noise::tests::test_superop_matches_julia_bit_flip ... ok
+test noise::tests::test_superop_matches_julia_depolarizing ... ok
+test qasm::tests::test_64_bit_classical_conditional_returns_unsupported_error ... ok
+test qasm::tests::test_bell_state ... ok
+test qasm::tests::test_barrier_is_noop ... ok
+test qasm::tests::test_classical_conditional_returns_unsupported_error ... ok
+test noise::tests::thermal_relaxation_matches_population_and_coherence_decay ... ok
+test qasm::tests::test_export_uses_extended_gate_names ... ok
+test qasm::tests::test_export_uses_standard_qelib1_names ... ok
+test qasm::tests::test_empty_circuit_preserves_qubit_count ... ok
+test qasm::tests::test_from_qasm_file_expands_scientific_notation_with_relative_include ... ok
+test qasm::tests::test_cz_gate ... ok
+test qasm::tests::test_ghz_state ... ok
+test qasm::tests::test_extra_gate_definitions_import ... ok
+test qasm::tests::test_no_include_with_primitive_gates ... ok
+test qasm::tests::test_parse_error ... ok
+test qasm::tests::test_hadamard ... ok
+test hamiltonian::tests::shared_time_and_model_coupling_gradients_including_zero ... ok
+test qasm::tests::test_measurements_only_circuit ... ok
+test qasm::tests::test_phase_gate ... ok
+test qasm::tests::test_reset_density_matrix_returns_qubit_to_zero ... ok
+test qasm::tests::test_measurement_collection ... ok
+test qasm::tests::test_reset_imports_as_reset_channel ... ok
+test qasm::tests::test_roundtrip_controlled_gates ... ok
+test qasm::tests::test_reset_renders_in_svg ... ok
+test qasm::tests::test_ry_gate ... ok
+test qasm::tests::test_rotation_gates ... ok
+test qasm::tests::test_rz_gate ... ok
+test qasm::tests::test_roundtrip_simulation ... ok
+test qasm::tests::test_to_qasm_bell ... ok
+test qasm::tests::test_scientific_notation_in_rz_imports ... ok
+test qasm::tests::test_to_qasm_parametric ... ok
+test qasm::tests::test_too_large_conditional_literal_returns_error_without_panicking ... ok
+test qasm::tests::test_unsupported_opaque_gate ... ok
+test qasm::tests::test_s_and_t_gates ... ok
+test register::tests::test_deterministic_state ... ok
+test register::tests::test_fidelity_orthogonal ... ok
+test register::tests::test_fidelity_same_state ... ok
+test register::tests::test_ghz_state ... ok
+test register::tests::test_uniform_state ... ok
+test register::tests::test_zero_state ... ok
+test qasm::tests::test_scientific_notation_in_u_gate_imports ... ok
+test qasm::tests::test_x_gate ... ok
+test qasm::tests::test_swap_gate ... ok
+test slicing::tests::budgets_account_for_inputs_output_and_one_active_slice ... ok
+test qasm::tests::test_toffoli ... ok
+test slicing::tests::invalid_shapes_labels_trees_overflow_and_callback_output_rejected ... ok
+test svg::tests::does_not_panic_on_valid_targetless_gate ... ok
+test svg::tests::escapes_label_text_for_xml ... ok
+test svg::tests::emits_one_wire_per_site_and_one_gate_box_per_column ... ok
+test svg::tests::extends_controlled_x_connector_to_marker_edges ... ok
+test svg::tests::keeps_overlapping_gates_in_separate_columns ... ok
+test svg::tests::renders_active_low_controls_as_open_circles ... ok
+test svg::tests::renders_annotation_above_the_target_wire ... ok
+test svg::tests::renders_basic_h_gate_to_svg ... ok
+test svg::tests::renders_channel_as_dashed_box_with_label ... ok
+test svg::tests::renders_controlled_x_with_connector_and_target_marker ... ok
+test svg::tests::renders_multi_target_gate_as_tall_box ... ok
+test svg::tests::renders_negative_rotation_gate_parameters_with_two_decimals ... ok
+test svg::tests::renders_phase_gate_compactly_without_p_abbreviation ... ok
+test svg::tests::packs_disjoint_gates_into_the_same_column ... ok
+test svg::tests::renders_rotation_gate_labels_compactly_with_two_decimals ... ok
+test svg::tests::renders_swap_with_two_markers_and_connector ... ok
+test svg::tests::widens_channel_column_for_long_channel_labels ... ok
+test svg::tests::widens_gate_box_and_viewbox_for_long_labels ... ok
+test slicing::tests::automatic_omeco_slicing_fits_checked_budget_and_matches_unsliced ... ok
+test hamiltonian::tests::product_formula_convergence_order_against_dense_exponential ... ok
+test tenferro::tests::invalid_metadata_and_trees_return_errors_before_execution ... ok
+test tenferro::tests::empty_network_identity_and_mixed_qudit_dimensions ... ok
+test tenferro::tests::explicit_tree_retains_grouping_and_noncanonical_intermediate_axes ... ok
+test tenferro::tests::repeated_labels_trace_diagonal_and_hyperedge ... ok
+test slicing::tests::unary_trace_diagonal_output_scalar_and_empty_network ... ok
+test tenferro::tests::layouts_identity_transpose_and_reusing_new_values ... ok
+test einsum::observable_tests::polynomial_pure_and_noisy_dm_match_direct_expectations ... ok
+test tenferro_ad::tests::eager_rejects_wrong_shape_dtype_and_context ... ok
+test tenferro_ad::tests::semantic_jvp_masks_match_native_and_reject_higher_order ... ok
+test tenferro_ad::tests::traced_vjp_accepts_nonreal_seed_and_rejects_higher_order ... ok
+test tensors::tests::test_cnot_gate ... ok
+test tensors::tests::test_controlled_diagonal_trigger_on_zero ... ok
+test tensors::tests::test_controlled_gate_trigger_on_zero ... ok
+test tensors::tests::test_custom_diagonal_qutrit ... ok
+test tensors::tests::test_custom_non_diagonal_qubit ... ok
+test tensors::tests::test_cz_gate ... ok
+test tensors::tests::test_gate_on_non_first_site ... ok
+test tensors::tests::test_h_gate_non_diagonal ... ok
+test tensors::tests::test_rz_gate_diagonal ... ok
+test tensors::tests::test_s_gate_diagonal ... ok
+test tensors::tests::test_single_qubit_x_gate ... ok
+test tensors::tests::test_single_qubit_z_gate_diagonal ... ok
+test tensors::tests::test_swap_gate ... ok
+test tensors::tests::test_t_gate_diagonal ... ok
+test tenferro::tests::negative_labels_and_noisy_density_matrix ... ok
+test tenferro_ad::tests::fixed_circuit_has_empty_parameter_gradient ... ok
+test trajectories::tests::generic_three_target_kraus_preserves_complex_amplitudes_and_site_order ... ok
+test trajectories::tests::identity_empty_and_one_sample_uncertainty ... ok
+test trajectories::tests::invalid_domains_fail_before_execution ... ok
+test trajectories::tests::malformed_matrices_and_observables_return_errors ... ok
+test tenferro_ad::tests::eager_shared_physical_gradients_at_zero_time ... ok
+test tenferro_ad::tests::eager_custom_real_loss_matches_native_vjp_and_updates_inputs ... ok
+test slicing::tests::internal_output_mixed_slices_and_complex_strided_inputs ... ok
+test trajectories::tests::seed_streams_reproduce_and_moments_match_explicit_samples ... ok
+test trajectories::tests::endpoints_and_state_dependent_branches ... ok
+test trajectories::tests::nonadjacent_multiqubit_custom_channel_and_controls ... ok
+test hamiltonian::tests::lowered_evolution_matches_tenferro_and_json_round_trip ... ok
+test tenferro::tests::circuits_match_direct_simulation_with_auto_and_explicit_trees ... ok
+test evolution::tests::large_matrix_free_model_and_reversible_evolution ... ok
+test trajectories::tests::register_wide_depolarizing_avoids_dense_kraus_storage ... ok
+test trajectories::tests::built_in_ensembles_match_exact_density ... ok
+test evolution::tests::large_basis_reductions_support_tight_reference_accuracy ... ok
+
+test result: ok. 350 passed; 0 failed; 7 ignored; 0 measured; 0 filtered out; finished in 14.80s
+
+     Running tests/main.rs (target/debug/deps/main-d6edf41701456c78)
+
+running 212 tests
+test apply::test_apply_preserves_input ... ok
+test apply::test_apply_inplace_bell_state ... ok
+test apply::test_apply_vs_apply_old_bell_circuit ... ok
+test apply::test_apply_vs_apply_old_cnot ... ok
+test apply::test_apply_vs_apply_old_diagonal_gates ... ok
+test apply::test_apply_vs_apply_old_controlled_phase ... ok
+test apply::test_apply_vs_apply_old_complex_circuit ... ok
+test apply::test_apply_vs_apply_old_phase_gate ... ok
+test apply::test_apply_vs_apply_old_rz_gate ... ok
+test apply::test_apply_vs_apply_old_single_h ... ok
+test apply::test_apply_vs_apply_old_rx_ry ... ok
+test apply::test_apply_vs_apply_old_swap_gate ... ok
+test apply::test_apply_vs_apply_old_toffoli ... ok
+test apply::test_arrayreg_apply_inplace_bell_state ... ok
+test apply::test_apply_vs_apply_old_4_qubit ... ok
+test apply::test_arrayreg_apply_inplace_swap_gate ... ok
+test apply::test_arrayreg_apply_inplace_custom_three_qubit_gate ... ok
+test apply::test_arrayreg_apply_inplace_x_gate ... ok
+test apply::test_bell_state ... ok
+test apply::test_apply_vs_apply_old_qft_like_circuit ... ok
+test apply::test_cnot_00_unchanged ... ok
+test apply::test_cnot_10_to_11 ... ok
+test apply::test_apply_vs_apply_old_random_gates ... ok
+test apply::test_diagonal_gate_behavior_via_apply ... ok
+test apply::test_h_gate_on_zero ... ok
+test apply::test_linear_to_multi ... ok
+test apply::test_multi_to_linear ... ok
+test apply::test_norm_preservation ... ok
+test apply::test_roundtrip ... ok
+test apply::test_x_gate_on_zero ... ok
+test apply::test_x_on_second_qubit ... ok
+test benchmark_validation::test_noisy_dm_entropy ... ok
+test benchmark_validation::test_noisy_dm_expectation ... ok
+test benchmark_validation::test_noisy_dm_full_and_reduced_matrices ... ok
+test benchmark_validation::test_noisy_dm_trace_and_purity ... ok
+test benchmark_validation::test_qft_vs_julia ... ok
+test benchmark_validation::test_single_gate_cnot ... ok
+test benchmark_validation::test_single_gate_crx ... ok
+test benchmark_validation::test_single_gate_h ... ok
+test benchmark_validation::test_single_gate_rx ... ok
+test benchmark_validation::test_single_gate_rz ... ok
+test benchmark_validation::test_single_gate_t ... ok
+test benchmark_validation::test_single_gate_toffoli ... ok
+test benchmark_validation::test_single_gate_x ... ok
+test einsum::test_boundary_diagonal_gate ... ok
+test einsum::test_boundary_h_gate_amplitude ... ok
+test einsum::test_boundary_open_legs ... ok
+test einsum::test_boundary_controlled_phase ... ok
+test einsum::test_boundary_cnot_amplitude ... ok
+test einsum::test_boundary_all_pinned_identity ... ok
+test einsum::test_boundary_phase_gate ... ok
+test einsum::test_boundary_x_gate_amplitude ... ok
+test einsum::test_boundary_partial_pinning ... ok
+test einsum::test_circuit_to_overlap_simple ... ok
+test einsum::test_cnot_gate ... ok
+test einsum::test_circuit_to_expectation_z ... ok
+test einsum::test_diagonal_gate_preserves_labels_across_multiple_uses ... ok
+test einsum::test_diagonal_s_gate ... ok
+test einsum::test_diagonal_t_gate ... ok
+test einsum::test_boundary_matches_apply ... ok
+test einsum::test_diagonal_z_gate ... ok
+test einsum::test_eincode_is_always_valid_bell_circuit ... ok
+test einsum::test_eincode_is_always_valid_ghz_circuit ... ok
+test einsum::test_eincode_is_always_valid_single_gate ... ok
+test einsum::test_eincode_validity ... ok
+test einsum::test_empty_circuit ... ok
+test apply::test_apply_ground_truth ... ok
+test einsum::test_empty_single_site_circuit ... ok
+test einsum::test_h_then_cnot ... ok
+test einsum::test_multiple_non_diagonal_gates ... ok
+test einsum::test_boundary_qft_amplitude ... ok
+test einsum::test_eincode_is_always_valid_larger_circuit ... ok
+test einsum::test_rz_then_h_on_same_qubit ... ok
+test einsum::test_single_cnot_gate_produces_valid_optimization ... ok
+test einsum::test_optimize_bell_circuit ... ok
+test einsum::test_single_diagonal_gate_valid_eincode ... ok
+test einsum::test_single_gate_circuit_produces_valid_optimization ... ok
+test einsum::test_single_h_gate_on_2_qubit_circuit ... ok
+test einsum::test_single_qubit_circuit ... ok
+test einsum::test_optimize_complexity_ghz_circuit ... ok
+test einsum::test_single_rz_gate_valid_eincode ... ok
+test einsum::test_size_dict_mixed_dimension_circuit ... ok
+test einsum::test_swap_gate ... ok
+test einsum::test_tensor_shapes_cnot ... ok
+test einsum::test_size_dict_qubit_circuit ... ok
+test einsum::test_tensor_shapes_diagonal ... ok
+test einsum::test_tensor_shapes_non_diagonal ... ok
+test einsum::test_three_qubit_circuit_with_mixed_gates ... ok
+test einsum::test_x_gate_non_diagonal ... ok
+test einsum::test_optimize_ghz_circuit ... ok
+test einsum_dm::test_dm_identity ... ok
+test einsum_dm::test_dm_single_hadamard ... ok
+test einsum_dm::test_dm_with_bit_flip_on_zero ... ok
+test einsum_dm::test_expectation_dm_hadamard_z ... ok
+test gate::test_custom_gate_larger_matrix ... ok
+test gate::test_custom_gate_matrix_passthrough ... ok
+test einsum_dm::test_dm_with_phase_flip_noise ... ok
+test gate::test_fsim_matrix_values ... ok
+test gate::test_gate_display_custom ... ok
+test gate::test_gate_display_named ... ok
+test gate::test_gate_display_parametric ... ok
+test einsum_dm::test_expectation_dm_noisy_hadamard_x ... ok
+test gate::test_h_gate_matrix ... ok
+test gate::test_h_squared_is_identity ... ok
+test gate::test_fsim_is_unitary ... ok
+test gate::test_is_diagonal_custom_false ... ok
+test gate::test_is_diagonal_custom_true ... ok
+test gate::test_is_diagonal_false_gates ... ok
+test gate::test_is_diagonal_new_gates ... ok
+test gate::test_is_diagonal_true_gates ... ok
+test einsum::test_optimize_larger_circuit ... ok
+test gate::test_iswap_is_unitary ... ok
+test gate::test_iswap_matrix_values ... ok
+test gate::test_num_sites_custom_2x2 ... ok
+test gate::test_num_sites_custom_4x4_d2 ... ok
+test gate::test_gate_matrices_ground_truth ... ok
+test gate::test_num_sites_custom_8x8_d2 ... ok
+test gate::test_num_sites_new_gates ... ok
+test gate::test_num_sites_single_qubit_gates ... ok
+test gate::test_num_sites_swap ... ok
+test gate::test_phase_gate_matrix ... ok
+test gate::test_phase_is_diagonal ... ok
+test gate::test_phase_pi_is_z ... ok
+test gate::test_phase_pi_over_2_is_s ... ok
+test gate::test_phase_pi_over_4_is_t ... ok
+test gate::test_rx_gate_matrix ... ok
+test gate::test_rx_gate_zero_angle ... ok
+test gate::test_rx_pi_gives_minus_i_times_x ... ok
+test gate::test_ry_gate_matrix ... ok
+test gate::test_ry_gate_zero_angle ... ok
+test gate::test_ry_pi_gives_rotation ... ok
+test gate::test_rz_gate_matrix ... ok
+test gate::test_rz_gate_zero_angle ... ok
+test gate::test_rz_pi_gives_z_up_to_phase ... ok
+test gate::test_s_gate_matrix ... ok
+test gate::test_s_squared_is_z ... ok
+test gate::test_sqrtw_is_unitary ... ok
+test gate::test_sqrtw_matrix_values ... ok
+test gate::test_sqrtw_squared_properties ... ok
+test gate::test_sqrtx_matrix_values ... ok
+test gate::test_sqrtx_sqrty_are_unitary ... ok
+test gate::test_sqrtx_squared_is_x ... ok
+test gate::test_sqrty_matrix_values ... ok
+test gate::test_sqrty_squared_is_y ... ok
+test gate::test_swap_gate_matrix ... ok
+test gate::test_t_gate_matrix ... ok
+test gate::test_t_squared_is_s ... ok
+test gate::test_x_gate_matrix ... ok
+test gate::test_x_squared_is_identity ... ok
+test gate::test_y_gate_matrix ... ok
+test gate::test_z_gate_matrix ... ok
+test integration::test_integration_3_qubit_circuit ... ok
+test integration::test_integration_bell_state ... ok
+test integration::test_integration_cnot_on_00 ... ok
+test integration::test_integration_3_qubit_ghz_like ... ok
+test integration::test_integration_cnot_on_01 ... ok
+test integration::test_integration_cnot_on_10 ... ok
+test integration::test_integration_cnot_on_11 ... ok
+test integration::test_integration_h_gate_on_one_state ... ok
+test einsum::test_optimize_complexity_larger_circuit ... ok
+test integration::test_integration_h_gate_single_qubit ... ok
+test integration::test_integration_multiple_diagonal_gates ... ok
+test integration::test_integration_qft_basis_state ... ok
+test integration::test_integration_ry_gate ... ok
+test integration::test_integration_qft_zero_state ... ok
+test gate::test_num_sites_custom_non_power_of_two_panics - should panic ... ok
+test integration::test_integration_rz_diagonal_gate ... ok
+test integration::test_integration_x_gate_single_qubit ... ok
+test integration::test_integration_two_qubit_h_on_both ... ok
+test integration::test_integration_rz_on_superposition ... ok
+test measure::test_measure_and_collapse_basic ... ok
+test measure::test_marginal_probs_multi_qubit ... ok
+test measure::test_measure_and_collapse_superposition ... ok
+test measure::test_measure_and_reset ... ok
+test measure::test_measure_deterministic ... ok
+test measure::test_measure_and_collapse_partial ... ok
+test measure::test_collapse_then_measure_consistent ... ok
+test integration::test_integration_qft_norm_preservation ... ok
+test measure::test_measure_large_system ... ok
+test measure::test_measure_non_contiguous_subset ... ok
+test measure::test_measure_ground_truth ... ok
+test measure::test_measure_product_state_deterministic ... ok
+test measure::test_measure_remove_bell_state ... ok
+test measure::test_measure_nshots_count ... ok
+test measure::test_measure_remove_product_state ... ok
+test integration::test_integration_qft_apply_vs_einsum ... ok
+test measure::test_measure_reset_to_zero ... ok
+test measure::test_measure_reset_to_one ... ok
+test measure::test_measure_does_not_collapse ... ok
+test measure::test_measure_subset_deterministic ... ok
+test measure::test_measure_with_postprocess_no_postprocess_preserves_arrayreg ... ok
+test measure::test_measure_with_postprocess_remove_measured_returns_smaller_arrayreg ... ok
+test measure::test_measure_with_postprocess_reset_to_sets_target_value ... ok
+test measure::test_measure_subset ... ok
+test measure::test_normalized_after_collapse ... ok
+test measure::test_partial_collapse_preserves_structure ... ok
+test measure::test_probs_arrayreg_supports_marginals ... ok
+test measure::test_probs_arrayreg_uses_circuit_qubit_ordering ... ok
+test measure::test_probs_bell_state ... ok
+test measure::test_probs_density_matrix_uses_diagonal_distribution ... ok
+test measure::test_probs_equals_abs2_state ... ok
+test measure::test_probs_marginal ... ok
+test measure::test_probs_sum_to_one ... ok
+test measure::test_probs_superposition ... ok
+test measure::test_probs_zero_state ... ok
+test measure::test_measure_superposition_statistics ... ok
+test einsum_dm::test_dm_pure_matches_vector_mode ... ok
+test einsum::test_einsum_ground_truth ... ok
+test measure::test_measurement_matches_probs ... ok
+test ad::plain_sgd_drives_heisenberg_energy_down ... ok
+test einsum_dm::test_dm_bell_state_with_depolarizing ... ok
+test benchmark_validation::test_qft_analytical ... ok
+
+test result: ok. 212 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+   Doc-tests bitbasis
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests yao_rs
+
+running 11 tests
+test src/circuit.rs - circuit::Circuit::to_svg (line 294) ... ignored
+test src/circuit.rs - circuit::put (line 426) ... ok
+test src/circuit.rs - circuit::control (line 444) ... ok
+test src/circuit.rs - circuit::label (line 473) ... ok
+test src/measure.rs - measure::probs (line 69) ... ok
+test src/lib.rs - (line 5) ... ok
+test src/ad.rs - ad::expect_grad (line 77) ... ok
+test src/hamiltonian.rs - hamiltonian (line 7) ... ok
+test src/qasm.rs - qasm (line 7) ... ok
+test src/evolution.rs - evolution (line 15) ... ok
+test src/tenferro.rs - tenferro (line 8) ... ok
+
+test result: ok. 10 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+all doctests ran in 5.63s; merged doctests compilation took 2.88s
+All checks passed.

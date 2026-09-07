@@ -291,3 +291,7 @@ sample are recorded, while repeated GPU Criterion timing is reserved for the
 labeled separately and do not enter CPU/GPU timing ratios or latency bars.
 Use `--repeat-deep-gradients --qualification-timeout 600` to request the longer
 repeated study. The memory-versus-depth plot includes the completed deep probes.
+
+The [recorded A800 comparison](results/a800-cuda-2026-09-07/README.md) contains
+the repeated same-host CPU/GPU/Yao results, all 14 successful qualification
+processes, raw samples, source hashes, runtime packages and standalone figures.

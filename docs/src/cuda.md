@@ -118,3 +118,23 @@ For larger eager graphs, request the gradients you need with `runtime.grad` or
 `runtime.vjp`. Tenferro 0.4.0's stateful `backward()` traverses retained tracked
 intermediates and requests separate pullbacks for them; it can do substantially
 more work than requesting parameter and input-state gradients explicitly.
+
+## Measured scope
+
+The [A800 report](https://github.com/GiggleLiu/yao-rs/tree/main/benchmarks/results/a800-cuda-2026-09-07)
+compares complex128 execution with native Rust and pinned Yao on the same host.
+It includes states through 24 qubits, loss/parameter/input-state gradients
+through 20 qubits, and exact noisy density networks through 10 qubits. These
+are measured fixtures, rather than maximum supported sizes.
+
+The gradient fixture repeats four gates on the final two sites of an asymmetric
+state. Forty-layer GPU gradients have process-cold and single warm diagnostic
+measurements; repeated GPU timing covers the ten-layer cases. The deep probes
+take roughly 132–135 seconds for their first execution, despite much shorter
+warm execution. This makes deep composed AD a substantial optimization target.
+
+The report separates resident execution, full input/output transfers, setup,
+and allocator-inclusive memory snapshots. Small circuits can be dominated by
+host/runtime overhead. Exact-noise tensor contraction and direct density
+simulation also use different algorithms; their ratios are specific to the
+recorded circuit and contraction path. Existing CPU defaults remain unchanged.

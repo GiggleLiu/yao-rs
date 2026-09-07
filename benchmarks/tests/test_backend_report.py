@@ -48,11 +48,14 @@ class BackendReportTests(unittest.TestCase):
             write(1)
             with self.assertRaisesRegex(ValueError, "did not exit"):
                 compare.cuda_report_sections(path, summary)
-            record["max_error"] = float("nan")
-            write()
-            with self.assertRaisesRegex(ValueError, "qualification error"):
-                compare.cuda_report_sections(path, summary)
-            record["max_error"] = 1e-12
+            for field in ["max_error", "transfer_max_error"]:
+                for invalid in [float("nan"), float("inf"), -1.0, 1e-8]:
+                    with self.subTest(field=field, invalid=invalid):
+                        record[field] = invalid
+                        write()
+                        with self.assertRaisesRegex(ValueError, "qualification error"):
+                            compare.cuda_report_sections(path, summary)
+                record[field] = 1e-12
             phases.pop()
             write()
             with self.assertRaisesRegex(ValueError, "memory snapshots"):

@@ -1,0 +1,9516 @@
+[
+  {
+    "circuit": {
+      "elements": [
+        {
+          "gate": "Ry",
+          "params": [
+            0.2
+          ],
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            0
+          ],
+          "gate": "X",
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            7,
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.21
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            1
+          ],
+          "gate": "X",
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            0,
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.22
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            2
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            1,
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.23
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            3
+          ],
+          "gate": "X",
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            2,
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.24
+          ],
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            4
+          ],
+          "gate": "X",
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            3,
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.25
+          ],
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            5
+          ],
+          "gate": "X",
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            4,
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.26
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            6
+          ],
+          "gate": "X",
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            5,
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.27
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            6,
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.28
+          ],
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            0
+          ],
+          "gate": "X",
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            7,
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.29000000000000004
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            1
+          ],
+          "gate": "X",
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            0,
+            1
+          ],
+          "type": "gate"
+        }
+      ],
+      "num_qubits": 8
+    },
+    "cuda_diagnostic_only": false,
+    "id": "cuda_state_8_depth10",
+    "initial": "deterministic",
+    "mode": "state",
+    "tensor": false
+  },
+  {
+    "circuit": {
+      "elements": [
+        {
+          "gate": "Ry",
+          "params": [
+            0.2
+          ],
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            0
+          ],
+          "gate": "X",
+          "targets": [
+            8
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            15,
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.21
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            1
+          ],
+          "gate": "X",
+          "targets": [
+            9
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            0,
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.22
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            2
+          ],
+          "gate": "X",
+          "targets": [
+            10
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            1,
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.23
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            3
+          ],
+          "gate": "X",
+          "targets": [
+            11
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            2,
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.24
+          ],
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            4
+          ],
+          "gate": "X",
+          "targets": [
+            12
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            3,
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.25
+          ],
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            5
+          ],
+          "gate": "X",
+          "targets": [
+            13
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            4,
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.26
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            6
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            5,
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.27
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            8
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            6,
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.28
+          ],
+          "targets": [
+            8
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            9
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            8
+          ],
+          "gate": "X",
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            7,
+            8
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.29000000000000004
+          ],
+          "targets": [
+            9
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            10
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            9
+          ],
+          "gate": "X",
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            8,
+            9
+          ],
+          "type": "gate"
+        }
+      ],
+      "num_qubits": 16
+    },
+    "cuda_diagnostic_only": false,
+    "id": "cuda_state_16_depth10",
+    "initial": "deterministic",
+    "mode": "state",
+    "tensor": false
+  },
+  {
+    "circuit": {
+      "elements": [
+        {
+          "gate": "Ry",
+          "params": [
+            0.2
+          ],
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            0
+          ],
+          "gate": "X",
+          "targets": [
+            10
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            19,
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.21
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            1
+          ],
+          "gate": "X",
+          "targets": [
+            11
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            0,
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.22
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            2
+          ],
+          "gate": "X",
+          "targets": [
+            12
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            1,
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.23
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            3
+          ],
+          "gate": "X",
+          "targets": [
+            13
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            2,
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.24
+          ],
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            4
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            3,
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.25
+          ],
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            5
+          ],
+          "gate": "X",
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            4,
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.26
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            6
+          ],
+          "gate": "X",
+          "targets": [
+            16
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            5,
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.27
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            8
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            17
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            6,
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.28
+          ],
+          "targets": [
+            8
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            9
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            8
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            7,
+            8
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.29000000000000004
+          ],
+          "targets": [
+            9
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            10
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            9
+          ],
+          "gate": "X",
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            8,
+            9
+          ],
+          "type": "gate"
+        }
+      ],
+      "num_qubits": 20
+    },
+    "cuda_diagnostic_only": false,
+    "id": "cuda_state_20_depth10",
+    "initial": "deterministic",
+    "mode": "state",
+    "tensor": false
+  },
+  {
+    "circuit": {
+      "elements": [
+        {
+          "gate": "Ry",
+          "params": [
+            0.2
+          ],
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            0
+          ],
+          "gate": "X",
+          "targets": [
+            12
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            23,
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.21
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            1
+          ],
+          "gate": "X",
+          "targets": [
+            13
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            0,
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.22
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            2
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            1,
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.23
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            3
+          ],
+          "gate": "X",
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            2,
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.24
+          ],
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            4
+          ],
+          "gate": "X",
+          "targets": [
+            16
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            3,
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.25
+          ],
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            5
+          ],
+          "gate": "X",
+          "targets": [
+            17
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            4,
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.26
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            6
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            5,
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.27
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            8
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            6,
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.28
+          ],
+          "targets": [
+            8
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            9
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            8
+          ],
+          "gate": "X",
+          "targets": [
+            20
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            7,
+            8
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.29000000000000004
+          ],
+          "targets": [
+            9
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.4
+          ],
+          "targets": [
+            10
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            9
+          ],
+          "gate": "X",
+          "targets": [
+            21
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "FSim",
+          "params": [
+            0.17,
+            -0.31
+          ],
+          "targets": [
+            8,
+            9
+          ],
+          "type": "gate"
+        }
+      ],
+      "num_qubits": 24
+    },
+    "cuda_diagnostic_only": false,
+    "id": "cuda_state_24_depth10",
+    "initial": "deterministic",
+    "mode": "state",
+    "tensor": false
+  },
+  {
+    "circuit": {
+      "elements": [
+        {
+          "gate": "Ry",
+          "params": [
+            0.1
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.2
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.3
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.101
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.198
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.299
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.102
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.196
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.298
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.103
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.194
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.297
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.104
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.192
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.296
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.105
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.19
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.295
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.106
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.188
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.294
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.107
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.186
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.293
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.108
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.184
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.292
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.109
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.182
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.291
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        }
+      ],
+      "num_qubits": 8
+    },
+    "cuda_diagnostic_only": false,
+    "id": "cuda_gradient_8_depth10",
+    "initial": "deterministic",
+    "mode": "custom_gradient",
+    "tensor": false
+  },
+  {
+    "circuit": {
+      "elements": [
+        {
+          "gate": "Ry",
+          "params": [
+            0.1
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.2
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.3
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.101
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.198
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.299
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.102
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.196
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.298
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.103
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.194
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.297
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.104
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.192
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.296
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.105
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.19
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.295
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.106
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.188
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.294
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.107
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.186
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.293
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.108
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.184
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.292
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.109
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.182
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.291
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.11
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.18000000000000002
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.29
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.111
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.17800000000000002
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.289
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.112
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.17600000000000002
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.288
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.113
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.17400000000000002
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.287
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.114
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.172
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.286
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.115
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.17
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.285
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.116
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.168
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.284
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.117
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.166
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.283
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.118
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.164
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.282
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.119
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.162
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.28099999999999997
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.12
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.16
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27999999999999997
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.121
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.158
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27899999999999997
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.122
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.15600000000000003
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27799999999999997
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.123
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.15400000000000005
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27699999999999997
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.124
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.15200000000000002
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27599999999999997
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.125
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.15000000000000002
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27499999999999997
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.126
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.14800000000000002
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27399999999999997
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.127
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.14600000000000002
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27299999999999996
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.128
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.14400000000000002
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27199999999999996
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.129
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.14200000000000002
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27099999999999996
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.13
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.14
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.131
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.138
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.269
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.132
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.136
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.268
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.133
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.134
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.267
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.134
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.132
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.266
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.135
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.13
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.265
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.136
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.128
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.264
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.137
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.126
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.263
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.138
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.124
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.262
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.139
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.122
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.261
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        }
+      ],
+      "num_qubits": 8
+    },
+    "cuda_diagnostic_only": true,
+    "id": "cuda_gradient_8_depth40",
+    "initial": "deterministic",
+    "mode": "custom_gradient",
+    "tensor": false
+  },
+  {
+    "circuit": {
+      "elements": [
+        {
+          "gate": "Ry",
+          "params": [
+            0.1
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.2
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.3
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.101
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.198
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.299
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.102
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.196
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.298
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.103
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.194
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.297
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.104
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.192
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.296
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.105
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.19
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.295
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.106
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.188
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.294
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.107
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.186
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.293
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.108
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.184
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.292
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.109
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.182
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.291
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        }
+      ],
+      "num_qubits": 16
+    },
+    "cuda_diagnostic_only": false,
+    "id": "cuda_gradient_16_depth10",
+    "initial": "deterministic",
+    "mode": "custom_gradient",
+    "tensor": false
+  },
+  {
+    "circuit": {
+      "elements": [
+        {
+          "gate": "Ry",
+          "params": [
+            0.1
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.2
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.3
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.101
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.198
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.299
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.102
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.196
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.298
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.103
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.194
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.297
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.104
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.192
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.296
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.105
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.19
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.295
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.106
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.188
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.294
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.107
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.186
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.293
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.108
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.184
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.292
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.109
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.182
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.291
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.11
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.18000000000000002
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.29
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.111
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.17800000000000002
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.289
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.112
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.17600000000000002
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.288
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.113
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.17400000000000002
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.287
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.114
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.172
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.286
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.115
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.17
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.285
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.116
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.168
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.284
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.117
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.166
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.283
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.118
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.164
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.282
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.119
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.162
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.28099999999999997
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.12
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.16
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27999999999999997
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.121
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.158
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27899999999999997
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.122
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.15600000000000003
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27799999999999997
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.123
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.15400000000000005
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27699999999999997
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.124
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.15200000000000002
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27599999999999997
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.125
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.15000000000000002
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27499999999999997
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.126
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.14800000000000002
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27399999999999997
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.127
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.14600000000000002
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27299999999999996
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.128
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.14400000000000002
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27199999999999996
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.129
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.14200000000000002
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27099999999999996
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.13
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.14
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.131
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.138
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.269
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.132
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.136
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.268
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.133
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.134
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.267
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.134
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.132
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.266
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.135
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.13
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.265
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.136
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.128
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.264
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.137
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.126
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.263
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.138
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.124
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.262
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.139
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.122
+          ],
+          "targets": [
+            15
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            15
+          ],
+          "gate": "X",
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.261
+          ],
+          "targets": [
+            14
+          ],
+          "type": "gate"
+        }
+      ],
+      "num_qubits": 16
+    },
+    "cuda_diagnostic_only": true,
+    "id": "cuda_gradient_16_depth40",
+    "initial": "deterministic",
+    "mode": "custom_gradient",
+    "tensor": false
+  },
+  {
+    "circuit": {
+      "elements": [
+        {
+          "gate": "Ry",
+          "params": [
+            0.1
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.2
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.3
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.101
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.198
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.299
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.102
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.196
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.298
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.103
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.194
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.297
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.104
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.192
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.296
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.105
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.19
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.295
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.106
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.188
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.294
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.107
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.186
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.293
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.108
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.184
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.292
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.109
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.182
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.291
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        }
+      ],
+      "num_qubits": 20
+    },
+    "cuda_diagnostic_only": false,
+    "id": "cuda_gradient_20_depth10",
+    "initial": "deterministic",
+    "mode": "custom_gradient",
+    "tensor": false
+  },
+  {
+    "circuit": {
+      "elements": [
+        {
+          "gate": "Ry",
+          "params": [
+            0.1
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.2
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.3
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.101
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.198
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.299
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.102
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.196
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.298
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.103
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.194
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.297
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.104
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.192
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.296
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.105
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.19
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.295
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.106
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.188
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.294
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.107
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.186
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.293
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.108
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.184
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.292
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.109
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.182
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.291
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.11
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.18000000000000002
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.29
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.111
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.17800000000000002
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.289
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.112
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.17600000000000002
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.288
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.113
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.17400000000000002
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.287
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.114
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.172
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.286
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.115
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.17
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.285
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.116
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.168
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.284
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.117
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.166
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.283
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.118
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.164
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.282
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.119
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.162
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.28099999999999997
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.12
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.16
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27999999999999997
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.121
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.158
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27899999999999997
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.122
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.15600000000000003
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27799999999999997
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.123
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.15400000000000005
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27699999999999997
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.124
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.15200000000000002
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27599999999999997
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.125
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.15000000000000002
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27499999999999997
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.126
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.14800000000000002
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27399999999999997
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.127
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.14600000000000002
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27299999999999996
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.128
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.14400000000000002
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27199999999999996
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.129
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.14200000000000002
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27099999999999996
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.13
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.14
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.27
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.131
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.138
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.269
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.132
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.136
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.268
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.133
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.134
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.267
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.134
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.132
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.266
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.135
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.13
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.265
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.136
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.128
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.264
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.137
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.126
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.263
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.138
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.124
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.262
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.139
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rz",
+          "params": [
+            -0.122
+          ],
+          "targets": [
+            19
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            19
+          ],
+          "gate": "X",
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        },
+        {
+          "gate": "Rx",
+          "params": [
+            0.261
+          ],
+          "targets": [
+            18
+          ],
+          "type": "gate"
+        }
+      ],
+      "num_qubits": 20
+    },
+    "cuda_diagnostic_only": true,
+    "id": "cuda_gradient_20_depth40",
+    "initial": "deterministic",
+    "mode": "custom_gradient",
+    "tensor": false
+  },
+  {
+    "circuit": {
+      "elements": [
+        {
+          "gate": "Ry",
+          "params": [
+            0.3
+          ],
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            0
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            0
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.32
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            0
+          ],
+          "gate": "X",
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            1
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            1
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.33999999999999997
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            1
+          ],
+          "gate": "X",
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            2
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            2
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.36
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            2
+          ],
+          "gate": "X",
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            3
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            3
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        }
+      ],
+      "num_qubits": 4
+    },
+    "cuda_diagnostic_only": false,
+    "id": "cuda_density_4",
+    "initial": "zero",
+    "mode": "density",
+    "tensor": true
+  },
+  {
+    "circuit": {
+      "elements": [
+        {
+          "gate": "Ry",
+          "params": [
+            0.3
+          ],
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            0
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            0
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.32
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            0
+          ],
+          "gate": "X",
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            1
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            1
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.33999999999999997
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            1
+          ],
+          "gate": "X",
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            2
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            2
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.36
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            2
+          ],
+          "gate": "X",
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            3
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            3
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.38
+          ],
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            3
+          ],
+          "gate": "X",
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            4
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            4
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.4
+          ],
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            4
+          ],
+          "gate": "X",
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            5
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            5
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        }
+      ],
+      "num_qubits": 6
+    },
+    "cuda_diagnostic_only": false,
+    "id": "cuda_density_6",
+    "initial": "zero",
+    "mode": "density",
+    "tensor": true
+  },
+  {
+    "circuit": {
+      "elements": [
+        {
+          "gate": "Ry",
+          "params": [
+            0.3
+          ],
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            0
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            0
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.32
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            0
+          ],
+          "gate": "X",
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            1
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            1
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.33999999999999997
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            1
+          ],
+          "gate": "X",
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            2
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            2
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.36
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            2
+          ],
+          "gate": "X",
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            3
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            3
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.38
+          ],
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            3
+          ],
+          "gate": "X",
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            4
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            4
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.4
+          ],
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            4
+          ],
+          "gate": "X",
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            5
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            5
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.42
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            5
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            6
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            6
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.44
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            6
+          ],
+          "gate": "X",
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            7
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            7
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        }
+      ],
+      "num_qubits": 8
+    },
+    "cuda_diagnostic_only": false,
+    "id": "cuda_density_8",
+    "initial": "zero",
+    "mode": "density",
+    "tensor": true
+  },
+  {
+    "circuit": {
+      "elements": [
+        {
+          "gate": "Ry",
+          "params": [
+            0.3
+          ],
+          "targets": [
+            0
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            0
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            0
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.32
+          ],
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            0
+          ],
+          "gate": "X",
+          "targets": [
+            1
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            1
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            1
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.33999999999999997
+          ],
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            1
+          ],
+          "gate": "X",
+          "targets": [
+            2
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            2
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            2
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.36
+          ],
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            2
+          ],
+          "gate": "X",
+          "targets": [
+            3
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            3
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            3
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.38
+          ],
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            3
+          ],
+          "gate": "X",
+          "targets": [
+            4
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            4
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            4
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.4
+          ],
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            4
+          ],
+          "gate": "X",
+          "targets": [
+            5
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            5
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            5
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.42
+          ],
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            5
+          ],
+          "gate": "X",
+          "targets": [
+            6
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            6
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            6
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.44
+          ],
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            6
+          ],
+          "gate": "X",
+          "targets": [
+            7
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            7
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            7
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.46
+          ],
+          "targets": [
+            8
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            7
+          ],
+          "gate": "X",
+          "targets": [
+            8
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            8
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            8
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        },
+        {
+          "gate": "Ry",
+          "params": [
+            0.48
+          ],
+          "targets": [
+            9
+          ],
+          "type": "gate"
+        },
+        {
+          "control_configs": [
+            true
+          ],
+          "controls": [
+            8
+          ],
+          "gate": "X",
+          "targets": [
+            9
+          ],
+          "type": "gate"
+        },
+        {
+          "channel": "AmplitudeDamping",
+          "excited_population": 0.2,
+          "gamma": 0.13,
+          "locs": [
+            9
+          ],
+          "type": "channel"
+        },
+        {
+          "channel": "Depolarizing",
+          "locs": [
+            9
+          ],
+          "n": 1,
+          "p": 0.07,
+          "type": "channel"
+        }
+      ],
+      "num_qubits": 10
+    },
+    "cuda_diagnostic_only": false,
+    "id": "cuda_density_10",
+    "initial": "zero",
+    "mode": "density",
+    "tensor": true
+  }
+]

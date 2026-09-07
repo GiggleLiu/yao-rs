@@ -1,0 +1,830 @@
+[
+  {
+    "threads": 1,
+    "id": "cuda_density_10",
+    "backend": "conversion",
+    "median_ns": 108982.90395869191,
+    "min_run_median_ns": 97632.42588652481,
+    "max_run_median_ns": 112015.90243902439,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_10",
+    "backend": "cuda_resident",
+    "median_ns": 20700092.971428573,
+    "min_run_median_ns": 18573240.14285714,
+    "max_run_median_ns": 21162306.180555556,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_10",
+    "backend": "cuda_transfer_inclusive",
+    "median_ns": 153157146.75,
+    "min_run_median_ns": 148483972.75,
+    "max_run_median_ns": 153484009.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_10",
+    "backend": "julia",
+    "median_ns": 539872789.0,
+    "min_run_median_ns": 536421856.0,
+    "max_run_median_ns": 546282654.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_10",
+    "backend": "native",
+    "median_ns": 1513946183.0,
+    "min_run_median_ns": 1509948859.5,
+    "max_run_median_ns": 1516427550.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_10",
+    "backend": "omeinsum",
+    "median_ns": 22242527.166666664,
+    "min_run_median_ns": 22058695.833333336,
+    "max_run_median_ns": 22334790.666666668,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_10",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 22389633.833333336,
+    "min_run_median_ns": 20645130.333333336,
+    "max_run_median_ns": 22462981.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_10",
+    "backend": "planning",
+    "median_ns": 2329057.625,
+    "min_run_median_ns": 2051764.263888889,
+    "max_run_median_ns": 2330295.9291666667,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_10",
+    "backend": "supported_from_arrays",
+    "median_ns": 57904380.0,
+    "min_run_median_ns": 50466961.0,
+    "max_run_median_ns": 58592782.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_10",
+    "backend": "supported_planning",
+    "median_ns": 1485053.9464285714,
+    "min_run_median_ns": 1473091.8265306123,
+    "max_run_median_ns": 1487851.2817460317,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_10",
+    "backend": "supported_warm",
+    "median_ns": 45719128.0,
+    "min_run_median_ns": 39692847.5,
+    "max_run_median_ns": 46165240.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_10",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 40504339.75,
+    "min_run_median_ns": 39509522.25,
+    "max_run_median_ns": 41368630.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_10",
+    "backend": "tenferro_warm",
+    "median_ns": 32406185.5,
+    "min_run_median_ns": 24918189.75,
+    "max_run_median_ns": 33546920.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_4",
+    "backend": "conversion",
+    "median_ns": 36720.20592638802,
+    "min_run_median_ns": 31575.338274044796,
+    "max_run_median_ns": 37165.53092145949,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_4",
+    "backend": "cuda_resident",
+    "median_ns": 2802218.966666667,
+    "min_run_median_ns": 2642045.6904761903,
+    "max_run_median_ns": 3322785.537878788,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_4",
+    "backend": "cuda_transfer_inclusive",
+    "median_ns": 7102685.125,
+    "min_run_median_ns": 4157040.935,
+    "max_run_median_ns": 7738654.199999999,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_4",
+    "backend": "julia",
+    "median_ns": 75387.0,
+    "min_run_median_ns": 74290.5,
+    "max_run_median_ns": 75756.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_4",
+    "backend": "native",
+    "median_ns": 51027.537662337665,
+    "min_run_median_ns": 50968.743055555555,
+    "max_run_median_ns": 51067.38738964687,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_4",
+    "backend": "omeinsum",
+    "median_ns": 470840.7608024691,
+    "min_run_median_ns": 470834.51203703706,
+    "max_run_median_ns": 471812.7361111111,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_4",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 209115.82214285713,
+    "min_run_median_ns": 182176.53096846846,
+    "max_run_median_ns": 218251.98964285714,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_4",
+    "backend": "planning",
+    "median_ns": 612353.7150000001,
+    "min_run_median_ns": 525733.646875,
+    "max_run_median_ns": 612999.1095238095,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_4",
+    "backend": "supported_from_arrays",
+    "median_ns": 5399993.571428571,
+    "min_run_median_ns": 5370957.641666667,
+    "max_run_median_ns": 5470144.017857143,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_4",
+    "backend": "supported_planning",
+    "median_ns": 267220.9935483871,
+    "min_run_median_ns": 265483.8615591398,
+    "max_run_median_ns": 267528.7629464286,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_4",
+    "backend": "supported_warm",
+    "median_ns": 4012695.5583333336,
+    "min_run_median_ns": 4006723.1904761903,
+    "max_run_median_ns": 4070961.861111111,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_4",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 2943187.9375,
+    "min_run_median_ns": 2917056.425,
+    "max_run_median_ns": 3130322.154761905,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_4",
+    "backend": "tenferro_warm",
+    "median_ns": 222930.93539915967,
+    "min_run_median_ns": 216206.83369408367,
+    "max_run_median_ns": 235446.80166666667,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_6",
+    "backend": "conversion",
+    "median_ns": 67112.03624338625,
+    "min_run_median_ns": 65600.15992366412,
+    "max_run_median_ns": 67803.3754032258,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_6",
+    "backend": "cuda_resident",
+    "median_ns": 5056025.1095238095,
+    "min_run_median_ns": 4174837.8777777776,
+    "max_run_median_ns": 5419594.680952381,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_6",
+    "backend": "cuda_transfer_inclusive",
+    "median_ns": 11315598.270833334,
+    "min_run_median_ns": 11248884.95,
+    "max_run_median_ns": 11622004.922222223,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_6",
+    "backend": "julia",
+    "median_ns": 1550032.0,
+    "min_run_median_ns": 1545155.0,
+    "max_run_median_ns": 1557806.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_6",
+    "backend": "native",
+    "median_ns": 1082708.0625,
+    "min_run_median_ns": 1080537.9215277778,
+    "max_run_median_ns": 1088473.09375,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_6",
+    "backend": "omeinsum",
+    "median_ns": 1129757.48125,
+    "min_run_median_ns": 1126314.5546875,
+    "max_run_median_ns": 1131020.9479166665,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_6",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 408550.8966165413,
+    "min_run_median_ns": 405421.84523809527,
+    "max_run_median_ns": 410893.3379281537,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_6",
+    "backend": "planning",
+    "median_ns": 1193172.503125,
+    "min_run_median_ns": 1189261.25,
+    "max_run_median_ns": 1195504.1666666665,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_6",
+    "backend": "supported_from_arrays",
+    "median_ns": 9624572.375,
+    "min_run_median_ns": 9623930.236111112,
+    "max_run_median_ns": 9741601.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_6",
+    "backend": "supported_planning",
+    "median_ns": 699631.7211538462,
+    "min_run_median_ns": 697513.3288461538,
+    "max_run_median_ns": 702559.9833333334,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_6",
+    "backend": "supported_warm",
+    "median_ns": 6776044.86875,
+    "min_run_median_ns": 6729331.888392857,
+    "max_run_median_ns": 6842131.611111111,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_6",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 6564585.666666666,
+    "min_run_median_ns": 6071125.85,
+    "max_run_median_ns": 6650323.025,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_6",
+    "backend": "tenferro_warm",
+    "median_ns": 461845.2952380952,
+    "min_run_median_ns": 443758.04714285716,
+    "max_run_median_ns": 463100.35722222226,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_8",
+    "backend": "conversion",
+    "median_ns": 88818.98721122113,
+    "min_run_median_ns": 88664.0275,
+    "max_run_median_ns": 89535.59239130435,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_8",
+    "backend": "cuda_resident",
+    "median_ns": 17061483.180555552,
+    "min_run_median_ns": 15716538.166666668,
+    "max_run_median_ns": 17276353.555555556,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_8",
+    "backend": "cuda_transfer_inclusive",
+    "median_ns": 31213657.5,
+    "min_run_median_ns": 28902988.214285716,
+    "max_run_median_ns": 33610964.125,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_8",
+    "backend": "julia",
+    "median_ns": 20175717.5,
+    "min_run_median_ns": 19193278.0,
+    "max_run_median_ns": 20358621.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_8",
+    "backend": "native",
+    "median_ns": 68642269.5,
+    "min_run_median_ns": 68502419.0,
+    "max_run_median_ns": 69225711.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_8",
+    "backend": "omeinsum",
+    "median_ns": 1852228.0,
+    "min_run_median_ns": 1838788.0733333332,
+    "max_run_median_ns": 1855677.3365079365,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_8",
+    "backend": "omeinsum_fixed_tree",
+    "median_ns": 1057399.33125,
+    "min_run_median_ns": 985828.1438271606,
+    "max_run_median_ns": 1093064.8333333335,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_8",
+    "backend": "planning",
+    "median_ns": 1716527.7944444444,
+    "min_run_median_ns": 1715128.4666666668,
+    "max_run_median_ns": 1718146.0083333333,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_8",
+    "backend": "supported_from_arrays",
+    "median_ns": 17076632.416666664,
+    "min_run_median_ns": 13083696.975,
+    "max_run_median_ns": 17368036.595238097,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_8",
+    "backend": "supported_planning",
+    "median_ns": 1137742.5659722222,
+    "min_run_median_ns": 1136506.5078125,
+    "max_run_median_ns": 1148117.3098958335,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_8",
+    "backend": "supported_warm",
+    "median_ns": 12483851.026785715,
+    "min_run_median_ns": 11914298.82142857,
+    "max_run_median_ns": 12679059.083333332,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_8",
+    "backend": "tenferro_from_arrays",
+    "median_ns": 11721077.6875,
+    "min_run_median_ns": 10942707.944444444,
+    "max_run_median_ns": 12312723.1375,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_density_8",
+    "backend": "tenferro_warm",
+    "median_ns": 1466474.7633928573,
+    "min_run_median_ns": 1446578.5899999999,
+    "max_run_median_ns": 1487790.55,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_16_depth10",
+    "backend": "cuda_resident",
+    "median_ns": 820455710.0,
+    "min_run_median_ns": 803895180.0,
+    "max_run_median_ns": 842132232.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_16_depth10",
+    "backend": "cuda_transfer_inclusive",
+    "median_ns": 828091739.0,
+    "min_run_median_ns": 790818471.5,
+    "max_run_median_ns": 845958599.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_16_depth10",
+    "backend": "julia",
+    "median_ns": 19477340.0,
+    "min_run_median_ns": 19451903.5,
+    "max_run_median_ns": 19678814.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_16_depth10",
+    "backend": "native",
+    "median_ns": 29251172.25,
+    "min_run_median_ns": 25250865.25,
+    "max_run_median_ns": 29348322.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_16_depth10",
+    "backend": "tenferro_circuit_ad",
+    "median_ns": 97430260.0,
+    "min_run_median_ns": 96247109.5,
+    "max_run_median_ns": 98510088.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_16_depth40",
+    "backend": "julia",
+    "median_ns": 72266419.0,
+    "min_run_median_ns": 71191351.0,
+    "max_run_median_ns": 73229710.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_16_depth40",
+    "backend": "native",
+    "median_ns": 114849583.5,
+    "min_run_median_ns": 99238350.5,
+    "max_run_median_ns": 115843975.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_16_depth40",
+    "backend": "tenferro_circuit_ad",
+    "median_ns": 280305185.5,
+    "min_run_median_ns": 244491365.5,
+    "max_run_median_ns": 281916900.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_20_depth10",
+    "backend": "cuda_resident",
+    "median_ns": 899168089.5,
+    "min_run_median_ns": 892693659.5,
+    "max_run_median_ns": 929964813.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_20_depth10",
+    "backend": "cuda_transfer_inclusive",
+    "median_ns": 910279267.5,
+    "min_run_median_ns": 897715860.0,
+    "max_run_median_ns": 979739602.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_20_depth10",
+    "backend": "julia",
+    "median_ns": 349749892.5,
+    "min_run_median_ns": 349727906.5,
+    "max_run_median_ns": 353651892.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_20_depth10",
+    "backend": "native",
+    "median_ns": 515975055.5,
+    "min_run_median_ns": 515564711.0,
+    "max_run_median_ns": 525016240.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_20_depth10",
+    "backend": "tenferro_circuit_ad",
+    "median_ns": 1477831432.5,
+    "min_run_median_ns": 1470866928.0,
+    "max_run_median_ns": 1499085428.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_20_depth40",
+    "backend": "julia",
+    "median_ns": 1347650758.0,
+    "min_run_median_ns": 1339910230.0,
+    "max_run_median_ns": 1671237617.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_20_depth40",
+    "backend": "native",
+    "median_ns": 1933287001.5,
+    "min_run_median_ns": 1930362995.0,
+    "max_run_median_ns": 1960616678.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_20_depth40",
+    "backend": "tenferro_circuit_ad",
+    "median_ns": 4554135190.0,
+    "min_run_median_ns": 4526771722.0,
+    "max_run_median_ns": 4596738587.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_8_depth10",
+    "backend": "cuda_resident",
+    "median_ns": 791352604.0,
+    "min_run_median_ns": 739652630.0,
+    "max_run_median_ns": 797157882.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_8_depth10",
+    "backend": "cuda_transfer_inclusive",
+    "median_ns": 807767395.0,
+    "min_run_median_ns": 753822772.0,
+    "max_run_median_ns": 808986581.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_8_depth10",
+    "backend": "julia",
+    "median_ns": 107419.0,
+    "min_run_median_ns": 101055.0,
+    "max_run_median_ns": 107854.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_8_depth10",
+    "backend": "native",
+    "median_ns": 107850.50041666666,
+    "min_run_median_ns": 107413.45446428572,
+    "max_run_median_ns": 108949.28639240506,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_8_depth10",
+    "backend": "tenferro_circuit_ad",
+    "median_ns": 2502142.4151785714,
+    "min_run_median_ns": 1843817.7833333332,
+    "max_run_median_ns": 2512272.291666667,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_8_depth40",
+    "backend": "julia",
+    "median_ns": 406713.0,
+    "min_run_median_ns": 362559.5,
+    "max_run_median_ns": 410287.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_8_depth40",
+    "backend": "native",
+    "median_ns": 493497.5450892857,
+    "min_run_median_ns": 493146.51230158727,
+    "max_run_median_ns": 494617.4166666666,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_gradient_8_depth40",
+    "backend": "tenferro_circuit_ad",
+    "median_ns": 3280712.291666667,
+    "min_run_median_ns": 2745801.0,
+    "max_run_median_ns": 3300148.7444444443,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_state_16_depth10",
+    "backend": "cuda_resident",
+    "median_ns": 72228419.0,
+    "min_run_median_ns": 64610038.7,
+    "max_run_median_ns": 73528562.33333334,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_state_16_depth10",
+    "backend": "cuda_transfer_inclusive",
+    "median_ns": 62008718.83333333,
+    "min_run_median_ns": 55599363.666666664,
+    "max_run_median_ns": 70613703.66666666,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_state_16_depth10",
+    "backend": "julia",
+    "median_ns": 5123399.5,
+    "min_run_median_ns": 5108405.0,
+    "max_run_median_ns": 5136745.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_state_16_depth10",
+    "backend": "native",
+    "median_ns": 5695964.642857143,
+    "min_run_median_ns": 5670597.539682539,
+    "max_run_median_ns": 5702533.78125,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_state_20_depth10",
+    "backend": "cuda_resident",
+    "median_ns": 55145812.5,
+    "min_run_median_ns": 55047396.11428571,
+    "max_run_median_ns": 58942355.67857143,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_state_20_depth10",
+    "backend": "cuda_transfer_inclusive",
+    "median_ns": 61136337.833333336,
+    "min_run_median_ns": 58911490.33333333,
+    "max_run_median_ns": 62263091.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_state_20_depth10",
+    "backend": "julia",
+    "median_ns": 81019836.0,
+    "min_run_median_ns": 80950189.0,
+    "max_run_median_ns": 81366869.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_state_20_depth10",
+    "backend": "native",
+    "median_ns": 94358648.0,
+    "min_run_median_ns": 94103724.5,
+    "max_run_median_ns": 95179091.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_state_24_depth10",
+    "backend": "cuda_resident",
+    "median_ns": 76267904.16666667,
+    "min_run_median_ns": 76180360.66666666,
+    "max_run_median_ns": 76292778.83333334,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_state_24_depth10",
+    "backend": "cuda_transfer_inclusive",
+    "median_ns": 812824838.0,
+    "min_run_median_ns": 811159610.5,
+    "max_run_median_ns": 851906153.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_state_24_depth10",
+    "backend": "julia",
+    "median_ns": 1488150033.0,
+    "min_run_median_ns": 1483636841.0,
+    "max_run_median_ns": 1489753167.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_state_24_depth10",
+    "backend": "native",
+    "median_ns": 1585271270.0,
+    "min_run_median_ns": 1578144900.5,
+    "max_run_median_ns": 1586365478.0,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_state_8_depth10",
+    "backend": "cuda_resident",
+    "median_ns": 70525109.33333334,
+    "min_run_median_ns": 70049613.83333334,
+    "max_run_median_ns": 71548640.33333334,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_state_8_depth10",
+    "backend": "cuda_transfer_inclusive",
+    "median_ns": 64550656.5,
+    "min_run_median_ns": 42954578.0,
+    "max_run_median_ns": 70896791.33333334,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_state_8_depth10",
+    "backend": "julia",
+    "median_ns": 97432.0,
+    "min_run_median_ns": 96432.5,
+    "max_run_median_ns": 104758.5,
+    "runs": 3
+  },
+  {
+    "threads": 1,
+    "id": "cuda_state_8_depth10",
+    "backend": "native",
+    "median_ns": 33097.46610696518,
+    "min_run_median_ns": 32933.126838235294,
+    "max_run_median_ns": 33147.7946494465,
+    "runs": 3
+  }
+]

@@ -1,0 +1,195 @@
+    Finished `bench` profile [optimized] target(s) in 0.17s
+     Running benches/cuda.rs (/home/jinguoliu/yao-rs-feature-work/target/release/deps/cuda-7f85494dc2512819)
+Gnuplot not found, using plotters backend
+Benchmarking cuda_state_8_depth10/cuda_resident
+Benchmarking cuda_state_8_depth10/cuda_resident: Warming up for 1.0000 s
+Benchmarking cuda_state_8_depth10/cuda_resident: Collecting 10 samples in estimated 2.3510 s (30 iterations)
+Benchmarking cuda_state_8_depth10/cuda_resident: Analyzing
+cuda_state_8_depth10/cuda_resident
+                        time:   [68.098 ms 69.671 ms 71.048 ms]
+Benchmarking cuda_state_8_depth10/cuda_transfer_inclusive
+Benchmarking cuda_state_8_depth10/cuda_transfer_inclusive: Warming up for 1.0000 s
+Benchmarking cuda_state_8_depth10/cuda_transfer_inclusive: Collecting 10 samples in estimated 2.4914 s (30 iterations)
+Benchmarking cuda_state_8_depth10/cuda_transfer_inclusive: Analyzing
+cuda_state_8_depth10/cuda_transfer_inclusive
+                        time:   [40.929 ms 47.534 ms 56.131 ms]
+Found 2 outliers among 10 measurements (20.00%)
+  2 (20.00%) high severe
+
+Benchmarking cuda_state_16_depth10/cuda_resident
+Benchmarking cuda_state_16_depth10/cuda_resident: Warming up for 1.0000 s
+Benchmarking cuda_state_16_depth10/cuda_resident: Collecting 10 samples in estimated 2.3907 s (30 iterations)
+Benchmarking cuda_state_16_depth10/cuda_resident: Analyzing
+cuda_state_16_depth10/cuda_resident
+                        time:   [73.472 ms 74.060 ms 75.083 ms]
+Found 2 outliers among 10 measurements (20.00%)
+  1 (10.00%) high mild
+  1 (10.00%) high severe
+Benchmarking cuda_state_16_depth10/cuda_transfer_inclusive
+Benchmarking cuda_state_16_depth10/cuda_transfer_inclusive: Warming up for 1.0000 s
+Benchmarking cuda_state_16_depth10/cuda_transfer_inclusive: Collecting 10 samples in estimated 2.2666 s (30 iterations)
+Benchmarking cuda_state_16_depth10/cuda_transfer_inclusive: Analyzing
+cuda_state_16_depth10/cuda_transfer_inclusive
+                        time:   [61.925 ms 62.228 ms 62.716 ms]
+Found 2 outliers among 10 measurements (20.00%)
+  1 (10.00%) high mild
+  1 (10.00%) high severe
+
+Benchmarking cuda_state_20_depth10/cuda_resident
+Benchmarking cuda_state_20_depth10/cuda_resident: Warming up for 1.0000 s
+
+Warning: Unable to complete 10 samples in 2.0s. You may wish to increase target time to 2.8s or enable flat sampling.
+Benchmarking cuda_state_20_depth10/cuda_resident: Collecting 10 samples in estimated 2.7665 s (55 iterations)
+Benchmarking cuda_state_20_depth10/cuda_resident: Analyzing
+cuda_state_20_depth10/cuda_resident
+                        time:   [54.945 ms 55.196 ms 55.496 ms]
+Benchmarking cuda_state_20_depth10/cuda_transfer_inclusive
+Benchmarking cuda_state_20_depth10/cuda_transfer_inclusive: Warming up for 1.0000 s
+Benchmarking cuda_state_20_depth10/cuda_transfer_inclusive: Collecting 10 samples in estimated 2.3311 s (30 iterations)
+Benchmarking cuda_state_20_depth10/cuda_transfer_inclusive: Analyzing
+cuda_state_20_depth10/cuda_transfer_inclusive
+                        time:   [60.737 ms 62.244 ms 63.653 ms]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) low mild
+
+Benchmarking cuda_state_24_depth10/cuda_resident
+Benchmarking cuda_state_24_depth10/cuda_resident: Warming up for 1.0000 s
+Benchmarking cuda_state_24_depth10/cuda_resident: Collecting 10 samples in estimated 2.2866 s (30 iterations)
+Benchmarking cuda_state_24_depth10/cuda_resident: Analyzing
+cuda_state_24_depth10/cuda_resident
+                        time:   [76.176 ms 76.316 ms 76.462 ms]
+Benchmarking cuda_state_24_depth10/cuda_transfer_inclusive
+Benchmarking cuda_state_24_depth10/cuda_transfer_inclusive: Warming up for 1.0000 s
+
+Warning: Unable to complete 10 samples in 2.0s. You may wish to increase target time to 8.7s.
+Benchmarking cuda_state_24_depth10/cuda_transfer_inclusive: Collecting 10 samples in estimated 8.7270 s (10 iterations)
+Benchmarking cuda_state_24_depth10/cuda_transfer_inclusive: Analyzing
+cuda_state_24_depth10/cuda_transfer_inclusive
+                        time:   [809.99 ms 822.12 ms 838.04 ms]
+Found 2 outliers among 10 measurements (20.00%)
+  2 (20.00%) high severe
+
+Benchmarking cuda_gradient_8_depth10/cuda_resident
+Benchmarking cuda_gradient_8_depth10/cuda_resident: Warming up for 1.0000 s
+
+Warning: Unable to complete 10 samples in 2.0s. You may wish to increase target time to 8.5s.
+Benchmarking cuda_gradient_8_depth10/cuda_resident: Collecting 10 samples in estimated 8.4621 s (10 iterations)
+Benchmarking cuda_gradient_8_depth10/cuda_resident: Analyzing
+cuda_gradient_8_depth10/cuda_resident
+                        time:   [782.42 ms 835.02 ms 903.40 ms]
+Found 2 outliers among 10 measurements (20.00%)
+  2 (20.00%) high severe
+Benchmarking cuda_gradient_8_depth10/cuda_transfer_inclusive
+Benchmarking cuda_gradient_8_depth10/cuda_transfer_inclusive: Warming up for 1.0000 s
+
+Warning: Unable to complete 10 samples in 2.0s. You may wish to increase target time to 7.8s.
+Benchmarking cuda_gradient_8_depth10/cuda_transfer_inclusive: Collecting 10 samples in estimated 7.8076 s (10 iterations)
+Benchmarking cuda_gradient_8_depth10/cuda_transfer_inclusive: Analyzing
+cuda_gradient_8_depth10/cuda_transfer_inclusive
+                        time:   [748.12 ms 779.68 ms 828.65 ms]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) high severe
+
+Benchmarking cuda_gradient_16_depth10/cuda_resident
+Benchmarking cuda_gradient_16_depth10/cuda_resident: Warming up for 1.0000 s
+
+Warning: Unable to complete 10 samples in 2.0s. You may wish to increase target time to 10.5s.
+Benchmarking cuda_gradient_16_depth10/cuda_resident: Collecting 10 samples in estimated 10.458 s (10 iterations)
+Benchmarking cuda_gradient_16_depth10/cuda_resident: Analyzing
+cuda_gradient_16_depth10/cuda_resident
+                        time:   [736.13 ms 790.50 ms 846.59 ms]
+Benchmarking cuda_gradient_16_depth10/cuda_transfer_inclusive
+Benchmarking cuda_gradient_16_depth10/cuda_transfer_inclusive: Warming up for 1.0000 s
+
+Warning: Unable to complete 10 samples in 2.0s. You may wish to increase target time to 11.6s.
+Benchmarking cuda_gradient_16_depth10/cuda_transfer_inclusive: Collecting 10 samples in estimated 11.649 s (10 iterations)
+Benchmarking cuda_gradient_16_depth10/cuda_transfer_inclusive: Analyzing
+cuda_gradient_16_depth10/cuda_transfer_inclusive
+                        time:   [787.45 ms 833.61 ms 895.82 ms]
+Found 2 outliers among 10 measurements (20.00%)
+  2 (20.00%) high severe
+
+Benchmarking cuda_gradient_20_depth10/cuda_resident
+Benchmarking cuda_gradient_20_depth10/cuda_resident: Warming up for 1.0000 s
+
+Warning: Unable to complete 10 samples in 2.0s. You may wish to increase target time to 10.0s.
+Benchmarking cuda_gradient_20_depth10/cuda_resident: Collecting 10 samples in estimated 10.036 s (10 iterations)
+Benchmarking cuda_gradient_20_depth10/cuda_resident: Analyzing
+cuda_gradient_20_depth10/cuda_resident
+                        time:   [909.67 ms 942.82 ms 978.83 ms]
+Benchmarking cuda_gradient_20_depth10/cuda_transfer_inclusive
+Benchmarking cuda_gradient_20_depth10/cuda_transfer_inclusive: Warming up for 1.0000 s
+
+Warning: Unable to complete 10 samples in 2.0s. You may wish to increase target time to 11.3s.
+Benchmarking cuda_gradient_20_depth10/cuda_transfer_inclusive: Collecting 10 samples in estimated 11.338 s (10 iterations)
+Benchmarking cuda_gradient_20_depth10/cuda_transfer_inclusive: Analyzing
+cuda_gradient_20_depth10/cuda_transfer_inclusive
+                        time:   [966.29 ms 1.0478 s 1.1409 s]
+
+Benchmarking cuda_density_4/cuda_resident
+Benchmarking cuda_density_4/cuda_resident: Warming up for 1.0000 s
+Benchmarking cuda_density_4/cuda_resident: Collecting 10 samples in estimated 2.1042 s (715 iterations)
+Benchmarking cuda_density_4/cuda_resident: Analyzing
+cuda_density_4/cuda_resident
+                        time:   [2.7999 ms 2.8067 ms 2.8202 ms]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) high severe
+Benchmarking cuda_density_4/cuda_transfer_inclusive
+Benchmarking cuda_density_4/cuda_transfer_inclusive: Warming up for 1.0000 s
+Benchmarking cuda_density_4/cuda_transfer_inclusive: Collecting 10 samples in estimated 2.2410 s (275 iterations)
+Benchmarking cuda_density_4/cuda_transfer_inclusive: Analyzing
+cuda_density_4/cuda_transfer_inclusive
+                        time:   [7.3191 ms 7.5296 ms 7.7867 ms]
+Found 3 outliers among 10 measurements (30.00%)
+  2 (20.00%) low severe
+  1 (10.00%) high severe
+
+Benchmarking cuda_density_6/cuda_resident
+Benchmarking cuda_density_6/cuda_resident: Warming up for 1.0000 s
+Benchmarking cuda_density_6/cuda_resident: Collecting 10 samples in estimated 2.1664 s (385 iterations)
+Benchmarking cuda_density_6/cuda_resident: Analyzing
+cuda_density_6/cuda_resident
+                        time:   [4.9679 ms 4.9965 ms 5.0542 ms]
+Benchmarking cuda_density_6/cuda_transfer_inclusive
+Benchmarking cuda_density_6/cuda_transfer_inclusive: Warming up for 1.0000 s
+Benchmarking cuda_density_6/cuda_transfer_inclusive: Collecting 10 samples in estimated 2.0753 s (165 iterations)
+Benchmarking cuda_density_6/cuda_transfer_inclusive: Analyzing
+cuda_density_6/cuda_transfer_inclusive
+                        time:   [11.543 ms 11.601 ms 11.677 ms]
+Found 3 outliers among 10 measurements (30.00%)
+  2 (20.00%) low mild
+  1 (10.00%) high severe
+
+Benchmarking cuda_density_8/cuda_resident
+Benchmarking cuda_density_8/cuda_resident: Warming up for 1.0000 s
+Benchmarking cuda_density_8/cuda_resident: Collecting 10 samples in estimated 2.5997 s (165 iterations)
+Benchmarking cuda_density_8/cuda_resident: Analyzing
+cuda_density_8/cuda_resident
+                        time:   [15.680 ms 15.715 ms 15.783 ms]
+Found 3 outliers among 10 measurements (30.00%)
+  2 (20.00%) low mild
+  1 (10.00%) high severe
+Benchmarking cuda_density_8/cuda_transfer_inclusive
+Benchmarking cuda_density_8/cuda_transfer_inclusive: Warming up for 1.0000 s
+Benchmarking cuda_density_8/cuda_transfer_inclusive: Collecting 10 samples in estimated 2.9625 s (110 iterations)
+Benchmarking cuda_density_8/cuda_transfer_inclusive: Analyzing
+cuda_density_8/cuda_transfer_inclusive
+                        time:   [28.326 ms 28.973 ms 29.217 ms]
+
+Benchmarking cuda_density_10/cuda_resident
+Benchmarking cuda_density_10/cuda_resident: Warming up for 1.0000 s
+Benchmarking cuda_density_10/cuda_resident: Collecting 10 samples in estimated 2.8991 s (165 iterations)
+Benchmarking cuda_density_10/cuda_resident: Analyzing
+cuda_density_10/cuda_resident
+                        time:   [18.560 ms 18.584 ms 18.611 ms]
+Found 2 outliers among 10 measurements (20.00%)
+  1 (10.00%) high mild
+  1 (10.00%) high severe
+Benchmarking cuda_density_10/cuda_transfer_inclusive
+Benchmarking cuda_density_10/cuda_transfer_inclusive: Warming up for 1.0000 s
+Benchmarking cuda_density_10/cuda_transfer_inclusive: Collecting 10 samples in estimated 2.9503 s (20 iterations)
+Benchmarking cuda_density_10/cuda_transfer_inclusive: Analyzing
+cuda_density_10/cuda_transfer_inclusive
+                        time:   [148.34 ms 151.88 ms 154.79 ms]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) low mild

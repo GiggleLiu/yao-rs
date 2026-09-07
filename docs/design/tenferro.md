@@ -14,8 +14,8 @@ validation targets the NVIDIA A800 host reachable as `ssh gpu`.
 | 4. Differentiable circuits | Custom losses/input-state VJP, tenferro integration, shared parameters, numerical and memory tests | Merged [PR #50](https://github.com/GiggleLiu/yao-rs/pull/50) (`bd00084`) |
 | 5. Tensor memory / observables | Polynomial expectations, omeco slicing, estimates, versioned plans and budget tests | Merged [PR #51](https://github.com/GiggleLiu/yao-rs/pull/51) (`53897a4`) |
 | 6. Noisy trajectories | Seeded Kraus sampling, uncertainty, exact-density comparisons and memory scaling | Merged [PR #52](https://github.com/GiggleLiu/yao-rs/pull/52) (`f09b722`) |
-| 7. Matrix-free exponential action | Community implementation qualification, error/convergence diagnostics, Yao comparison | Implemented; repeated CPU error/time and memory report recorded |
-| 8. GPU execution | Resident tensor/circuit/AD execution, explicit transfers, correctness and timings via `ssh gpu` | Pending |
+| 7. Matrix-free exponential action | Community implementation qualification, error/convergence diagnostics, Yao comparison | Merged [PR #53](https://github.com/GiggleLiu/yao-rs/pull/53) (`ceb372f`) |
+| 8. GPU execution | Resident tensor/circuit/AD execution, explicit transfers, correctness and timings via `ssh gpu` | Implemented in [PR #54](https://github.com/GiggleLiu/yao-rs/pull/54); hardware qualification and repeated A800 report complete |
 
 Reusable subcircuits, batching, measurement/feedforward, symbolic algebra,
 qudit state-vector simulation and distributed execution remain the roadmap's
@@ -66,7 +66,7 @@ Krylov community packages independently before committing to a maintenance
 burden. Do not add a second simulator as a runtime dependency. The full
 performance report, not a single GEMM number, will guide any default change.
 
-## GPU host reconnaissance
+## GPU host qualification
 
 The host has six A800 80 GB GPUs, a dual-socket Xeon Platinum 8378A CPU and
 approximately 1 TiB RAM. Other GPUs are in use; select an idle GPU explicitly
@@ -75,11 +75,16 @@ Use `cargo +1.96.0` (or a task-local newer toolchain) without changing other
 users' environments.
 
 The installed driver is 535.230.02, reporting CUDA 12.2, with a CUDA 12.1
-toolkit. This needs validation against tenferro's CUDA requirements. NVIDIA's
+toolkit. The qualified task-local runtime uses CUDA 12.8.90, cuBLAS 12.8.5.5,
+NVRTC 12.8.93, cuTENSOR 2.6.0.4 and NVIDIA's CUDA 12.8 forward-compatibility
+package 570.211.01. Published tenferro 0.4.0 executes complex128 circuits,
+first-order derivatives and contractions on GPU zero with these libraries.
+System drivers and other users' environments were not changed. NVIDIA's
 [forward-compatibility documentation](https://docs.nvidia.com/deploy/cuda-compatibility/latest/forward-compatibility.html)
-describes supported user-space compatibility libraries on data-center GPUs;
-evaluate that task-local option before considering any system driver change.
-Host access alone is not evidence that GPU execution works.
+describes the compatibility requirements; this measurement qualifies one
+configuration, rather than every CUDA installation. See the
+[CUDA guide](../src/cuda.md) for explicit runtime selection, transfers and
+unsupported upstream operations.
 
 ## Validation and performance record
 
@@ -412,3 +417,77 @@ These small-state circuits expose general tensor execution overhead; they do
 not measure an adaptive tenferro Krylov backend or establish a default backend
 change. The zero-state four-qubit XYZ adaptive case terminates in a
 four-dimensional invariant subspace; asymmetric inputs are tested separately.
+
+
+## CUDA circuits, differentiation and tensor contraction (PR #54)
+
+`CudaSimulator` owns one explicit tenferro CUDA runtime. `CudaCircuit` reuses
+validated unitary structure, physical bindings and existing gate generators;
+parameters and state values remain device inputs. Controls form batch axes of
+local gate tensors so each gate applies one state contraction. A gate with
+`c` controls and `k` targets stores `2^c * 4^k` local complex entries, separate
+from state and derivative storage. Preparation uploads constants, while
+execution evaluates parameter-dependent trigonometric factors on the device.
+
+`PreparedCudaContraction` validates shapes without device initialization and
+preserves each supplied omeco tree node. N-ary nodes lower left to right.
+Contraction shares CPU shape/tree validation, supports changed tensor values,
+and executes fixed-noise density networks and arbitrary qudit exports.
+Upload/download boundaries are explicit. Context validation reads borrowed
+placement metadata; it does not copy GPU values merely to inspect them.
+
+The seven opt-in hardware tests cover named/custom gates, reordered targets,
+mixed active-low/high controls, scalar phases, physical parameter bindings,
+finite-difference step sweeps, complex input VJPs, JVP/VJP pairing, custom
+losses and device parameter updates. Tensor tests cover empty/unary/hyperedge
+networks, explicit contraction order, qudits and exact Kraus noise. All pass
+on the A800 in release mode and debug mode with an 8 MiB test-thread stack.
+Regular CPU-only CI compiles all features and runs device-independent plan
+validation without initializing CUDA.
+
+The pinned upstream backend has explicit limits. Trace/diagonal forward
+contraction works, but tracked networks with repeated input labels are
+rejected because their pullback reaches a host-only padding path. Complex
+`abs` differentiation reaches an unsupported sign operation; the example uses
+the smooth real squared norm. The upstream whole-program eager prototype is
+rejected for contraction. CUDA AD uses ordinary tensor composition and retains
+intermediates; the CPU reversible operation's bounded state memory does not
+apply. GPU slicing, trajectory execution, adaptive Krylov and differentiation
+of noise parameters remain unsupported.
+
+The [A800 report](../../benchmarks/results/a800-cuda-2026-09-07/README.md)
+records three independent processes per runner: 168 CPU phase records, 66 GPU
+timing records, 42 passing Yao comparisons and all 14 isolated GPU qualification
+processes. All 84 measured source hashes match `5e825920`; later report validation
+and plotting changes have separate hashes. Full-output CUDA/native differences
+are at most `1.15e-14`, and Yao/native differences at most `6.66e-15`.
+
+At 24 qubits and ten layers, native/Yao state execution takes 1585.27/1488.15 ms,
+versus 76.27 ms resident on CUDA and 812.82 ms including transfers. At 20 qubits,
+the ten-layer loss and all gradients take 515.98/349.75 ms native/Yao,
+1477.83 ms through the CPU tenferro custom operation, and 899.17/910.28 ms
+resident/transfer-inclusive on CUDA. Smaller cases strongly favor native CPU
+kernels. The gradient fixture repeats four gates on two sites, rather than a
+full-width variational ansatz.
+
+The ten-qubit exact-noise fixture takes 1513.95/539.87 ms with direct native/Yao
+density evolution. The existing omeinsum CPU contractor takes 22.39 ms and
+prepared tenferro CPU 45.72 ms, compared with 20.70 ms resident CUDA and
+153.16 ms including transfers. At eight qubits omeinsum is substantially faster
+than CUDA. These comparisons include algorithm and boundary differences; they
+do not establish a universal GPU or tenferro advantage. Defaults remain intact.
+
+Forty-layer gradients have bounded, separately labeled GPU diagnostics and full
+output checks: first execution takes about 132–135 seconds, with one warm sample
+of 7.58–15.60 seconds per case. They are excluded from repeated GPU timing
+ratios. Observed device process memory after repeats is 856/920/1112 MiB at
+8/16/20 qubits for both depths. Allocator-inclusive snapshots do not establish
+depth-independent peak memory. Host peak RSS, process-cold context/preparation,
+runtime package hashes, hardware test logs and standalone figures are retained.
+The shared host uses one configured CPU thread, unpinned clocks/affinity and
+niceness 5; raw independent-run ranges remain part of the report.
+
+Validation: `make check-all` (668 passing workspace tests), 12 fixture tests,
+12 report tests including rejection of incomplete/non-finite qualifications,
+warnings-denied rustdoc/mdBook, and Linux/macOS feature-matrix CI. The seven
+hardware tests are opt-in so CPU-only installation remains usable.

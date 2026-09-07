@@ -31,9 +31,6 @@ def main():
     summary = json.loads((directory / "summary.json").read_text())
     lookup = {(row["id"], row["backend"]): row for row in summary}
     fig, axes = plt.subplots(1, 3, figsize=(16, 5.2))
-    backends = ["native", "julia", "cuda_resident", "cuda_transfer_inclusive"]
-    names = ["Native CPU", "Yao CPU", "GPU resident", "GPU + transfers"]
-    colors = ["#666666", "#7b3294", "#008837", "#c47b00"]
     for ax, mode, title in zip(
         axes,
         ["state", "custom_gradient", "density"],
@@ -45,15 +42,27 @@ def main():
             if case["mode"] == mode and not case.get("cuda_diagnostic_only", False)
         ]
         y = np.arange(len(selected))
+        backends = ["native", "julia", "cuda_resident", "cuda_transfer_inclusive"]
+        names = ["Native CPU", "Yao CPU", "GPU resident", "GPU + transfers"]
+        colors = ["#666666", "#7b3294", "#008837", "#c47b00"]
+        if mode != "state":
+            backends.insert(2, "tenferro_circuit_ad" if mode == "custom_gradient" else "supported_warm")
+            names.insert(2, "Tenferro CPU¹")
+            colors.insert(2, "#2166ac")
+        if mode == "density":
+            backends.insert(2, "omeinsum_fixed_tree")
+            names.insert(2, "omeinsum CPU²")
+            colors.insert(2, "#b2182b")
+        width = 0.8 / len(backends)
         for i, (backend, name, color) in enumerate(zip(backends, names, colors)):
             rows = [lookup[(case["id"], backend)] for case in selected]
             values = np.array([row["median_ns"] / 1e6 for row in rows])
             lower = values - np.array([row["min_run_median_ns"] / 1e6 for row in rows])
             upper = np.array([row["max_run_median_ns"] / 1e6 for row in rows]) - values
             ax.barh(
-                y + (i - 1.5) * 0.2,
+                y + (i - (len(backends) - 1) / 2) * width,
                 values,
-                height=0.19,
+                height=width * 0.95,
                 color=color,
                 label=name,
                 xerr=[lower, upper],
@@ -76,8 +85,9 @@ def main():
         ax.set_title(title)
         ax.invert_yaxis()
         ax.grid(axis="x", alpha=0.2)
-    axes[0].legend(fontsize=8, loc="best")
+        ax.legend(fontsize=7, loc="best")
     fig.suptitle("Complex128 · GPU and host CPU · medians and range of process medians")
+    fig.text(0.5, -0.05, "¹CPU tenferro: reversible custom AD; prepared density contraction with ndarray adaptation. GPU uses composed AD and resident tensors.\n²omeinsum CPU: supplied greedy tree, including internal preparation and array adaptation. See the report for all timing boundaries.", ha="center", fontsize=9)
     save(fig, directory, "cuda-latency")
 
     records = json.loads((directory / "cuda-qualification.json").read_text())

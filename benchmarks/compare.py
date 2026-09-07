@@ -395,7 +395,9 @@ def backend_report(directory):
         )
     lines += [
         "",
-        "Raw confidence intervals and samples are in `*-rust.json`; Julia trial samples are in `*-julia.json`. Memory logs report instrumented Rust allocations per phase and whole-process peak RSS separately. Timings from the allocation instrument are diagnostic only. See `metadata.json` and pinned manifests for reproducibility.",
+        ("Raw confidence intervals and samples are in `*-rust.json` and `*-gpu.json`; Julia trial samples are in `*-julia.json`. CUDA memory logs report device process snapshots and host peak RSS, with the measurement limits described below. See `metadata.json` and pinned manifests for reproducibility."
+         if metadata.get("suite") == "cuda" else
+         "Raw confidence intervals and samples are in `*-rust.json`; Julia trial samples are in `*-julia.json`. Memory logs report instrumented Rust allocations per phase and whole-process peak RSS separately. Timings from the allocation instrument are diagnostic only. See `metadata.json` and pinned manifests for reproducibility."),
         "",
     ]
     if approximation_errors:
@@ -612,9 +614,10 @@ def cuda_report_sections(directory, summary):
         if len(complete) != 1 or complete[0]["id"] != case["id"]:
             raise ValueError(f"Missing complete GPU qualification for {case['id']}")
         record = complete[0]
-        error = max(record["max_error"], record["transfer_max_error"])
-        if not math.isfinite(error) or error > 1e-9:
-            raise ValueError(f"GPU qualification error for {case['id']}: {error}")
+        output_errors = [record["max_error"], record["transfer_max_error"]]
+        if any(not math.isfinite(value) or not 0 <= value <= 1e-9 for value in output_errors):
+            raise ValueError(f"GPU qualification error for {case['id']}: {output_errors}")
+        error = max(output_errors)
         samples = record.get("resident_samples_ns", [])
         if not samples or any(not math.isfinite(x) or x <= 0 for x in samples):
             raise ValueError(f"Invalid GPU diagnostic samples for {case['id']}")

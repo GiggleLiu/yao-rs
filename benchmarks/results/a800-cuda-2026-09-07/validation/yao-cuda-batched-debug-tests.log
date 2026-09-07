@@ -1,0 +1,20 @@
+   Compiling yao-rs v0.1.0 (/home/jinguoliu/yao-rs-cuda)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.72s
+     Running unittests src/lib.rs (/home/jinguoliu/yao-rs-feature-work/target/debug/deps/yao_rs-d874c03f29febd7c)
+
+running 7 tests
+test cuda::tests::cuda_all_gate_families_match_native_with_ordered_targets_and_controls ... ok
+test cuda::tests::cuda_contraction_circuits_qudits_and_exact_noise_match_cpu ... ok
+test cuda::tests::cuda_contraction_unary_hyperedges_gradients_and_explicit_order ... ok
+test cuda::tests::cuda_custom_loss_and_gpu_parameter_update_preserve_residency ... ok
+test cuda::tests::cuda_empty_parameters_scalar_phase_and_many_controls ... ok
+test cuda::tests::cuda_physical_and_complex_input_derivatives_match_native_and_differences ... ok
+test cuda::tests::cuda_rejects_host_tensors_bad_shapes_and_foreign_contexts ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 292 filtered out; finished in 8.95s
+
+     Running tests/main.rs (/home/jinguoliu/yao-rs-feature-work/target/debug/deps/main-85c239daacb49773)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 212 filtered out; finished in 0.00s

@@ -1,0 +1,332 @@
+[
+  {
+    "context_ns": 284514626,
+    "device": "NVIDIA A800 80GB PCIe",
+    "first_resident_ns": 375974669,
+    "id": "cuda_state_8_depth10",
+    "input_bytes": 4416,
+    "max_error": 8.355534721610419e-17,
+    "precision": "complex128",
+    "preparation_upload_ns": 302044796,
+    "resident_samples_ns": [
+      42969496,
+      42644939,
+      42759545
+    ],
+    "status": "complete",
+    "transfer_max_error": 8.355534721610419e-17,
+    "snapshots": {
+      "context": 434110464,
+      "prepared": 562036736,
+      "first_result": 562036736,
+      "after_repeats": 562036736
+    },
+    "peak_rss_bytes": 820084736
+  },
+  {
+    "context_ns": 257359106,
+    "device": "NVIDIA A800 80GB PCIe",
+    "first_resident_ns": 480313920,
+    "id": "cuda_state_16_depth10",
+    "input_bytes": 1048896,
+    "max_error": 6.1331736667334966e-18,
+    "precision": "complex128",
+    "preparation_upload_ns": 328964195,
+    "resident_samples_ns": [
+      93934897,
+      93229270,
+      84413920
+    ],
+    "status": "complete",
+    "transfer_max_error": 6.1331736667334966e-18,
+    "snapshots": {
+      "context": 434110464,
+      "prepared": 662700032,
+      "first_result": 662700032,
+      "after_repeats": 662700032
+    },
+    "peak_rss_bytes": 893808640
+  },
+  {
+    "context_ns": 263192504,
+    "device": "NVIDIA A800 80GB PCIe",
+    "first_resident_ns": 474262439,
+    "id": "cuda_state_20_depth10",
+    "input_bytes": 16777536,
+    "max_error": 1.9303670873972785e-18,
+    "precision": "complex128",
+    "preparation_upload_ns": 390316723,
+    "resident_samples_ns": [
+      46862391,
+      43243212,
+      42569852
+    ],
+    "status": "complete",
+    "transfer_max_error": 1.9303670873972785e-18,
+    "snapshots": {
+      "context": 434110464,
+      "prepared": 595591168,
+      "first_result": 662700032,
+      "after_repeats": 662700032
+    },
+    "peak_rss_bytes": 920141824
+  },
+  {
+    "context_ns": 258232571,
+    "device": "NVIDIA A800 80GB PCIe",
+    "first_resident_ns": 520384134,
+    "id": "cuda_state_24_depth10",
+    "input_bytes": 268435776,
+    "max_error": 5.421010862427522e-19,
+    "precision": "complex128",
+    "preparation_upload_ns": 1392691008,
+    "resident_samples_ns": [
+      76010221,
+      76143447,
+      76068127
+    ],
+    "status": "complete",
+    "transfer_max_error": 5.421010862427522e-19,
+    "snapshots": {
+      "context": 434110464,
+      "prepared": 1233125376,
+      "first_result": 2239758336,
+      "after_repeats": 2239758336
+    },
+    "peak_rss_bytes": 2666840064
+  },
+  {
+    "context_ns": 264757429,
+    "device": "NVIDIA A800 80GB PCIe",
+    "first_resident_ns": 4618640234,
+    "id": "cuda_gradient_8_depth10",
+    "input_bytes": 8432,
+    "max_error": 4.440892098500626e-16,
+    "precision": "complex128",
+    "preparation_upload_ns": 316989030,
+    "resident_samples_ns": [
+      808126265,
+      601871304,
+      546965773
+    ],
+    "status": "complete",
+    "transfer_max_error": 4.440892098500626e-16,
+    "snapshots": {
+      "context": 434110464,
+      "prepared": 562036736,
+      "first_result": 897581056,
+      "after_repeats": 897581056
+    },
+    "peak_rss_bytes": 1020387328
+  },
+  {
+    "context_ns": 260070026,
+    "device": "NVIDIA A800 80GB PCIe",
+    "first_resident_ns": 131526143324,
+    "id": "cuda_gradient_8_depth40",
+    "input_bytes": 9152,
+    "max_error": 1.7763568394002505e-15,
+    "precision": "complex128",
+    "preparation_upload_ns": 349216264,
+    "resident_samples_ns": [
+      15598375857
+    ],
+    "status": "complete",
+    "transfer_max_error": 1.7763568394002505e-15,
+    "snapshots": {
+      "context": 434110464,
+      "prepared": 562036736,
+      "first_result": 897581056,
+      "after_repeats": 897581056
+    },
+    "peak_rss_bytes": 3508293632
+  },
+  {
+    "context_ns": 252826329,
+    "device": "NVIDIA A800 80GB PCIe",
+    "first_resident_ns": 4212554822,
+    "id": "cuda_gradient_16_depth10",
+    "input_bytes": 2097392,
+    "max_error": 8.43769498715119e-15,
+    "precision": "complex128",
+    "preparation_upload_ns": 294440912,
+    "resident_samples_ns": [
+      600424881,
+      491927835,
+      479506389
+    ],
+    "status": "complete",
+    "transfer_max_error": 8.43769498715119e-15,
+    "snapshots": {
+      "context": 434110464,
+      "prepared": 662700032,
+      "first_result": 964689920,
+      "after_repeats": 964689920
+    },
+    "peak_rss_bytes": 1141612544
+  },
+  {
+    "context_ns": 273416296,
+    "device": "NVIDIA A800 80GB PCIe",
+    "first_resident_ns": 135386660782,
+    "id": "cuda_gradient_16_depth40",
+    "input_bytes": 2098112,
+    "max_error": 2.886579864025407e-15,
+    "precision": "complex128",
+    "preparation_upload_ns": 380063296,
+    "resident_samples_ns": [
+      15421097467
+    ],
+    "status": "complete",
+    "transfer_max_error": 2.886579864025407e-15,
+    "snapshots": {
+      "context": 434110464,
+      "prepared": 662700032,
+      "first_result": 964689920,
+      "after_repeats": 964689920
+    },
+    "peak_rss_bytes": 3589799936
+  },
+  {
+    "context_ns": 261618061,
+    "device": "NVIDIA A800 80GB PCIe",
+    "first_resident_ns": 5020682902,
+    "id": "cuda_gradient_20_depth10",
+    "input_bytes": 33554672,
+    "max_error": 5.329070518200751e-15,
+    "precision": "complex128",
+    "preparation_upload_ns": 454435110,
+    "resident_samples_ns": [
+      529149860,
+      555752351,
+      537465153
+    ],
+    "status": "complete",
+    "transfer_max_error": 5.329070518200751e-15,
+    "snapshots": {
+      "context": 434110464,
+      "prepared": 629145600,
+      "first_result": 1132462080,
+      "after_repeats": 1166016512
+    },
+    "peak_rss_bytes": 1156837376
+  },
+  {
+    "context_ns": 258835557,
+    "device": "NVIDIA A800 80GB PCIe",
+    "first_resident_ns": 135174635926,
+    "id": "cuda_gradient_20_depth40",
+    "input_bytes": 33555392,
+    "max_error": 1.1546319456101628e-14,
+    "precision": "complex128",
+    "preparation_upload_ns": 474535388,
+    "resident_samples_ns": [
+      7584271183
+    ],
+    "status": "complete",
+    "transfer_max_error": 1.1546319456101628e-14,
+    "snapshots": {
+      "context": 434110464,
+      "prepared": 629145600,
+      "first_result": 1132462080,
+      "after_repeats": 1166016512
+    },
+    "peak_rss_bytes": 3607015424
+  },
+  {
+    "context_ns": 264963473,
+    "device": "NVIDIA A800 80GB PCIe",
+    "first_resident_ns": 7605203,
+    "id": "cuda_density_4",
+    "input_bytes": 4352,
+    "max_error": 2.220446049250313e-16,
+    "precision": "complex128",
+    "preparation_upload_ns": 312950923,
+    "resident_samples_ns": [
+      5683228,
+      5390534,
+      5367797
+    ],
+    "status": "complete",
+    "transfer_max_error": 2.220446049250313e-16,
+    "snapshots": {
+      "context": 434110464,
+      "prepared": 562036736,
+      "first_result": 562036736,
+      "after_repeats": 562036736
+    },
+    "peak_rss_bytes": 765296640
+  },
+  {
+    "context_ns": 261258183,
+    "device": "NVIDIA A800 80GB PCIe",
+    "first_resident_ns": 12745700,
+    "id": "cuda_density_6",
+    "input_bytes": 6784,
+    "max_error": 3.3306690738754696e-16,
+    "precision": "complex128",
+    "preparation_upload_ns": 312550787,
+    "resident_samples_ns": [
+      10558751,
+      10442947,
+      9991430
+    ],
+    "status": "complete",
+    "transfer_max_error": 3.3306690738754696e-16,
+    "snapshots": {
+      "context": 434110464,
+      "prepared": 562036736,
+      "first_result": 897581056,
+      "after_repeats": 897581056
+    },
+    "peak_rss_bytes": 766279680
+  },
+  {
+    "context_ns": 258803136,
+    "device": "NVIDIA A800 80GB PCIe",
+    "first_resident_ns": 15508660,
+    "id": "cuda_density_8",
+    "input_bytes": 9216,
+    "max_error": 3.885780586188048e-16,
+    "precision": "complex128",
+    "preparation_upload_ns": 327740710,
+    "resident_samples_ns": [
+      27142892,
+      27896780,
+      26369624
+    ],
+    "status": "complete",
+    "transfer_max_error": 3.885780586188048e-16,
+    "snapshots": {
+      "context": 434110464,
+      "prepared": 562036736,
+      "first_result": 964689920,
+      "after_repeats": 964689920
+    },
+    "peak_rss_bytes": 834981888
+  },
+  {
+    "context_ns": 259068623,
+    "device": "NVIDIA A800 80GB PCIe",
+    "first_resident_ns": 66938765,
+    "id": "cuda_density_10",
+    "input_bytes": 11648,
+    "max_error": 3.3306690738754696e-16,
+    "precision": "complex128",
+    "preparation_upload_ns": 315941081,
+    "resident_samples_ns": [
+      15787481,
+      14471670,
+      14313919
+    ],
+    "status": "complete",
+    "transfer_max_error": 3.3306690738754696e-16,
+    "snapshots": {
+      "context": 434110464,
+      "prepared": 562036736,
+      "first_result": 1031798784,
+      "after_repeats": 1031798784
+    },
+    "peak_rss_bytes": 841580544
+  }
+]
