@@ -1,84 +1,43 @@
-# yao-rs
+<p class="eyebrow">Quantum computing in Rust</p>
 
-Quantum circuit description and tensor network export in Rust.
+# From circuit to result.
 
-## What is yao-rs?
+<p class="lead">Build quantum circuits, simulate their behavior, and explore tensor networks. Use the <code>yao</code> command line or bring yao-rs into your Rust project.</p>
 
-yao-rs is a library for describing quantum circuits, simulating qubit registers, exporting tensor networks, and rendering circuit diagrams as SVG. It provides a type-safe circuit construction API with validation, and converts circuits into einsum representations suitable for contraction order optimization via [omeco](https://crates.io/crates/omeco).
+<a class="primary-link" href="installation.html">Get started <span aria-hidden="true">→</span></a>
 
-Ported from the Julia library [Yao.jl](https://github.com/QuantumBFS/Yao.jl), focused on the circuit description and tensor network layers.
+<figure class="circuit-preview">
+<img src="examples/generated/svg/bell.svg" alt="Bell circuit: a Hadamard gate on qubit 0 followed by a controlled X on qubit 1." />
+<figcaption>A Bell circuit. Two gates prepare an entangled pair.</figcaption>
+</figure>
 
-## Module Architecture
+## One circuit, several ways to use it
 
-<script src="https://unpkg.com/cytoscape@3.30.4/dist/cytoscape.min.js"></script>
+A circuit describes the operations in your experiment. The state holds their
+result. Keeping them separate lets you reuse a circuit with different starting
+states and choose how to evaluate it.
 
-<div id="module-graph"></div>
-<div id="mg-controls">
-  <div id="mg-legend">
-    <span class="swatch" style="background:#c8f0c8;"></span>Core
-    <span class="swatch" style="background:#c8c8f0;"></span>Simulation
-    <span class="swatch" style="background:#f0f0a0;"></span>Tensor Export
-    <span class="swatch" style="background:#e0e0e0;"></span>Utilities
-    <span class="swatch" style="background:#e0c8f0;"></span>Higher-level
-    <span class="swatch" style="background:#f0c8e0;"></span>Visualization
-  </div>
-</div>
-<div id="mg-help">
-  Click a module to expand/collapse its public items.
-  Double-click to open rustdoc.
-</div>
-<div id="mg-tooltip"></div>
+| Your goal | What you do | What you get |
+|---|---|---|
+| [Simulate an experiment](states.md) | Apply the circuit to a qubit state. | Amplitudes, probabilities, samples, or expectation values. |
+| [Work with tensor networks](tensor-networks.md) | Export the circuit, choose boundaries, then optimize and contract. | A state, overlap, or expectation value. |
+| [Show the experiment](visualization.md) | Render the circuit directly. | An SVG diagram for a notebook, paper, or presentation. |
 
-## Why Tensor Network Export?
+Create circuits with the [Rust builders](circuits.md), describe them in
+[JSON](conventions.md), or import [OpenQASM](openqasm.md). These entry points
+use the same circuit representation, so you can move between tools without
+redrawing your experiment.
 
-Tensor networks provide an alternative to full state-vector simulation. Instead of tracking the entire 2^n-dimensional state vector, a circuit is decomposed into a network of small tensors. The contraction order determines computational cost — and can make an exponential difference:
+## Choose an evaluation method
 
-| Approach | Memory | Scaling |
-|----------|--------|---------|
-| State vector | O(2^n) | Exponential in qubits |
-| Tensor network | Depends on order | Can be much better for structured circuits |
+**State-vector simulation** is a direct way to run qubit circuits and inspect
+their full output. It stores one complex amplitude per basis state, so memory
+grows as \\(2^n\\) for \\(n\\) qubits.
 
-yao-rs further optimizes by recognizing diagonal gates (Z, S, T, Phase, Rz), which reduce tensor rank in the network.
+**Tensor networks** let you target a particular result and choose the order of
+computation. Their cost depends on the circuit structure and contraction order.
+They also support circuits with higher-dimensional sites, such as qutrits;
+`ArrayReg` state-vector simulation supports qubits only.
 
-## Key Features
-
-- **Circuit Description**: `put`/`control` builder API with qudit support
-- **Tensor Network Export**: `circuit_to_einsum` with diagonal gate optimization
-- **Contraction Optimization**: Integration with [omeco](https://crates.io/crates/omeco)
-- **State-Vector Simulation**: Direct `apply` for verification
-- **SVG Visualization**: `Circuit::to_svg()` and `yao visualize` without an external renderer
-- **CLI Tool**: `yao` command for simulation, measurement, tensor export, and visualization without writing Rust code
-
-## Example
-
-```rust
-use yao_rs::{Gate, Circuit, ArrayReg, put, control, apply, circuit_to_einsum};
-
-// Build a Bell circuit
-let circuit = Circuit::new(vec![2, 2], vec![
-    put(vec![0], Gate::H),
-    control(vec![0], vec![1], Gate::X),
-]).unwrap();
-
-// Simulate
-let reg = ArrayReg::zero_state(2);
-let result = apply(&circuit, &reg);
-
-// Render as SVG
-let svg = circuit.to_svg();
-
-// Export as tensor network
-let tn = circuit_to_einsum(&circuit);
-println!("Tensors: {}, Labels: {}", tn.tensors.len(), tn.size_dict.len());
-```
-
-## Next Steps
-
-- [Getting Started](./getting-started.md) - Install yao-rs and build your first circuit
-- [CLI Tool](./cli.md) - Use the `yao` command-line tool
-- [Gates](./gates.md) - All gate variants and their properties
-- [Tensor Networks](./tensor-networks.md) - Understand the einsum export
-
-The complete [Rust API reference](./api/yao_rs/index.html) includes optional
-OpenQASM and tensor-contraction APIs. For training parameterized circuits, see
-[Differentiable Simulation](./differentiation.md).
+yao-rs is an MIT-licensed Rust port of [Yao.jl](https://github.com/QuantumBFS/Yao.jl).
+Explore the [worked examples](examples/catalog.md) to see complete experiments.

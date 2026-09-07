@@ -142,7 +142,7 @@ The full circuit JSON follows the
 and simulate:
 
 ```bash
-yao simulate bernstein-vazirani-1011.json | yao probs -
+yao simulate bernstein-vazirani-1011.json | yao probs - --json
 ```
 
 Expected output (single non-zero entry at index 11, binary `1011`):
@@ -158,14 +158,6 @@ Expected output (single non-zero entry at index 11, binary `1011`):
     0.0, 0.0, 0.0, 0.0
   ]
 }
-```
-
-**Regenerating this page's artifacts** from the repo root:
-
-```bash
-cargo build -p yao-cli --no-default-features
-YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/bernstein_vazirani.sh 1011
-python3 scripts/plot_cli_results.py docs/src/examples/generated/results docs/src/examples/generated/plots
 ```
 
 ## Interpreting the result

@@ -174,7 +174,7 @@ bit-for-bit identical. The format follows the
 and simulate:
 
 ```bash
-yao simulate grover-marked-5.json | yao probs -
+yao simulate grover-marked-5.json | yao probs - --json
 ```
 
 Expected output (peak at index 5, residual \\( 0.0078 \\) elsewhere):
@@ -194,14 +194,6 @@ Expected output (peak at index 5, residual \\( 0.0078 \\) elsewhere):
     0.007812500000000002
   ]
 }
-```
-
-**Regenerating this page's artifacts** from the repo root:
-
-```bash
-cargo build -p yao-cli --no-default-features
-YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/grover_marked_state.sh 5
-python3 scripts/plot_cli_results.py docs/src/examples/generated/results docs/src/examples/generated/plots
 ```
 
 ## Interpreting the result

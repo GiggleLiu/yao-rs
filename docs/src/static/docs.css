@@ -1,0 +1,174 @@
+/* Small overrides on mdBook: keep its navigation, search and keyboard behavior. */
+:root {
+    --sidebar-target-width: 260px;
+    --content-max-width: 780px;
+    --page-padding: 28px;
+    --menu-bar-height: 64px;
+    --mono-font: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    --docs-border: #e3e7eb;
+    --docs-muted: #596674;
+    --docs-surface: #f6f8fa;
+    --docs-active: #e7f2ef;
+}
+
+.light, .rust, html:not(.js) {
+    --bg: #ffffff;
+    --fg: #25313d;
+    --sidebar-bg: #f8fafb;
+    --sidebar-fg: #52606d;
+    --sidebar-active: #17664f;
+    --links: #17664f;
+    --icons: #64717e;
+    --icons-hover: #17664f;
+    --inline-code-color: #35465a;
+    --table-border-color: var(--docs-border);
+    --table-header-bg: var(--docs-surface);
+    --table-alternate-bg: transparent;
+    --quote-bg: var(--docs-surface);
+    --quote-border: #8bb7a9;
+    --theme-popup-bg: #ffffff;
+    --theme-popup-border: var(--docs-border);
+    --theme-hover: var(--docs-active);
+    --searchbar-bg: #ffffff;
+    --searchbar-fg: var(--fg);
+    --searchbar-border-color: var(--docs-border);
+    --searchresults-header-fg: var(--docs-muted);
+}
+
+.coal, .navy, .ayu {
+    --bg: #151b21;
+    --fg: #d3dce5;
+    --sidebar-bg: #11171c;
+    --sidebar-fg: #adb9c4;
+    --sidebar-active: #8cd6bc;
+    --links: #8cd6bc;
+    --icons: #a2b0bd;
+    --icons-hover: #8cd6bc;
+    --inline-code-color: #c9d9e8;
+    --docs-border: #303b45;
+    --docs-muted: #a2b0bd;
+    --docs-surface: #1c252e;
+    --docs-active: #233c35;
+    --table-border-color: var(--docs-border);
+    --table-header-bg: var(--docs-surface);
+    --table-alternate-bg: transparent;
+    --quote-bg: var(--docs-surface);
+    --quote-border: #527f70;
+    --theme-popup-bg: var(--docs-surface);
+    --theme-popup-border: var(--docs-border);
+    --theme-hover: var(--docs-active);
+    --searchbar-bg: var(--docs-surface);
+    --searchbar-fg: var(--fg);
+    --searchbar-border-color: var(--docs-border);
+    --searchresults-header-fg: var(--docs-muted);
+    --searchresults-li-bg: var(--docs-surface);
+}
+
+html { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+body { font-size: 16px; line-height: 1.7; }
+a, button, summary { -webkit-tap-highlight-color: transparent; }
+a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible,
+.icon-button:focus-visible {
+    outline: 2px solid var(--links);
+    outline-offset: 4px;
+    border-radius: 3px;
+}
+main { padding-block: 38px 56px; }
+.content { padding-inline: 20px; }
+.content h1 { font-size: 3.6rem; line-height: 1.18; letter-spacing: -0.035em; margin: 0 0 24px; }
+.content h2 { font-size: 2.3rem; line-height: 1.3; letter-spacing: -0.02em; margin-top: 48px; }
+.content h3 { font-size: 1.8rem; line-height: 1.4; margin-top: 32px; }
+.content h1, .content h2, .content h3 { font-weight: 650; scroll-margin-top: 88px; }
+.content p, .content ul, .content ol { margin-block: 16px; }
+.content li { margin-block: 5px; }
+.content a { text-underline-offset: 3px; }
+.content a.header { color: var(--fg); }
+.content :not(pre) > code { background: var(--docs-surface); border-radius: 4px; padding: 2px 5px; }
+.content pre { border: 1px solid var(--docs-border); border-radius: 8px; margin-block: 22px; }
+.content pre > code { padding: 18px 20px; line-height: 1.65; font-size: 13px; background: var(--docs-surface); }
+.content pre code:not(.hljs) { display: block; overflow-x: auto; }
+.content table { width: 100%; margin: 20px 0; font-size: 14px; line-height: 1.6; }
+.content table td, .content table th { padding: 12px 14px; border: 0; border-bottom: 1px solid var(--docs-border); text-align: left; }
+.content table th { font-weight: 600; }
+.content table tbody tr:nth-child(2n) { background: transparent; }
+.content blockquote { margin: 24px 0; padding: 2px 20px; border-left: 3px solid var(--quote-border); border-radius: 0 6px 6px 0; }
+.content img[src$=".svg"] { box-sizing: border-box; background: #fff; padding: 16px; border: 1px solid var(--docs-border); border-radius: 8px; }
+.circuit-diagram { display: block; overflow-x: auto; padding: 16px; background: #fff; border: 1px solid var(--docs-border); border-radius: 8px; }
+.content .circuit-diagram img { display: block; width: auto; height: auto; max-width: none; margin-inline: auto; padding: 0; border: 0; border-radius: 0; }
+.circuit-diagram:focus-visible { outline: 2px solid var(--links); outline-offset: 3px; }
+.content details { border-block: 1px solid var(--docs-border); margin-block: 24px; padding-block: 12px; }
+.content summary { cursor: pointer; font-weight: 600; }
+
+/* Navigation remains a single sidebar with a compact utility bar. */
+.sidebar { border-right: 1px solid var(--docs-border); font-size: 14px; }
+.sidebar .sidebar-scrollbox { padding: 28px 18px; }
+.chapter { line-height: 1.5; }
+.sidebar .on-this-page { display: none; }
+.chapter .part-title { color: var(--docs-muted); font-size: 11px; font-weight: 650; letter-spacing: 0.08em; text-transform: uppercase; margin: 28px 10px 10px; }
+.chapter li.chapter-item { margin-top: 2px; }
+.chapter li a { padding: 7px 10px; border-radius: 5px; }
+.chapter li a:hover { background: var(--docs-surface); }
+.chapter li a.active { color: var(--sidebar-active); background: var(--docs-active); font-weight: 600; }
+.chapter .section { padding-left: 14px; margin-left: 12px; border-left: 1px solid var(--docs-border); }
+.chapter-fold-toggle { padding: 8px; }
+#mdbook-menu-bar { border-bottom: 1px solid var(--docs-border); flex-wrap: nowrap; align-items: center; padding-inline: 14px; }
+#mdbook-menu-bar .menu-title { font-size: 18px; font-weight: 700; letter-spacing: -0.04em; flex: 1; text-align: left; margin-left: 16px; }
+.site-brand { color: var(--fg) !important; text-decoration: none; }
+.site-brand span { color: var(--docs-muted); font-size: 12px; font-weight: 400; letter-spacing: 0; margin-left: 12px; }
+#mdbook-menu-bar .right-buttons { margin-right: 4px; }
+#mdbook-menu-bar .icon-button, #mdbook-menu-bar .right-buttons a { min-width: 36px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+#mdbook-theme-list { line-height: 1.6; border-radius: 8px; padding: 6px; }
+#mdbook-theme-list li:has(#mdbook-theme-rust),
+#mdbook-theme-list li:has(#mdbook-theme-navy),
+#mdbook-theme-list li:has(#mdbook-theme-ayu) { display: none; }
+#mdbook-search-wrapper { padding-block: 24px; }
+#mdbook-searchbar { border-radius: 8px; font-size: 16px; }
+.nav-chapters { display: none; }
+.mobile-nav-chapters { border: 1px solid var(--docs-border); border-radius: 6px; background: var(--docs-surface); margin-block: 12px 32px; }
+.page-footer { display: flex; justify-content: space-between; gap: 20px; font-size: 12px; color: var(--docs-muted); border-top: 1px solid var(--docs-border); padding-top: 20px; margin-top: 48px; }
+.page-footer a { color: var(--docs-muted) !important; }
+
+/* Overview: a short introduction and an actual circuit, with no decorative graph. */
+.content .eyebrow { color: var(--links); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 18px; }
+.content .eyebrow + h1 { font-size: clamp(3.6rem, 4.5vw, 5.6rem); max-width: 650px; }
+.content .lead { font-size: 20px; color: var(--docs-muted); line-height: 1.65; max-width: 650px; }
+.content a.primary-link { display: inline-flex; align-items: center; gap: 32px; padding: 10px 18px; background: var(--links); color: var(--bg); font-size: 14px; font-weight: 600; text-decoration: none; border-radius: 6px; margin: 8px 0; }
+.content a.primary-link:hover { filter: brightness(1.1); }
+.circuit-preview { margin: 28px 0 36px; padding: 28px; text-align: center; border: 1px solid var(--docs-border); border-radius: 8px; background: #fff; }
+.content .circuit-preview img { display: block; width: auto; height: auto; max-width: 100%; margin: auto; padding: 0; border: 0; border-radius: 0; }
+.circuit-preview figcaption { font-size: 12px; color: #596674; margin-top: 16px; }
+.page-outline { display: none; }
+
+@media (min-width: 1450px) {
+    .content { max-width: 1060px; position: relative; }
+    .content main { max-width: 780px; margin-right: 230px; }
+    .page-outline { display: block; position: fixed; top: 112px; width: 170px; margin-left: 830px; max-height: calc(100vh - 150px); overflow-y: auto; font-size: 12px; line-height: 1.5; }
+    .page-outline p { font-weight: 600; color: var(--fg); margin: 0 0 14px; }
+    .page-outline a { display: block; color: var(--docs-muted); text-decoration: none; border-left: 1px solid var(--docs-border); padding: 6px 12px; }
+    .page-outline a[aria-current="location"] { color: var(--links); border-left: 2px solid var(--links); }
+}
+
+@media (max-width: 620px) {
+    :root { --page-padding: 16px; }
+    main { padding-top: 28px; }
+    .content { padding-inline: 0; }
+    .content h1 { font-size: 3.1rem; }
+    .content .lead { font-size: 18px; }
+    .content h2 { margin-top: 36px; }
+    .content table td, .content table th { padding: 10px; min-width: 100px; }
+    .content pre > code { padding: 14px; }
+    #mdbook-menu-bar { padding-inline: 0; }
+    #mdbook-menu-bar .menu-title { margin-left: 6px; }
+    .site-brand span { display: none; }
+    .circuit-preview { padding: 24px 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+}
+
+@media print {
+    .page-outline, .page-footer, .primary-link { display: none !important; }
+    .content main { max-width: none; margin: 0; }
+    main { padding: 0; }
+}

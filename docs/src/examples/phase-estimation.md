@@ -124,7 +124,7 @@ Map each gate back to a step of the general algorithm:
 then (with `yao` on PATH):
 
 ```bash
-yao simulate phase-estimation-z.json | yao probs -
+yao simulate phase-estimation-z.json | yao probs - --json
 ```
 
 Expected output:
@@ -140,15 +140,6 @@ Expected output:
     1.0000000000000004
   ]
 }
-```
-
-**Regenerating this page's artifacts** from the repo root (via the bundled
-shell workflow):
-
-```bash
-cargo build -p yao-cli --no-default-features
-YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/phase_estimation_z.sh
-python3 scripts/plot_cli_results.py docs/src/examples/generated/results docs/src/examples/generated/plots
 ```
 
 ## Interpreting the result

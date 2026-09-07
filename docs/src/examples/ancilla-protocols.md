@@ -164,8 +164,8 @@ places the ancilla in \\( |+\rangle \\); the controlled `SWAP` swaps
 [swap test](./generated/circuits/swap-test.json)) and simulate each:
 
 ```bash
-yao simulate hadamard-test-z.json | yao probs -
-yao simulate swap-test.json | yao probs -
+yao simulate hadamard-test-z.json | yao probs - --json
+yao simulate swap-test.json | yao probs - --json
 ```
 
 Expected output for Hadamard test (deterministic \\( |11\rangle \\)):
@@ -189,15 +189,6 @@ Expected output for swap test (four equal non-zero entries of \\( 0.25 \\)):
     0.0, 0.2500000000000001, 0.2500000000000001, 0.0
   ]
 }
-```
-
-**Regenerating this page's artifacts** from the repo root:
-
-```bash
-cargo build -p yao-cli --no-default-features
-YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/hadamard_test_z.sh
-YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/swap_test.sh
-python3 scripts/plot_cli_results.py docs/src/examples/generated/results docs/src/examples/generated/plots
 ```
 
 ## Interpreting the result

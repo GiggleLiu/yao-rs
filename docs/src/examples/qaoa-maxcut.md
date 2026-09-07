@@ -183,20 +183,6 @@ Expected output:
 rather than a probability distribution; the imaginary part is zero by
 construction (the expectation of a Hermitian operator is real).
 
-**Regenerating this page's artifacts** from the repo root:
-
-```bash
-cargo build -p yao-cli --no-default-features
-YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/qaoa_maxcut_line4.sh 2
-python3 scripts/plot_cli_results.py docs/src/examples/generated/results docs/src/examples/generated/plots
-```
-
-The script's shell wrapper invokes the same `yao run --op "Z(0)Z(1)"` call
-and writes the result JSON under
-`docs/src/examples/generated/results/`. The plotting script renders
-expectation files as a single bar at
-`docs/src/examples/generated/plots/qaoa-maxcut-line4-depth2-expect.svg`.
-
 ## Interpreting the result
 
 ![QAOA expectation](./generated/plots/qaoa-maxcut-line4-depth2-expect.svg)

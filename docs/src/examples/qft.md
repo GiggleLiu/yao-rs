@@ -133,10 +133,10 @@ are no final SWAPs.
 
 ## Running it
 
-**Quick run** (after `cargo install --path yao-cli`):
+**Quick run** (with the [CLI installed](../installation.md)):
 
 ```bash
-yao example qft --nqubits 4 | yao simulate - | yao probs -
+yao example qft --nqubits 4 | yao simulate - | yao probs - --json
 ```
 
 Expected output (every one of the 16 entries equal to \\( 1/16 = 0.0625 \\)):
@@ -152,16 +152,6 @@ Expected output (every one of the 16 entries equal to \\( 1/16 = 0.0625 \\)):
     0.06250000000000003, 0.06250000000000003, 0.06250000000000003, 0.06250000000000003
   ]
 }
-```
-
-**Regenerating this page's artifacts** from the repo root:
-
-```bash
-cargo build -p yao-cli --no-default-features
-target/debug/yao example qft --nqubits 4 --json --output docs/src/examples/generated/circuits/qft4.json
-target/debug/yao visualize docs/src/examples/generated/circuits/qft4.json --output docs/src/examples/generated/svg/qft4.svg
-target/debug/yao simulate docs/src/examples/generated/circuits/qft4.json | target/debug/yao probs - > docs/src/examples/generated/results/qft4-probs.json
-python3 scripts/plot_cli_results.py docs/src/examples/generated/results docs/src/examples/generated/plots
 ```
 
 ## Interpreting the result
@@ -210,15 +200,14 @@ sum of \\( 2^n \\) unit-modulus complex numbers that must add to zero —
 a sensitive, global condition that breaks if any rotation angle is
 wrong.
 
-A bundled shell workflow prepends an \\( H^{\otimes 4} \\) layer to the
-canonical QFT-4 circuit and runs it from the same CLI pipeline:
+Download the [QFT circuit with a Hadamard preparation layer](./generated/circuits/qft4-from-plus.json)
+and run it through the same pipeline:
 
 ```bash
-YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/qft_from_plus.sh 4
-python3 scripts/plot_cli_results.py docs/src/examples/generated/results docs/src/examples/generated/plots
+yao simulate qft4-from-plus.json | yao probs - --json
 ```
 
-Expected `docs/src/examples/generated/results/qft4-from-plus-probs.json`:
+Expected probabilities (rounded):
 
 ```text
 {
@@ -230,7 +219,7 @@ Expected `docs/src/examples/generated/results/qft4-from-plus-probs.json`:
 
 ![QFT-4 from |+⟩⁴ probabilities](./generated/plots/qft4-from-plus-probs.svg)
 
-All sixteen other bins are zero to machine precision. The full-register
+All fifteen other bins are zero to machine precision. The full-register
 spike at index 0 is the required fingerprint: \\( |+\rangle^{\otimes 4} \\)
 is symmetric under qubit permutation, so the omitted-SWAP convention
 does not change the result — the output is still

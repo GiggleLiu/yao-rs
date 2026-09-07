@@ -116,98 +116,6 @@ fn assert_probability(json: &Value, index: usize, expected: f64) {
     );
 }
 
-fn cli_example_pages() -> [(
-    &'static str,
-    &'static str,
-    &'static str,
-    &'static str,
-    &'static str,
-    &'static str,
-); 10] {
-    [
-        (
-            "Bell State",
-            "bell",
-            "bell.svg",
-            "bell-probs.json",
-            "bell-probs.svg",
-            "target/debug/yao example bell",
-        ),
-        (
-            "GHZ 4",
-            "ghz4",
-            "ghz4.svg",
-            "ghz4-probs.json",
-            "ghz4-probs.svg",
-            "target/debug/yao example ghz --nqubits 4",
-        ),
-        (
-            "QFT 4",
-            "qft4",
-            "qft4.svg",
-            "qft4-probs.json",
-            "qft4-probs.svg",
-            "target/debug/yao example qft --nqubits 4",
-        ),
-        (
-            "Phase Estimation Z",
-            "phase-estimation-z",
-            "phase-estimation-z.svg",
-            "phase-estimation-z-probs.json",
-            "phase-estimation-z-probs.svg",
-            "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/phase_estimation_z.sh",
-        ),
-        (
-            "Hadamard Test Z",
-            "hadamard-test-z",
-            "hadamard-test-z.svg",
-            "hadamard-test-z-probs.json",
-            "hadamard-test-z-probs.svg",
-            "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/hadamard_test_z.sh",
-        ),
-        (
-            "Swap Test",
-            "swap-test",
-            "swap-test.svg",
-            "swap-test-probs.json",
-            "swap-test-probs.svg",
-            "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/swap_test.sh",
-        ),
-        (
-            "Bernstein-Vazirani 1011",
-            "bernstein-vazirani-1011",
-            "bernstein-vazirani-1011.svg",
-            "bernstein-vazirani-1011-probs.json",
-            "bernstein-vazirani-1011-probs.svg",
-            "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/bernstein_vazirani.sh 1011",
-        ),
-        (
-            "Grover Marked State 5",
-            "grover-marked-5",
-            "grover-marked-5.svg",
-            "grover-marked-5-probs.json",
-            "grover-marked-5-probs.svg",
-            "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/grover_marked_state.sh 5",
-        ),
-        (
-            "QAOA MaxCut Line-4 Depth 2",
-            "qaoa-maxcut-line4-depth2",
-            "qaoa-maxcut-line4-depth2.svg",
-            "qaoa-maxcut-line4-depth2-expect.json",
-            "qaoa-maxcut-line4-depth2-expect.svg",
-            "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/qaoa_maxcut_line4.sh 2",
-        ),
-        (
-            "QCBM Static Depth 2",
-            "qcbm-static-depth2",
-            "qcbm-static-depth2.svg",
-            "qcbm-static-depth2-probs.json",
-            "qcbm-static-depth2-probs.svg",
-            "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/qcbm_static.sh 2",
-        ),
-    ]
-}
-
 #[test]
 fn simulate_measure_probs_and_expect_pipeline() {
     let circuit_path = temp_path("yao-bell", "json");
@@ -529,136 +437,64 @@ fn cli_plotter_removes_stale_plot_files() {
 }
 
 #[test]
-fn cli_visualization_docs_reference_commands_and_generated_artifacts() {
+fn consolidated_docs_preserve_example_downloads_and_legacy_urls() {
     let repo_root = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
-    let page_path = repo_root.join("docs/src/examples/cli-visualization.md");
-    let page = fs::read_to_string(&page_path).unwrap();
-    let page_dir = page_path.parent().unwrap();
+    let docs = repo_root.join("docs/src");
+    let summary = fs::read_to_string(docs.join("SUMMARY.md")).unwrap();
+    let catalog = fs::read_to_string(docs.join("examples/catalog.md")).unwrap();
+    let config = fs::read_to_string(repo_root.join("docs/book.toml")).unwrap();
 
-    assert!(page.contains("# CLI Example Visualization"));
-    assert!(page.contains(
+    for (legacy, canonical) in [
+        ("bell", "entangled-states"),
+        ("ghz4", "entangled-states"),
+        ("qft4", "qft"),
+        ("phase-estimation-z", "phase-estimation"),
+        ("hadamard-test-z", "ancilla-protocols"),
+        ("swap-test", "ancilla-protocols"),
+        ("bernstein-vazirani-1011", "bernstein-vazirani"),
+        ("grover-marked-5", "grover-search"),
+        ("qaoa-maxcut-line4-depth2", "qaoa-maxcut"),
+        ("qcbm-static-depth2", "qcbm"),
+    ] {
+        assert!(summary.contains(&format!("(./examples/{canonical}.md)")));
+        assert!(catalog.contains(&format!("({canonical}.md)")));
+        let redirect = format!("\"examples/cli/{legacy}.html\" = \"../{canonical}.html\"");
+        assert!(config.contains(&redirect), "missing redirect: {redirect}");
+
+        let page = fs::read_to_string(docs.join(format!("examples/{canonical}.md"))).unwrap();
+        for (directory, extension) in [("circuits", "json"), ("svg", "svg")] {
+            let asset = format!("generated/{directory}/{legacy}.{extension}");
+            assert!(
+                page.contains(&asset),
+                "missing download or diagram: {asset}"
+            );
+            assert!(
+                docs.join("examples").join(&asset).is_file(),
+                "missing asset: {asset}"
+            );
+        }
+        // Check all linked plots and results, including additional experiment variants.
+        for suffix in page.split("](./generated/").skip(1) {
+            let target = suffix.split(')').next().unwrap();
+            assert!(
+                docs.join("examples/generated").join(target).is_file(),
+                "missing generated docs link target: {target}"
+            );
+        }
+    }
+
+    let visualization = fs::read_to_string(docs.join("visualization.md")).unwrap();
+    assert!(visualization.contains("yao visualize qft.json --output qft.svg"));
+    assert!(visualization.contains("examples/generated/svg/qft4.svg"));
+    assert!(config.contains("\"examples/cli-visualization.html\" = \"../visualization.html\""));
+    assert!(config.contains("\"examples/generated/manifest.html\" = \"../catalog.html\""));
+
+    let maintenance = fs::read_to_string(docs.join("examples/README.md")).unwrap();
+    assert!(maintenance.contains(
         "YAO_BIN=target/debug/yao bash examples/cli/generate_artifacts.sh docs/src/examples/generated"
     ));
-    assert!(page.contains(
-        "python3 scripts/plot_cli_results.py docs/src/examples/generated/results docs/src/examples/generated/plots"
-    ));
-    assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/phase_estimation_z.sh"));
-    assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/hadamard_test_z.sh"));
-    assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/swap_test.sh"));
-    assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/bernstein_vazirani.sh 1011"));
-    assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/grover_marked_state.sh 5"));
-    assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/qaoa_maxcut_line4.sh 2"));
-    assert!(page.contains("YAO_BIN=target/debug/yao bash examples/cli/qcbm_static.sh 2"));
-    assert!(page.contains(
-        "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/phase_estimation_z.sh"
-    ));
-    assert!(page.contains(
-        "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/hadamard_test_z.sh"
-    ));
-    assert!(page.contains(
-        "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/swap_test.sh"
-    ));
-    assert!(page.contains(
-        "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/bernstein_vazirani.sh 1011"
-    ));
-    assert!(page.contains(
-        "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/grover_marked_state.sh 5"
-    ));
-    assert!(page.contains(
-        "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/qaoa_maxcut_line4.sh 2"
-    ));
-    assert!(page.contains(
-        "YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/qcbm_static.sh 2"
-    ));
-    assert!(page.contains("generated/svg/qft4.svg"));
-    assert!(page.contains("generated/plots/grover-marked-5-probs.svg"));
-    assert!(page.contains("generated/results/grover-marked-5-probs.json"));
-    assert!(page.contains("generated/manifest.md"));
-    assert!(page.contains("## Example Pages"));
-    for (heading, slug, _, _, _, _) in cli_example_pages() {
-        let link = format!("[{heading}](./cli/{slug}.md)");
-        assert!(page.contains(&link), "missing example-page link {link}");
-    }
-    assert!(page.contains("0.9453"));
-    assert!(page.contains("0.3074"));
-    assert!(page.contains("static zero-parameter"));
-    assert!(
-        repo_root
-            .join("docs/src/examples/generated/manifest.md")
-            .exists()
-    );
-
-    let manifest =
-        fs::read_to_string(repo_root.join("docs/src/examples/generated/manifest.md")).unwrap();
-    assert!(manifest.contains("# Generated CLI Example Artifacts"));
-    assert!(manifest.contains("python3 scripts/plot_cli_results.py"));
-    assert!(manifest.contains("[qft4.svg](./svg/qft4.svg)"));
-    assert!(manifest.contains("[grover-marked-5-probs.svg](./plots/grover-marked-5-probs.svg)"));
-    assert!(
-        manifest.contains("[grover-marked-5-probs.json](./results/grover-marked-5-probs.json)")
-    );
-
-    let mut rest = page.as_str();
-    while let Some(start) = rest.find("](./generated/") {
-        let target_start = start + 2;
-        let target_end = target_start + rest[target_start..].find(')').unwrap();
-        let target = &rest[target_start..target_end];
-        assert!(
-            page_dir.join(target.trim_start_matches("./")).exists(),
-            "missing generated docs link target: {target}"
-        );
-        rest = &rest[target_end + 1..];
-    }
-
-    let summary = fs::read_to_string(repo_root.join("docs/src/SUMMARY.md")).unwrap();
-    assert!(summary.contains("[CLI Example Visualization](./examples/cli-visualization.md)"));
-    assert!(
-        summary.contains("[Generated CLI Example Artifacts](./examples/generated/manifest.md)")
-    );
-    for (heading, slug, svg, result, plot, command) in cli_example_pages() {
-        let summary_link = format!("[{heading}](./examples/cli/{slug}.md)");
-        assert!(
-            summary.contains(&summary_link),
-            "missing summary link {summary_link}"
-        );
-
-        let example_path = repo_root.join(format!("docs/src/examples/cli/{slug}.md"));
-        let example_page = fs::read_to_string(&example_path).unwrap();
-        assert!(example_page.contains(&format!("# {heading}")));
-        assert!(example_page.contains("Run from the repository root."));
-        assert!(example_page.contains("## 1. Build the CLI"));
-        assert!(example_page.contains("## 2. Generate the artifacts"));
-        assert!(example_page.contains("## 3. Refresh the plot"));
-        assert!(example_page.contains("## 4. Inspect the generated result"));
-        assert!(example_page.contains(command), "missing command in {slug}");
-        assert!(
-            example_page.contains(
-                "python3 scripts/plot_cli_results.py docs/src/examples/generated/results docs/src/examples/generated/plots"
-            ),
-            "missing Python plot command in {slug}"
-        );
-        assert!(
-            example_page.contains(&format!(
-                "python3 -m json.tool docs/src/examples/generated/results/{result}"
-            )),
-            "missing generated JSON inspection command in {slug}"
-        );
-        assert!(example_page.contains(&format!("../generated/svg/{svg}")));
-        assert!(example_page.contains(&format!("../generated/results/{result}")));
-        assert!(example_page.contains(&format!("../generated/plots/{plot}")));
-        assert!(
-            !example_page.contains("```rust"),
-            "Rust code block found in {slug}"
-        );
-        assert!(
-            !example_page.contains("cargo run --example"),
-            "Rust example command found in {slug}"
-        );
-    }
-    let qft_page = fs::read_to_string(repo_root.join("docs/src/examples/qft.md")).unwrap();
-    assert!(!qft_page.contains("```rust"));
-    assert!(!repo_root.join("examples/cli/plot_results.py").exists());
-    assert!(repo_root.join("scripts/plot_cli_results.py").exists());
+    assert!(repo_root.join("scripts/plot_cli_results.py").is_file());
+    assert!(docs.join("examples/generated/manifest.md").is_file());
 }
 
 #[test]

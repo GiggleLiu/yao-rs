@@ -1,53 +1,15 @@
-# CLI Tool
+# CLI commands
 
-The `yao` CLI provides a command-line interface for quantum circuit simulation, measurement, and tensor network export. It wraps the yao-rs library so you can work with circuits without writing Rust code.
+Use `yao <command> --help` for command-specific options. For setup and a complete
+first run, see [installation](installation.md) and [first circuit](getting-started.md).
+Input arguments accept a file path or `-` for stdin.
 
-## Installation
-
-Install the published CLI with a current stable Rust toolchain:
-
-```bash
-cargo install yao-cli --locked
-```
-
-From a repository checkout, install the development version with
-`cargo install --path yao-cli --locked`.
-
-## Quick Start: Bell State
-
-Create a circuit file `bell.json`:
-
-```json
-{
-  "num_qubits": 2,
-  "elements": [
-    { "type": "gate", "gate": "H", "targets": [0] },
-    { "type": "gate", "gate": "CNOT", "targets": [1], "controls": [0] }
-  ]
-}
-```
-
-Inspect, simulate, and measure:
-
-```bash
-# View circuit structure
-yao inspect bell.json
-
-# Simulate and measure in one step
-yao run bell.json --shots 1024
-
-# Compute expectation value
-yao run bell.json --op "Z(0)Z(1)"
-
-# Pipeline: simulate, then compute probabilities
-yao simulate bell.json | yao probs -
-```
-
-## Output Modes
+## Output modes
 
 Structured results are human-readable in a terminal, JSON when piped.
 `simulate` and `run` without post-processing emit binary state files; QASM
-exports and SVG diagrams keep their native formats. Use `--json` to force JSON in interactive mode.
+exports use raw QASM with `--output` and a JSON wrapper when piped; SVG diagrams
+use SVG files. Use `--json` to force JSON for structured results in a terminal.
 
 ```bash
 yao inspect bell.json              # human-readable
@@ -63,9 +25,7 @@ Global flags available on all commands:
 | `-q`, `--quiet` | Suppress informational messages on stderr |
 | `-o`, `--output <file>` | Write output to file |
 
-## Commands
-
-### `yao inspect`
+## `yao inspect`
 
 Display circuit information: qubit count, gate count, gate list.
 
@@ -75,7 +35,7 @@ yao inspect circuit.json --json
 cat circuit.json | yao inspect -
 ```
 
-### `yao simulate`
+## `yao simulate`
 
 Simulate a circuit and output the resulting quantum state. Circuits containing
 noise channels automatically use a density matrix. Noiseless circuits use a
@@ -97,7 +57,7 @@ Without `--output`, writes binary state data to a pipe; writing binary data dire
 | `--input <file>` | Input state file (defaults to \|0...0>) |
 | `--output <file>` | Save state to file |
 
-### `yao measure`
+## `yao measure`
 
 Sample measurement outcomes from a state.
 
@@ -113,7 +73,7 @@ yao simulate circuit.json | yao measure - --shots 1024
 | `--seed <u64>` | Reproduce measurement samples with the same binary version |
 | `--locs <i,j,...>` | Qubit indices for partial measurement (comma-separated) |
 
-### `yao probs`
+## `yao probs`
 
 Compute the probability distribution from a state.
 
@@ -127,7 +87,7 @@ yao simulate circuit.json | yao probs -
 |--------|-------------|
 | `--locs <i,j,...>` | Qubit indices for marginal probabilities (comma-separated) |
 
-### `yao expect`
+## `yao expect`
 
 Compute the expectation value of an operator on a state.
 
@@ -139,9 +99,9 @@ yao simulate circuit.json | yao expect - --op "Z(0)"
 
 | Option | Description |
 |--------|-------------|
-| `--op <expr>` | Operator expression (see [Operator DSL](#operator-dsl) below) |
+| `--op <expr>` | Operator expression (see [operator syntax](conventions.md#operator-syntax)) |
 
-### `yao run`
+## `yao run`
 
 All-in-one command: simulate a circuit and optionally post-process, without intermediate files.
 
@@ -156,14 +116,18 @@ yao run circuit.json --output state.bin
 |--------|-------------|
 | `--input <file>` | Input state file (defaults to \|0...0>) |
 | `--shots <N>` | Simulate then measure (mutually exclusive with `--op`) |
-| `--seed <u64>` | Reproduce measurement samples; requires `--shots` |
+| `--seed <u64>` | Reproduce samples; requires `--shots` or `--trajectories` |
+| `--trajectories <N>` | Estimate `--op` with independent noisy trajectories; conflicts with `--shots` |
+| `--threads <N>` | Trajectory workers; requires `--trajectories`, and `parallel` for more than one |
 | `--op <expr>` | Simulate then compute expectation (mutually exclusive with `--shots`) |
 | `--locs <i,j,...>` | Qubit indices for partial measurement (used with `--shots`) |
-| `--output <file>` | Save final state to file |
+| `--output <file>` | Save the result; binary state when neither `--shots` nor `--op` is set |
 
-Without `--shots`, `--op`, or `--output`, the state is written to stdout in binary format.
+Without `--shots`, `--op`, or `--output`, the state is written to a pipe in
+binary format. Writing binary state data directly to a terminal is refused.
+For stochastic noise estimates, see [noisy trajectories](trajectories.md).
 
-### `yao toeinsum`
+## `yao toeinsum`
 
 Export a circuit as a tensor network in einsum format.
 
@@ -179,12 +143,12 @@ yao toeinsum circuit.json --op "Z(0)Z(1)"
 | Option | Description |
 |--------|-------------|
 | `--mode <pure\|dm\|overlap\|state>` | Export mode: `pure` (default), `dm` (density matrix), `overlap` (scalar ⟨0\|U\|0⟩), or `state` (state vector with \|0⟩ boundary tensors) |
-| `--op <expr>` | Single operator term for expectation value TN (overrides `--mode`) |
+| `--op <expr>` | Operator expression (including sums) for expectation value TN (overrides `--mode`) |
 | `--output <file>` | Save tensor network JSON to file |
 
-See [Tensor Network JSON Format](#tensor-network-json-format) below for the output schema.
+See [tensor network JSON](conventions.md#tensor-network-json) for the output schema.
 
-### `yao optimize`
+## `yao optimize`
 
 Optimize contraction order for a tensor network. Requires either the `omeinsum` or `tenferro` feature.
 
@@ -207,9 +171,19 @@ yao toeinsum circuit.json --mode overlap | yao optimize -
 | `--sc-weight <f64>` | [treesa] Space complexity weight (default: 1.0) |
 | `--rw-weight <f64>` | [treesa] Read-write complexity weight (default: 0.0) |
 
+| Memory option | Description |
+|---|---|
+| `--slice <labels>` | Fix comma-separated tensor labels, including signed bra labels |
+| `--memory-budget <bytes>` | Estimate a memory budget and choose slices when labels are not supplied |
+| `--workspace-bytes <bytes>` | Additional backend workspace reserve (default: 0) |
+| `--max-slices <N>` | Maximum slice assignments (default: 1,000,000) |
+
+Budgets are storage estimates, not process memory caps. See
+[observables and memory controls](tensor-memory.md) for sliced plans.
+
 Adds a `contraction_order` field to the TN JSON, ready for `yao contract`.
 
-### `yao contract`
+## `yao contract`
 
 Contract a pre-optimized tensor network. Requires either the `omeinsum` or `tenferro` feature. Input must have a `contraction_order` field (produced by `yao optimize`).
 
@@ -219,8 +193,8 @@ yao toeinsum circuit.json --mode overlap | yao optimize - | yao contract -
 yao toeinsum circuit.json --op "Z(0)Z(1)" | yao optimize - | yao contract -
 ```
 
-Build with `cargo install --path yao-cli --features tenferro --locked` (Rust
-1.96+) to select the tenferro CPU provider:
+With the optional [`tenferro` CLI feature](installation.md#optional-features),
+select the CPU provider with:
 
 ```bash
 yao contract tn.json --backend tenferro --threads 4
@@ -236,7 +210,7 @@ networks; other node arities require tenferro.
 This option selects tensor contraction; direct `simulate`/`run` use the existing
 register kernels.
 
-### `yao fromqasm`
+## `yao fromqasm`
 
 Convert an OpenQASM 2.0 file to circuit JSON. Requires the `qasm` feature.
 
@@ -246,7 +220,7 @@ yao fromqasm circuit.qasm --output circuit.json
 yao fromqasm circuit.qasm | yao run - --shots 1024
 ```
 
-### `yao toqasm`
+## `yao toqasm`
 
 Export a circuit as OpenQASM 2.0. Requires the `qasm` feature.
 
@@ -255,7 +229,7 @@ yao toqasm circuit.json
 yao example bell | yao toqasm -
 ```
 
-### `yao fetch`
+## `yao fetch`
 
 Download benchmark circuits from online repositories.
 
@@ -277,7 +251,7 @@ Pipeline example:
 yao fetch qasmbench grover | yao fromqasm - | yao run - --shots 100
 ```
 
-### `yao example`
+## `yao example`
 
 Print example circuit JSON to stdout.
 
@@ -293,9 +267,9 @@ Available examples: `bell`, `ghz`, `qft`.
 |--------|-------------|
 | `--nqubits <N>` | Number of qubits (default: 2 for bell, 3 for ghz, 4 for qft) |
 
-See the [Example Catalog](./examples/catalog.md) for bash scripts that reproduce algorithm examples through CLI workflows.
+See the [examples](examples/catalog.md) for complete algorithm walkthroughs.
 
-### `yao visualize`
+## `yao visualize`
 
 Render a circuit diagram as SVG.
 
@@ -305,7 +279,7 @@ yao visualize circuit.json --output circuit.svg
 
 The `--output` flag is required. Only SVG output is supported.
 
-### `yao completions`
+## `yao completions`
 
 Generate shell completion scripts.
 
@@ -315,259 +289,8 @@ yao completions bash >> ~/.bashrc
 yao completions zsh > _yao
 ```
 
-## Circuit JSON Format
 
-Circuits are specified as JSON with the following structure:
+## Data formats
 
-```json
-{
-  "num_qubits": 2,
-  "elements": [
-    { "type": "gate", "gate": "H", "targets": [0] },
-    { "type": "gate", "gate": "X", "targets": [1], "controls": [0] }
-  ]
-}
-```
-
-Each element has `"type": "gate"` and the following fields:
-
-| Field | Required | Description |
-|-------|----------|-------------|
-| `gate` | yes | Gate name (see table below) |
-| `targets` | yes | Target qubit indices |
-| `controls` | no | Control qubit indices |
-| `control_configs` | no | Control activation states (default: all `true` = active-high) |
-| `params` | no | Gate parameters (for parameterized gates) |
-| `matrix` | no | Custom gate matrix (for `Custom` gates) |
-| `is_diagonal` | no | Whether custom gate is diagonal (default: `false`) |
-| `label` | no | Display label for custom gates |
-
-### Gate Names
-
-| Name | Description | Parameters |
-|------|-------------|------------|
-| `H` | Hadamard | -- |
-| `X`, `CNOT`, `CX` | Pauli X (use with controls for CNOT) | -- |
-| `Y` | Pauli Y | -- |
-| `Z` | Pauli Z | -- |
-| `S` | Phase gate (sqrt Z) | -- |
-| `T` | T gate (fourth-root Z) | -- |
-| `SWAP` | Swap (2-qubit) | -- |
-| `SqrtX` | Square root of X | -- |
-| `SqrtY` | Square root of Y | -- |
-| `SqrtW` | Square root of W | -- |
-| `ISWAP` | iSWAP (2-qubit) | -- |
-| `Phase` | Phase shift diag(1, e^{i*theta}) | `params: [theta]` |
-| `Rx` | X rotation | `params: [theta]` |
-| `Ry` | Y rotation | `params: [theta]` |
-| `Rz` | Z rotation | `params: [theta]` |
-| `FSim` | Fermionic simulation (2-qubit) | `params: [theta, phi]` |
-| `Custom` | Arbitrary unitary | `matrix`, optional `is_diagonal`, `label` |
-
-Controlled gates are specified by adding `controls` to any gate. For example, CNOT is X with a control:
-
-```json
-{ "type": "gate", "gate": "X", "targets": [1], "controls": [0] }
-```
-
-The aliases `CNOT` and `CX` are accepted as shorthand for X (with controls expected).
-
-Annotations can be added for visualization:
-
-```json
-{ "type": "label", "text": "QFT block", "loc": 0 }
-```
-
-## Operator DSL
-
-The `--op` flag accepts operator expressions built from Pauli operators and projectors.
-
-### Supported Operators
-
-| Name | Matrix | Description |
-|------|--------|-------------|
-| `I` | identity | Identity |
-| `X` | \|0><1\| + \|1><0\| | Pauli X |
-| `Y` | -i\|0><1\| + i\|1><0\| | Pauli Y |
-| `Z` | \|0><0\| - \|1><1\| | Pauli Z |
-| `P0` | \|0><0\| | Projector onto \|0> |
-| `P1` | \|1><1\| | Projector onto \|1> |
-| `Pu` | \|0><1\| | Raising operator (sigma+) |
-| `Pd` | \|1><0\| | Lowering operator (sigma-) |
-
-### Syntax
-
-```
-term [+/- term ...]
-term = [coeff *] Op(site)[Op(site)...]
-```
-
-### Examples
-
-```bash
-# Single Pauli
-yao run circuit.json --op "Z(0)"
-
-# Multi-site product
-yao run circuit.json --op "Z(0)Z(1)"
-
-# Weighted sum
-yao run circuit.json --op "0.5*Z(0)Z(1) + 0.3*X(0)"
-
-# Difference
-yao run circuit.json --op "X(0)Y(1) - Y(0)X(1)"
-
-# Negative leading term
-yao run circuit.json --op "-Z(0)"
-
-# Projectors
-yao run circuit.json --op "P0(0) + P1(1)"
-```
-
-## State File Format
-
-State files use a compact binary format with a JSON header:
-
-```
-[JSON header line]\n
-[binary payload: Complex64 array in little-endian]
-```
-
-Header example:
-
-```json
-{"format":"yao-state-v1","num_qubits":4,"dims":[2,2,2,2],"num_elements":16,"dtype":"complex128"}
-```
-
-Each complex amplitude is stored as two 64-bit little-endian floats (real,
-imaginary), 16 bytes per element. The total binary payload size is
-`num_elements * 16` bytes. Pure states use `yao-state-v1` with `2^num_qubits`
-entries. Density matrices use `yao-density-v1` with `4^num_qubits` entries in
-row-major order; `dims` still lists one dimension per physical qubit. Headers
-must agree on qubit count, dimensions, and element count. Truncated payloads
-and non-finite values are rejected.
-
-## Tensor Network JSON Format
-
-The `toeinsum` command outputs a JSON tensor network DTO:
-
-```json
-{
-  "format": "yao-tn-v1",
-  "mode": "pure",
-  "eincode": {"input_indices": [["0"]], "output_indices": ["0"]},
-  "tensors": [{"shape": [2], "data_re": [1.0, 0.0], "data_im": [0.0, 0.0]}],
-  "size_dict": {"0": 2},
-  "contraction_order": null
-}
-```
-
-| Field | Description |
-|-------|-------------|
-| `format` | Always `"yao-tn-v1"` |
-| `mode` | Representation: `"pure"` (also used by state/overlap exports) or `"dm"` |
-| `eincode.input_indices` | Index labels for each tensor (list of lists) |
-| `eincode.output_indices` | Open indices of the final state |
-| `tensors` | Gate tensors with shape and split real/imaginary data |
-| `size_dict` | Maps each index label to its dimension |
-| `contraction_order` | Nested binary tree for contraction order (added by `yao optimize`, null otherwise) |
-
-Index labels are strings. In density matrix mode (`dm`), bra indices use negative labels (e.g., `"-1"`, `"-2"`).
-
-## Typical Workflows
-
-### Quick simulation and measurement
-
-```bash
-yao run circuit.json --shots 1024
-```
-
-### Pipeline with saved state
-
-```bash
-yao simulate circuit.json --output state.bin
-yao measure state.bin --shots 1000
-yao expect state.bin --op "X(0) + Z(0)"
-yao probs state.bin --locs 0,1
-```
-
-### Pipeline without intermediate files
-
-```bash
-yao simulate circuit.json | yao measure - --shots 1024
-yao simulate circuit.json | yao probs -
-yao simulate circuit.json | yao expect - --op "Z(0)Z(1)"
-```
-
-### Tensor network export and contraction
-
-```bash
-# Export only
-yao toeinsum circuit.json --output tn.json
-yao toeinsum circuit.json --mode dm --output tn_dm.json
-
-# Full pipeline: export → optimize → contract
-yao toeinsum circuit.json --mode state | yao optimize - | yao contract -
-yao toeinsum circuit.json --mode overlap | yao optimize - | yao contract -
-yao toeinsum circuit.json --op "Z(0)Z(1)" | yao optimize - | yao contract -
-```
-
-### OpenQASM import/export
-
-```bash
-yao fromqasm circuit.qasm | yao run - --shots 1024
-yao example bell | yao toqasm -
-yao fetch qasmbench grover | yao fromqasm - | yao run - --shots 100
-```
-
-### Circuit visualization
-
-```bash
-yao visualize circuit.json --output circuit.svg
-```
-
-## Noisy simulation
-
-Save this as `noisy.json`:
-
-```json
-{
-  "num_qubits": 1,
-  "elements": [
-    {"type": "gate", "gate": "X", "targets": [0]},
-    {"type": "channel", "channel": "AmplitudeDamping", "locs": [0],
-     "gamma": 0.25, "excited_population": 0.0}
-  ]
-}
-```
-
-```bash
-yao simulate noisy.json | yao probs - --json
-yao run noisy.json --op "Z(0)" --json
-yao run noisy.json --shots 1024 --seed 42
-```
-
-The probabilities are `[0.25, 0.75]` and the Z expectation is `-0.5`.
-Noise is applied exactly as a density-matrix channel; the seed controls only
-measurement sampling. Saved density states can be passed to a later simulation
-using `--input`. Circuit JSON and initial state cannot both use stdin at once.
-
-
-Tensor expectations support sums, including noisy circuits. Use
-`yao optimize tn.json --memory-budget 67108864` for automatic slicing, or
-`--slice=3,-3` for fixed tensor labels. Budgets are estimates in bytes, with one
-active slice; they are not process RSS caps. Sliced plans use `yao-tn-v2` and are
-validated before contraction. See the
-[memory-control guide](https://giggleliu.github.io/yao-rs/tensor-memory.html).
-
-
-### Trajectory expectation mode
-
-```bash
-yao run noisy.json --trajectories 4096 --op 'Z(0)' --seed 19
-```
-
-This returns the sample mean, componentwise standard error and covariance in a
-`mode: trajectories` result. `--trajectories` requires `--op` and conflicts with
-`--shots`; uncertainty is unavailable with one sample. Build the CLI with
-`--features parallel` to use `--threads N`. See [Noisy Trajectories](trajectories.md).
+See [formats and conventions](conventions.md) for circuit JSON, operator
+expressions, binary states, and tensor network JSON.

@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help build build-release check fmt fmt-check clippy test check-all release clean doc doc-serve doc-open rustdoc example-qft run-plan module-graph cli bench bench-gates bench-qft bench-density bench-julia bench-compare
+.PHONY: help build build-release check fmt fmt-check clippy test check-all release clean doc doc-serve doc-open rustdoc example-qft run-plan cli bench bench-gates bench-qft bench-density bench-julia bench-compare
 
 CARGO ?= cargo
 CARGO_TARGET_DIR ?= target
@@ -23,7 +23,6 @@ help:
 	@printf "  doc-serve     Serve mdBook at http://%s:%s\n" "$(DOC_HOST)" "$(DOC_PORT)"
 	@printf "  doc-open      Build and open mdBook in browser\n"
 	@printf "  rustdoc       Build Rust API docs\n"
-	@printf "  module-graph  Generate module graph JSON from rustdoc\n"
 	@printf "\nBenchmarks:\n"
 	@printf "  bench         Run all Criterion benchmarks\n"
 	@printf "  bench-gates   Run single-gate benchmarks\n"
@@ -88,10 +87,6 @@ rustdoc:
 
 example-qft:
 	$(CARGO) run --example qft
-
-module-graph:  ## Generate module graph JSON from rustdoc
-	cargo +nightly rustdoc -- -Z unstable-options --output-format json
-	python3 scripts/gen_module_graph.py
 
 cli:
 	$(CARGO) install --path yao-cli

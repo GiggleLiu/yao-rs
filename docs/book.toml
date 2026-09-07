@@ -1,6 +1,6 @@
 [book]
 title = "yao-rs"
-description = "Quantum circuit description and tensor network export"
+description = "Build quantum circuits, simulate qubit states, and explore tensor networks in Rust."
 authors = ["GiggleLiu", "Roger-luo"]
 language = "en"
 
@@ -8,13 +8,36 @@ language = "en"
 build-dir = "book"
 
 [output.html]
-default-theme = "rust"
+default-theme = "light"
 preferred-dark-theme = "coal"
 mathjax-support = true
 git-repository-url = "https://github.com/GiggleLiu/yao-rs"
-edit-url-template = "https://github.com/GiggleLiu/yao-rs/edit/main/docs/src/{path}"
-additional-css = ["src/static/module-graph.css"]
-additional-js = ["src/static/module-graph.js"]
+edit-url-template = "https://github.com/GiggleLiu/yao-rs/edit/main/docs/{path}"
+additional-css = ["src/static/docs.css"]
+additional-js = ["src/static/docs.js"]
+no-section-label = true
+
+[output.html.fold]
+enable = true
+level = 0
+
+[output.html.print]
+enable = false
 
 [output.html.search]
 enable = true
+
+[output.html.redirect]
+"comparison.html" = "introduction.html"
+"examples/cli-visualization.html" = "../visualization.html"
+"examples/generated/manifest.html" = "../catalog.html"
+"examples/cli/bell.html" = "../entangled-states.html"
+"examples/cli/ghz4.html" = "../entangled-states.html"
+"examples/cli/qft4.html" = "../qft.html"
+"examples/cli/phase-estimation-z.html" = "../phase-estimation.html"
+"examples/cli/hadamard-test-z.html" = "../ancilla-protocols.html"
+"examples/cli/swap-test.html" = "../ancilla-protocols.html"
+"examples/cli/bernstein-vazirani-1011.html" = "../bernstein-vazirani.html"
+"examples/cli/grover-marked-5.html" = "../grover-search.html"
+"examples/cli/qaoa-maxcut-line4-depth2.html" = "../qaoa-maxcut.html"
+"examples/cli/qcbm-static-depth2.html" = "../qcbm.html"

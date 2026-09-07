@@ -1,151 +1,83 @@
-# Quantum Registers
+# Simulation & measurement
 
-An `ArrayReg` is a qubit-only register backed by a dense state vector (`Vec<Complex64>`). It is the primary type for state-vector simulation in yao-rs.
+Simulation applies a circuit to an initial state. You can then inspect exact
+probabilities, sample measurements, or compute an observable's expectation value.
 
-## Structure
+## Run from the CLI
 
-`ArrayReg` has two fields:
+`yao run` starts from the all-zero state and simulates a circuit before sampling:
 
-- **`state`** (public): a `Vec<Complex64>` of length `2^n` holding the amplitudes.
-- **`nbits`** (private): the number of qubits, accessible via `nqubits()`.
-
-## Creating Registers
-
-### Zero State
-
-`zero_state(n)` creates the computational basis state |00...0> on `n` qubits.
-
-```rust
-use yao_rs::ArrayReg;
-
-let reg = ArrayReg::zero_state(3);
-assert_eq!(reg.nqubits(), 3);
-assert_eq!(reg.state.len(), 8); // 2^3
-assert_eq!(reg.state[0].re, 1.0); // |000> has amplitude 1
+```bash
+yao run circuit.json --shots 1024
 ```
 
-### Product State
+To reuse the resulting state across several queries, save it once:
 
-`product_state` creates a computational basis state from a `BitStr<N>`. The const generic `N` determines the number of qubits.
-
-```rust
-use yao_rs::ArrayReg;
-use bitbasis::BitStr;
-
-// |01> on 2 qubits: bit string value 1 means qubit 1 is |1>
-let reg = ArrayReg::product_state(BitStr::<2>::new(0b01));
-assert_eq!(reg.state[1].re, 1.0); // index 1 = |01>
-
-// |10> on 2 qubits: bit string value 2 means qubit 0 is |1>
-let reg = ArrayReg::product_state(BitStr::<2>::new(0b10));
-assert_eq!(reg.state[2].re, 1.0); // index 2 = |10>
+```bash
+yao simulate circuit.json --output state.bin
+yao probs state.bin
+yao measure state.bin --shots 1024
+yao expect state.bin --op "Z(0)Z(1)"
 ```
 
-### Uniform State
+`probs` computes the distribution without sampling noise. `measure` draws random
+outcomes. `expect` evaluates an [operator expression](conventions.md#operator-syntax).
+Add `--locs 0,1` to `probs` or `measure` to select a subset of qubits.
 
-`uniform_state(n)` creates the equal superposition state where every basis state has amplitude `1/sqrt(2^n)`.
+To start from a saved state, pass `--input state.bin` to `yao simulate`.
+See the [command reference](cli.md) for all options.
 
-```rust
-use yao_rs::ArrayReg;
+## Simulate from Rust
 
-let reg = ArrayReg::uniform_state(2);
-// All 4 amplitudes equal 1/sqrt(4) = 0.5
-for amp in reg.state_vec() {
-    assert!((amp.re - 0.5).abs() < 1e-12);
-}
-```
-
-### GHZ State
-
-`ghz_state(n)` creates the Greenberger-Horne-Zeilinger state `(|00...0> + |11...1>) / sqrt(2)`.
+`ArrayReg` stores a qubit state as complex amplitudes. `apply` returns a new
+register; `apply_inplace` updates an existing one.
 
 ```rust
-use yao_rs::ArrayReg;
+use yao_rs::{ArrayReg, Circuit, Gate, apply, probs, put};
 
-let reg = ArrayReg::ghz_state(3);
-let amp = 1.0 / 2.0_f64.sqrt();
-assert!((reg.state[0].re - amp).abs() < 1e-12);  // |000>
-assert!((reg.state[7].re - amp).abs() < 1e-12);  // |111>
+let circuit = Circuit::qubits(1, vec![put(vec![0], Gate::H)]).unwrap();
+let initial = ArrayReg::zero_state(1);
+let result = apply(&circuit, &initial);
+let probabilities = probs(&result, None);
+assert!((probabilities[0] - 0.5).abs() < 1e-12);
 ```
 
-### From a Raw Vector
+Choose an initial state to match your experiment:
 
-`from_vec(nbits, data)` wraps an existing amplitude vector. The vector length must be exactly `2^nbits`.
+| Constructor | Initial state |
+|---|---|
+| `ArrayReg::zero_state(n)` | All qubits in 0 |
+| `ArrayReg::uniform_state(n)` | Equal superposition of all basis states |
+| `ArrayReg::ghz_state(n)` | Equal superposition of all-zero and all-one states |
+| `ArrayReg::product_state(bitstr)` | A basis state described by a `BitStr<N>` |
+| `ArrayReg::from_vec(n, amplitudes)` | Your own vector of exactly `2^n` amplitudes |
+| `ArrayReg::rand_state(n, rng)` | A normalized random state |
 
-```rust
-use yao_rs::ArrayReg;
-use num_complex::Complex64;
+`from_vec` checks the vector length; supply normalized amplitudes or call
+`normalize()` before interpreting the state as probabilities.
+Use `state_vec()` to inspect amplitudes and `nqubits()` for the register size.
+The shared [bit ordering convention](conventions.md#bit-ordering) defines which
+basis state each array index represents.
 
-let amps = vec![
-    Complex64::new(1.0 / 2.0_f64.sqrt(), 0.0),
-    Complex64::new(1.0 / 2.0_f64.sqrt(), 0.0),
-];
-let reg = ArrayReg::from_vec(1, amps);
-assert_eq!(reg.nqubits(), 1);
-```
+## Measure and post-process
 
-### Random State
+The Rust [`measure_with_postprocess`](api/yao_rs/measure/fn.measure_with_postprocess.html)
+function supports sampling without changing the register, resetting measured
+qubits, or removing them. Select the behavior with `PostProcess`.
+Use [`expect_arrayreg`](api/yao_rs/expect/fn.expect_arrayreg.html) with an
+`OperatorPolynomial` to compute an expectation value directly.
 
-`rand_state(nbits, rng)` generates a normalized state with random complex amplitudes.
+## Mixed states and noise
 
-```rust
-use yao_rs::ArrayReg;
-use rand::rngs::StdRng;
-use rand::SeedableRng;
+Use [`DensityMatrix`](api/yao_rs/density_matrix/struct.DensityMatrix.html) for
+mixed states and noise channels. The CLI automatically uses a density matrix when a circuit contains noise
+channels or its input is already a density matrix. `probs`, `measure`, and
+`expect` accept both saved representations.
 
-let mut rng = StdRng::seed_from_u64(42);
-let reg = ArrayReg::rand_state(3, &mut rng);
-assert!((reg.norm() - 1.0).abs() < 1e-12); // always normalized
-```
+For streaming observable estimates with uncertainty, use [noisy trajectories](trajectories.md).
+Other guides cover [Hamiltonian evolution](hamiltonian.md),
+[differentiable simulation](differentiation.md), and [CUDA execution](cuda.md).
 
-## Bit Ordering
-
-yao-rs uses **big-endian** ordering: qubit 0 is the most significant bit. For a 2-qubit register the basis states map to vector indices as follows:
-
-| State   | Index |
-|---------|-------|
-| \|00\>  | 0     |
-| \|01\>  | 1     |
-| \|10\>  | 2     |
-| \|11\>  | 3     |
-
-So applying an X gate to qubit 0 on state |00> produces |10> (index 2), not |01>.
-
-## Utility Methods
-
-| Method | Description |
-|--------|-------------|
-| `nqubits()` | Number of qubits |
-| `state_vec()` | Borrow the amplitude slice |
-| `state_vec_mut()` | Mutably borrow the amplitude slice |
-| `norm()` | L2 norm of the state vector |
-| `normalize()` | Normalize the state in place |
-| `fidelity(&other)` | Squared overlap `|<self|other>|^2` between two registers |
-
-## Applying Circuits
-
-Use `apply` to evolve a register through a circuit, returning a new `ArrayReg`. Use `apply_inplace` to modify a register in place.
-
-```rust
-use yao_rs::{ArrayReg, Circuit, Gate, put, apply, apply_inplace};
-
-// Build a 2-qubit circuit that flips qubit 0
-let circuit = Circuit::new(vec![2, 2], vec![put(vec![0], Gate::X)]).unwrap();
-
-// apply returns a new register
-let reg = ArrayReg::zero_state(2);
-let result = apply(&circuit, &reg);
-// X on qubit 0: |00> -> |10> (index 2)
-assert_eq!(result.state[2].re, 1.0);
-
-// apply_inplace modifies the register directly
-let mut reg = ArrayReg::zero_state(2);
-apply_inplace(&circuit, &mut reg);
-assert_eq!(reg.state[2].re, 1.0);
-```
-
-The simulation backend operates directly on the state vector using per-gate instruction kernels -- it never constructs the full `2^n x 2^n` unitary matrix.
-
-## Qudit Support
-
-`ArrayReg` is qubit-only (every site has dimension 2). For circuits with non-qubit dimensions (qutrits, etc.), yao-rs supports construction and tensor-network export via `circuit_to_einsum`, but direct state-vector simulation with `apply` requires all dimensions to be 2.
+State-vector simulation is qubit-only and stores `2^n` complex amplitudes.
+For larger structured circuits or higher-dimensional sites, consider
+[tensor networks](tensor-networks.md).
