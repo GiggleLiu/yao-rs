@@ -160,7 +160,7 @@ BENCH_ENV = benchmarks/regression/environment
 
 benchmark-setup:
 	$(UV) sync --frozen --project $(BENCH_ENV)
-	$(JULIA) --project=$(BENCH_ENV)/julia -e 'using Pkg; Pkg.instantiate(); using Yao, BenchmarkTools'
+	$(JULIA) --startup-file=no --project=$(BENCH_ENV)/julia -e 'using Pkg; Pkg.instantiate(); using Yao, BenchmarkTools'
 
 benchmark:
 	$(UV) run --frozen --project $(BENCH_ENV) python benchmarks/regression/run.py "$(BENCH_OUT)" --profile "$(BENCH_PROFILE)" --julia "$(JULIA)"

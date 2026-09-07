@@ -42,6 +42,26 @@ class QualificationTests(unittest.TestCase):
             row['run_medians_ns'] = row['run_medians_ns'][:1]
         self.assertEqual(qualify(doc)['status'], 'fail')
 
+    def test_prepared_execution_is_available_but_preparation_is_not_a_speed_result(self):
+        doc = fixture()
+        doc['records'][0]['run_medians_ns'] = [120]*6
+        for phase, time in [('fused2_prepare', 1), ('fused2_execute', 60)]:
+            doc['records'].append(dict(case='qft', backend='native', threads=1, phase=phase,
+                                       correctness='passed', run_medians_ns=[time]*6))
+            doc['expected_records'].append(['qft', 'native', 1, phase])
+        result = qualify(doc)
+        self.assertEqual(result['status'], 'pass')
+        self.assertTrue(all(row['native_mode'] == 'fused2_execute' for row in result['records']))
+        doc['records'][-1]['run_medians_ns'] = [140]*6
+        self.assertEqual(qualify(doc)['status'], 'fail')
+
+    def test_prepared_only_run_cannot_hide_missing_direct_execution(self):
+        doc = fixture()
+        doc['records'][0]['phase'] = 'fused2_execute'
+        doc['expected_records'][0][-1] = 'fused2_execute'
+        with self.assertRaisesRegex(ValueError, 'native'):
+            qualify(doc)
+
     def test_invalid_tolerance_rejected(self):
         for tolerance in [-1, float('nan'), float('inf')]:
             with self.subTest(tolerance=tolerance), self.assertRaises(ValueError):

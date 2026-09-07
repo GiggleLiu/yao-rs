@@ -36,7 +36,7 @@ pub(crate) fn dispatch_arrayreg_gate(nbits: usize, state: &mut [Complex64], pg: 
             crate::instruct_qubit::instruct_swap(state, nbits, &pg.target_locs);
         }
         Gate::SWAP => {
-            let gate_flat: Vec<Complex64> = gate.matrix().iter().copied().collect();
+            let gate_flat = gate.matrix_row_major();
             crate::instruct_qubit::instruct_2q_controlled(
                 state,
                 nbits,
@@ -58,13 +58,8 @@ pub(crate) fn dispatch_arrayreg_gate(nbits: usize, state: &mut [Complex64], pg: 
             }
         }
         gate if gate.is_diagonal() && pg.target_locs.len() == 2 => {
-            let matrix = gate.matrix();
-            let diag = [
-                matrix[[0, 0]],
-                matrix[[1, 1]],
-                matrix[[2, 2]],
-                matrix[[3, 3]],
-            ];
+            let matrix = gate.matrix_row_major();
+            let diag = [matrix[0], matrix[5], matrix[10], matrix[15]];
             if has_controls {
                 crate::instruct_qubit::instruct_2q_diag_controlled(
                     state,
@@ -90,7 +85,7 @@ pub(crate) fn dispatch_arrayreg_gate(nbits: usize, state: &mut [Complex64], pg: 
             }
         }
         _ if pg.target_locs.len() == 2 => {
-            let gate_flat: Vec<Complex64> = gate.matrix().iter().copied().collect();
+            let gate_flat = gate.matrix_row_major();
             if has_controls {
                 crate::instruct_qubit::instruct_2q_controlled(
                     state,
@@ -105,7 +100,7 @@ pub(crate) fn dispatch_arrayreg_gate(nbits: usize, state: &mut [Complex64], pg: 
             }
         }
         _ => {
-            let gate_flat: Vec<Complex64> = gate.matrix().iter().copied().collect();
+            let gate_flat = gate.matrix_row_major();
             crate::instruct_qubit::instruct_nq(
                 state,
                 nbits,

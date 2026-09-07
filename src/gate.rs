@@ -281,6 +281,19 @@ impl Gate {
     }
 
     /// Internal: compute the 2x2 or 4x4 matrix for named qubit gates.
+    /// Borrow standard-layout custom matrices for state-vector execution.
+    pub(crate) fn matrix_row_major(&self) -> std::borrow::Cow<'_, [Complex64]> {
+        use std::borrow::Cow;
+        if let Gate::Custom { matrix, .. } = self {
+            return match matrix.as_slice() {
+                Some(values) => Cow::Borrowed(values),
+                None => Cow::Owned(matrix.iter().copied().collect()),
+            };
+        }
+        // Named gates construct standard-layout arrays with zero offset.
+        Cow::Owned(self.matrix().into_raw_vec_and_offset().0)
+    }
+
     /// Stack-backed coefficients for the one-qubit execution path.
     pub(crate) fn single_qubit_coefficients(&self) -> Option<[Complex64; 4]> {
         let zero = Complex64::new(0.0, 0.0);

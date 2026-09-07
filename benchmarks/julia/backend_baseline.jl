@@ -1,6 +1,20 @@
 # Full-output validation and warmed timing of the shared Rust/Julia circuits.
 using Yao, BenchmarkTools, JSON, LinearAlgebra, Statistics
 
+copy_and_apply(initial, circuit) = apply!(copy(initial), circuit)
+
+function warmed_trial(f, args...)
+    call = () -> f(args...)
+    call() # Compile before the timed warmup and calibration.
+    deadline = time_ns() + 200_000_000
+    while time_ns() < deadline
+        call()
+    end
+    calibration = @benchmark $call() samples=3 evals=1 seconds=0.2
+    iterations = clamp(round(Int, 10_000_000 / max(1., median(calibration).time)), 1, 100_000)
+    @benchmark $call() samples=30 evals=iterations seconds=60
+end
+
 function build_circuit(spec)
     n = spec["num_qubits"]
     blocks = AbstractBlock[]
@@ -187,16 +201,17 @@ function main()
         isapprox(got,expected;atol=agreement,rtol=agreement) || error("$(case["id"]): error=$err")
         # Rust expect_grad includes one forward value calculation and one backward sweep.
         trial=if mode == "gradient"
-            @benchmark value_gradient($initial,$circuit,$op) samples=10 evals=1 seconds=0.5
+            warmed_trial(value_gradient, initial, circuit, op)
         elseif mode in ("expectation", "expectation_dm")
-            @benchmark complex_expectation($mode,$initial,$circuit,$op) samples=10 evals=1 seconds=0.5
+            warmed_trial(complex_expectation, mode, initial, circuit, op)
         elseif mode == "custom_gradient"
-            @benchmark custom_gradient($initial,$circuit,$op) samples=10 evals=1 seconds=0.5
+            warmed_trial(custom_gradient, initial, circuit, op)
         else
-            @benchmark apply!(copy($initial),$circuit) samples=10 evals=1 seconds=0.5
+            warmed_trial(copy_and_apply, initial, circuit)
         end
         record=Dict{String,Any}("id"=>case["id"],"median_ns"=>median(trial).time,
             "samples_ns"=>trial.times,"allocations"=>trial.allocs,"allocated_bytes"=>trial.memory,
+            "evals_per_sample"=>trial.params.evals,"gc_samples_ns"=>trial.gctimes,
             "construction_median_ns"=>median(construction).time,"max_error"=>err)
         if haskey(case, "evolution")
             evolution=case["evolution"]

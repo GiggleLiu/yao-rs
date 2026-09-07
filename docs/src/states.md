@@ -59,6 +59,20 @@ Use `state_vec()` to inspect amplitudes and `nqubits()` for the register size.
 The shared [bit ordering convention](conventions.md#bit-ordering) defines which
 basis state each array index represents.
 
+## Reuse a fixed circuit
+
+For repeated runs with the same parameters, prepare fused gates once:
+
+```rust
+let prepared = circuit.fused(2).unwrap();
+let result = apply(&prepared, &initial);
+```
+
+Fusion combines consecutive gates into matrices on at most two qubits here.
+Compare it with ordinary execution for your workload; larger blocks can be
+slower. Parameter values are fixed in the prepared circuit, so prepare again
+after changing them and use the original circuit for differentiation.
+
 ## Measure and post-process
 
 The Rust [`measure_with_postprocess`](api/yao_rs/measure/fn.measure_with_postprocess.html)

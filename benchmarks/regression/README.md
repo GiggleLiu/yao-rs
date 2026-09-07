@@ -26,6 +26,9 @@ Python 3.13.12 and its dependencies are managed by uv. Rust dependencies use the
 probe's `Cargo.lock` with `--locked`. Compiler versions, dependency locks, host
 identity, suite contents, thread budgets, and adapter code are recorded; the
 comparison command rejects incompatible runs instead of pooling them.
+Compiler flags and Cargo configuration hashes are retained. Julia startup files
+are disabled, and its BLAS provider is checked across processes. Linux CPU
+identity excludes changing clock readings while retaining topology and affinity.
 
 ## Profiles
 
@@ -61,10 +64,11 @@ make benchmark-test
 
 Implementation order is counterbalanced across the six default runs.
 Warmed state execution includes a fresh state copy in each implementation.
-Complete outputs are checked outside timing. Qulacs has both ordinary and
-four-qubit-fused execution rows; fusion preparation is recorded separately.
-The fastest measured competitor in the report is descriptive, with all timings
-retained. Gradients, density matrices, tensor phases, trajectories, and Krylov
+Complete outputs are checked outside timing. yao-rs has direct, two-qubit-fused,
+and four-qubit-fused execution rows; Qulacs has ordinary and four-qubit-fused
+rows. Fusion preparation is recorded separately. The report identifies each
+library's fastest measured execution mode and retains all timings. Julia warms each operation for 0.2 seconds, then takes 30 calibrated batches
+targeting 10 ms each. Batch sizes and GC timings are saved. Gradients, density matrices, tensor phases, trajectories, and Krylov
 operations retain their feature-specific execution boundaries from the
 [parent benchmark guide](../README.md).
 
@@ -81,8 +85,14 @@ strong applicable competitors on every main feature, matched accuracy and
 outputs, and a same-device run. CPU results do not qualify CUDA performance.
 The existing CUDA suite remains documented in the parent guide.
 
-`benchmark-qualify` checks warmed native CPU execution against every measured
-competitor, using the same confidence interval and tolerance. Each comparison
+`benchmark-qualify` checks the fastest measured yao-rs execution mode against
+every measured competitor, using the same confidence interval and tolerance.
+It identifies the selected mode and excludes preparation timings. Each comparison
 must pass; a fast result on one workload cannot offset a slow result elsewhere.
 This command covers the named execution comparisons in the saved run. Tensor
 phases, stochastic accuracy, and GPU performance need their own qualification.
+
+Krylov results record achieved errors against an independently checked tight
+reference. The current solver parameter is `rtol=1e-7`, with a validated global
+relative-error budget of `1e-6`. Timing at this budget is not an equal-error
+comparison; consult the reported errors before making a solver-performance claim.

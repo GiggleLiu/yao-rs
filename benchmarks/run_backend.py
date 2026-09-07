@@ -257,6 +257,7 @@ def main():
     run(
         [
             a.julia,
+            "--startup-file=no",
             f"--project={a.julia_project.resolve()}",
             "-e",
             "using Pkg; Pkg.instantiate(); using Yao, BenchmarkTools",
@@ -335,7 +336,7 @@ def main():
             env["YAO_BENCH_KRYLOV_LOG"] = str(output / (prefix + "-krylov-stats.jsonl"))
             commands = {
                 "rust": ["cargo", "bench", "--manifest-path", str(MANIFEST), "--locked", "--bench", "backend"],
-                "julia": [a.julia, f"--project={a.julia_project.resolve()}",
+                "julia": [a.julia, "--startup-file=no", f"--project={a.julia_project.resolve()}",
                           "benchmarks/julia/backend_baseline.jl", str(cases), str(references),
                           str(output / (prefix + "-julia.json"))],
                 "qulacs": [sys.executable, "benchmarks/regression/qulacs_baseline.py", str(cases),

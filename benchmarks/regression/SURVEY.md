@@ -53,3 +53,9 @@ precision/device/thread settings, and statistically unresolved regressions.
 Do not hide individual failures behind a geometric mean. Repeated measurements
 on a dedicated host are required for a performance decision; shared CI checks
 harness correctness and never substitutes for that measurement.
+
+Use calibrated inner batches for short operations, with sample and evaluation
+counts retained. The [BenchmarkTools manual](https://juliaci.github.io/BenchmarkTools.jl/stable/manual/)
+explains why timing individual evaluations can be unreliable and distinguishes
+the sample limit from a time budget. Confidence intervals here resample whole
+process medians, rather than treating inner evaluations as independent runs.

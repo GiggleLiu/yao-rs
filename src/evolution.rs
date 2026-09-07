@@ -505,17 +505,34 @@ pub(crate) fn evolve_pauli(
     exponential_action(&input.state, time, options, |x, y| {
         y.fill(C::new(0., 0.));
         for &(flip, phase, coefficient) in &terms {
-            for (column, x) in x.iter().enumerate() {
-                let value = coefficient * x;
-                y[column ^ flip] += if (column & phase).count_ones() % 2 == 0 {
-                    value
-                } else {
-                    -value
-                };
+            if coefficient.im == 0. {
+                accumulate_pauli(x, y, flip, phase, |value| value * coefficient.re);
+            } else {
+                accumulate_pauli(x, y, flip, phase, |value| coefficient * value);
             }
         }
         Ok(())
     })
+}
+
+#[inline]
+fn accumulate_pauli(x: &[C], y: &mut [C], flip: usize, phase: usize, scale: impl Fn(C) -> C) {
+    // X-only terms have no phase parity to compute. Keep that decision, and
+    // real-vs-complex coefficient dispatch, outside the amplitude loop.
+    if phase == 0 {
+        for (column, &value) in x.iter().enumerate() {
+            y[column ^ flip] += scale(value);
+        }
+    } else {
+        for (column, &value) in x.iter().enumerate() {
+            let value = scale(value);
+            y[column ^ flip] += if (column & phase).count_ones().is_multiple_of(2) {
+                value
+            } else {
+                -value
+            };
+        }
+    }
 }
 
 #[cfg(test)]

@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import statistics
 from pathlib import Path
 
 from compare import comparison, validate
@@ -16,23 +17,25 @@ def qualify(document, tolerance=0.05):
     validate(document)
     groups = {}
     for row in document['records']:
-        if row['phase'] == 'execute':
-            groups.setdefault((row['case'], row['threads']), {})[row['backend']] = row
+        group = groups.setdefault((row['case'], row['threads']), dict(native={}, rivals={}))
+        if row['backend'] == 'native' and row['phase'] in ['execute', 'fused2_execute', 'fused4_execute']:
+            group['native'][row['phase']] = row
+        elif row['backend'] != 'native' and row['phase'] == 'execute':
+            group['rivals'][row['backend']] = row
     records = []
-    for (case, threads), backends in sorted(groups.items()):
-        if 'native' not in backends or len(backends) < 2:
+    for (case, threads), group in sorted(groups.items()):
+        if 'execute' not in group['native'] or not group['rivals']:
             raise ValueError(f'Missing native or competitor: {case}, {threads}t')
-        for name, rival in sorted(backends.items()):
-            if name == 'native':
-                continue
-            result = comparison(rival['run_medians_ns'], backends['native']['run_medians_ns'], tolerance)
+        native_mode, native = min(group['native'].items(), key=lambda pair: statistics.median(pair[1]['run_medians_ns']))
+        for name, rival in sorted(group['rivals'].items()):
+            result = comparison(rival['run_medians_ns'], native['run_medians_ns'], tolerance)
             if result['status'] == 'regression':
                 result['status'] = 'slower'
-            records.append(dict(case=case, threads=threads, competitor=name, **result))
+            records.append(dict(case=case, threads=threads, native_mode=native_mode, competitor=name, **result))
     if not records:
         raise ValueError('No matched comparisons')
     return dict(schema_version=1, tolerance=tolerance,
-                scope='Warmed native CPU execution against named measured competitors; other phases and devices require separate qualification.',
+                scope='Fastest measured native CPU execution mode against every named competitor; preparation is excluded. Other phases and devices require separate qualification.',
                 status='pass' if all(r['status'] == 'pass' for r in records) else 'fail', records=records)
 
 
@@ -49,7 +52,7 @@ def main():
     if args.output:
         args.output.write_text(json.dumps(report, indent=2) + '\n')
     for row in report['records']:
-        print(f"{row['status']:18} {row['case']:50} {row['competitor']:14} {row['ratio']:.3f}× native/competitor")
+        print(f"{row['status']:18} {row['case']:50} {row['native_mode']:16} {row['competitor']:14} {row['ratio']:.3f}× native/competitor")
     parser.exit(0 if report['status'] == 'pass' else 1)
 
 

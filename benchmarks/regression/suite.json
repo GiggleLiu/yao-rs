@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "name": "yao-cpu-v1",
+  "name": "yao-cpu-v2",
   "precision": "complex128",
   "profiles": {
     "smoke": {
@@ -57,8 +57,9 @@
   },
   "timing": {
     "rust": "Criterion: 10 samples, 0.2 s warmup, 0.5 s target",
-    "julia": "BenchmarkTools: 10 warmed samples, evals=1",
-    "qulacs": "30 warmed samples with calibrated inner iterations"
+    "julia": "BenchmarkTools: 0.2 s warmup, 30 calibrated batches targeting 10 ms each, up to 100000 evals/batch",
+    "qulacs": "30 warmed samples with calibrated inner iterations",
+    "fusion": "yao-rs 2q/4q and Qulacs 4q fusion; preparation outside warmed execution"
   },
   "default_regression_tolerance": 0.05,
   "claim": "Named-baseline qualification only; every main feature must be independently covered before a SOTA claim."

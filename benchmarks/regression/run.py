@@ -20,6 +20,7 @@ ROOT = HERE.parents[1]
 sys.path.insert(0, str(ROOT / "benchmarks"))
 from generate_cases import cases as native_cases
 from run_backend import MANIFEST, TARGET, run, sha
+import machine
 
 
 def dump(path, value):
@@ -77,14 +78,15 @@ def main():
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=False)
     env = os.environ.copy()
-    env.update(CARGO_TARGET_DIR=str(TARGET), YAO_BENCH_CORE_ONLY="1")
+    env.update(CARGO_TARGET_DIR=str(TARGET), YAO_BENCH_CORE_ONLY="1", YAO_BENCH_FUSION="1")
     # All compilation and environment setup finish before any timed process.
     run(["cargo", "build", "--release", "--locked", "--manifest-path", str(MANIFEST), "--bins", "--benches"], env, output / "build.log")
     julia_project = HERE / "environment/julia"
-    run([args.julia, f"--project={julia_project}", "-e", "using Pkg; Pkg.instantiate(); using Yao, BenchmarkTools"], env, output / "julia-setup.log")
+    run([args.julia, "--startup-file=no", f"--project={julia_project}", "-e", "using Pkg; Pkg.instantiate(); using Yao, BenchmarkTools"], env, output / "julia-setup.log")
     selected = {track: prepare(track, profile, output, env) for track in tracks}
-    hardware = subprocess.check_output(["sysctl", "machdep.cpu.brand_string", "hw.memsize", "hw.physicalcpu"] if sys.platform == "darwin" else ["lscpu"], text=True)
+    hardware = machine.hardware()
     environment = dict(device=fingerprint([platform.node(), hardware]), hardware=hardware,
+                       configuration=machine.configuration(ROOT),
                        platform=platform.platform(), precision=spec["precision"], python=platform.python_version(),
                        rustc=subprocess.check_output(["rustc", "-Vv"], text=True),
                        julia=subprocess.check_output([args.julia, "--version"], text=True),
@@ -92,7 +94,7 @@ def main():
                        probe_lock=sha(MANIFEST.with_name("Cargo.lock")),
                        timing=spec["timing"],
                        protocol_sha256=fingerprint({str(p.relative_to(ROOT)): sha(p) for p in [
-                           Path(__file__), HERE / "qulacs_baseline.py", ROOT / "benchmarks/run_backend.py",
+                           Path(__file__), HERE / "machine.py", HERE / "qulacs_baseline.py", ROOT / "benchmarks/run_backend.py",
                            ROOT / "benchmarks/julia/backend_baseline.jl", ROOT / "benchmarks/tenferro-probe/benches/backend.rs"]}))
     suite_hash = fingerprint({track: cases for track, (cases, _) in selected.items()})
     metadata = dict(schema_version=1, suite=spec["name"], profile=args.profile, tracks=tracks,
@@ -103,6 +105,8 @@ def main():
     dump(output / "metadata.json", metadata)
     samples = defaultdict(list)
     required = set()
+    providers = set()
+    accuracy = defaultdict(list)
     for track, (cases, case_path) in selected.items():
         print(f"Running {track}: {len(cases)} cases", flush=True)
         folder = output / track
@@ -114,13 +118,21 @@ def main():
             for case in cases:
                 for backend in ["native", "julia"] + (["qulacs", "qulacs_fused4"] if case["mode"] == "state" else []):
                     required.add((track + "/" + case["id"], backend, threads, "execute"))
+                if case["mode"] == "state":
+                    for phase in ["fused2_prepare", "fused2_execute", "fused4_prepare", "fused4_execute"]:
+                        required.add((track + "/" + case["id"], "native", threads, phase))
             for index in range(1, profile["runs"] + 1):
                 prefix = f"{threads}t-run{index}"
                 for row in json.loads((folder / (prefix + "-rust.json")).read_text()):
                     phase = "execute" if row["backend"] == "native" else row["backend"]
                     samples[(track + "/" + row["id"], "native", threads, phase)].append(row["estimates"]["median"]["point_estimate"])
-                for row in json.loads((folder / (prefix + "-julia.json")).read_text())["records"]:
+                julia_result = json.loads((folder / (prefix + "-julia.json")).read_text())
+                providers.add(julia_result["blas"])
+                for row in julia_result["records"]:
                     samples[(track + "/" + row["id"], "julia", threads, "execute")].append(row["median_ns"])
+                    if "approximation_error" in row:
+                        accuracy[track + "/" + row["id"]].append({
+                            key: row[key] for key in ["approximation_error", "yao_approximation_error", "oracle", "tight_reference_error"]})
                 qpath = folder / (prefix + "-qulacs.json")
                 for row in json.loads(qpath.read_text())["records"]:
                     samples[(track + "/" + row["id"], row["backend"], threads, "execute")].append(row["median_ns"])
@@ -128,21 +140,35 @@ def main():
         raise ValueError(f"Missing required results: {required - samples.keys()}")
     if any(len(v) != profile["runs"] for v in samples.values()):
         raise ValueError("Incomplete independent runs")
+    if len(providers) != 1:
+        raise ValueError(f"Julia BLAS provider changed between processes: {providers}")
+    environment["julia_blas"] = next(iter(providers))
+    metadata["accuracy"] = dict(accuracy)
+    dump(output / "metadata.json", metadata)
     records = [dict(case=k[0], backend=k[1], threads=k[2], phase=k[3], correctness="passed", run_medians_ns=v)
                for k, v in sorted(samples.items())]
     dump(output / "results.json", dict(**metadata, expected_records=[list(k) for k in sorted(samples)], records=records))
     lines = ["# Curated CPU comparison", "", f"Profile: {args.profile}. Independent runs: {profile['runs']}.", "",
-             "Times are medians of independent process medians. Ratios above 1 favor yao-rs. Fusion preparation is outside warmed execution.", "",
-             "| Case | Threads | yao-rs ms | Fastest measured competitor | Competitor ms | Competitor / yao-rs |", "|---|---:|---:|---|---:|---:|"]
+             "Times are medians of independent process medians. Each library uses its fastest measured execution mode. Ratios above 1 favor yao-rs. Fusion preparation is outside warmed execution.", "",
+             "| Case | Threads | yao-rs mode | yao-rs ms | Fastest measured competitor | Competitor ms | Competitor / yao-rs |", "|---|---:|---|---:|---|---:|---:|"]
     for case, backend, threads, phase in sorted(required):
-        if backend != "native":
+        if backend != "native" or phase != "execute":
             continue
         rivals = [(statistics.median(samples[k]), k[1]) for k in required if k[0] == case and k[2] == threads and k[1] != "native"]
         rival, name = min(rivals)
-        native = statistics.median(samples[(case, backend, threads, phase)])
-        lines.append(f"| {case} | {threads} | {native/1e6:.4f} | {name} | {rival/1e6:.4f} | {rival/native:.2f}× |")
+        choices = [(statistics.median(v), k[3]) for k, v in samples.items()
+                   if k[:3] == (case, backend, threads) and k[3] in ["execute", "fused2_execute", "fused4_execute"]]
+        native, mode = min(choices)
+        lines.append(f"| {case} | {threads} | {mode} | {native/1e6:.4f} | {name} | {rival/1e6:.4f} | {rival/native:.2f}× |")
     lines += ["", "This table is descriptive. Run the regression gate against a compatible saved run; it rejects incomplete or inconclusive comparisons.",
               "Feature-specific phases and all raw samples are retained in results.json and the track directories."]
+    if accuracy:
+        lines += ["", "## Achieved evolution accuracy", "",
+                  "The solver parameter is rtol=1e-7; the validated global relative-error budget is 1e-6. Achieved errors differ, so timing at this budget is not an equal-error comparison.", "",
+                  "| Case | yao-rs relative error (maximum) | Yao.jl relative error (maximum) |",
+                  "|---|---:|---:|"]
+        for case, values in sorted(accuracy.items()):
+            lines.append(f"| {case} | {max(x['approximation_error'] for x in values):.3e} | {max(x['yao_approximation_error'] for x in values):.3e} |")
     (output / "report.md").write_text("\n".join(lines) + "\n")
     print(f"Results: {output / 'report.md'}", flush=True)
 

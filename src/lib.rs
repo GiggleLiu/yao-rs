@@ -45,6 +45,7 @@ pub mod easybuild;
 pub mod einsum;
 pub mod evolution;
 pub mod expect;
+pub mod fusion;
 pub mod gate;
 pub mod hamiltonian;
 pub mod instruct_qubit;

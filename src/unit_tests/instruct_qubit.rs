@@ -600,6 +600,18 @@ fn single_qubit_kernels_match_dense_action_at_every_stride() {
     // Nonunitary matrices also exercise the kernels used by Kraus channels.
     let matrices = [
         [
+            C::new(1.0, 0.0),
+            C::new(0.0, 0.0),
+            C::new(0.0, 0.0),
+            C::new(-0.5, 0.7),
+        ],
+        [
+            C::new(0.3, 0.0),
+            C::new(0.0, 0.4),
+            C::new(0.0, -0.7),
+            C::new(-0.2, 0.0),
+        ],
+        [
             C::new(0.3, 0.0),
             C::new(-0.4, 0.0),
             C::new(0.7, 0.0),
@@ -653,4 +665,218 @@ fn single_qubit_kernels_match_dense_action_at_every_stride() {
             }
         }
     }
+}
+
+#[test]
+fn two_qubit_blocks_match_dense_action_for_all_target_orders_and_controls() {
+    use crate::instruct_qubit::{instruct_2q, instruct_2q_controlled};
+    use num_complex::Complex64 as C;
+    let zero = C::new(0., 0.);
+    // Asymmetric and nonunitary: catches target-order errors and assumptions
+    // that the |00> and |11> amplitudes are unchanged.
+    let mut sparse = [zero; 16];
+    for (index, value) in [
+        (0, C::new(0.7, 0.2)),
+        (5, C::new(0.1, -0.3)),
+        (6, C::new(-0.4, 0.6)),
+        (9, C::new(0.2, 0.5)),
+        (10, C::new(0.8, -0.2)),
+        (15, C::new(-0.3, 0.4)),
+    ] {
+        sparse[index] = value;
+    }
+    let mut dense = sparse;
+    dense[3] = C::new(0.1, -0.2);
+    dense[12] = C::new(0.3, 0.2);
+    for n in 2..=5 {
+        let size = 1 << n;
+        let initial: Vec<C> = (0..size)
+            .map(|k| C::new((k as f64 * 0.13).sin(), (k as f64 * 0.19).cos()))
+            .collect();
+        for first in 0..n {
+            for second in 0..n {
+                if first == second {
+                    continue;
+                }
+                let locs = [first, second];
+                let masks = [1 << (n - 1 - first), 1 << (n - 1 - second)];
+                let target_mask = masks[0] | masks[1];
+                let local =
+                    |i: usize| usize::from(i & masks[0] != 0) + 2 * usize::from(i & masks[1] != 0);
+                let mut controls = vec![None];
+                for control in (0..n).filter(|q| !locs.contains(q)) {
+                    controls.extend([Some((control, 0)), Some((control, 1))]);
+                }
+                for control in controls {
+                    for matrix in [sparse, dense] {
+                        let expected: Vec<C> = (0..size)
+                            .map(|row| {
+                                if let Some((q, value)) = control
+                                    && (row >> (n - 1 - q)) & 1 != value
+                                {
+                                    return initial[row];
+                                }
+                                (0..size)
+                                    .filter(|&column| row & !target_mask == column & !target_mask)
+                                    .map(|column| {
+                                        matrix[4 * local(row) + local(column)] * initial[column]
+                                    })
+                                    .sum()
+                            })
+                            .collect();
+                        let mut actual = initial.clone();
+                        if let Some((q, value)) = control {
+                            instruct_2q_controlled(&mut actual, n, &locs, &matrix, &[q], &[value]);
+                        } else {
+                            instruct_2q(&mut actual, n, &locs, &matrix);
+                        }
+                        for (got, want) in actual.iter().zip(&expected) {
+                            assert!(
+                                (*got - *want).norm() < 1e-12,
+                                "n={n}, targets={locs:?}, control={control:?}"
+                            );
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+#[test]
+fn permutation_kernels_match_basis_permutations_at_every_position() {
+    use crate::instruct_qubit::{instruct_swap, instruct_x};
+    use num_complex::Complex64 as C;
+    for n in 2..=7 {
+        let initial: Vec<C> = (0..1usize << n)
+            .map(|k| C::new(k as f64, -(k as f64) - 0.5))
+            .collect();
+        for first in 0..n {
+            let a = 1 << (n - 1 - first);
+            let mut actual = initial.clone();
+            instruct_x(&mut actual, n, first);
+            for (row, got) in actual.iter().enumerate() {
+                assert_eq!(*got, initial[row ^ a]);
+            }
+            for second in 0..n {
+                if first == second {
+                    continue;
+                }
+                let b = 1 << (n - 1 - second);
+                let mut actual = initial.clone();
+                instruct_swap(&mut actual, n, &[first, second]);
+                for (row, got) in actual.iter().enumerate() {
+                    let column = if (row & a != 0) == (row & b != 0) {
+                        row
+                    } else {
+                        row ^ a ^ b
+                    };
+                    assert_eq!(*got, initial[column], "n={n}, targets={first},{second}");
+                }
+            }
+        }
+    }
+}
+
+#[test]
+fn custom_matrix_application_preserves_row_order_for_strided_storage() {
+    use crate::{ArrayReg, Circuit, Gate, apply, put};
+    use ndarray::{Array2, s};
+    use num_complex::Complex64 as C;
+    for n in 2..=4 {
+        let dimension = 1usize << n;
+        let base = Array2::from_shape_fn((dimension, dimension), |(r, c)| {
+            C::new(
+                ((r * 7 + c) as f64 * 0.11).sin(),
+                ((r + c * 3) as f64 * 0.17).cos(),
+            )
+        });
+        let input: Vec<C> = (0..dimension)
+            .map(|i| C::new(i as f64 * 0.13, 0.5 - i as f64 * 0.07))
+            .collect();
+        for matrix in [
+            base.clone(),
+            base.clone().reversed_axes(),
+            base.slice_move(s![..;-1, ..]),
+        ] {
+            let expected: Vec<C> = (0..dimension)
+                .map(|r| (0..dimension).map(|c| matrix[[r, c]] * input[c]).sum())
+                .collect();
+            let gate = Gate::Custom {
+                matrix,
+                is_diagonal: false,
+                label: "strided".into(),
+            };
+            let circuit = Circuit::qubits(n, vec![put((0..n).rev().collect(), gate)]).unwrap();
+            let got = apply(&circuit, &ArrayReg::from_vec(n, input.clone()));
+            for (actual, expected) in got.state_vec().iter().zip(expected) {
+                assert!((*actual - expected).norm() < 1e-12, "n={n}");
+            }
+        }
+    }
+}
+
+#[test]
+fn generic_gate_reuses_scratch_across_free_bits_and_mixed_controls() {
+    use crate::instruct_qubit::instruct_nq;
+    use num_complex::Complex64 as C;
+    let n = 6;
+    let initial: Vec<C> = (0..64)
+        .map(|i| C::new((i as f64 * 0.2).sin(), (i as f64 * 0.3).cos()))
+        .collect();
+    let matrix: Vec<C> = (0..64)
+        .map(|i| C::new((i as f64 * 0.17).sin(), (i as f64 * 0.11).cos()))
+        .collect();
+    for targets in [[0, 4, 2], [2, 4, 0]] {
+        let mask = targets.iter().fold(0, |acc, &q| acc | (1 << (n - 1 - q)));
+        let local = |basis: usize| {
+            targets.iter().enumerate().fold(0usize, |acc, (i, &q)| {
+                acc | (((basis >> (n - 1 - q)) & 1) << i)
+            })
+        };
+        for values in [[0, 1], [1, 0]] {
+            let active = |basis: usize| (basis & 1) == values[0] && ((basis >> 4) & 1) == values[1];
+            let expected: Vec<C> = (0..64)
+                .map(|row| {
+                    if !active(row) {
+                        return initial[row];
+                    }
+                    (0..64)
+                        .filter(|&col| row & !mask == col & !mask)
+                        .map(|col| matrix[8 * local(row) + local(col)] * initial[col])
+                        .sum()
+                })
+                .collect();
+            let mut actual = initial.clone();
+            instruct_nq(&mut actual, n, &targets, &matrix, &[5, 1], &values);
+            for (got, want) in actual.iter().zip(expected) {
+                assert!((*got - want).norm() < 1e-12);
+            }
+        }
+    }
+}
+
+#[test]
+fn controlled_phase_preserves_every_unselected_amplitude() {
+    use crate::instruct_qubit::instruct_1q_diag_controlled;
+    let initial: Vec<Complex64> = (0..16)
+        .map(|i| Complex64::new(i as f64 * 0.1, 0.3 - i as f64 * 0.07))
+        .collect();
+    let phase = Complex64::from_polar(1., 0.37);
+    let mut expected = initial.clone();
+    // q0=0, q3=1, and target q2=1: only |0011> and |0111> gain a phase.
+    for index in [3, 7] {
+        expected[index] *= phase;
+    }
+    let mut actual = initial;
+    instruct_1q_diag_controlled(
+        &mut actual,
+        4,
+        2,
+        Complex64::new(1., 0.),
+        phase,
+        &[0, 3],
+        &[0, 1],
+    );
+    assert_eq!(actual, expected);
 }
