@@ -54,6 +54,11 @@ Install from this checkout with `cargo install --path yao-cli --features tenferr
 then select `yao contract tn.json --backend tenferro --threads 4`.
 See [tensor-network execution](docs/src/tensor-networks.md#tenferro-cpu-execution).
 
+Enable `cuda` for tenferro GPU circuits, differentiation and tensor contraction.
+See [CUDA simulation](docs/src/cuda.md) for hardware requirements and operation limits.
+The [A800/CPU comparison](benchmarks/results/a800-cuda-2026-09-07/README.md)
+records performance, transfers, memory and current limitations.
+
 Enable `tenferro-ad` for custom-loss circuit differentiation. The optional
 `optimizer-example` feature runs an argmin L-BFGS state-fitting example:
 `cargo run --release --example custom_loss --features optimizer-example`.

@@ -1,0 +1,247 @@
+{
+  "records": [
+    {
+      "median_ns": 97432.0,
+      "construction_median_ns": 158323.0,
+      "max_error": 3.273069708340169e-17,
+      "id": "cuda_state_8_depth10",
+      "samples_ns": [
+        329308.0,
+        98327.0,
+        129924.0,
+        112781.0,
+        97702.0,
+        97162.0,
+        96663.0,
+        96241.0,
+        95382.0,
+        95253.0
+      ],
+      "allocations": 698,
+      "allocated_bytes": 40440
+    },
+    {
+      "median_ns": 5.108405e6,
+      "construction_median_ns": 160784.0,
+      "max_error": 1.5922644930580816e-17,
+      "id": "cuda_state_16_depth10",
+      "samples_ns": [
+        5.141234e6,
+        5.10658e6,
+        5.0118e6,
+        5.110885e6,
+        5.106956e6,
+        5.134352e6,
+        5.109854e6,
+        5.114873e6,
+        5.104181e6,
+        5.098584e6
+      ],
+      "allocations": 794,
+      "allocated_bytes": 1092152
+    },
+    {
+      "median_ns": 8.0950189e7,
+      "construction_median_ns": 134606.5,
+      "max_error": 1.2160476525755222e-17,
+      "id": "cuda_state_20_depth10",
+      "samples_ns": [
+        8.1239416e7,
+        8.087062e7,
+        8.3420901e7,
+        8.114124e7,
+        8.0950189e7,
+        8.0723669e7,
+        8.0725169e7
+      ],
+      "allocations": 808,
+      "allocated_bytes": 16821336
+    },
+    {
+      "median_ns": 1.483636841e9,
+      "construction_median_ns": 135535.5,
+      "max_error": 4.0594069895044175e-17,
+      "id": "cuda_state_24_depth10",
+      "samples_ns": [
+        1.483636841e9
+      ],
+      "allocations": 808,
+      "allocated_bytes": 268486800
+    },
+    {
+      "median_ns": 107854.0,
+      "construction_median_ns": 118592.0,
+      "max_error": 1.6653345369377348e-16,
+      "id": "cuda_gradient_8_depth10",
+      "samples_ns": [
+        397112.0,
+        101625.0,
+        109857.0,
+        109273.0,
+        107489.0,
+        107758.0,
+        107950.0,
+        108878.0,
+        107057.0,
+        107087.0
+      ],
+      "allocations": 453,
+      "allocated_bytes": 72672
+    },
+    {
+      "median_ns": 410287.5,
+      "construction_median_ns": 806139.0,
+      "max_error": 4.440892098500626e-16,
+      "id": "cuda_gradient_8_depth40",
+      "samples_ns": [
+        665068.0,
+        410395.0,
+        390315.0,
+        483658.0,
+        531092.0,
+        377246.0,
+        409940.0,
+        410180.0,
+        413299.0,
+        386022.0
+      ],
+      "allocations": 1656,
+      "allocated_bytes": 237048
+    },
+    {
+      "median_ns": 1.96788145e7,
+      "construction_median_ns": 108238.5,
+      "max_error": 6.661338147750939e-15,
+      "id": "cuda_gradient_16_depth10",
+      "samples_ns": [
+        1.8011074e7,
+        1.7882673e7,
+        2.134727e7,
+        2.1452702e7,
+        2.1347848e7,
+        2.1346555e7,
+        2.1718097e7,
+        1.7717823e7,
+        1.7898731e7,
+        1.7816596e7
+      ],
+      "allocations": 453,
+      "allocated_bytes": 14695392
+    },
+    {
+      "median_ns": 7.322971e7,
+      "construction_median_ns": 869327.0,
+      "max_error": 4.6629367034256575e-15,
+      "id": "cuda_gradient_16_depth40",
+      "samples_ns": [
+        6.9345855e7,
+        7.322971e7,
+        7.2008534e7,
+        6.9258989e7,
+        8.0233474e7,
+        7.9577739e7,
+        7.6990809e7
+      ],
+      "allocations": 1656,
+      "allocated_bytes": 46194168
+    },
+    {
+      "median_ns": 3.536518925e8,
+      "construction_median_ns": 112719.0,
+      "max_error": 3.709277554705091e-15,
+      "id": "cuda_gradient_20_depth10",
+      "samples_ns": [
+        3.41042727e8,
+        3.66261058e8
+      ],
+      "allocations": 453,
+      "allocated_bytes": 234896352
+    },
+    {
+      "median_ns": 1.671237617e9,
+      "construction_median_ns": 632776.0,
+      "max_error": 6.661338147750939e-15,
+      "id": "cuda_gradient_20_depth40",
+      "samples_ns": [
+        1.671237617e9
+      ],
+      "allocations": 1656,
+      "allocated_bytes": 738254328
+    },
+    {
+      "median_ns": 75387.0,
+      "construction_median_ns": 57168.5,
+      "max_error": 1.1102230246251565e-16,
+      "id": "cuda_density_4",
+      "samples_ns": [
+        453145.0,
+        76529.0,
+        74432.0,
+        75268.0,
+        76383.0,
+        75313.0,
+        75461.0,
+        73716.0,
+        72434.0,
+        75554.0
+      ],
+      "allocations": 678,
+      "allocated_bytes": 129256
+    },
+    {
+      "median_ns": 1.5578065e6,
+      "construction_median_ns": 85550.0,
+      "max_error": 1.1102230246251565e-16,
+      "id": "cuda_density_6",
+      "samples_ns": [
+        1.028942e6,
+        862406.0,
+        1.565724e6,
+        1.554826e6,
+        1.570845e6,
+        1.554299e6,
+        1.555182e6,
+        1.565793e6,
+        1.560431e6,
+        1.571269e6
+      ],
+      "allocations": 1016,
+      "allocated_bytes": 2465096
+    },
+    {
+      "median_ns": 1.9193278e7,
+      "construction_median_ns": 117778.5,
+      "max_error": 1.6653345369377348e-16,
+      "id": "cuda_density_8",
+      "samples_ns": [
+        1.8805153e7,
+        3.377095e7,
+        1.8454344e7,
+        2.2134814e7,
+        3.3361539e7,
+        2.5473329e7,
+        1.8495172e7,
+        1.8427042e7,
+        1.9581403e7,
+        1.8302e7
+      ],
+      "allocations": 1354,
+      "allocated_bytes": 51433896
+    },
+    {
+      "median_ns": 5.46282654e8,
+      "construction_median_ns": 171530.5,
+      "max_error": 2.220446049250313e-16,
+      "id": "cuda_density_10",
+      "samples_ns": [
+        5.46282654e8
+      ],
+      "allocations": 1692,
+      "allocated_bytes": 1023477256
+    }
+  ],
+  "julia": "1.12.7",
+  "blas": "LBTConfig([ILP64] libopenblas64_.so)",
+  "threads": 1,
+  "yao": "0.9.2"
+}

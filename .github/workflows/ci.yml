@@ -11,6 +11,9 @@ permissions:
 
 env:
   CARGO_TERM_COLOR: always
+  # CUDA's optional dependency graph makes full debug symbols exceed small runners.
+  CARGO_PROFILE_DEV_DEBUG: "0"
+  CARGO_PROFILE_TEST_DEBUG: "0"
 
 jobs:
   quality:
@@ -59,8 +62,9 @@ jobs:
         with:
           workspaces: benchmarks/tenferro-probe -> ../../target/probe
       - run: cargo fmt --manifest-path benchmarks/tenferro-probe/Cargo.toml -- --check
-      - run: cargo clippy --manifest-path benchmarks/tenferro-probe/Cargo.toml --all-targets --locked -- -D warnings
-      - run: cargo test --manifest-path benchmarks/tenferro-probe/Cargo.toml --locked
+      - run: cargo clippy --manifest-path benchmarks/tenferro-probe/Cargo.toml --all-targets --all-features --locked -- -D warnings
+      - run: cargo test --manifest-path benchmarks/tenferro-probe/Cargo.toml --all-features --locked
+      - run: cargo run --manifest-path benchmarks/tenferro-probe/Cargo.toml --locked --bin cuda_cases -- /tmp/cuda-smoke.json --smoke
       - run: python3 -m unittest discover -s benchmarks/tests
       - name: Krylov benchmark smoke
         run: |

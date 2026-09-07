@@ -3,6 +3,61 @@
 use omeco::{CodeOptimizer, EinCode, Label, NestedEinsum};
 use std::collections::{HashMap, HashSet};
 
+#[cfg(feature = "tenferro")]
+pub(crate) struct TensorShapes {
+    pub inputs: Vec<Vec<usize>>,
+    pub output: Vec<usize>,
+}
+
+/// Shared complex128 shape/addressability validation for tenferro providers.
+#[cfg(feature = "tenferro")]
+pub(crate) fn tensor_shapes<L: Label>(
+    code: &EinCode<L>,
+    sizes: &HashMap<L, usize>,
+) -> Result<TensorShapes, String> {
+    let labels: HashSet<_> = code.ixs.iter().flatten().collect();
+    let mut outputs = HashSet::new();
+    for label in &code.iy {
+        if !labels.contains(label) || !outputs.insert(label) {
+            return Err(format!("Invalid output label {label:?}"));
+        }
+    }
+    Ok(TensorShapes {
+        inputs: code
+            .ixs
+            .iter()
+            .map(|xs| tensor_shape(xs, sizes))
+            .collect::<Result<_, _>>()?,
+        output: tensor_shape(&code.iy, sizes)?,
+    })
+}
+
+#[cfg(feature = "tenferro")]
+pub(crate) fn tensor_shape<L: Label>(
+    labels: &[L],
+    sizes: &HashMap<L, usize>,
+) -> Result<Vec<usize>, String> {
+    let shape = labels
+        .iter()
+        .map(|label| {
+            sizes
+                .get(label)
+                .copied()
+                .filter(|&d| d > 0)
+                .ok_or_else(|| format!("Missing or zero dimension for label {label:?}"))
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    let bytes = shape
+        .iter()
+        .try_fold(size_of::<num_complex::Complex64>(), |n, &d| {
+            n.checked_mul(d)
+        });
+    if bytes.is_none_or(|n| n > isize::MAX as usize) {
+        return Err("Tensor shape exceeds addressable complex128 storage".into());
+    }
+    Ok(shape)
+}
+
 /// Optimize a network, retaining unary traces, diagonals and permutations.
 ///
 /// omeco's single-input optimizer returns a leaf without applying the output

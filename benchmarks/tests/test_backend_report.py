@@ -20,6 +20,47 @@ runner = load("run_backend")
 
 
 class BackendReportTests(unittest.TestCase):
+    def test_cuda_report_requires_successful_process_and_finite_full_output(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp)
+            (path / "cases.json").write_text(json.dumps([{"id": "gpu"}]))
+            summary = [{"id": "gpu", "backend": b, "median_ns": 1000.}
+                       for b in ["cuda_resident", "cuda_transfer_inclusive", "native"]]
+            phases = [{"phase": name, "device_process_bytes": 1024}
+                      for name in ["context", "prepared", "first_result", "after_repeats"]]
+            record = {"id": "gpu", "status": "complete", "max_error": 1e-12,
+                      "transfer_max_error": 2e-12, "context_ns": 1,
+                      "resident_samples_ns": [4],
+                      "preparation_upload_ns": 2, "first_resident_ns": 3}
+            log = path / "memory-gpu.log"
+            def write(exit_status=0):
+                log.write_text("\n".join(json.dumps(x) for x in phases + [record]) +
+                               f"\nMaximum resident set size (kbytes): 4096\nExit status: {exit_status}\n")
+            write()
+            compare.cuda_report_sections(path, summary)
+            memory = json.loads((path / "cuda-qualification.json").read_text())[0]
+            self.assertEqual(memory["peak_rss_bytes"], 4096 * 1024)
+            self.assertEqual(memory["snapshots"]["context"], 1024)
+            (path / "cases.json").write_text(json.dumps([{"id": "gpu", "cuda_diagnostic_only": True}]))
+            lines = compare.cuda_report_sections(path, [summary[-1]])
+            self.assertTrue(any("Diagnostic only" in line for line in lines))
+            (path / "cases.json").write_text(json.dumps([{"id": "gpu"}]))
+            write(1)
+            with self.assertRaisesRegex(ValueError, "did not exit"):
+                compare.cuda_report_sections(path, summary)
+            for field in ["max_error", "transfer_max_error"]:
+                for invalid in [float("nan"), float("inf"), -1.0, 1e-8]:
+                    with self.subTest(field=field, invalid=invalid):
+                        record[field] = invalid
+                        write()
+                        with self.assertRaisesRegex(ValueError, "qualification error"):
+                            compare.cuda_report_sections(path, summary)
+                record[field] = 1e-12
+            phases.pop()
+            write()
+            with self.assertRaisesRegex(ValueError, "memory snapshots"):
+                compare.cuda_report_sections(path, summary)
+
     def test_krylov_diagnostics_reject_partial_missing_and_bad_oracles(self):
         with tempfile.TemporaryDirectory() as temp:
             path = Path(temp)

@@ -1,0 +1,28 @@
+{"device_process_bytes":434110464,"phase":"context"}
+{"device_process_bytes":662700032,"phase":"prepared"}
+{"device_process_bytes":662700032,"phase":"first_result"}
+{"device_process_bytes":662700032,"phase":"after_repeats"}
+{"context_ns":257359106,"device":"NVIDIA A800 80GB PCIe","first_resident_ns":480313920,"id":"cuda_state_16_depth10","input_bytes":1048896,"max_error":6.1331736667334966e-18,"precision":"complex128","preparation_upload_ns":328964195,"resident_samples_ns":[93934897,93229270,84413920],"status":"complete","transfer_max_error":6.1331736667334966e-18}
+	Command being timed: "/home/jinguoliu/yao-rs-feature-work/target/release/cuda_probe cuda_state_16_depth10"
+	User time (seconds): 1.41
+	System time (seconds): 0.79
+	Percent of CPU this job got: 108%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.04
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 872860
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 158990
+	Voluntary context switches: 13738
+	Involuntary context switches: 3
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 8
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

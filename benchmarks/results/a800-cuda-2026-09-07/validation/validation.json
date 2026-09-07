@@ -1,0 +1,64 @@
+{
+  "measured_source": "5e825920701c9a35016872298ca0a036d7b4c881",
+  "cuda_hardware": "NVIDIA A800 80GB PCIe, visible device 0",
+  "precision": "complex128 (tenferro DType::C64)",
+  "runtime_packages": "packages.json",
+  "cutensor": {
+    "version": "2.6.0.4",
+    "archive": "libcutensor-linux-x86_64-2.6.0.4_cuda12-archive.tar.xz",
+    "sha256": "28dbda315a95b3edc58af986ff1b886dcf2bd1c9651094539011bbce234cb9ae",
+    "redistribution_manifest": "https://developer.download.nvidia.com/compute/cutensor/redist/redistrib_2.6.0.json"
+  },
+  "hardware_tests": [
+    {
+      "log": "yao-cuda-batched-tests.log",
+      "profile": "release",
+      "passed": 7,
+      "note": "Batched-control implementation; before extra controlled-scalar assertions."
+    },
+    {
+      "log": "yao-cuda-batched-debug-tests.log",
+      "profile": "debug",
+      "rust_min_stack": 8388608,
+      "passed": 7,
+      "note": "Same implementation; default 2 MiB test stack is insufficient on this host."
+    },
+    {
+      "log": "yao-cuda-controlled-phase-test.log",
+      "profile": "release",
+      "passed": 1,
+      "source": "5e825920701c9a35016872298ca0a036d7b4c881",
+      "note": "Re-runs the changed scalar/control test with the additional assertions; other six hardware tests unchanged."
+    }
+  ],
+  "example": {
+    "log": "yao-cuda-example.log",
+    "profile": "release",
+    "iterations": 20,
+    "note": "Initial CUDA implementation before batched-control optimization; example has no controlled gates."
+  },
+  "local_workspace": {
+    "command": "CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0 make check-all",
+    "log": "local-check-all.log",
+    "passed": 668,
+    "hardware_tests_ignored": 7
+  },
+  "ci_measured_head": {
+    "ci": "https://github.com/GiggleLiu/yao-rs/actions/runs/34068288417",
+    "docs": "https://github.com/GiggleLiu/yao-rs/actions/runs/34068288424",
+    "result": "13 passed; docs deployment skipped on PR"
+  },
+  "notes": [
+    "Source hashes refer to measured executables. Later report validation, documentation and plots do not change these executables.",
+    "All qualification processes must complete with exit status zero; raw logs retain full-output error and memory records."
+  ],
+  "observed_runner_environment": {
+    "RUSTFLAGS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_BUILD_TARGET": null,
+    "RUSTUP_TOOLCHAIN": "1.96.0",
+    "CUDA_VISIBLE_DEVICES": "0",
+    "TENFERRO_EAGER_WHOLE_PROGRAM": null
+  },
+  "environment_observation": "Selected build/runtime variables read from the live benchmark runner process; thread controls are set to one in the child environment by run_cuda.py."
+}

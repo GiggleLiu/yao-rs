@@ -9,6 +9,8 @@ use tenferro_tensor::{BackendSessionHost, Tensor};
 
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 pub mod circuit_ad;
+#[cfg(feature = "cuda")]
+pub mod cuda;
 pub mod extension;
 
 /// Materialize logical ndarray axes in Fortran order, including strided arrays.
@@ -295,6 +297,8 @@ mod tests {
 /// Shared workload identity; the serialized circuit is also consumed by Julia.
 #[derive(serde::Deserialize)]
 pub struct Case {
+    #[serde(default)]
+    pub cuda_diagnostic_only: bool,
     #[serde(default)]
     pub krylov: Option<krylov::Specification>,
     #[serde(default)]

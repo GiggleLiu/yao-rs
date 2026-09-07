@@ -21,6 +21,8 @@
 //! - `qasm`: OpenQASM 2.0 import and export.
 //! - `omeinsum`: native tensor-network contraction.
 //! - `tenferro`: tenferro CPU contraction with reusable plans (Rust 1.96+).
+//! - `tenferro-ad`: custom-loss circuit differentiation through tenferro.
+//! - `cuda`: explicit tenferro CUDA circuits, AD and tensor contraction (Rust 1.96+).
 //! - `parallel`: Rayon operations.
 //!
 //! All features are optional. Qudit circuits support tensor-network export;
@@ -30,6 +32,8 @@ pub mod ad;
 pub mod apply;
 pub mod circuit;
 pub mod contraction_plan;
+#[cfg(feature = "cuda")]
+pub mod cuda;
 pub mod differentiable;
 #[cfg(feature = "tenferro-ad")]
 pub mod tenferro_ad;

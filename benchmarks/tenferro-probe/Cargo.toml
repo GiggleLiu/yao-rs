@@ -7,6 +7,9 @@ edition = "2024"
 rust-version = "1.96"
 publish = false
 
+[features]
+cuda = ["yao-rs/cuda"]
+
 [dependencies]
 yao-rs = { path = "../..", features = ["omeinsum", "tenferro-ad", "parallel"] }
 tenferro-tensor = "=0.4.0"
@@ -26,3 +29,12 @@ criterion = "0.5"
 [[bench]]
 name = "backend"
 harness = false
+
+[[bench]]
+name = "cuda"
+harness = false
+required-features = ["cuda"]
+
+[[bin]]
+name = "cuda_probe"
+required-features = ["cuda"]

@@ -41,6 +41,7 @@
 - [Noisy Trajectories](./trajectories.md)
 - [Hamiltonian Evolution](./hamiltonian.md)
 - [Differentiable Simulation](./differentiation.md)
+- [CUDA Simulation](./cuda.md)
 - [Tensor Networks](./tensor-networks.md)
 - [Multiple Observables and Memory Controls](./tensor-memory.md)
 

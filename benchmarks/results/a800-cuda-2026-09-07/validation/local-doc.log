@@ -1,0 +1,10 @@
+mdbook build docs
+ INFO Book building has started
+ INFO Running the html backend
+ INFO HTML book written to `/Users/jinguomini/rcode/yao-rs-tenferro/docs/book`
+cargo doc --workspace --no-deps --all-features --locked
+ Documenting yao-rs v0.1.0 (/Users/jinguomini/rcode/yao-rs-tenferro)
+    Finished `dev` profile [unoptimized] target(s) in 1.76s
+   Generated /Users/jinguomini/rcode/yao-rs-tenferro/target/doc/bitbasis/index.html and 2 other files
+rm -rf docs/book/api
+cp -r "target/doc" docs/book/api
