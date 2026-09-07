@@ -40,4 +40,5 @@ They also support circuits with higher-dimensional sites, such as qutrits;
 `ArrayReg` state-vector simulation supports qubits only.
 
 yao-rs is an MIT-licensed Rust port of [Yao.jl](https://github.com/QuantumBFS/Yao.jl).
-Explore the [worked examples](examples/catalog.md) to see complete experiments.
+Explore the [worked examples](examples/catalog.md) or compare measured
+performance in [Benchmarks vs Yao.jl](benchmarks.md).

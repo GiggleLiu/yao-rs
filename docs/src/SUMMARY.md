@@ -35,6 +35,8 @@
 
 # Reference
 
+- [Benchmarks vs Yao.jl](./benchmarks.md)
+
 - [CLI commands](./cli.md)
 - [Formats & conventions](./conventions.md)
 - [Gate reference](./gates.md)
