@@ -7,11 +7,16 @@ use crate::register::ArrayReg;
 pub(crate) fn dispatch_arrayreg_gate(nbits: usize, state: &mut [Complex64], pg: &PositionedGate) {
     let has_controls = !pg.control_locs.is_empty();
     let ctrl_locs = &pg.control_locs;
-    let ctrl_bits: Vec<usize> = pg
-        .control_configs
-        .iter()
-        .map(|&value| usize::from(value))
-        .collect();
+    let many_controls;
+    let ctrl_bits: &[usize] = match pg.control_configs.as_slice() {
+        [] => &[],
+        [false] => &[0],
+        [true] => &[1],
+        configs => {
+            many_controls = configs.iter().map(|&v| usize::from(v)).collect::<Vec<_>>();
+            &many_controls
+        }
+    };
     let gate = &pg.gate;
 
     match gate {
@@ -23,7 +28,7 @@ pub(crate) fn dispatch_arrayreg_gate(nbits: usize, state: &mut [Complex64], pg: 
         Gate::X => {
             for &loc in &pg.target_locs {
                 crate::instruct_qubit::instruct_x_controlled(
-                    state, nbits, loc, ctrl_locs, &ctrl_bits,
+                    state, nbits, loc, ctrl_locs, ctrl_bits,
                 );
             }
         }
@@ -38,17 +43,15 @@ pub(crate) fn dispatch_arrayreg_gate(nbits: usize, state: &mut [Complex64], pg: 
                 &pg.target_locs,
                 &gate_flat,
                 ctrl_locs,
-                &ctrl_bits,
+                ctrl_bits,
             );
         }
         gate if gate.is_diagonal() && pg.target_locs.len() == 1 => {
-            let matrix = gate.matrix();
-            let d0 = matrix[[0, 0]];
-            let d1 = matrix[[1, 1]];
+            let [d0, _, _, d1] = gate.single_qubit_coefficients().unwrap();
             let loc = pg.target_locs[0];
             if has_controls {
                 crate::instruct_qubit::instruct_1q_diag_controlled(
-                    state, nbits, loc, d0, d1, ctrl_locs, &ctrl_bits,
+                    state, nbits, loc, d0, d1, ctrl_locs, ctrl_bits,
                 );
             } else {
                 crate::instruct_qubit::instruct_1q_diag(state, loc, d0, d1);
@@ -69,22 +72,18 @@ pub(crate) fn dispatch_arrayreg_gate(nbits: usize, state: &mut [Complex64], pg: 
                     &pg.target_locs,
                     &diag,
                     ctrl_locs,
-                    &ctrl_bits,
+                    ctrl_bits,
                 );
             } else {
                 crate::instruct_qubit::instruct_2q_diag(state, nbits, &pg.target_locs, &diag);
             }
         }
         _ if pg.target_locs.len() == 1 => {
-            let matrix = gate.matrix();
+            let [a, b, c, d] = gate.single_qubit_coefficients().unwrap();
             let loc = pg.target_locs[0];
-            let a = matrix[[0, 0]];
-            let b = matrix[[0, 1]];
-            let c = matrix[[1, 0]];
-            let d = matrix[[1, 1]];
             if has_controls {
                 crate::instruct_qubit::instruct_1q_controlled(
-                    state, nbits, loc, a, b, c, d, ctrl_locs, &ctrl_bits,
+                    state, nbits, loc, a, b, c, d, ctrl_locs, ctrl_bits,
                 );
             } else {
                 crate::instruct_qubit::instruct_1q(state, loc, a, b, c, d);
@@ -99,7 +98,7 @@ pub(crate) fn dispatch_arrayreg_gate(nbits: usize, state: &mut [Complex64], pg: 
                     &pg.target_locs,
                     &gate_flat,
                     ctrl_locs,
-                    &ctrl_bits,
+                    ctrl_bits,
                 );
             } else {
                 crate::instruct_qubit::instruct_2q(state, nbits, &pg.target_locs, &gate_flat);
@@ -113,7 +112,7 @@ pub(crate) fn dispatch_arrayreg_gate(nbits: usize, state: &mut [Complex64], pg: 
                 &pg.target_locs,
                 &gate_flat,
                 ctrl_locs,
-                &ctrl_bits,
+                ctrl_bits,
             );
         }
     }

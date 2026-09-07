@@ -147,13 +147,28 @@ pub fn instruct_1q(
     let bit = loc_to_bit(nbits, loc);
     let step1 = 1 << bit;
     let step2 = 1 << (bit + 1);
-    let total = state.len();
-    let mut j = 0;
-    while j < total {
-        for i in j..(j + step1) {
-            u1rows(state, i, i + step1, a, b, c, d);
+    if [a.im, b.im, c.im, d.im].iter().all(|&v| v == 0.0) {
+        // Real matrices act independently on real and imaginary components.
+        // Disjoint halves let LLVM vectorize both contiguous streams.
+        for block in state.chunks_exact_mut(step2) {
+            let (low, high) = block.split_at_mut(step1);
+            for (low, high) in low.iter_mut().zip(high) {
+                let w = *low;
+                let v = *high;
+                *low = w * a.re + v * b.re;
+                *high = w * c.re + v * d.re;
+            }
         }
-        j += step2;
+    } else {
+        for block in state.chunks_exact_mut(step2) {
+            let (low, high) = block.split_at_mut(step1);
+            for (low, high) in low.iter_mut().zip(high) {
+                let w = *low;
+                let v = *high;
+                *low = a * w + b * v;
+                *high = c * w + d * v;
+            }
+        }
     }
 }
 
@@ -172,14 +187,14 @@ pub fn instruct_1q_diag(state: &mut [Complex64], loc: usize, d0: Complex64, d1: 
     let bit = loc_to_bit(nbits, loc);
     let step1 = 1 << bit;
     let step2 = 1 << (bit + 1);
-    let total = state.len();
-    let mut j = 0;
-    while j < total {
-        for i in j..(j + step1) {
-            state[i] *= d0;
-            state[i + step1] *= d1;
+    for block in state.chunks_exact_mut(step2) {
+        let (low, high) = block.split_at_mut(step1);
+        for value in low {
+            *value *= d0;
         }
-        j += step2;
+        for value in high {
+            *value *= d1;
+        }
     }
 }
 

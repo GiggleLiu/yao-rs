@@ -591,3 +591,66 @@ fn test_apply_3q_custom_gate() {
         );
     }
 }
+
+#[test]
+fn single_qubit_kernels_match_dense_action_at_every_stride() {
+    use crate::instruct_qubit::{instruct_1q, instruct_1q_diag};
+    use num_complex::Complex64 as C;
+
+    // Nonunitary matrices also exercise the kernels used by Kraus channels.
+    let matrices = [
+        [
+            C::new(0.3, 0.0),
+            C::new(-0.4, 0.0),
+            C::new(0.7, 0.0),
+            C::new(0.2, 0.0),
+        ],
+        [
+            C::new(0.2, 0.3),
+            C::new(-0.4, 0.5),
+            C::new(0.6, -0.7),
+            C::new(0.8, 0.1),
+        ],
+        [
+            C::new(0.2, 0.3),
+            C::new(0.0, 0.0),
+            C::new(0.0, 0.0),
+            C::new(-0.5, 0.7),
+        ],
+    ];
+    for n in 1..=7 {
+        let size = 1 << n;
+        let initial: Vec<C> = (0..size)
+            .map(|k| C::new((k as f64 * 0.17).sin(), (k as f64 * 0.31).cos()))
+            .collect();
+        for loc in 0..n {
+            let mask = 1 << (n - 1 - loc);
+            for matrix in matrices {
+                let expected: Vec<C> = (0..size)
+                    .map(|row| {
+                        (0..size)
+                            .filter(|&column| row & !mask == column & !mask)
+                            .map(|column| {
+                                let r = usize::from(row & mask != 0);
+                                let c = usize::from(column & mask != 0);
+                                matrix[2 * r + c] * initial[column]
+                            })
+                            .sum()
+                    })
+                    .collect();
+                let mut actual = initial.clone();
+                instruct_1q(&mut actual, loc, matrix[0], matrix[1], matrix[2], matrix[3]);
+                for (got, want) in actual.iter().zip(&expected) {
+                    assert!((*got - *want).norm() < 1e-12, "n={n}, loc={loc}");
+                }
+                if matrix[1] == C::new(0., 0.) && matrix[2] == C::new(0., 0.) {
+                    let mut actual = initial.clone();
+                    instruct_1q_diag(&mut actual, loc, matrix[0], matrix[3]);
+                    for (got, want) in actual.iter().zip(&expected) {
+                        assert!((*got - *want).norm() < 1e-12, "diagonal n={n}, loc={loc}");
+                    }
+                }
+            }
+        }
+    }
+}
