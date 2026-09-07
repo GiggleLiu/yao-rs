@@ -35,6 +35,15 @@ function build_circuit(spec)
             H
         elseif name == "X"
             X
+        elseif name == "Y"
+            Y
+        elseif name == "Z"
+            Z
+        elseif name == "T"
+            ConstGate.T
+        elseif name == "Custom"
+            rows = el["matrix"]
+            matblock(ComplexF64[complex(rows[i][j]...) for i in eachindex(rows), j in eachindex(rows[1])])
         elseif name == "S"
             ConstGate.S
         elseif name == "SWAP"

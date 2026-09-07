@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "seed": 4137,
+  "qasmbench": {
+    "repository": "https://github.com/pnnl/QASMBench",
+    "revision": "357b942396d5c2b7cbc1c229c585a6ef5ccaebac",
+    "paths": [
+      "small/adder_n10/adder_n10.qasm",
+      "small/qaoa_n6/qaoa_n6.qasm",
+      "small/qpe_n9/qpe_n9.qasm",
+      "small/ising_n10/ising_n10.qasm",
+      "small/vqe_uccsd_n8/vqe_uccsd_n8.qasm",
+      "medium/qft_n18/qft_n18.qasm"
+    ]
+  },
+  "mqt": {
+    "version": "2.2.3",
+    "algorithms": ["ghz", "qft", "grover", "qaoa", "randomcircuit"],
+    "qubits": [8, 12, 16]
+  }
+}

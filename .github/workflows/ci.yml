@@ -16,6 +16,18 @@ env:
   CARGO_PROFILE_TEST_DEBUG: "0"
 
 jobs:
+  benchmark-harness:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          version: "0.10.2"
+      - run: make benchmark-test
+
   quality:
     runs-on: ubuntu-latest
     steps:

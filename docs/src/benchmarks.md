@@ -67,15 +67,21 @@ and [CUDA vs CuYao](https://github.com/GiggleLiu/yao-rs/tree/2f99ba1b1def29ede40
 
 ## Reproduce
 
-Run from a source checkout with Rust and Julia installed. Use a new result
-directory and keep other builds and benchmarks off the measurement host:
+The [curated benchmark suite](https://github.com/GiggleLiu/yao-rs/tree/main/benchmarks/regression)
+combines pinned QASMBench and MQT application circuits with feature-specific
+workloads. It provides locked environments, full-output validation, and saved
+results for future regression checks. The
+[dataset survey](https://github.com/GiggleLiu/yao-rs/blob/main/benchmarks/regression/SURVEY.md)
+explains the selection.
+
+From a source checkout with Rust, Julia, and uv installed:
 
 ```bash
-python3 benchmarks/run_backend.py benchmarks/results/local-cpu --julia julia
-python3 benchmarks/compare.py --backend-results benchmarks/results/local-cpu
+make benchmark-setup
+make benchmark BENCH_OUT=benchmarks/results/local-cpu
 ```
 
-The runner builds both implementations and runs them serially. Add
-`--max-qubits 8 --runs 1 --threads 1` for a shorter smoke run. See the
-[benchmark guide](https://github.com/GiggleLiu/yao-rs/blob/main/benchmarks/README.md) for setup, plotting,
-thread controls, and workload-specific suites.
+Use `BENCH_PROFILE=smoke` for a short setup check, or `BENCH_PROFILE=full` for
+both thread budgets and the larger cases. See the
+[benchmark guide](https://github.com/GiggleLiu/yao-rs/blob/main/benchmarks/regression/README.md)
+for comparing two saved runs with `make benchmark-check`.

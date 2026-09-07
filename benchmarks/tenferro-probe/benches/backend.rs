@@ -229,6 +229,9 @@ fn backend(c: &mut Criterion) {
         }
         group.finish();
     }
+    if std::env::var("YAO_BENCH_CORE_ONLY").as_deref() == Ok("1") {
+        return;
+    }
     if std::env::var("YAO_BENCH_SUITE").as_deref() == Ok("tensor-memory") {
         matrix_slicing(c, &cpu);
         return;

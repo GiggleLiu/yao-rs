@@ -1,5 +1,9 @@
 # CPU backend comparison
 
+For routine performance work, use the [curated regression suite](regression/README.md):
+`make benchmark-setup`, `make benchmark`, and `make benchmark-check`. The
+[dataset survey](regression/SURVEY.md) explains its selection and scope.
+
 The initial tenferro experiment is an isolated, unpublished Cargo fixture at
 `tenferro-probe`. It pins the published tenferro 0.4.0 crates and requires Rust
 1.96 or newer. It does not change the library's dependencies or default backend.

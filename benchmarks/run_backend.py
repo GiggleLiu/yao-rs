@@ -4,6 +4,7 @@
 import argparse
 import hashlib
 import json
+import itertools
 import os
 import platform
 import shutil
@@ -52,6 +53,13 @@ def collect_criterion(directory=None):
             )
         )
     return records
+
+
+def measurement_order(index, include_qulacs=False):
+    """Counterbalance implementation order across independent runs."""
+    names = ["rust", "julia"] + (["qulacs"] if include_qulacs else [])
+    orders = list(itertools.permutations(names))
+    return orders[index % len(orders)]
 
 
 def measure_trajectory_memory(output, env):
@@ -195,6 +203,11 @@ def main():
     p.add_argument(
         "--suite", choices=["circuits", "evolution", "circuit-ad", "tensor-memory", "trajectories", "krylov"], default="circuits"
     )
+    p.add_argument("--qulacs", action="store_true", help="Also validate and time the pinned Qulacs adapter")
+    p.add_argument("--cases", type=Path, help="Versioned shared cases; do not regenerate workloads")
+    p.add_argument("--julia-project", type=Path, default=ROOT / "benchmarks/julia")
+    p.add_argument("--no-report", action="store_true", help="Collect raw data for a caller-owned report")
+    p.add_argument("--skip-memory", action="store_true", help="Time the selected suite without diagnostic memory probes")
     a = p.parse_args()
     if min(a.threads) < 1 or a.runs < 1 or not 4 <= a.max_qubits <= 24:
         p.error("positive threads/runs and 4..24 qubits required")
@@ -203,7 +216,9 @@ def main():
     env = os.environ.copy()
     env["CARGO_TARGET_DIR"] = str(TARGET)
     cases = output / "cases.json"
-    if a.suite == "circuits":
+    if a.cases:
+        shutil.copyfile(a.cases, cases)
+    elif a.suite == "circuits":
         run(
             [
                 sys.executable,
@@ -227,16 +242,13 @@ def main():
         "--benches",
     ]
     run(build, env, output / "build.log")
-    if a.suite == "evolution":
-        run([str(TARGET / "release/evolution_cases"), str(cases)], env)
-    elif a.suite == "circuit-ad":
-        run([str(TARGET / "release/ad_cases"), str(cases)], env)
-    elif a.suite == "tensor-memory":
-        run([str(TARGET / "release/memory_cases"), str(cases)], env)
-    elif a.suite == "trajectories":
-        run([str(TARGET / "release/trajectory_cases"), str(cases)], env)
-    elif a.suite == "krylov":
-        run([str(TARGET / "release/krylov_cases"), str(cases)], env)
+    generators = {
+        "evolution": "evolution_cases", "circuit-ad": "ad_cases",
+        "tensor-memory": "memory_cases", "trajectories": "trajectory_cases",
+        "krylov": "krylov_cases",
+    }
+    if not a.cases and a.suite in generators:
+        run([str(TARGET / "release" / generators[a.suite]), str(cases)], env)
     run(
         ["cargo", "bench", "--locked", "--manifest-path", str(MANIFEST), "--no-run"],
         env,
@@ -245,7 +257,7 @@ def main():
     run(
         [
             a.julia,
-            "--project=benchmarks/julia",
+            f"--project={a.julia_project.resolve()}",
             "-e",
             "using Pkg; Pkg.instantiate(); using Yao, BenchmarkTools",
         ],
@@ -276,6 +288,7 @@ def main():
         threads=a.threads,
         runs=a.runs,
         suite=a.suite,
+        measurement_order=[measurement_order(i, a.qulacs) for i in range(a.runs)],
         cases_sha256=sha(cases),
         sources={str(x.relative_to(ROOT)): sha(x) for x in source_paths},
         git_head=subprocess.check_output(
@@ -295,7 +308,7 @@ def main():
         metadata["hardware"] = subprocess.check_output(["lscpu"], text=True)
     (output / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
     shutil.copyfile(
-        ROOT / "benchmarks/julia/Manifest.toml", output / "julia-manifest.toml"
+        a.julia_project / "Manifest.toml", output / "julia-manifest.toml"
     )
     shutil.copyfile(MANIFEST.with_name("Cargo.lock"), output / "probe-cargo.lock")
     for threads in a.threads:
@@ -304,6 +317,7 @@ def main():
                 name: str(threads)
                 for name in [
                     "YAO_BENCH_THREADS",
+                    "QULACS_NUM_THREADS",
                     "RAYON_NUM_THREADS",
                     "JULIA_NUM_THREADS",
                     "OMP_NUM_THREADS",
@@ -319,71 +333,60 @@ def main():
             env["YAO_BENCH_PLAN_LOG"] = str(output / (prefix + "-plans.jsonl"))
             env["YAO_BENCH_STATS_LOG"] = str(output / (prefix + "-trajectory-stats.jsonl"))
             env["YAO_BENCH_KRYLOV_LOG"] = str(output / (prefix + "-krylov-stats.jsonl"))
-            # Criterion's output directory is shared; remove only previous benchmark results.
-            shutil.rmtree(TARGET / "criterion", ignore_errors=True)
-            run(
-                [
-                    "cargo",
-                    "bench",
-                    "--manifest-path",
-                    str(MANIFEST),
-                    "--locked",
-                    "--bench",
-                    "backend",
-                ],
-                env,
-                output / (prefix + "-rust.log"),
-            )
-            (output / (prefix + "-rust.json")).write_text(
-                json.dumps(collect_criterion(), indent=2) + "\n"
-            )
-            run(
-                [
-                    a.julia,
-                    "--project=benchmarks/julia",
-                    "benchmarks/julia/backend_baseline.jl",
-                    str(cases),
-                    str(references),
-                    str(output / (prefix + "-julia.json")),
-                ],
-                env,
-                output / (prefix + "-julia.log"),
-            )
-    if a.suite not in ("trajectories", "krylov"):
-        for n in [8, 12, 16]:
+            commands = {
+                "rust": ["cargo", "bench", "--manifest-path", str(MANIFEST), "--locked", "--bench", "backend"],
+                "julia": [a.julia, f"--project={a.julia_project.resolve()}",
+                          "benchmarks/julia/backend_baseline.jl", str(cases), str(references),
+                          str(output / (prefix + "-julia.json"))],
+                "qulacs": [sys.executable, "benchmarks/regression/qulacs_baseline.py", str(cases),
+                           str(references), str(output / (prefix + "-qulacs.json"))],
+            }
+            for implementation in measurement_order(index, a.qulacs):
+                if implementation == "rust":
+                    # Only this adapter writes Criterion's shared output directory.
+                    shutil.rmtree(TARGET / "criterion", ignore_errors=True)
+                run(commands[implementation], env, output / (prefix + f"-{implementation}.log"))
+                if implementation == "rust":
+                    (output / (prefix + "-rust.json")).write_text(
+                        json.dumps(collect_criterion(), indent=2) + "\n"
+                    )
+    if not a.skip_memory:
+        if a.suite not in ("trajectories", "krylov"):
+            for n in [8, 12, 16]:
+                for depth in [10, 100]:
+                    prefix = f"memory-{n}-{depth}"
+                    time_args = ["/usr/bin/time", "-l" if sys.platform == "darwin" else "-v"]
+                    run(
+                        time_args + [str(TARGET / "release/memory"), str(n), str(depth)],
+                        env,
+                        output / (prefix + ".log"),
+                    )
             for depth in [10, 100]:
-                prefix = f"memory-{n}-{depth}"
                 time_args = ["/usr/bin/time", "-l" if sys.platform == "darwin" else "-v"]
                 run(
-                    time_args + [str(TARGET / "release/memory"), str(n), str(depth)],
+                    time_args + [str(TARGET / "release/memory"), "16", str(depth), "nonlinear"],
                     env,
-                    output / (prefix + ".log"),
+                    output / f"memory-nonlinear-16-{depth}.log",
                 )
-        for depth in [10, 100]:
-            time_args = ["/usr/bin/time", "-l" if sys.platform == "darwin" else "-v"]
-            run(
-                time_args + [str(TARGET / "release/memory"), "16", str(depth), "nonlinear"],
-                env,
-                output / f"memory-nonlinear-16-{depth}.log",
-            )
-    if a.suite == "evolution":
-        measure_evolution_memory(output, env)
-    elif a.suite == "circuit-ad":
-        measure_circuit_ad_memory(output, env)
-    elif a.suite == "tensor-memory":
-        measure_tensor_memory(output, env)
-    elif a.suite == "trajectories":
-        measure_trajectory_memory(output, env)
-    elif a.suite == "krylov":
-        timer = ["/usr/bin/time", "-l" if sys.platform == "darwin" else "-v"]
-        for model in ("ising", "heisenberg"):
-            for n in (4, 8, 12, 16):
-                for k in (8, 20, 40):
-                    run(timer + [str(TARGET / "release/memory"), "krylov", model, str(n), str(k)],
-                        env, output / f"memory-krylov-{model}-{n}-{k}.log")
-    run(
-        [sys.executable, "benchmarks/compare.py", "--backend-results", str(output)], env
-    )
+        if a.suite == "evolution":
+            measure_evolution_memory(output, env)
+        elif a.suite == "circuit-ad":
+            measure_circuit_ad_memory(output, env)
+        elif a.suite == "tensor-memory":
+            measure_tensor_memory(output, env)
+        elif a.suite == "trajectories":
+            measure_trajectory_memory(output, env)
+        elif a.suite == "krylov":
+            timer = ["/usr/bin/time", "-l" if sys.platform == "darwin" else "-v"]
+            for model in ("ising", "heisenberg"):
+                for n in (4, 8, 12, 16):
+                    for k in (8, 20, 40):
+                        run(timer + [str(TARGET / "release/memory"), "krylov", model, str(n), str(k)],
+                            env, output / f"memory-krylov-{model}-{n}-{k}.log")
+    if not a.no_report:
+        run(
+            [sys.executable, "benchmarks/compare.py", "--backend-results", str(output)], env
+        )
     print(f"Results: {output}")
 
 
