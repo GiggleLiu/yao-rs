@@ -1,87 +1,93 @@
 # Benchmarks vs Yao.jl
 
-Performance depends on circuit size and workload. The recorded CPU comparison
-shows low overhead for small QFT circuits, similar QFT times at 24 qubits, and
-faster Yao.jl execution for several layered and noisy circuits.
+This CPU snapshot covers **70 workloads** with Yao.jl and, for state-vector
+execution, Qulacs. It includes public application circuits, gradients, exact
+noise, tensor workflows, and Hamiltonian evolution.
 
-## CPU scaling
+## Same-device results
 
-This **7 September 2026 baseline** compares the native yao-rs simulator with
-Yao.jl 0.9.3 on an **Apple M4, 16 GiB RAM, macOS 26.6.2**, using one thread and
-complex128 arithmetic. The toolchains were Rust 1.98.0 and Julia 1.12.4.
-These are measurements of the recorded source snapshot; they are not rerun
-on each release.
+**8 September 2026 · Apple M4 · 16 GiB RAM · macOS 26.6.2 · one thread · complex128.**
+Rust 1.98.0, Julia 1.12.4, Yao.jl 0.9.3, and Qulacs 0.6.14.
+The measured [source snapshot](https://github.com/GiggleLiu/yao-rs/commit/22364fbbbaff25f5b5df191b9475d63bf2d0d7a4) uses six
+independent processes per implementation, with execution order counterbalanced.
+Times below are medians of process medians; lower is better.
 
-![Single-thread CPU time for Rx and QFT from 8 to 24 qubits on Apple M4. The logarithmic time axis shows the small-QFT advantage narrowing as the state grows.](static/benchmark-cpu-scaling.svg)
+![QFT and 100-layer circuit execution times on Apple M4, comparing direct and fastest measured yao-rs modes with Yao.jl and Qulacs.](static/benchmark-cpu-scaling.svg)
 
-Lower time is better. The vertical axis is logarithmic. Each point is the
-median of three independent process medians, with the same circuit and input
-state in both implementations.
+The vertical axes are logarithmic. “Fastest mode” selects direct execution or
+a prepared circuit: yao-rs offers two- and four-qubit fusion; Qulacs uses direct
+or four-qubit-fused execution. Preparation is excluded here and retained in the
+raw results. For repeated fixed circuits, see [circuit fusion](states.md#reuse-a-fixed-circuit).
 
-## Other workloads
+| Workload | yao-rs (ms) | Mode | Yao.jl (ms) | Qulacs (ms) |
+|---|---:|---|---:|---:|
+| Rx · 16 qubits | 0.0466 | Fused 4q | 0.0579 | 0.0925 |
+| QFT · 16 qubits | 1.3681 | Direct | 2.9073 | 4.6652 |
+| 100 Ry–CX layers · 4 qubits | 0.0003 | Fused 4q | 0.0157 | 0.0016 |
+| 100 Ry–CX layers · 12 qubits | 1.9030 | Direct | 1.9668 | 5.9088 |
+| QASMBench adder · 10 qubits | 0.0261 | Direct | 0.0553 | 0.0322 |
+| QASMBench QAOA · 6 qubits | 0.0022 | Fused 2q | 0.0365 | 0.0061 |
+| QASMBench UCCSD · 8 qubits | 0.6362 | Fused 2q | 2.2023 | 0.6192 |
+| Value + gradient, 100 layers · 12 qubits | 10.8483 | Direct | 23.0744 | — |
+| Custom-loss gradient, depth 100 · 12 qubits | 3.1170 | Direct | 5.7058 | — |
+| Exact noisy density matrix · 10 qubits | 124.0126 | Direct | 154.1985 | — |
+| Five-term expectation · 6 qubits | 0.0019 | Direct | 0.0045 | — |
+| Ising Krylov evolution · 12 qubits | 6.5098 | Direct | 7.3002 | — |
 
-The same M4 run includes gates, layered circuits, gradients, and exact noisy
-simulation. A ratio **above 1 favors yao-rs; below 1 favors Yao.jl**.
+For the 100-layer, 4-qubit circuit, fusion preparation takes **0.302 ms**.
+It takes roughly **41 executions** to amortize that cost relative to direct
+yao-rs execution at these median timings.
 
-| Workload | Qubits | yao-rs (ms) | Yao.jl (ms) | Yao.jl / yao-rs |
-|---|---:|---:|---:|---:|
-| Rz gate | 24 | 12.7267 | 18.9304 | 1.49× |
-| FSim gate | 24 | 34.9472 | 25.3953 | 0.73× |
-| 100 Ry–CX layers | 8 | 0.2366 | 0.1157 | 0.49× |
-| 100 Ry–CX layers | 12 | 5.0920 | 1.9951 | 0.39× |
-| Value + gradient, 100 layers | 8 | 1.1124 | 1.4790 | 1.33× |
-| Value + gradient, 100 layers | 12 | 23.3087 | 23.6564 | 1.01× |
-| Noisy circuit, exact density matrix | 4 | 0.0222 | 0.0321 | 1.44× |
-| Noisy circuit, exact density matrix | 10 | 198.4158 | 155.4484 | 0.78× |
+Qulacs entries use its fastest measured mode; a dash means that feature was
+not measured with Qulacs. The expectation row uses direct simulation; tensor
+export, planning, and contraction timings are separate in the full results.
 
-Each layer applies Ry to every qubit followed by a nearest-neighbor CX chain.
-Gradient rows return both an expectation value and all parameter derivatives;
-noise rows use depolarizing and amplitude-damping channels.
+**Qualification: 158/158 named execution comparisons pass** the 5%
+tolerance using a 95% bootstrap interval over independent process medians.
 
-[Full M4 report and raw samples](https://github.com/GiggleLiu/yao-rs/tree/2f99ba1b1def29ede407d6a3a4b2f837ba03185c/benchmarks/results/mac-cpu-2026-09-07)
-include all 48 circuit cases, one- and four-thread settings, run ranges, source
-hashes, and pinned dependencies. The
-[Linux Xeon Platinum 8378A results](https://github.com/GiggleLiu/yao-rs/tree/2f99ba1b1def29ede407d6a3a4b2f837ba03185c/benchmarks/results/linux-cpu-2026-09-07)
-provide a second CPU comparison; that shared dual-socket host was not isolated
-from other workloads, so its timings need to be read with the recorded variability.
+This is a named-baseline result. A broader SOTA claim still requires tensor-
+contraction competitors, matched stochastic accuracy, and same-GPU comparisons.
 
-## What is timed
+[All workload timings, qualification details, and raw samples](https://github.com/GiggleLiu/yao-rs/tree/main/benchmarks/results/mac-curated-cpu-2026-09-08)
+retain every measured mode and phase, including slower results.
 
-- **Execution:** warmed library calls, including a fresh input-state copy.
-  Compilation, circuit construction, CLI startup, and file I/O are excluded.
-- **Agreement:** Julia validates every output entry against the Rust result
-  before timing, with qubit ordering aligned. Gradient cases check both values
-  and gradients.
-- **Threads:** the native Rust kernels in this fixture are serial. The
-  four-thread results change the Julia/provider budget; they do not make those
-  Rust kernels parallel.
-- **Tensor networks:** conversion, planning, and contraction are measured
-  separately. Their costs and execution boundaries are in the full reports;
-  the table above measures native simulation.
+## Measurement boundaries
 
-Additional measured workflows have their own reports:
-[custom-loss differentiation](https://github.com/GiggleLiu/yao-rs/tree/2f99ba1b1def29ede407d6a3a4b2f837ba03185c/benchmarks/results/mac-circuit-ad-cpu-2026-09-07),
-[Hamiltonian evolution](https://github.com/GiggleLiu/yao-rs/tree/2f99ba1b1def29ede407d6a3a4b2f837ba03185c/benchmarks/results/mac-krylov-cpu-2026-09-07),
-[tensor expectations and slicing](https://github.com/GiggleLiu/yao-rs/tree/2f99ba1b1def29ede407d6a3a4b2f837ba03185c/benchmarks/results/mac-tensor-memory-cpu-2026-09-07),
-and [CUDA vs CuYao](https://github.com/GiggleLiu/yao-rs/tree/2f99ba1b1def29ede407d6a3a4b2f837ba03185c/benchmarks/results/a800-cuda-2026-09-07).
+- Warmed execution includes a fresh input-state copy. Compilation, circuit
+  construction, CLI startup, and file I/O are excluded.
+- Complete outputs are checked before timing, with qubit order aligned.
+  Gradient comparisons check both the value and derivatives.
+- Krylov uses `rtol=1e-7` and a validated global relative-error budget of
+  `1e-6`. Achieved errors are retained in the report; this is not an equal-error
+  solver comparison.
+- Shared CI checks correctness of the harness. Performance gates require
+  repeated measurements on the same host and environment.
 
-## Reproduce
+## Reproduce and detect regressions
 
-The [curated benchmark suite](https://github.com/GiggleLiu/yao-rs/tree/main/benchmarks/regression)
-combines pinned QASMBench and MQT application circuits with feature-specific
-workloads. It provides locked environments, full-output validation, and saved
-results for future regression checks. The
-[dataset survey](https://github.com/GiggleLiu/yao-rs/blob/main/benchmarks/regression/SURVEY.md)
-explains the selection.
+The [curated suite](https://github.com/GiggleLiu/yao-rs/tree/main/benchmarks/regression) freezes 19
+QASMBench/MQT application circuits and adds feature-specific fixtures.
+The [dataset survey](https://github.com/GiggleLiu/yao-rs/blob/main/benchmarks/regression/SURVEY.md)
+explains the selection and comparison pool.
 
-From a source checkout with Rust, Julia, and uv installed:
+From a checkout with Rust, Julia, and uv installed:
 
 ```bash
 make benchmark-setup
 make benchmark BENCH_OUT=benchmarks/results/local-cpu
 ```
 
-Use `BENCH_PROFILE=smoke` for a short setup check, or `BENCH_PROFILE=full` for
-both thread budgets and the larger cases. See the
-[benchmark guide](https://github.com/GiggleLiu/yao-rs/blob/main/benchmarks/regression/README.md)
-for comparing two saved runs with `make benchmark-check`.
+Use `BENCH_PROFILE=smoke` for setup validation or `BENCH_PROFILE=full` for
+larger cases and both thread budgets. To compare two revisions:
+
+```bash
+make benchmark-check \
+  BENCH_BASELINE=path/to/baseline/results.json \
+  BENCH_CANDIDATE=path/to/candidate/results.json
+```
+
+The check rejects missing cases, incompatible environments, correctness
+failures, and inconclusive intervals. The saved M4 run provides the initial
+baseline for this protocol; use a local baseline for another device.
+See the [benchmark guide](https://github.com/GiggleLiu/yao-rs/blob/main/benchmarks/regression/README.md)
+for environment locks, raw data, and the named-baseline qualification command.

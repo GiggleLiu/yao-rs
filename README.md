@@ -132,6 +132,8 @@ See the [mdBook documentation](https://giggleliu.github.io/yao-rs/) for detailed
 
 Run `make check-all` for workspace formatting, Clippy, and all-feature tests.
 Run `make doc` to build the book and full API docs (requires mdBook 0.5.2).
+Use `make benchmark-setup` and `make benchmark` for the
+[curated CPU suite](benchmarks/regression/README.md), saved results, and regression checks.
 See [CONTRIBUTING.md](CONTRIBUTING.md) for feature checks and the
 [release guide](RELEASING.md) for packaging and publishing.
 

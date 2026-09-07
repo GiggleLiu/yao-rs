@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from pathlib import Path
 import statistics
 
 import matplotlib
@@ -19,7 +20,7 @@ def main():
     args = parser.parse_args()
     data = json.load(open(args.results))
     rows = data["records"]
-    plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 10,
+    plt.rcParams.update({"font.family": "sans-serif", "font.size": 10,
                          "svg.fonttype": "none", "svg.hashsalt": "yao-curated-cpu"})
     fig, axes = plt.subplots(1, 2, figsize=(10, 3.8), layout="constrained")
     styles = [
@@ -51,6 +52,9 @@ def main():
     fig.legend(handles, labels, loc="outside lower center", ncol=2, frameon=False)
     fig.savefig(args.output, metadata={"Date": None,
         "Description": "Source: " + data["source_commit"] + "; medians of independent processes. Fusion preparation excluded."})
+    output = Path(args.output)
+    if output.suffix.lower() == '.svg':
+        output.write_text('\n'.join(line.rstrip() for line in output.read_text().splitlines()) + '\n')
 
 
 if __name__ == "__main__":

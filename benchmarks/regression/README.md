@@ -4,6 +4,8 @@ This folder defines the curated CPU suite and the environment used to run it.
 It reuses the Rust/Julia feature adapters in `benchmarks/tenferro-probe` and adds
 pinned QASMBench/MQT application circuits plus Qulacs comparisons.
 [Survey and selection rationale](SURVEY.md) describe the coverage.
+The [recorded M4 baseline](../results/mac-curated-cpu-2026-09-08) includes the
+six-process results and raw samples for this protocol.
 
 From the repository root, with Rust (1.96+), Julia, and uv installed:
 
