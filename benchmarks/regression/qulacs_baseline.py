@@ -43,11 +43,12 @@ def build(spec):
             theta, phi = params
             c, s = np.cos(theta), -1j * np.sin(theta)
             matrix = np.array([[1,0,0,0],[0,c,s,0],[0,s,c,0],[0,0,0,np.exp(-1j*phi)]])
-            operation = gate.DenseMatrix(sites[::-1], matrix)
+            operation = gate.DenseMatrix(sites, matrix)
         elif name == "Custom":
             matrix = np.asarray(element["matrix"])
             matrix = matrix[...,0] + 1j * matrix[...,1]
-            operation = gate.DenseMatrix(sites[::-1], matrix)
+            # Both libraries assign the first target to the matrix's low bit.
+            operation = gate.DenseMatrix(sites, matrix)
         else:
             raise ValueError(f"Unsupported gate: {name}")
         if controls:

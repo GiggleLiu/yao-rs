@@ -49,6 +49,8 @@ requires no dataset downloads. Their manifest records source revision, SHA-256,
 qubit mapping, gate lowering, and removed final measurements. Original files
 and licenses are retained. QASMBench UCCSD's invalid terminal readout register
 names are preserved in the original file; only the unitary prefix is timed.
+Application circuits use the same deterministic, normalized dense complex input
+in every library. Native fixtures retain the initial state specified in each case.
 Mid-circuit measurement, reset, or classical control is rejected. MQT generation
 uses its pinned deterministic defaults (seed 10), followed by level-0 common
 basis lowering (transpiler seed 4137). Global phase is preserved explicitly.
@@ -67,9 +69,10 @@ Warmed state execution includes a fresh state copy in each implementation.
 Complete outputs are checked outside timing. yao-rs has direct, two-qubit-fused,
 and four-qubit-fused execution rows; Qulacs has ordinary and four-qubit-fused
 rows. Fusion preparation is recorded separately. The report identifies each
-library's fastest measured execution mode and retains all timings. Julia warms each operation for 0.2 seconds, then takes 30 calibrated batches
-targeting 10 ms each. Batch sizes and GC timings are saved. Gradients, density matrices, tensor phases, trajectories, and Krylov
-operations retain their feature-specific execution boundaries from the
+library's fastest measured execution mode and retains all timings. Julia warms
+each operation for 0.2 seconds, then takes 30 calibrated batches targeting 10 ms
+each. Batch sizes and GC timings are saved. Gradients, density matrices, tensor
+phases, trajectories, and Krylov operations retain their execution boundaries from the
 [parent benchmark guide](../README.md).
 
 `benchmark-check` compares the same implementation and phase across revisions.
@@ -78,6 +81,9 @@ candidate/baseline time ratio. The default tolerance is 5%; configure it with
 `BENCH_TOLERANCE`. Fewer than five runs, missing cases, correctness failures,
 nonfinite samples, incompatible environments, and inconclusive intervals cannot
 pass. A mean across workloads never masks an individual regression.
+For inconclusive results, increase the profile's `runs` in `suite.json` to a
+multiple of six (for example, 12), preserving the implementation-order balance,
+and remeasure both revisions on the idle host.
 
 A comparison against a prior yao-rs revision is a regression check, not a claim
 of state-of-the-art performance. Qualifying that claim additionally requires
@@ -96,3 +102,11 @@ Krylov results record achieved errors against an independently checked tight
 reference. The current solver parameter is `rtol=1e-7`, with a validated global
 relative-error budget of `1e-6`. Timing at this budget is not an equal-error
 comparison; consult the reported errors before making a solver-performance claim.
+
+Regenerate the documentation's one-thread QFT/layer scaling chart from a saved
+regression or full run:
+
+```bash
+uv run --frozen --project benchmarks/regression/environment \
+  python benchmarks/regression/plot.py path/to/results.json chart.svg
+```

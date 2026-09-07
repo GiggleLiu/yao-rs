@@ -7,6 +7,7 @@ import itertools
 
 import numpy as np
 from qiskit import QuantumCircuit
+from qiskit.circuit.library import UnitaryGate
 from qiskit.quantum_info import Statevector
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -27,6 +28,28 @@ qulacs = load("qulacs_baseline")
 
 
 class DatasetTests(unittest.TestCase):
+    def test_asymmetric_custom_matrices_preserve_target_order_and_controls(self):
+        n = 5
+        for targets in ([0, 3], [3, 0], [4, 1, 3]):
+            dimension = 1 << len(targets)
+            matrix = np.roll(np.diag(np.exp(0.17j * np.arange(dimension))), 1, axis=0)
+            for controlled in (False, True):
+                controls = [q for q in range(n) if q not in targets][:2] if controlled else []
+                configs = [False, True] if controlled else []
+                with self.subTest(targets=targets, controls=controls):
+                    element = dict(type='gate', gate='Custom', targets=targets,
+                                   controls=controls, control_configs=configs,
+                                   matrix=np.stack([matrix.real, matrix.imag], axis=-1).tolist())
+                    spec = dict(num_qubits=n, elements=[element])
+                    state = qulacs.initial(dict(circuit=spec, initial='deterministic'))
+                    operation = UnitaryGate(matrix)
+                    if controls:
+                        operation = operation.control(len(controls), ctrl_state=2)
+                    expected = Statevector(state.get_vector()).evolve(
+                        operation, qargs=[n - 1 - q for q in controls + list(targets)]).data
+                    qulacs.build(spec).update_quantum_state(state)
+                    np.testing.assert_allclose(state.get_vector(), expected, rtol=1e-12, atol=1e-12)
+
     def test_six_runs_cover_every_implementation_order(self):
         self.assertEqual({measurement_order(i, True) for i in range(6)},
                          set(itertools.permutations(["rust", "julia", "qulacs"])))
