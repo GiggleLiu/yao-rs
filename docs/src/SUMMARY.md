@@ -1,50 +1,43 @@
 # Summary
 
-[Introduction](./introduction.md)
+[Overview](./introduction.md)
 
-# User Guide
+# Get started
 
-- [Getting Started](./getting-started.md)
-- [CLI Tool](./cli.md)
-- [Circuit JSON Conventions](./conventions.md)
+- [Installation](./installation.md)
+- [First circuit](./getting-started.md)
+
+# Guides
+
+- [Circuits & gates](./circuits.md)
+- [Simulation & measurement](./states.md)
+  - [Noisy trajectories](./trajectories.md)
+  - [Hamiltonian evolution](./hamiltonian.md)
+  - [Differentiable simulation](./differentiation.md)
+  - [CUDA simulation](./cuda.md)
+- [Tensor networks](./tensor-networks.md)
+  - [Observables & memory controls](./tensor-memory.md)
+- [Visualization](./visualization.md)
+- [OpenQASM](./openqasm.md)
 
 # Examples
 
-- [Example Catalog](./examples/catalog.md)
-- [CLI Example Visualization](./examples/cli-visualization.md)
-- [Generated CLI Example Artifacts](./examples/generated/manifest.md)
-  - [Bell State](./examples/cli/bell.md)
-  - [GHZ 4](./examples/cli/ghz4.md)
-  - [QFT 4](./examples/cli/qft4.md)
-  - [Phase Estimation Z](./examples/cli/phase-estimation-z.md)
-  - [Hadamard Test Z](./examples/cli/hadamard-test-z.md)
-  - [Swap Test](./examples/cli/swap-test.md)
-  - [Bernstein-Vazirani 1011](./examples/cli/bernstein-vazirani-1011.md)
-  - [Grover Marked State 5](./examples/cli/grover-marked-5.md)
-  - [QAOA MaxCut Line-4 Depth 2](./examples/cli/qaoa-maxcut-line4-depth2.md)
-  - [QCBM Static Depth 2](./examples/cli/qcbm-static-depth2.md)
-- [Entangled States](./examples/entangled-states.md)
-- [Quantum Fourier Transform](./examples/qft.md)
-- [Phase Estimation](./examples/phase-estimation.md)
-- [Ancilla Protocols](./examples/ancilla-protocols.md)
-- [Bernstein–Vazirani](./examples/bernstein-vazirani.md)
-- [Grover Search](./examples/grover-search.md)
-- [QAOA for MaxCut](./examples/qaoa-maxcut.md)
-- [Quantum Circuit Born Machine](./examples/qcbm.md)
-- [Variational Quantum Eigensolver (VQE)](./examples/vqe.md)
-
-# Rust API
-
-- [Gates](./gates.md)
-- [Circuits](./circuits.md)
-- [Quantum Registers](./states.md)
-- [Noisy Trajectories](./trajectories.md)
-- [Hamiltonian Evolution](./hamiltonian.md)
-- [Differentiable Simulation](./differentiation.md)
-- [CUDA Simulation](./cuda.md)
-- [Tensor Networks](./tensor-networks.md)
-- [Multiple Observables and Memory Controls](./tensor-memory.md)
+- [Browse examples](./examples/catalog.md)
+  - [Entangled states](./examples/entangled-states.md)
+  - [Quantum Fourier transform](./examples/qft.md)
+  - [Phase estimation](./examples/phase-estimation.md)
+  - [Ancilla protocols](./examples/ancilla-protocols.md)
+  - [Bernstein–Vazirani](./examples/bernstein-vazirani.md)
+  - [Grover search](./examples/grover-search.md)
+  - [QAOA for MaxCut](./examples/qaoa-maxcut.md)
+  - [Quantum circuit Born machine](./examples/qcbm.md)
+  - [Variational quantum eigensolver](./examples/vqe.md)
 
 # Reference
 
-- [Comparison with Yao.jl](./comparison.md)
+- [Benchmarks vs Yao.jl](./benchmarks.md)
+
+- [CLI commands](./cli.md)
+- [Formats & conventions](./conventions.md)
+- [Gate reference](./gates.md)
+- [Rust API](./api.md)

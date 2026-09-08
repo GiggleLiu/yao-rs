@@ -1,72 +1,59 @@
-# Gates
+# Gate reference
 
-Gates in yao-rs are represented by the `Gate` enum, covering standard qubit gates, parameterized rotations, and custom matrices.
+Use these gates with the [circuit builders](circuits.md) or their names in
+[JSON](conventions.md#gate-elements). Angles are in radians.
 
-```rust
-pub enum Gate {
-    X, Y, Z, H, S, T, SWAP,
-    Phase(f64),
-    Rx(f64), Ry(f64), Rz(f64),
-    Custom { matrix: Array2<Complex64>, is_diagonal: bool },
-}
-```
+## Gate names
 
-## Named Qubit Gates
+| Rust gate / JSON name | Sites | Parameters | Operation |
+|---|---|---|---|
+| `X`, `Y`, `Z` | 1 | — | Pauli gates |
+| `H` | 1 | — | Hadamard |
+| `S` | 1 | — | Phase of π/2 on state 1 |
+| `T` | 1 | — | Phase of π/4 on state 1 |
+| `SqrtX`, `SqrtY` | 1 | — | Square roots of X and Y |
+| `SqrtW` | 1 | — | π/2 rotation about the (X + Y)/√2 axis |
+| `Rx`, `Ry`, `Rz` | 1 | `theta` | Rotation about X, Y, or Z |
+| `Phase` | 1 | `theta` | Diagonal matrix `diag(1, exp(i*theta))` |
+| `SWAP` | 2 | — | Exchange two sites |
+| `ISWAP` | 2 | — | Exchange states 01 and 10 with phase i |
+| `FSim` | 2 | `theta, phi` | Fermionic simulation gate |
+| `Custom` | Matrix-dependent | — | User-supplied matrix |
 
-| Gate | Matrix | Diagonal |
-|------|--------|----------|
-| `X` | `[[0, 1], [1, 0]]` | No |
-| `Y` | `[[0, -i], [i, 0]]` | No |
-| `Z` | `[[1, 0], [0, -1]]` | Yes |
-| `H` | `1/sqrt(2) [[1, 1], [1, -1]]` | No |
-| `S` | `[[1, 0], [0, i]]` | Yes |
-| `T` | `[[1, 0], [0, e^(i*pi/4)]]` | Yes |
+In Rust, write `Gate::Ry(theta)` or `Gate::FSim(theta, phi)`.
+In JSON, use `"params": [theta]` or `"params": [theta, phi]` alongside the gate name.
+Named gates require qubit targets.
 
-## SWAP Gate
-
-The 2-qubit `Gate::SWAP` acts on 2 sites. Its 4x4 matrix swaps the |01> and |10> basis states.
-
-## Rotation Gates
-
-- **Rx(theta):** `[[cos(theta/2), -i*sin(theta/2)], [-i*sin(theta/2), cos(theta/2)]]`
-- **Ry(theta):** `[[cos(theta/2), -sin(theta/2)], [sin(theta/2), cos(theta/2)]]`
-- **Rz(theta):** `[[e^(-i*theta/2), 0], [0, e^(i*theta/2)]]` -- diagonal
-
-## Phase Gate
-
-`Gate::Phase(theta)` represents `diag(1, e^(i*theta))`. This is equivalent to Yao.jl's `shift(theta)`.
-
-Special cases:
-
-- `Phase(pi)` = Z
-- `Phase(pi/2)` = S
-- `Phase(pi/4)` = T
-
-The Phase gate is diagonal.
-
-## Custom Gates
+## Inspect a matrix
 
 ```rust
-Gate::Custom {
-    matrix: Array2<Complex64>,
-    is_diagonal: bool,
-}
+use yao_rs::Gate;
+
+let matrix = Gate::H.matrix();
+assert_eq!(matrix.shape(), &[2, 2]);
 ```
 
-Provide an arbitrary unitary matrix. The `is_diagonal` flag tells the tensor network exporter to use the diagonal optimization (shared legs instead of separate input/output legs).
+The [generated gate API](api/yao_rs/gate/enum.Gate.html) documents matrix and
+parameter access.
 
-The matrix dimension determines how many sites the gate acts on: a d^n x d^n matrix acts on n sites of dimension d.
+## Custom gates
 
-## Diagonal Gate Optimization
-
-In tensor networks, diagonal gates have one shared leg per site instead of separate input and output legs. This reduces the tensor rank and can improve contraction efficiency.
-
-Gates that are diagonal: `Z`, `S`, `T`, `Phase(theta)`, `Rz(theta)`, and any `Custom` gate with `is_diagonal: true`.
-
-## Getting the Matrix
+Supply a square complex matrix, a display label, and an accurate diagonal flag:
 
 ```rust
-let mat = Gate::H.matrix(2);  // d=2 for qubits
+use yao_rs::Gate;
+
+let gate = Gate::Custom {
+    matrix: Gate::H.matrix(),
+    is_diagonal: false,
+    label: "My H".into(),
+};
 ```
 
-Named gates require `d=2` (will panic otherwise). Custom gates work with any dimension.
+A gate's matrix size must equal the product of its target dimensions. For
+example, a gate on two qutrits needs a 9 × 9 matrix. Supply a unitary matrix
+for unitary evolution; the circuit constructor does not check unitarity.
+
+Set `is_diagonal: true` only if all off-diagonal entries are zero. This flag
+enables specialized simulation and [tensor export](tensor-networks.md#control-computation-cost)
+paths. The named diagonal gates are `Z`, `S`, `T`, `Phase`, and `Rz`.

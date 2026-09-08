@@ -14,6 +14,8 @@ fn renders_basic_h_gate_to_svg() {
     assert!(svg.contains("<line "));
     assert!(svg.contains(">H</text>"));
     assert!(svg.contains("viewBox="));
+    assert_eq!(extract_attr_from_tag(&svg, "xmlns=", "width"), 136.0);
+    assert_eq!(extract_attr_from_tag(&svg, "xmlns=", "height"), 56.0);
     assert!(svg.ends_with("</svg>"));
     assert_eq!(svg, crate::svg::to_svg(&circuit));
 }
@@ -215,14 +217,14 @@ fn renders_negative_rotation_gate_parameters_with_two_decimals() {
 }
 
 #[test]
-fn renders_phase_gate_compactly_without_p_abbreviation() {
+fn renders_standalone_phase_with_standard_p_label() {
     let circuit = Circuit::new(vec![2], vec![put(vec![0], Gate::Phase(1.2345))]).unwrap();
     let svg = crate::svg::to_svg(&circuit);
     let gate_width = extract_attr_from_tag(&svg, "data-label=\"Phase(1.2345)\"", "width");
 
-    assert!(svg.contains(">Phase</text>"));
+    assert!(svg.contains(">P</text>"));
     assert!(svg.contains(">1.23</text>"));
-    assert!(!svg.contains(">P</text>"));
+    assert!(!svg.contains(">Phase</text>"));
     assert!(!svg.contains(">Phase(1.2345)</text>"));
     assert!(gate_width < 94.0);
 }
@@ -268,4 +270,108 @@ fn extract_viewbox_width(svg: &str) -> f32 {
     let parts: Vec<&str> = svg[viewbox_start..viewbox_end].split_whitespace().collect();
 
     parts[2].parse().unwrap()
+}
+
+#[test]
+fn renders_controlled_phase_as_connected_dots_in_either_direction() {
+    for (control_site, target_site) in [(0, 1), (1, 0), (0, 2), (2, 0)] {
+        let circuit = Circuit::qubits(
+            3,
+            vec![control(
+                vec![control_site],
+                vec![target_site],
+                Gate::Phase(std::f64::consts::FRAC_PI_2),
+            )],
+        )
+        .unwrap();
+        let svg = circuit.to_svg();
+        assert_eq!(count_occurrences(&svg, "class=\"control\""), 1);
+        assert_eq!(count_occurrences(&svg, "class=\"phase-target\""), 1);
+        assert_eq!(count_occurrences(&svg, "class=\"control-link\""), 1);
+        assert!(!svg.contains("class=\"gate-box\""));
+        assert!(svg.contains(">π/2</text>"));
+        let control_y = extract_attr_from_tag(&svg, "class=\"control\"", "cy");
+        let target_y = extract_attr_from_tag(&svg, "class=\"phase-target\"", "cy");
+        let label_y = extract_attr_from_tag(&svg, "class=\"phase-label\"", "y");
+        assert!(label_y > control_y.min(target_y) && label_y < control_y.max(target_y));
+        let y1 = extract_attr_from_tag(&svg, "class=\"control-link\"", "y1");
+        let y2 = extract_attr_from_tag(&svg, "class=\"control-link\"", "y2");
+        assert_eq!(y1, control_y.min(target_y) - super::CONTROL_RADIUS);
+        assert_eq!(y2, control_y.max(target_y) + super::CONTROL_RADIUS);
+    }
+}
+
+#[test]
+fn preserves_open_control_for_controlled_phase() {
+    let gate = PositionedGate::new(
+        Gate::Phase(-std::f64::consts::FRAC_PI_4),
+        vec![1],
+        vec![0],
+        vec![false],
+    );
+    let circuit = Circuit::qubits(2, vec![CircuitElement::Gate(gate)]).unwrap();
+    let svg = circuit.to_svg();
+    assert_eq!(count_occurrences(&svg, "class=\"control-open\""), 1);
+    assert_eq!(count_occurrences(&svg, "class=\"phase-target\""), 1);
+    assert!(!svg.contains("class=\"control\""));
+    assert!(svg.contains(">−π/4</text>"));
+}
+
+#[test]
+fn uses_boxed_p_for_multiple_controls_and_keeps_rz_distinct() {
+    let circuit = Circuit::qubits(
+        3,
+        vec![
+            control(vec![0, 1], vec![2], Gate::Phase(std::f64::consts::PI)),
+            control(vec![0], vec![1], Gate::Rz(0.5)),
+        ],
+    )
+    .unwrap();
+    let svg = circuit.to_svg();
+    assert_eq!(count_occurrences(&svg, "class=\"gate-box\""), 2);
+    assert!(svg.contains(">P</text>"));
+    assert!(svg.contains(">π</text>"));
+    assert!(svg.contains(">Rz</text>"));
+    assert!(!svg.contains("class=\"phase-target\""));
+}
+
+#[test]
+fn formats_phase_angles_without_misidentifying_decimal_parameters() {
+    use std::f64::consts::PI;
+    for (angle, label) in [
+        (0.0, "0"),
+        (PI, "π"),
+        (-PI, "−π"),
+        (2.0 * PI, "2π"),
+        (PI / 2.0, "π/2"),
+        (PI / 4.0, "π/4"),
+        (PI / 8.0, "π/8"),
+        (PI / 3.0, "π/3"),
+        (3.0 * PI / 4.0, "3π/4"),
+        (-PI / 1024.0, "−π/1024"),
+        (1.2345, "1.23"),
+        (PI / 2.0 + 0.0001, "1.57"),
+        (0.000001, "1.00e-6"),
+    ] {
+        assert_eq!(super::phase_angle_label(angle), label, "angle {angle}");
+    }
+}
+
+#[test]
+fn reserves_space_for_long_phase_angles_between_columns() {
+    let theta = -std::f64::consts::PI / 1024.0;
+    let circuit = Circuit::qubits(
+        2,
+        vec![
+            control(vec![0], vec![1], Gate::Phase(theta)),
+            put(vec![0], Gate::H),
+        ],
+    )
+    .unwrap();
+    let svg = circuit.to_svg();
+    let label_x = extract_attr_from_tag(&svg, "class=\"phase-label\"", "x");
+    let h_x = extract_attr_from_tag(&svg, "data-label=\"H\"", "x");
+    let label_right = label_x + super::text_width("−π/1024");
+    assert!(label_right < h_x);
+    assert!(label_right < extract_viewbox_width(&svg));
 }

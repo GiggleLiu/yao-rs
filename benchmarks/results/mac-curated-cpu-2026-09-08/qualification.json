@@ -1,0 +1,1904 @@
+{
+  "schema_version": 1,
+  "tolerance": 0.05,
+  "scope": "Fastest measured native CPU execution mode against every named competitor; preparation is excluded. Other phases and devices require separate qualification.",
+  "status": "pass",
+  "records": [
+    {
+      "case": "circuit-ad/custom_gradient_12_depth10",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.5650710560271703,
+      "status": "pass",
+      "confidence_interval": [
+        0.5572273423992095,
+        0.5707200097895042
+      ]
+    },
+    {
+      "case": "circuit-ad/custom_gradient_12_depth100",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.5462822206902422,
+      "status": "pass",
+      "confidence_interval": [
+        0.5394392234996294,
+        0.5531134242813013
+      ]
+    },
+    {
+      "case": "circuit-ad/custom_gradient_8_depth10",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.5668112426021624,
+      "status": "pass",
+      "confidence_interval": [
+        0.5534905613902246,
+        0.5742577186885528
+      ]
+    },
+    {
+      "case": "circuit-ad/custom_gradient_8_depth100",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.5916163993604722,
+      "status": "pass",
+      "confidence_interval": [
+        0.5808829905936446,
+        0.5989777894512524
+      ]
+    },
+    {
+      "case": "circuits/cry_low_far_12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.2517858153992513,
+      "status": "pass",
+      "confidence_interval": [
+        0.24830890515768933,
+        0.2559360198915758
+      ]
+    },
+    {
+      "case": "circuits/cry_low_far_12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.32043484508594944,
+      "status": "pass",
+      "confidence_interval": [
+        0.3138298650560742,
+        0.3239275428359771
+      ]
+    },
+    {
+      "case": "circuits/cry_low_far_12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.319603243808853,
+      "status": "pass",
+      "confidence_interval": [
+        0.3114947539357084,
+        0.32502579367323053
+      ]
+    },
+    {
+      "case": "circuits/cry_low_far_16",
+      "threads": 1,
+      "native_mode": "fused4_execute",
+      "competitor": "julia",
+      "ratio": 0.6658433062150702,
+      "status": "pass",
+      "confidence_interval": [
+        0.6590429615122411,
+        0.6694739965917972
+      ]
+    },
+    {
+      "case": "circuits/cry_low_far_16",
+      "threads": 1,
+      "native_mode": "fused4_execute",
+      "competitor": "qulacs",
+      "ratio": 0.5373687070537813,
+      "status": "pass",
+      "confidence_interval": [
+        0.531147489679292,
+        0.5385489057801777
+      ]
+    },
+    {
+      "case": "circuits/cry_low_far_16",
+      "threads": 1,
+      "native_mode": "fused4_execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.5337859183400194,
+      "status": "pass",
+      "confidence_interval": [
+        0.5251741412272267,
+        0.5369516929322928
+      ]
+    },
+    {
+      "case": "circuits/cry_low_far_8",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "julia",
+      "ratio": 0.03498354203472013,
+      "status": "pass",
+      "confidence_interval": [
+        0.03464491241418299,
+        0.03542675494007185
+      ]
+    },
+    {
+      "case": "circuits/cry_low_far_8",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs",
+      "ratio": 0.07501758764419574,
+      "status": "pass",
+      "confidence_interval": [
+        0.07436859367491921,
+        0.07544355417606852
+      ]
+    },
+    {
+      "case": "circuits/cry_low_far_8",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.07464005668443728,
+      "status": "pass",
+      "confidence_interval": [
+        0.07336919684525775,
+        0.07497624051055564
+      ]
+    },
+    {
+      "case": "circuits/fsim_adjacent_12",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "julia",
+      "ratio": 0.36987715154686,
+      "status": "pass",
+      "confidence_interval": [
+        0.36344239530999056,
+        0.3814942369894219
+      ]
+    },
+    {
+      "case": "circuits/fsim_adjacent_12",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs",
+      "ratio": 0.32789756474801696,
+      "status": "pass",
+      "confidence_interval": [
+        0.325474491082545,
+        0.3297151868223239
+      ]
+    },
+    {
+      "case": "circuits/fsim_adjacent_12",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.3262818067050562,
+      "status": "pass",
+      "confidence_interval": [
+        0.3236273725545219,
+        0.3289056090302749
+      ]
+    },
+    {
+      "case": "circuits/fsim_adjacent_16",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "julia",
+      "ratio": 0.6613272209574013,
+      "status": "pass",
+      "confidence_interval": [
+        0.6577576401951101,
+        0.6671808643605988
+      ]
+    },
+    {
+      "case": "circuits/fsim_adjacent_16",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs",
+      "ratio": 0.40735649883747294,
+      "status": "pass",
+      "confidence_interval": [
+        0.4054410802656692,
+        0.41065590998861756
+      ]
+    },
+    {
+      "case": "circuits/fsim_adjacent_16",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.4069689114159298,
+      "status": "pass",
+      "confidence_interval": [
+        0.40507365572527637,
+        0.41064837529095694
+      ]
+    },
+    {
+      "case": "circuits/fsim_adjacent_8",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "julia",
+      "ratio": 0.06230919435851674,
+      "status": "pass",
+      "confidence_interval": [
+        0.06203292868662575,
+        0.06294441659273022
+      ]
+    },
+    {
+      "case": "circuits/fsim_adjacent_8",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs",
+      "ratio": 0.14018825384433942,
+      "status": "pass",
+      "confidence_interval": [
+        0.139443956384918,
+        0.14192648533035887
+      ]
+    },
+    {
+      "case": "circuits/fsim_adjacent_8",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.14043601994469873,
+      "status": "pass",
+      "confidence_interval": [
+        0.13958588179205483,
+        0.141727819959657
+      ]
+    },
+    {
+      "case": "circuits/gradient100_12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.47014330544063715,
+      "status": "pass",
+      "confidence_interval": [
+        0.4538603138217863,
+        0.4853214054368523
+      ]
+    },
+    {
+      "case": "circuits/gradient100_4",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.6636995436442004,
+      "status": "pass",
+      "confidence_interval": [
+        0.6588898216240118,
+        0.6915174056252377
+      ]
+    },
+    {
+      "case": "circuits/gradient100_8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.4203799915229207,
+      "status": "pass",
+      "confidence_interval": [
+        0.4148554584298854,
+        0.4342667160515674
+      ]
+    },
+    {
+      "case": "circuits/gradient10_12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.4670278985861023,
+      "status": "pass",
+      "confidence_interval": [
+        0.456574960782361,
+        0.5036401621502067
+      ]
+    },
+    {
+      "case": "circuits/gradient10_4",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.6526533014622444,
+      "status": "pass",
+      "confidence_interval": [
+        0.6367938408645543,
+        0.6680081338583598
+      ]
+    },
+    {
+      "case": "circuits/gradient10_8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.4209571782635377,
+      "status": "pass",
+      "confidence_interval": [
+        0.41306002182309565,
+        0.4400137237946977
+      ]
+    },
+    {
+      "case": "circuits/layers100_12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.9675854381775965,
+      "status": "pass",
+      "confidence_interval": [
+        0.9641581910772019,
+        0.9720374310312403
+      ]
+    },
+    {
+      "case": "circuits/layers100_12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.3220672207009145,
+      "status": "pass",
+      "confidence_interval": [
+        0.31830256416021097,
+        0.3226789156334313
+      ]
+    },
+    {
+      "case": "circuits/layers100_12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.11516627597128518,
+      "status": "pass",
+      "confidence_interval": [
+        0.11498335649870658,
+        0.11538191699947954
+      ]
+    },
+    {
+      "case": "circuits/layers100_4",
+      "threads": 1,
+      "native_mode": "fused4_execute",
+      "competitor": "julia",
+      "ratio": 0.01982219575411601,
+      "status": "pass",
+      "confidence_interval": [
+        0.019189035495399638,
+        0.02057759347885203
+      ]
+    },
+    {
+      "case": "circuits/layers100_4",
+      "threads": 1,
+      "native_mode": "fused4_execute",
+      "competitor": "qulacs",
+      "ratio": 0.02262142745010552,
+      "status": "pass",
+      "confidence_interval": [
+        0.02211347772576371,
+        0.023042799930882207
+      ]
+    },
+    {
+      "case": "circuits/layers100_4",
+      "threads": 1,
+      "native_mode": "fused4_execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.19906839960974795,
+      "status": "pass",
+      "confidence_interval": [
+        0.1948988880130401,
+        0.2019842050556498
+      ]
+    },
+    {
+      "case": "circuits/layers100_8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.8109285607751792,
+      "status": "pass",
+      "confidence_interval": [
+        0.8062396081825141,
+        0.8174133112238274
+      ]
+    },
+    {
+      "case": "circuits/layers100_8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.3643648671342403,
+      "status": "pass",
+      "confidence_interval": [
+        0.36301849431841365,
+        0.36677557522752785
+      ]
+    },
+    {
+      "case": "circuits/layers100_8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.1668859858065209,
+      "status": "pass",
+      "confidence_interval": [
+        0.1662694155065436,
+        0.16799714625721657
+      ]
+    },
+    {
+      "case": "circuits/layers10_12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.9704494632493345,
+      "status": "pass",
+      "confidence_interval": [
+        0.9675766244778574,
+        0.9756871797237128
+      ]
+    },
+    {
+      "case": "circuits/layers10_12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.32242865549096394,
+      "status": "pass",
+      "confidence_interval": [
+        0.32171027510108624,
+        0.32413233772985806
+      ]
+    },
+    {
+      "case": "circuits/layers10_12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.11968812747554108,
+      "status": "pass",
+      "confidence_interval": [
+        0.11906342361072235,
+        0.12033163486697142
+      ]
+    },
+    {
+      "case": "circuits/layers10_4",
+      "threads": 1,
+      "native_mode": "fused4_execute",
+      "competitor": "julia",
+      "ratio": 0.18354741804555208,
+      "status": "pass",
+      "confidence_interval": [
+        0.17612701713930973,
+        0.18616752979445472
+      ]
+    },
+    {
+      "case": "circuits/layers10_4",
+      "threads": 1,
+      "native_mode": "fused4_execute",
+      "competitor": "qulacs",
+      "ratio": 0.12158635556848946,
+      "status": "pass",
+      "confidence_interval": [
+        0.12031474360207411,
+        0.12274530814463201
+      ]
+    },
+    {
+      "case": "circuits/layers10_4",
+      "threads": 1,
+      "native_mode": "fused4_execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.19929362237558004,
+      "status": "pass",
+      "confidence_interval": [
+        0.19605506443957124,
+        0.2010755210508062
+      ]
+    },
+    {
+      "case": "circuits/layers10_8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.8166492150522939,
+      "status": "pass",
+      "confidence_interval": [
+        0.8108128947676235,
+        0.8250254122222783
+      ]
+    },
+    {
+      "case": "circuits/layers10_8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.3503378586157119,
+      "status": "pass",
+      "confidence_interval": [
+        0.3488436548772897,
+        0.35391882515088313
+      ]
+    },
+    {
+      "case": "circuits/layers10_8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.157572345001624,
+      "status": "pass",
+      "confidence_interval": [
+        0.15686839215913634,
+        0.15919293742194215
+      ]
+    },
+    {
+      "case": "circuits/mqt-ghz-12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.5437714369262112,
+      "status": "pass",
+      "confidence_interval": [
+        0.5393166099545632,
+        0.5485424039775884
+      ]
+    },
+    {
+      "case": "circuits/mqt-ghz-12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.899970712539792,
+      "status": "pass",
+      "confidence_interval": [
+        0.8898603136159854,
+        0.9049260697274671
+      ]
+    },
+    {
+      "case": "circuits/mqt-ghz-12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.04791304131331748,
+      "status": "pass",
+      "confidence_interval": [
+        0.04753562565470965,
+        0.048157465456168176
+      ]
+    },
+    {
+      "case": "circuits/mqt-ghz-16",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.603781782868683,
+      "status": "pass",
+      "confidence_interval": [
+        0.5972374504127396,
+        0.6066436018232
+      ]
+    },
+    {
+      "case": "circuits/mqt-ghz-16",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.9569351199451199,
+      "status": "pass",
+      "confidence_interval": [
+        0.9558130377004116,
+        0.9580110869171751
+      ]
+    },
+    {
+      "case": "circuits/mqt-ghz-16",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.0449606000462936,
+      "status": "pass",
+      "confidence_interval": [
+        0.044750768026213784,
+        0.045143607260236564
+      ]
+    },
+    {
+      "case": "circuits/mqt-ghz-8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.42735075050358273,
+      "status": "pass",
+      "confidence_interval": [
+        0.4177608643750573,
+        0.4332334232685993
+      ]
+    },
+    {
+      "case": "circuits/mqt-ghz-8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.23525261968426148,
+      "status": "pass",
+      "confidence_interval": [
+        0.23264724608724882,
+        0.23968934382574636
+      ]
+    },
+    {
+      "case": "circuits/mqt-ghz-8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.054534675673778905,
+      "status": "pass",
+      "confidence_interval": [
+        0.05439462402742312,
+        0.05474049016470313
+      ]
+    },
+    {
+      "case": "circuits/mqt-grover-8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.4012131090496914,
+      "status": "pass",
+      "confidence_interval": [
+        0.3883262913200775,
+        0.41076716098202515
+      ]
+    },
+    {
+      "case": "circuits/mqt-grover-8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.7677252408737455,
+      "status": "pass",
+      "confidence_interval": [
+        0.7662447216042343,
+        0.7723654172493207
+      ]
+    },
+    {
+      "case": "circuits/mqt-grover-8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.3829461470625725,
+      "status": "pass",
+      "confidence_interval": [
+        0.38172908236705716,
+        0.3852082563569921
+      ]
+    },
+    {
+      "case": "circuits/mqt-qaoa-12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.47992772097670283,
+      "status": "pass",
+      "confidence_interval": [
+        0.4768702330944733,
+        0.48154714549194705
+      ]
+    },
+    {
+      "case": "circuits/mqt-qaoa-12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.68813650665436,
+      "status": "pass",
+      "confidence_interval": [
+        0.6852443282247888,
+        0.6892381176939176
+      ]
+    },
+    {
+      "case": "circuits/mqt-qaoa-12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.1987639002780535,
+      "status": "pass",
+      "confidence_interval": [
+        0.1981402303972131,
+        0.19900607884832933
+      ]
+    },
+    {
+      "case": "circuits/mqt-qaoa-16",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.5032550637902913,
+      "status": "pass",
+      "confidence_interval": [
+        0.500553107482454,
+        0.5048536875130953
+      ]
+    },
+    {
+      "case": "circuits/mqt-qaoa-16",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.6680509074463303,
+      "status": "pass",
+      "confidence_interval": [
+        0.6664171143106689,
+        0.6697012911171891
+      ]
+    },
+    {
+      "case": "circuits/mqt-qaoa-16",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.1886846941590302,
+      "status": "pass",
+      "confidence_interval": [
+        0.18821964525787732,
+        0.18913843332829489
+      ]
+    },
+    {
+      "case": "circuits/mqt-qaoa-8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.45160976463700697,
+      "status": "pass",
+      "confidence_interval": [
+        0.44545766686132415,
+        0.4557313448060633
+      ]
+    },
+    {
+      "case": "circuits/mqt-qaoa-8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.6067636020501233,
+      "status": "pass",
+      "confidence_interval": [
+        0.6043692154974862,
+        0.6116084442602019
+      ]
+    },
+    {
+      "case": "circuits/mqt-qaoa-8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.23065246150544708,
+      "status": "pass",
+      "confidence_interval": [
+        0.22915298188376207,
+        0.232585825732646
+      ]
+    },
+    {
+      "case": "circuits/mqt-qft-12",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "julia",
+      "ratio": 0.3992336681762498,
+      "status": "pass",
+      "confidence_interval": [
+        0.3969295915224903,
+        0.3998045278442101
+      ]
+    },
+    {
+      "case": "circuits/mqt-qft-12",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs",
+      "ratio": 0.4083671632345956,
+      "status": "pass",
+      "confidence_interval": [
+        0.4078481987967413,
+        0.40865438990273106
+      ]
+    },
+    {
+      "case": "circuits/mqt-qft-12",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.18415878997860682,
+      "status": "pass",
+      "confidence_interval": [
+        0.18391761668526557,
+        0.18435106682527924
+      ]
+    },
+    {
+      "case": "circuits/mqt-qft-16",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "julia",
+      "ratio": 0.39752247055576667,
+      "status": "pass",
+      "confidence_interval": [
+        0.3970630327282521,
+        0.3981281599895823
+      ]
+    },
+    {
+      "case": "circuits/mqt-qft-16",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs",
+      "ratio": 0.3747220025796252,
+      "status": "pass",
+      "confidence_interval": [
+        0.37453649720724697,
+        0.3749988330354849
+      ]
+    },
+    {
+      "case": "circuits/mqt-qft-16",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.16827636263123177,
+      "status": "pass",
+      "confidence_interval": [
+        0.16799804108007854,
+        0.16879878431437254
+      ]
+    },
+    {
+      "case": "circuits/mqt-qft-8",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "julia",
+      "ratio": 0.3290872301136815,
+      "status": "pass",
+      "confidence_interval": [
+        0.32783016387638547,
+        0.3312712426948221
+      ]
+    },
+    {
+      "case": "circuits/mqt-qft-8",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs",
+      "ratio": 0.3876910594293886,
+      "status": "pass",
+      "confidence_interval": [
+        0.3860509162740714,
+        0.38816687689668133
+      ]
+    },
+    {
+      "case": "circuits/mqt-qft-8",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.20318645766526164,
+      "status": "pass",
+      "confidence_interval": [
+        0.20249484200948886,
+        0.20359906893376312
+      ]
+    },
+    {
+      "case": "circuits/mqt-randomcircuit-12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.46392126440661097,
+      "status": "pass",
+      "confidence_interval": [
+        0.462955031398192,
+        0.4650328809054166
+      ]
+    },
+    {
+      "case": "circuits/mqt-randomcircuit-12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.7286278721202397,
+      "status": "pass",
+      "confidence_interval": [
+        0.7267811250183935,
+        0.7295759087359917
+      ]
+    },
+    {
+      "case": "circuits/mqt-randomcircuit-12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.2763566490248738,
+      "status": "pass",
+      "confidence_interval": [
+        0.27562990665995774,
+        0.27669251487285135
+      ]
+    },
+    {
+      "case": "circuits/mqt-randomcircuit-16",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.47935433684838524,
+      "status": "pass",
+      "confidence_interval": [
+        0.4786697006868336,
+        0.48030701370738754
+      ]
+    },
+    {
+      "case": "circuits/mqt-randomcircuit-16",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.6418937079977477,
+      "status": "pass",
+      "confidence_interval": [
+        0.6409769255456329,
+        0.6429828206613392
+      ]
+    },
+    {
+      "case": "circuits/mqt-randomcircuit-16",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.2689937579595585,
+      "status": "pass",
+      "confidence_interval": [
+        0.26860956856191665,
+        0.2694895804882389
+      ]
+    },
+    {
+      "case": "circuits/mqt-randomcircuit-8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.41622327807271053,
+      "status": "pass",
+      "confidence_interval": [
+        0.4044112302361342,
+        0.42801716252454575
+      ]
+    },
+    {
+      "case": "circuits/mqt-randomcircuit-8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.7490952396001835,
+      "status": "pass",
+      "confidence_interval": [
+        0.7428845673737507,
+        0.7545482085075983
+      ]
+    },
+    {
+      "case": "circuits/mqt-randomcircuit-8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.5184351578511315,
+      "status": "pass",
+      "confidence_interval": [
+        0.5139239640477171,
+        0.5221231081679313
+      ]
+    },
+    {
+      "case": "circuits/noisy_10",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.8042397980100839,
+      "status": "pass",
+      "confidence_interval": [
+        0.8024337637680544,
+        0.8088709859256985
+      ]
+    },
+    {
+      "case": "circuits/noisy_4",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.5046088076250013,
+      "status": "pass",
+      "confidence_interval": [
+        0.4963828968819854,
+        0.5097993202052546
+      ]
+    },
+    {
+      "case": "circuits/noisy_6",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.6479773996497232,
+      "status": "pass",
+      "confidence_interval": [
+        0.6408217794638977,
+        0.6514786995739702
+      ]
+    },
+    {
+      "case": "circuits/noisy_8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.6791040174354102,
+      "status": "pass",
+      "confidence_interval": [
+        0.6760306065153211,
+        0.6815637232348257
+      ]
+    },
+    {
+      "case": "circuits/qasmbench-adder_n10",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.4720393873842985,
+      "status": "pass",
+      "confidence_interval": [
+        0.468380121082076,
+        0.47631335430860394
+      ]
+    },
+    {
+      "case": "circuits/qasmbench-adder_n10",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.81104321615225,
+      "status": "pass",
+      "confidence_interval": [
+        0.8098243208959787,
+        0.8129484020650869
+      ]
+    },
+    {
+      "case": "circuits/qasmbench-adder_n10",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.3242692016422567,
+      "status": "pass",
+      "confidence_interval": [
+        0.3238510869610843,
+        0.3252458747268732
+      ]
+    },
+    {
+      "case": "circuits/qasmbench-ising_n10",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "julia",
+      "ratio": 0.20731350588585815,
+      "status": "pass",
+      "confidence_interval": [
+        0.20681445472184506,
+        0.20754266457581427
+      ]
+    },
+    {
+      "case": "circuits/qasmbench-ising_n10",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs",
+      "ratio": 0.39552303063808436,
+      "status": "pass",
+      "confidence_interval": [
+        0.3951626423175644,
+        0.3960648632656751
+      ]
+    },
+    {
+      "case": "circuits/qasmbench-ising_n10",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.43075399654535146,
+      "status": "pass",
+      "confidence_interval": [
+        0.4294558847934303,
+        0.4313905692557566
+      ]
+    },
+    {
+      "case": "circuits/qasmbench-qaoa_n6",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "julia",
+      "ratio": 0.061310412134158526,
+      "status": "pass",
+      "confidence_interval": [
+        0.05956395627753151,
+        0.0628560715672347
+      ]
+    },
+    {
+      "case": "circuits/qasmbench-qaoa_n6",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs",
+      "ratio": 0.06662175072640338,
+      "status": "pass",
+      "confidence_interval": [
+        0.06654279754514332,
+        0.06689354068166603
+      ]
+    },
+    {
+      "case": "circuits/qasmbench-qaoa_n6",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.3643837992908726,
+      "status": "pass",
+      "confidence_interval": [
+        0.3624141559258333,
+        0.36779204267529675
+      ]
+    },
+    {
+      "case": "circuits/qasmbench-qpe_n9",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.4448678469205086,
+      "status": "pass",
+      "confidence_interval": [
+        0.4438666726524388,
+        0.44950845526681527
+      ]
+    },
+    {
+      "case": "circuits/qasmbench-qpe_n9",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.6228845089005447,
+      "status": "pass",
+      "confidence_interval": [
+        0.6208986338529227,
+        0.6243718399026169
+      ]
+    },
+    {
+      "case": "circuits/qasmbench-qpe_n9",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.3282756251650128,
+      "status": "pass",
+      "confidence_interval": [
+        0.3279462394815025,
+        0.3289037937549064
+      ]
+    },
+    {
+      "case": "circuits/qasmbench-vqe_uccsd_n8",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "julia",
+      "ratio": 0.2888982864262624,
+      "status": "pass",
+      "confidence_interval": [
+        0.2867362424277401,
+        0.30609929378605755
+      ]
+    },
+    {
+      "case": "circuits/qasmbench-vqe_uccsd_n8",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs",
+      "ratio": 1.027568607569991,
+      "status": "pass",
+      "confidence_interval": [
+        1.0263640235493052,
+        1.0295642015349966
+      ]
+    },
+    {
+      "case": "circuits/qasmbench-vqe_uccsd_n8",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.22952785859867572,
+      "status": "pass",
+      "confidence_interval": [
+        0.22593343961658394,
+        0.2302217738659776
+      ]
+    },
+    {
+      "case": "circuits/qft_12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.19380409692943534,
+      "status": "pass",
+      "confidence_interval": [
+        0.19206996663028514,
+        0.1949702626894225
+      ]
+    },
+    {
+      "case": "circuits/qft_12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.3288483368234197,
+      "status": "pass",
+      "confidence_interval": [
+        0.32614296338473675,
+        0.33016055516144993
+      ]
+    },
+    {
+      "case": "circuits/qft_12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.07852035338515999,
+      "status": "pass",
+      "confidence_interval": [
+        0.07788225385810939,
+        0.07879171737438301
+      ]
+    },
+    {
+      "case": "circuits/qft_16",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.47058477349092775,
+      "status": "pass",
+      "confidence_interval": [
+        0.4697242677004831,
+        0.473786307264664
+      ]
+    },
+    {
+      "case": "circuits/qft_16",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.2932660588833142,
+      "status": "pass",
+      "confidence_interval": [
+        0.2927744286062166,
+        0.294844158691849
+      ]
+    },
+    {
+      "case": "circuits/qft_16",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.05722228068782524,
+      "status": "pass",
+      "confidence_interval": [
+        0.05706307777315549,
+        0.05753995082594082
+      ]
+    },
+    {
+      "case": "circuits/qft_8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.027052327962374677,
+      "status": "pass",
+      "confidence_interval": [
+        0.02661760762535177,
+        0.02731255104968102
+      ]
+    },
+    {
+      "case": "circuits/qft_8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.31152529775737137,
+      "status": "pass",
+      "confidence_interval": [
+        0.3094742448190858,
+        0.3138171211775228
+      ]
+    },
+    {
+      "case": "circuits/qft_8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.09961865059766914,
+      "status": "pass",
+      "confidence_interval": [
+        0.09925076931067066,
+        0.10031158233743426
+      ]
+    },
+    {
+      "case": "circuits/rx_12",
+      "threads": 1,
+      "native_mode": "fused4_execute",
+      "competitor": "julia",
+      "ratio": 0.7130376050923217,
+      "status": "pass",
+      "confidence_interval": [
+        0.7051218699647746,
+        0.7246977366282664
+      ]
+    },
+    {
+      "case": "circuits/rx_12",
+      "threads": 1,
+      "native_mode": "fused4_execute",
+      "competitor": "qulacs",
+      "ratio": 0.3456390187662925,
+      "status": "pass",
+      "confidence_interval": [
+        0.3407770942705583,
+        0.3513387766872992
+      ]
+    },
+    {
+      "case": "circuits/rx_12",
+      "threads": 1,
+      "native_mode": "fused4_execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.3442927310740738,
+      "status": "pass",
+      "confidence_interval": [
+        0.3388464561257052,
+        0.35213325449522814
+      ]
+    },
+    {
+      "case": "circuits/rx_16",
+      "threads": 1,
+      "native_mode": "fused4_execute",
+      "competitor": "julia",
+      "ratio": 0.8045740436431168,
+      "status": "pass",
+      "confidence_interval": [
+        0.7700611560840221,
+        0.8074081295608901
+      ]
+    },
+    {
+      "case": "circuits/rx_16",
+      "threads": 1,
+      "native_mode": "fused4_execute",
+      "competitor": "qulacs",
+      "ratio": 0.5038854630513147,
+      "status": "pass",
+      "confidence_interval": [
+        0.4819554395494979,
+        0.5056606266909237
+      ]
+    },
+    {
+      "case": "circuits/rx_16",
+      "threads": 1,
+      "native_mode": "fused4_execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.503427210066021,
+      "status": "pass",
+      "confidence_interval": [
+        0.4823884026165081,
+        0.5049166355474015
+      ]
+    },
+    {
+      "case": "circuits/rx_8",
+      "threads": 1,
+      "native_mode": "fused4_execute",
+      "competitor": "julia",
+      "ratio": 0.4663249146801943,
+      "status": "pass",
+      "confidence_interval": [
+        0.45885936360321766,
+        0.4697211493644444
+      ]
+    },
+    {
+      "case": "circuits/rx_8",
+      "threads": 1,
+      "native_mode": "fused4_execute",
+      "competitor": "qulacs",
+      "ratio": 0.11183563327076833,
+      "status": "pass",
+      "confidence_interval": [
+        0.10950752545112824,
+        0.11246779242440379
+      ]
+    },
+    {
+      "case": "circuits/rx_8",
+      "threads": 1,
+      "native_mode": "fused4_execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.11237607723571033,
+      "status": "pass",
+      "confidence_interval": [
+        0.11036585774169719,
+        0.11261185639285369
+      ]
+    },
+    {
+      "case": "circuits/rz_12",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "julia",
+      "ratio": 0.4587668117991965,
+      "status": "pass",
+      "confidence_interval": [
+        0.4518765566343842,
+        0.4646212057341672
+      ]
+    },
+    {
+      "case": "circuits/rz_12",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs",
+      "ratio": 0.3983701228011686,
+      "status": "pass",
+      "confidence_interval": [
+        0.38682471181878375,
+        0.4066159459310256
+      ]
+    },
+    {
+      "case": "circuits/rz_12",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.3863420219546509,
+      "status": "pass",
+      "confidence_interval": [
+        0.3763500411855157,
+        0.3974431596717798
+      ]
+    },
+    {
+      "case": "circuits/rz_16",
+      "threads": 1,
+      "native_mode": "fused4_execute",
+      "competitor": "julia",
+      "ratio": 0.5334096443295893,
+      "status": "pass",
+      "confidence_interval": [
+        0.5285430280798813,
+        0.5389946510038779
+      ]
+    },
+    {
+      "case": "circuits/rz_16",
+      "threads": 1,
+      "native_mode": "fused4_execute",
+      "competitor": "qulacs",
+      "ratio": 0.721081818710475,
+      "status": "pass",
+      "confidence_interval": [
+        0.7169528163076668,
+        0.7236379847033871
+      ]
+    },
+    {
+      "case": "circuits/rz_16",
+      "threads": 1,
+      "native_mode": "fused4_execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.7240876899808414,
+      "status": "pass",
+      "confidence_interval": [
+        0.7192834168958486,
+        0.7263484384587319
+      ]
+    },
+    {
+      "case": "circuits/rz_8",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "julia",
+      "ratio": 0.3391728820079928,
+      "status": "pass",
+      "confidence_interval": [
+        0.32745692276717364,
+        0.34791464766393887
+      ]
+    },
+    {
+      "case": "circuits/rz_8",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs",
+      "ratio": 0.09566882183534632,
+      "status": "pass",
+      "confidence_interval": [
+        0.094235362625111,
+        0.09668558880330347
+      ]
+    },
+    {
+      "case": "circuits/rz_8",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.09635701477277209,
+      "status": "pass",
+      "confidence_interval": [
+        0.09502139964764704,
+        0.09730463389821412
+      ]
+    },
+    {
+      "case": "circuits/swap_far_12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.448555029631716,
+      "status": "pass",
+      "confidence_interval": [
+        0.44081433284158933,
+        0.4552641054814968
+      ]
+    },
+    {
+      "case": "circuits/swap_far_12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.39755370141558244,
+      "status": "pass",
+      "confidence_interval": [
+        0.38829949776107897,
+        0.40737868578963743
+      ]
+    },
+    {
+      "case": "circuits/swap_far_12",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.4061550959625004,
+      "status": "pass",
+      "confidence_interval": [
+        0.3945383667123197,
+        0.4120711141445462
+      ]
+    },
+    {
+      "case": "circuits/swap_far_16",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "julia",
+      "ratio": 0.6000084797227828,
+      "status": "pass",
+      "confidence_interval": [
+        0.5961402877074523,
+        0.6051847126482899
+      ]
+    },
+    {
+      "case": "circuits/swap_far_16",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs",
+      "ratio": 0.9166610584789997,
+      "status": "pass",
+      "confidence_interval": [
+        0.9102892574011182,
+        0.924732599443096
+      ]
+    },
+    {
+      "case": "circuits/swap_far_16",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.9226014913988154,
+      "status": "pass",
+      "confidence_interval": [
+        0.9149908285551529,
+        0.9276477255496869
+      ]
+    },
+    {
+      "case": "circuits/swap_far_8",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "julia",
+      "ratio": 0.2787370992121518,
+      "status": "pass",
+      "confidence_interval": [
+        0.2638848207592578,
+        0.29080232569095876
+      ]
+    },
+    {
+      "case": "circuits/swap_far_8",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs",
+      "ratio": 0.071472526875221,
+      "status": "pass",
+      "confidence_interval": [
+        0.07078715244140048,
+        0.07227629318744334
+      ]
+    },
+    {
+      "case": "circuits/swap_far_8",
+      "threads": 1,
+      "native_mode": "fused2_execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.07204499789301766,
+      "status": "pass",
+      "confidence_interval": [
+        0.07045397548558588,
+        0.07260812920718805
+      ]
+    },
+    {
+      "case": "circuits/tensor_state_4",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.5063921369178277,
+      "status": "pass",
+      "confidence_interval": [
+        0.4779642503228151,
+        0.5209016998226856
+      ]
+    },
+    {
+      "case": "circuits/tensor_state_4",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.10532351383406387,
+      "status": "pass",
+      "confidence_interval": [
+        0.10479369588065116,
+        0.10577111951007087
+      ]
+    },
+    {
+      "case": "circuits/tensor_state_4",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.10199192226898982,
+      "status": "pass",
+      "confidence_interval": [
+        0.10063763284319933,
+        0.10273893188312197
+      ]
+    },
+    {
+      "case": "circuits/tensor_state_8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.7613729309947642,
+      "status": "pass",
+      "confidence_interval": [
+        0.7573804420339431,
+        0.7718532342060066
+      ]
+    },
+    {
+      "case": "circuits/tensor_state_8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs",
+      "ratio": 0.30143121237065257,
+      "status": "pass",
+      "confidence_interval": [
+        0.29985735089361826,
+        0.3055804149156516
+      ]
+    },
+    {
+      "case": "circuits/tensor_state_8",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "qulacs_fused4",
+      "ratio": 0.19724248141377812,
+      "status": "pass",
+      "confidence_interval": [
+        0.19629321533666938,
+        0.19996093879655236
+      ]
+    },
+    {
+      "case": "krylov/krylov_heisenberg_12q_tol7",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.6391667090881314,
+      "status": "pass",
+      "confidence_interval": [
+        0.6309563221430898,
+        0.6426225489400595
+      ]
+    },
+    {
+      "case": "krylov/krylov_heisenberg_4q_tol7",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.09178402028459907,
+      "status": "pass",
+      "confidence_interval": [
+        0.08994357001073162,
+        0.09569418768631874
+      ]
+    },
+    {
+      "case": "krylov/krylov_heisenberg_8q_tol7",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.2655848972461119,
+      "status": "pass",
+      "confidence_interval": [
+        0.2629791485384668,
+        0.26919826474907493
+      ]
+    },
+    {
+      "case": "krylov/krylov_ising_12q_tol7",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.8917250551897191,
+      "status": "pass",
+      "confidence_interval": [
+        0.8836210178520684,
+        0.8952847322186707
+      ]
+    },
+    {
+      "case": "krylov/krylov_ising_4q_tol7",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.1498572552419003,
+      "status": "pass",
+      "confidence_interval": [
+        0.14613951604746864,
+        0.15300478097691045
+      ]
+    },
+    {
+      "case": "krylov/krylov_ising_8q_tol7",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.4167799170379372,
+      "status": "pass",
+      "confidence_interval": [
+        0.40888213080861363,
+        0.4219527480619185
+      ]
+    },
+    {
+      "case": "tensor-memory/expectation_4_terms5",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.27055160331528394,
+      "status": "pass",
+      "confidence_interval": [
+        0.26145344793448616,
+        0.27960065946922685
+      ]
+    },
+    {
+      "case": "tensor-memory/expectation_6_terms5",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.42236375714871005,
+      "status": "pass",
+      "confidence_interval": [
+        0.4152932533331629,
+        0.42725258280036443
+      ]
+    },
+    {
+      "case": "tensor-memory/expectation_dm_4_terms5",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.2792951229736049,
+      "status": "pass",
+      "confidence_interval": [
+        0.27654343880026006,
+        0.2831756400483705
+      ]
+    },
+    {
+      "case": "tensor-memory/expectation_dm_6_terms5",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.6297330947932731,
+      "status": "pass",
+      "confidence_interval": [
+        0.6212399448640812,
+        0.6341908659291299
+      ]
+    },
+    {
+      "case": "trajectories/noisy_expectation_4",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.40319856484428884,
+      "status": "pass",
+      "confidence_interval": [
+        0.3923992342745987,
+        0.40945331259459067
+      ]
+    },
+    {
+      "case": "trajectories/noisy_expectation_6",
+      "threads": 1,
+      "native_mode": "execute",
+      "competitor": "julia",
+      "ratio": 0.6182708503163553,
+      "status": "pass",
+      "confidence_interval": [
+        0.6077762453570618,
+        0.6250995523116034
+      ]
+    }
+  ]
+}

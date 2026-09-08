@@ -1,97 +1,88 @@
-# Circuits
+# Circuits & gates
 
-A `Circuit` represents a sequence of positioned gates applied to a register of qudits. Each gate in the circuit is wrapped in a `PositionedGate` that specifies which sites the gate acts on and which sites control its activation.
+Build a circuit by placing gates on numbered sites. A gate describes an
+operation; its placement specifies the targets and any controls. The circuit
+checks that those placements match the register dimensions.
 
-## PositionedGate
+## Build a circuit
 
 ```rust
-pub struct PositionedGate {
-    pub gate: Gate,
-    pub target_locs: Vec<usize>,
-    pub control_locs: Vec<usize>,
-    pub control_configs: Vec<bool>,
-}
+use yao_rs::{Circuit, Gate, control, put};
+
+let circuit = Circuit::qubits(2, vec![
+    put(vec![0], Gate::H),
+    control(vec![0], vec![1], Gate::X),
+]).unwrap();
 ```
 
-- **`gate`**: The gate to apply.
-- **`target_locs`**: Sites the gate matrix acts on (0-indexed).
-- **`control_locs`**: Sites that control the gate activation.
-- **`control_configs`**: Which state triggers each control (`true` = |1>).
+`put` applies a gate to its target sites. `control` applies it only when all
+control sites are in state 1. Operations run in the order you add them.
+See the [gate reference](gates.md) for supported gates and parameters.
 
-## Builder API
+The CLI reads the same circuit from [JSON](conventions.md#circuit-json).
+Use `yao inspect circuit.json` to check its structure before running it.
 
-### `put`
+## Choose controls
 
-Places a gate on target locations with no controls.
-
-```rust
-use yao_rs::{put, Gate};
-
-// H gate on qubit 0
-let h = put(vec![0], Gate::H);
-
-// SWAP on qubits 1 and 2
-let swap = put(vec![1, 2], Gate::SWAP);
-```
-
-### `control`
-
-Places a controlled gate. All controls are active-high, triggering on |1>.
+A controlled X is a CNOT. Two controls make a Toffoli:
 
 ```rust
-use yao_rs::{control, Gate};
+use yao_rs::{Gate, control};
 
-// CNOT: control on qubit 0, X on qubit 1
-let cnot = control(vec![0], vec![1], Gate::X);
-
-// Toffoli: controls on qubits 0,1, X on qubit 2
 let toffoli = control(vec![0, 1], vec![2], Gate::X);
 ```
 
-Note: All controls are active-high (trigger on |1>). The `control_configs` are automatically set to `vec![true; ctrl_locs.len()]`.
-
-## Building a Circuit
+To trigger on state 0, set the corresponding `control_configs` entry to `false`:
 
 ```rust
-use yao_rs::{Circuit, Gate, put, control};
+use yao_rs::{Circuit, CircuitElement, Gate, control};
 
-let gates = vec![
-    put(vec![0], Gate::H),
-    control(vec![0], vec![1], Gate::X),
-];
-let circuit = Circuit::new(vec![2, 2], gates).unwrap();
+let mut gate = control(vec![0], vec![1], Gate::X);
+if let CircuitElement::Gate(ref mut positioned) = gate {
+    positioned.control_configs[0] = false;
+}
+let circuit = Circuit::qubits(2, vec![gate]).unwrap();
 ```
 
-`Circuit::new` validates all gates and returns `Result<Circuit, CircuitError>`.
+## Validate placement
 
-## Validation Rules
-
-The 6 validation rules checked by `Circuit::new`:
-
-1. **control_configs length must match control_locs length** — Each control site needs a configuration.
-2. **All locations must be in range** — Every loc in `target_locs` and `control_locs` must be < `dims.len()`.
-3. **No overlap between target and control** — A site cannot be both a target and a control.
-4. **Control sites must be qubits (d=2)** — Controlled gates only support qubit control sites.
-5. **Named gate targets must be qubits** — Non-Custom gates require target sites with d=2.
-6. **Gate matrix size must match target dimensions** — The gate's matrix dimension must equal the product of target site dimensions.
-
-Example of a validation error:
+Construction returns `Result<Circuit, CircuitError>`. It checks that sites
+exist, targets and controls do not overlap, controls are qubits, and gate
+matrices match the target dimensions.
 
 ```rust
 use yao_rs::{Circuit, Gate, put};
 
-// This fails: location 5 is out of range for a 2-qubit circuit
-let result = Circuit::new(vec![2, 2], vec![put(vec![5], Gate::H)]);
-assert!(result.is_err());
+let result = Circuit::qubits(2, vec![put(vec![5], Gate::H)]);
+assert!(result.is_err()); // There is no qubit 5.
 ```
 
-## Qudit Support
+Validation checks circuit structure; it does not prove that a custom matrix
+is unitary. See the [error reference](api/yao_rs/circuit/enum.CircuitError.html)
+for individual error cases.
 
-The `dims` vector specifies per-site dimensions. For qubits use 2, for qutrits use 3, etc.
+## Change parameters
+
+Parameterized gates store angles in radians. A circuit exposes them in element
+order so an optimizer can update an experiment without rebuilding it:
 
 ```rust
-// Mixed qubit-qutrit circuit
-let dims = vec![2, 3, 2]; // qubit, qutrit, qubit
+use yao_rs::{Circuit, Gate, put};
+
+let mut circuit = Circuit::qubits(1, vec![put(vec![0], Gate::Ry(0.0))]).unwrap();
+circuit.dispatch(&[std::f64::consts::FRAC_PI_2]);
+assert_eq!(circuit.parameters().len(), 1);
 ```
 
-Custom gates can target non-qubit sites, but named gates (X, Y, Z, H, etc.) require d=2.
+The [VQE example](examples/vqe.md) uses this interface with `expect_grad`
+to minimize an energy.
+
+## Use higher-dimensional sites
+
+For a mixed register, `Circuit::new` takes a dimension for each site:
+`vec![2, 3, 2]` describes a qubit, a qutrit, and a qubit.
+Custom gates can act on these sites when their matrix dimensions match.
+Named gates and controls require qubits.
+
+Use [tensor network export](tensor-networks.md) to evaluate qudit circuits.
+Direct simulation with `ArrayReg` requires every site to have dimension 2.

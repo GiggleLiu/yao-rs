@@ -1,0 +1,361 @@
+{
+  "schema_version": 1,
+  "suite": "yao-cpu-v2",
+  "profile": "regression",
+  "tracks": [
+    "circuits",
+    "circuit-ad",
+    "tensor-memory",
+    "trajectories",
+    "krylov"
+  ],
+  "suite_sha256": "4fbe827885c0fa7d139a76b50d48f4d1cfda386fcd5ce77cde348b681af824ba",
+  "environment": {
+    "device": "3a4fcf834ee6e1c455bc8c39ea18011850d34a2686e03fc4ce35567f1e9320cf",
+    "hardware": "machdep.cpu.brand_string: Apple M4\nhw.memsize: 17179869184\nhw.physicalcpu: 10\n",
+    "configuration": {
+      "flags": {},
+      "cargo_configs": {},
+      "julia_startup": false,
+      "affinity": null
+    },
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "precision": "complex128",
+    "python": "3.13.12",
+    "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18) (Homebrew)\nbinary: rustc\ncommit-hash: 88d9e12ae178fab0fb5cc050a94da85685d449ea\ncommit-date: 2026-08-18\nhost: aarch64-apple-darwin\nrelease: 1.98.0\nLLVM version: 22.1.8\n",
+    "julia": "julia version 1.12.4\n",
+    "python_lock": "7fe4b30284643223f1cebd4a7e860962d4d5d64e1079a1490e83560bc4ed91af",
+    "julia_lock": "cd906da6a0e43e6fece7aa9e86d0447f6c17c2b550d11cec3f5d3049fc8eeb2a",
+    "probe_lock": "4e53f91b05533dddcfdfd58c2c222b81f7ccb71dae79d59ebf542ceed3008ba0",
+    "timing": {
+      "rust": "Criterion: 10 samples, 0.2 s warmup, 0.5 s target",
+      "julia": "BenchmarkTools: 0.2 s warmup, 30 calibrated batches targeting 10 ms each, up to 100000 evals/batch",
+      "qulacs": "30 warmed samples with calibrated inner iterations",
+      "fusion": "yao-rs 2q/4q and Qulacs 4q fusion; preparation outside warmed execution"
+    },
+    "protocol_sha256": "7d518cd09fa5717e3577be81399114b4c65f8db5935725d7ccb864411e36bb47",
+    "julia_blas": "LBTConfig([ILP64] libopenblas64_.dylib)"
+  },
+  "created_utc": "2026-09-07T19:52:30.423456+00:00",
+  "source_commit": "22364fbbbaff25f5b5df191b9475d63bf2d0d7a4",
+  "sources": {
+    "src/slicing.rs": "3a061894b3eb7585c92a8061f107a1d528cc88e7522d62d4d3018018c9bfbf16",
+    "src/operator.rs": "08e0b40564d14733452e9bfc9d978e9257a9b9fd41418e41462f29649faecba9",
+    "src/tenferro.rs": "83b83e82b2351060946905ce94948343d9a3d85da5eaefabee22a6d0670b07e4",
+    "src/instruct_qubit.rs": "7960418d4da1fd2964e8c2e8f08942ca5e5caa79aca03946e26db9ebe9d81b7d",
+    "src/differentiable.rs": "cebb7317d37d438cffd56764aa089c8b3b78dd3869c389f3e43a9762e5131f06",
+    "src/einsum.rs": "79eefbb687d25dc0883e1ced11880aab9cd43a5d6a3cb0765752b8be000db97b",
+    "src/contraction_plan.rs": "abad613bedf2e37aadc5fe22414e5f3df4ce39357f50f1774a784ae8b9be0713",
+    "src/tensors.rs": "f49c5386c4bd264dcff1582c7778329fa3d95741f8242877a872bccad497912b",
+    "src/evolution.rs": "8d977128cd0a6e7a54172f8759916ff292af7748edeec43aa0e9d4621d00b381",
+    "src/contractor.rs": "84f96833ec2cd390fe7e151dd9dbce6e0726decbcd18dc14ef9d159bdf5c6186",
+    "src/circuit.rs": "a9fc9f2a2831447faf565dea11d73a90274eb8eeaba0a4f5933beb9301949945",
+    "src/lib.rs": "f0879bd6a0be8f9cdba045b52b04b3566afbdf5473d3ad29a3787ce27e22fa0a",
+    "src/register.rs": "e56d41f82f4f3cf9d97cf19ee42309295451470b08176bee6962ac055b6390a7",
+    "src/tenferro_ad.rs": "0fa6f6f956af5fa33d4094297dd4ef7f8e0a8852f8c7f6f9deca1d01aaf04a80",
+    "src/expect.rs": "c3a3de96402c046f4252cfcdd60b72d55aee62fb90f95a8ec4bf182cab27d461",
+    "src/measure.rs": "d0eb8afb79d4dbe9a460ef75c5bf64470446c7ce20cc61b89a8aa0c5ea09e3bd",
+    "src/trajectories.rs": "2f55f3475c841e0157d301844ee659b77aee9e2d14e0e7d810fd0795d3504c86",
+    "src/hamiltonian.rs": "b7d9004d79a3fbf4525926ee71a42795e91990c10192a4e94a188a086d212879",
+    "src/json.rs": "25dfd512877e1e725cdbc4c6a1f7154f2346fd13c5c46b975132dda32652e104",
+    "src/ad.rs": "011c891591199c60b7430881123355e5592a36b30894b24188e19e8ac6f6159c",
+    "src/easybuild.rs": "3ee2c63f840b3b8cf84e8dcac898213454d179778f079b3bfa5174eca582f45d",
+    "src/density_matrix.rs": "685d815419fc74e7a65b3ea34aed9854336a313e309852535acff1d1b7930867",
+    "src/apply.rs": "b90c755baff0b4eb40fa75cfbe25ad685c5359fb87f4f29a24cd891fee9e67b9",
+    "src/fusion.rs": "f9a2d7bb9ce9923bcb538ecf96a4e5b851663bca88fe9a7961c8d194fd158e66",
+    "src/noise.rs": "e6b7d5de3836bae263dd16a301a76337d33f6f6fa427f4404cd0ebf92ea110fc",
+    "src/gate.rs": "92c6905d94719b075eaea695bcb0fa31c88dc42ce3c74787af1cba6969716bea",
+    "src/qasm.rs": "0217e558246c309fab1a00cb924fd51c5b382a14cd2eaaed5c3d9fa665d2912d",
+    "src/parameters.rs": "9e36a6bb3775b7046f88277328db24bef56c372996f883a7c75bda49f5eafd54",
+    "src/cuda.rs": "36d319a6a6aa4065e32f6d7ef8bc21063eb804d19e1139876aa9432203fa8803",
+    "src/svg.rs": "16eaea3bb6385079581e440d7f071d322a671b9d62914b7a20dfe39ee640738d",
+    "src/unit_tests/slicing.rs": "14daa7cdbecabd1dfc665f446db4017f4c8ee8ccdcbf01696e45879ea1399ba9",
+    "src/unit_tests/operator.rs": "7701dbbaa8c48a10ddc86e8c6778c594a98917c7f497ba8ef7187e2b4342f52c",
+    "src/unit_tests/tenferro.rs": "45981cef8efaaa2b480a855303bdccd54e6b94200cd8a0ac9f6e251ea1af85e3",
+    "src/unit_tests/instruct_qubit.rs": "ffdf5f75f215b559f720190af8b4665c9bc5403df7f050b26ace0d93d58a7855",
+    "src/unit_tests/differentiable.rs": "6675667e2d83050e37fc789fbdc288c197d70b1173e6c079a3fbc25250627563",
+    "src/unit_tests/tensors.rs": "1a0ff52aeffde59480652637f894a4c62a2cd6cf06e9335e8158bc647e379af5",
+    "src/unit_tests/evolution.rs": "f6bdbb3fab166f0c92d676ff1f2e8f2397ec198d3615225566336cdce690825a",
+    "src/unit_tests/contractor.rs": "386aa82aba59c6a6b36f8c48c8aabd1f685915d40220f083e1a76e4456f3422c",
+    "src/unit_tests/circuit.rs": "57693d97ccd4b6455796ed873b38bcb7dafceb329caa0ef3dd0708aea677f75c",
+    "src/unit_tests/tenferro_ad.rs": "64c3c1382db1e28557f6d27acbf3de7092140845bd088f4bf2c1ba5b89de3e7d",
+    "src/unit_tests/trajectories.rs": "df4fab4021a73380ca0c90c0a5cdce96c37d858f4c80e85fc9554334ba6b72c4",
+    "src/unit_tests/hamiltonian.rs": "72b2d412e357a56eee91b91dadfd7f5f9d0cdabd4b1bfed58026df5cde607564",
+    "src/unit_tests/json.rs": "018be5312ba856dc94a98fd9cd74e35b402b0fc1514c5faebfbcac72696ea28e",
+    "src/unit_tests/observables.rs": "8e16088c674192c7dabc4fc1b904ac6aa26d2786b49bae73a84c8a00f68ddbcc",
+    "src/unit_tests/ad.rs": "be8126121a2856321e2e9846567a95d5c634c9f47d6c0f8e3a2162ea74613e38",
+    "src/unit_tests/easybuild.rs": "e7f4aa8abcef42ba4a26da92e06a1b274fa8ac8e5f356c25559799e4a5ea5054",
+    "src/unit_tests/fusion.rs": "bd97b8296a5701dca4bf053bcae63eb018322f796e36bc23f9855659c009a0c5",
+    "src/unit_tests/noise.rs": "af6accd599d047633ee1aaa4c1ef5a0bdb503c02807b5ccd962225086209e135",
+    "src/unit_tests/gate.rs": "2309df7f65d1c696342ba68f7f8452a34e6f599ba3a8ad326f0f3c24df8a65fd",
+    "src/unit_tests/qasm.rs": "ac0ed79c2ea65b83a19a9771c7588047551d416df5a2be7b611bdf49fde06fed",
+    "src/unit_tests/parameters.rs": "63d3cba668248ec9fe4ab8f9d508c06b0000d080ceda57e32d4e42287834f21f",
+    "src/unit_tests/circuit_noise.rs": "6f026e244334302af30144747901764bbc4d5f7c051657541518535f1e0e6e8f",
+    "src/unit_tests/cuda.rs": "c28b49c65bd4f9a2af71d93da00a8771b7958afc165d17811c6eb685c48a10c2",
+    "src/unit_tests/svg.rs": "c8b8629a4484bbcd15a134ea3cd9e6d75ba7bfa4984b6abac2b3c11d66cddae3",
+    "src/cuda/contraction.rs": "a36acdc42ed8fb53fdb4af8e59199b7e07a11fb72bdb096ca68877358ed242f1",
+    "bitbasis/src/bitstr.rs": "ae633deb0a353363e6cbbb48b6baad1ff2d065976e0d94f575845a35e08c8460",
+    "bitbasis/src/lib.rs": "e9fe6de40e5f6c8f1d614dc247b0f5acf1b0a9be64c0acce55775c7a185a3e63",
+    "bitbasis/src/bit_ops.rs": "7dda49670dab3da5717b05457b7447584cfe868d10641342777f6bb41b8f9857",
+    "bitbasis/src/iterate_control.rs": "3a2d6a28a3528b95659f8c770e7cd3a8385c0789a63af30af9f742dd934d6fee",
+    "benchmarks/regression/prepare_datasets.py": "05a4f7a4c475359225310471947d0a94f0f0f286887c4c40d6ffaceb9a38e9c1",
+    "benchmarks/regression/run.py": "f38f52c86185dafeb2f8b419cc0ff187426a6d6603c01876d542856ee8118170",
+    "benchmarks/regression/plot.py": "b6b3a2f4ed15ba964f41d194f05e45dc6b1ba249d13e9a94fb02b82c9c1a8d35",
+    "benchmarks/regression/qulacs_baseline.py": "2b9520bd88cd59fbe7af14cb38d7aa98889d5ae395d72a11e16721ad90a7299e",
+    "benchmarks/regression/machine.py": "490c319844894f03548426bffcb33b9b2e00c3583d981c429be1deb108b0b3b2",
+    "benchmarks/regression/compare.py": "e5b0c6503fd7d42b4d608050bd14db7655f9d5b75bc2daca3ec03f9d0c041e34",
+    "benchmarks/regression/qualify.py": "a7359e374ee708185dd42cbcd272ad79a53b6524e26e535b28ebbf625781d6e6",
+    "benchmarks/regression/tests/test_datasets.py": "f36bae0c8531a30dedb8868844476474074b65ebe4aea2b5385405cfa3ea4992",
+    "benchmarks/regression/tests/test_machine.py": "238116950c1abe4127551abaaaa669ae72357a78ba8985199e456cb612fa4d78",
+    "benchmarks/regression/tests/test_qualify.py": "5d10bf705da47d5949100e4a36f13cc687dc326d6419c71d8050e47a2bb1db82",
+    "benchmarks/regression/tests/test_compare.py": "e0bc466212abe9c05d34c477d8c0d7da7e7aee1dbb398dac87e78ea8479d2184",
+    "benchmarks/tenferro-probe/src/lib.rs": "45f6ce3514599ab06b131617be845092dd129d8dc17574922ad1d02963f1bf9a",
+    "benchmarks/tenferro-probe/src/trajectories.rs": "10590f8a73ca2185d317110b76b3f52c9b8c147205d9c1ac4b5305650e980912",
+    "benchmarks/tenferro-probe/src/tensor_memory.rs": "9346a6a7c11f20f20a4edd7a73b271f887b1666ca8f0b83e05a21b6a75970f51",
+    "benchmarks/tenferro-probe/src/krylov.rs": "5eb5505d3459210c166cbd89db805c68ed4ff4258ff39a2c8f89a1c2548a1ed3",
+    "benchmarks/tenferro-probe/src/extension.rs": "c2489d87e2949c10efa9371f0f0fce9b2a7aef7aa0bc2a34a011a735b32a00f3",
+    "benchmarks/tenferro-probe/src/circuit_ad.rs": "b92dfa597db3a0b6e4f2a11089758f0a824de3f61c7db6f0a25773f90c0c249b",
+    "benchmarks/tenferro-probe/src/cuda.rs": "57018e18918db8b23f3039c81eb7ef09c50ff58f66af46eade60a1f4de31aafe",
+    "benchmarks/tenferro-probe/src/bin/krylov_cases.rs": "198d59f582e399a1bc8b718a74b94eefddb76fcbaa9f1f5ecbb95b1e85881015",
+    "benchmarks/tenferro-probe/src/bin/memory.rs": "b13625b09adf8d18815d84881dbcd7b0baa93e950c828651b2c24286a9d8c593",
+    "benchmarks/tenferro-probe/src/bin/memory_cases.rs": "5b112c86c3e821d47295eba9d8a10145f2778abb60986f1345b8f0d57c01c857",
+    "benchmarks/tenferro-probe/src/bin/cuda_cases.rs": "b2f8955e9e3be81307f3cb312cf27bcfe674f89863547936f9852d568cd0fe91",
+    "benchmarks/tenferro-probe/src/bin/trajectory_cases.rs": "6bca0a0c92be507c1466ee7724cd78c9f5f4dac07802970ee6a6dc5dd4e8294f",
+    "benchmarks/tenferro-probe/src/bin/cuda_probe.rs": "244b0687d30392f040fb9092b5e2d8859636de752278478f676c2e434602d681",
+    "benchmarks/tenferro-probe/src/bin/ad_cases.rs": "5f6b6a69e483762922b9f0b81da398d7971a3835c9b7040fef8a4e3a19651ed3",
+    "benchmarks/tenferro-probe/src/bin/reference.rs": "5792d20ff0268935dd6976499560c2e15dcbb999f72d91a9c7eb8f6d7a01a934",
+    "benchmarks/tenferro-probe/src/bin/evolution_cases.rs": "2462d1fcaf8d15a6990a1b00e6a9f95ffc5b19215d14adda0e374d9ff459d5f6",
+    "benchmarks/tenferro-probe/benches/backend.rs": "b1aedb60e19f33db64fa382b4aee9a1d6be7c30381a23cc0c46b51ba6305f7b3",
+    "benchmarks/tenferro-probe/benches/cuda.rs": "6c02811a745fa5e56a227a7a7eee1dd864f5d9870314b6e7883377e966ac5a2e"
+  },
+  "accuracy": {
+    "krylov/krylov_ising_4q_tol7": [
+      {
+        "approximation_error": 4.326537143266042e-08,
+        "yao_approximation_error": 1.927797037884143e-09,
+        "oracle": "dense exponential",
+        "tight_reference_error": 1.4740789515594868e-15
+      },
+      {
+        "approximation_error": 4.326537143266042e-08,
+        "yao_approximation_error": 1.927797037884143e-09,
+        "oracle": "dense exponential",
+        "tight_reference_error": 1.4740789515594868e-15
+      },
+      {
+        "approximation_error": 4.326537143266042e-08,
+        "yao_approximation_error": 1.927797037884143e-09,
+        "oracle": "dense exponential",
+        "tight_reference_error": 1.4740789515594868e-15
+      },
+      {
+        "approximation_error": 4.326537143266042e-08,
+        "yao_approximation_error": 1.927797037884143e-09,
+        "oracle": "dense exponential",
+        "tight_reference_error": 1.4740789515594868e-15
+      },
+      {
+        "approximation_error": 4.326537143266042e-08,
+        "yao_approximation_error": 1.927797037884143e-09,
+        "oracle": "dense exponential",
+        "tight_reference_error": 1.4740789515594868e-15
+      },
+      {
+        "approximation_error": 4.326537143266042e-08,
+        "yao_approximation_error": 1.927797037884143e-09,
+        "oracle": "dense exponential",
+        "tight_reference_error": 1.4740789515594868e-15
+      }
+    ],
+    "krylov/krylov_ising_8q_tol7": [
+      {
+        "approximation_error": 3.542891269754906e-08,
+        "yao_approximation_error": 4.045817047142987e-07,
+        "oracle": "dense exponential",
+        "tight_reference_error": 2.8075373952339645e-14
+      },
+      {
+        "approximation_error": 3.542891269754906e-08,
+        "yao_approximation_error": 4.045817047142987e-07,
+        "oracle": "dense exponential",
+        "tight_reference_error": 2.8075373952339645e-14
+      },
+      {
+        "approximation_error": 3.542891269754906e-08,
+        "yao_approximation_error": 4.045817047142987e-07,
+        "oracle": "dense exponential",
+        "tight_reference_error": 2.8075373952339645e-14
+      },
+      {
+        "approximation_error": 3.542891269754906e-08,
+        "yao_approximation_error": 4.045817047142987e-07,
+        "oracle": "dense exponential",
+        "tight_reference_error": 2.8075373952339645e-14
+      },
+      {
+        "approximation_error": 3.542891269754906e-08,
+        "yao_approximation_error": 4.045817047142987e-07,
+        "oracle": "dense exponential",
+        "tight_reference_error": 2.8075373952339645e-14
+      },
+      {
+        "approximation_error": 3.542891269754906e-08,
+        "yao_approximation_error": 4.045817047142987e-07,
+        "oracle": "dense exponential",
+        "tight_reference_error": 2.8075373952339645e-14
+      }
+    ],
+    "krylov/krylov_ising_12q_tol7": [
+      {
+        "approximation_error": 4.063801788705405e-08,
+        "yao_approximation_error": 1.9384970900524253e-07,
+        "oracle": "KrylovKit tol=1e-13",
+        "tight_reference_error": 1.0535413654635281e-13
+      },
+      {
+        "approximation_error": 4.063801788705405e-08,
+        "yao_approximation_error": 1.9384970900524253e-07,
+        "oracle": "KrylovKit tol=1e-13",
+        "tight_reference_error": 1.0535413654635281e-13
+      },
+      {
+        "approximation_error": 4.063801788705405e-08,
+        "yao_approximation_error": 1.9384970900524253e-07,
+        "oracle": "KrylovKit tol=1e-13",
+        "tight_reference_error": 1.0535413654635281e-13
+      },
+      {
+        "approximation_error": 4.063801788705405e-08,
+        "yao_approximation_error": 1.9384970900524253e-07,
+        "oracle": "KrylovKit tol=1e-13",
+        "tight_reference_error": 1.0535413654635281e-13
+      },
+      {
+        "approximation_error": 4.063801788705405e-08,
+        "yao_approximation_error": 1.9384970900524253e-07,
+        "oracle": "KrylovKit tol=1e-13",
+        "tight_reference_error": 1.0535413654635281e-13
+      },
+      {
+        "approximation_error": 4.063801788705405e-08,
+        "yao_approximation_error": 1.9384970900524253e-07,
+        "oracle": "KrylovKit tol=1e-13",
+        "tight_reference_error": 1.0535413654635281e-13
+      }
+    ],
+    "krylov/krylov_heisenberg_4q_tol7": [
+      {
+        "approximation_error": 8.437820525416214e-16,
+        "yao_approximation_error": 3.1140098378119704e-16,
+        "oracle": "dense exponential",
+        "tight_reference_error": 8.437820525416214e-16
+      },
+      {
+        "approximation_error": 8.437820525416214e-16,
+        "yao_approximation_error": 3.1140098378119704e-16,
+        "oracle": "dense exponential",
+        "tight_reference_error": 8.437820525416214e-16
+      },
+      {
+        "approximation_error": 8.437820525416214e-16,
+        "yao_approximation_error": 3.1140098378119704e-16,
+        "oracle": "dense exponential",
+        "tight_reference_error": 8.437820525416214e-16
+      },
+      {
+        "approximation_error": 8.437820525416214e-16,
+        "yao_approximation_error": 3.1140098378119704e-16,
+        "oracle": "dense exponential",
+        "tight_reference_error": 8.437820525416214e-16
+      },
+      {
+        "approximation_error": 8.437820525416214e-16,
+        "yao_approximation_error": 3.1140098378119704e-16,
+        "oracle": "dense exponential",
+        "tight_reference_error": 8.437820525416214e-16
+      },
+      {
+        "approximation_error": 8.437820525416214e-16,
+        "yao_approximation_error": 3.1140098378119704e-16,
+        "oracle": "dense exponential",
+        "tight_reference_error": 8.437820525416214e-16
+      }
+    ],
+    "krylov/krylov_heisenberg_8q_tol7": [
+      {
+        "approximation_error": 2.494001304895335e-15,
+        "yao_approximation_error": 7.274474347240478e-08,
+        "oracle": "dense exponential",
+        "tight_reference_error": 2.494001304895335e-15
+      },
+      {
+        "approximation_error": 2.494001304895335e-15,
+        "yao_approximation_error": 7.274474347240478e-08,
+        "oracle": "dense exponential",
+        "tight_reference_error": 2.494001304895335e-15
+      },
+      {
+        "approximation_error": 2.494001304895335e-15,
+        "yao_approximation_error": 7.274474347240478e-08,
+        "oracle": "dense exponential",
+        "tight_reference_error": 2.494001304895335e-15
+      },
+      {
+        "approximation_error": 2.494001304895335e-15,
+        "yao_approximation_error": 7.274474347240478e-08,
+        "oracle": "dense exponential",
+        "tight_reference_error": 2.494001304895335e-15
+      },
+      {
+        "approximation_error": 2.494001304895335e-15,
+        "yao_approximation_error": 7.274474347240478e-08,
+        "oracle": "dense exponential",
+        "tight_reference_error": 2.494001304895335e-15
+      },
+      {
+        "approximation_error": 2.494001304895335e-15,
+        "yao_approximation_error": 7.274474347240478e-08,
+        "oracle": "dense exponential",
+        "tight_reference_error": 2.494001304895335e-15
+      }
+    ],
+    "krylov/krylov_heisenberg_12q_tol7": [
+      {
+        "approximation_error": 4.035551432329846e-08,
+        "yao_approximation_error": 3.0537703241355e-07,
+        "oracle": "KrylovKit tol=1e-13",
+        "tight_reference_error": 1.1892942062036598e-13
+      },
+      {
+        "approximation_error": 4.035551432329846e-08,
+        "yao_approximation_error": 3.0537703241355e-07,
+        "oracle": "KrylovKit tol=1e-13",
+        "tight_reference_error": 1.1892942062036598e-13
+      },
+      {
+        "approximation_error": 4.035551432329846e-08,
+        "yao_approximation_error": 3.0537703241355e-07,
+        "oracle": "KrylovKit tol=1e-13",
+        "tight_reference_error": 1.1892942062036598e-13
+      },
+      {
+        "approximation_error": 4.035551432329846e-08,
+        "yao_approximation_error": 3.0537703241355e-07,
+        "oracle": "KrylovKit tol=1e-13",
+        "tight_reference_error": 1.1892942062036598e-13
+      },
+      {
+        "approximation_error": 4.035551432329846e-08,
+        "yao_approximation_error": 3.0537703241355e-07,
+        "oracle": "KrylovKit tol=1e-13",
+        "tight_reference_error": 1.1892942062036598e-13
+      },
+      {
+        "approximation_error": 4.035551432329846e-08,
+        "yao_approximation_error": 3.0537703241355e-07,
+        "oracle": "KrylovKit tol=1e-13",
+        "tight_reference_error": 1.1892942062036598e-13
+      }
+    ]
+  }
+}

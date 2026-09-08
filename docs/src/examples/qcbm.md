@@ -164,7 +164,7 @@ two-gate `Rz·Rx` pattern. [Full QCBM JSON](./generated/circuits/qcbm-static-dep
 and simulate:
 
 ```bash
-yao simulate qcbm-static-depth2.json | yao probs -
+yao simulate qcbm-static-depth2.json | yao probs - --json
 ```
 
 Expected output — first and last few entries of the 64-element probability
@@ -185,14 +185,6 @@ invariants):
     0.04593274455545663
   ]
 }
-```
-
-**Regenerating this page's artifacts** from the repo root:
-
-```bash
-cargo build -p yao-cli --no-default-features
-YAO_ARTIFACT_DIR=docs/src/examples/generated YAO_BIN=target/debug/yao bash examples/cli/qcbm_static.sh 2
-python3 scripts/plot_cli_results.py docs/src/examples/generated/results docs/src/examples/generated/plots
 ```
 
 ## Interpreting the result

@@ -1,94 +1,53 @@
-# Getting Started
+# First circuit
 
-This guide installs the `yao` CLI tool, runs your first circuit, and points
-at the example catalogue. You do not need to write any Rust — circuits are
-plain JSON. See [Circuit JSON Conventions](./conventions.md) for the schema,
-and if you want to embed yao-rs as a Rust library, see the Rust API pages
-linked from the sidebar.
+Prepare an entangled pair, draw the circuit, and measure its output.
+This walkthrough uses the [installed CLI](installation.md).
 
-## Install the CLI
-
-Install the published CLI with a current stable Rust toolchain:
-
-```bash
-cargo install yao-cli --locked
-yao --help
-```
-
-To install the development version from source:
-
-```bash
-git clone https://github.com/GiggleLiu/yao-rs.git
-cd yao-rs
-cargo install --path yao-cli --locked
-```
-
-Both commands install `yao` into Cargo's binary directory (normally
-`~/.cargo/bin`), which must be on your `PATH`.
-
-## Your first circuit: Bell state
-
-Ask the CLI for a built-in Bell circuit, render it to SVG, and simulate:
+## Create a Bell circuit
 
 ```bash
 yao example bell > bell.json
+```
+
+The file describes two operations: a Hadamard on qubit 0, followed by an X on
+qubit 1 controlled by qubit 0. Both qubits start in \\( |0\rangle \\) when simulated.
+
+## Draw it
+
+```bash
 yao visualize bell.json --output bell.svg
+```
+
+Open `bell.svg` in a browser:
+
+![Bell circuit: H on qubit 0 followed by a controlled X on qubit 1.](examples/generated/svg/bell.svg)
+
+## Compute probabilities
+
+```bash
 yao simulate bell.json | yao probs - --json
 ```
 
-The `probs` output is:
+`simulate` produces a binary state vector. The pipe passes it to `probs`,
+which computes a probability for each basis state. `-` means read from stdin.
+The probabilities are approximately:
 
 ```json
 {"num_qubits": 2, "locs": null, "probabilities": [0.5, 0.0, 0.0, 0.5]}
 ```
 
-Probability 0.5 on indices 0 and 3, nothing in the middle. Under the
-qubit-0-MSB convention (see
-[Bit ordering](./conventions.md#bit-ordering)) index 3 is
-\\( |q_0 q_1\rangle = |11\rangle \\) — both qubits in
-\\( |1\rangle \\). The [Entangled States](./examples/entangled-states.md)
-example builds on this.
+The pair is equally likely to be measured as \\( |00\rangle \\) or
+\\( |11\rangle \\). The two qubits always agree.
 
-## Inspect a circuit without running it
-
-```bash
-yao inspect bell.json
-```
-
-Prints the number of qubits and gate counts in a human-readable form. Add
-`--json` if you want the inspection itself as JSON for piping.
-
-## Measurement samples
+## Take measurement samples
 
 ```bash
 yao run bell.json --shots 1024
 ```
 
-JSON output contains `counts` keyed by bit strings and `outcomes` as arrays
-of measured bits in qubit order. Add `--json` to force JSON in a terminal.
-Use `--seed 42` to repeat a sample sequence with the same binary version.
+The terminal shows counts for `00` and `11`. Each should be near half the
+shots, with variation between runs.
 
-## Expectation values
-
-For any Hermitian Pauli product:
-
-```bash
-yao run bell.json --op "Z(0)Z(1)" --json
-```
-
-Returns:
-
-```json
-{"operator": "Z(0)Z(1)", "expectation_value": {"re": 1.0, "im": 0.0}}
-```
-
-See the [Operator syntax](./conventions.md#operator-syntax) section of the
-conventions page for the full grammar.
-
-## Next steps
-
-- [CLI Tool](./cli.md) — full command reference.
-- [Circuit JSON Conventions](./conventions.md) — schema, gate names, bit
-  ordering, result formats.
-- [Example Catalog](./examples/catalog.md) — eight worked algorithms from
-  Bell pairs to QCBM.
+You've now created, rendered, and simulated the same circuit. Continue with
+[simulation and measurement](states.md) to compute expectation values, or
+[entangled states](examples/entangled-states.md) for the physics behind this example.

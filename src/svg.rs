@@ -76,6 +76,7 @@ const BOX_LABEL_PADDING: f32 = 18.0;
 const PARAM_BOX_LABEL_PADDING: f32 = 10.0;
 const COLUMN_GUTTER: f32 = 18.0;
 const PARAM_GATE_HEIGHT: f32 = 34.0;
+const PHASE_LABEL_OFFSET: f32 = 10.0;
 
 enum GateLabel {
     Single {
@@ -141,8 +142,7 @@ pub fn to_svg(circuit: &Circuit) -> String {
 
     let mut svg = String::new();
     svg.push_str(&format!(
-        r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {} {}">"#,
-        width, height
+        r#"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">"#,
     ));
     svg.push_str(
         r#"<style>
@@ -152,7 +152,8 @@ pub fn to_svg(circuit: &Circuit) -> String {
 .gate-label, .gate-param-label, .channel-label, .annotation-label { fill: #111; font-family: monospace; text-anchor: middle; dominant-baseline: middle; }
 .gate-param-label { fill: #555; font-size: 10px; }
 .annotation-label { dominant-baseline: auto; }
-.control { fill: #111; stroke: #111; stroke-width: 2; }
+.control, .phase-target { fill: #111; stroke: #111; stroke-width: 2; }
+.phase-label { fill: #111; font-family: monospace; font-size: 12px; text-anchor: start; dominant-baseline: middle; }
 .control-open { fill: #fff; stroke: #111; stroke-width: 2; }
 .control-link { stroke: #111; stroke-width: 2; }
 .target-x { fill: none; stroke: #111; stroke-width: 2; }
@@ -197,6 +198,29 @@ fn layout_gate(pg: &PositionedGate, x: f32, config: &LayoutConfig, nodes: &mut V
 
     if matches!(pg.gate, Gate::X) && !pg.control_locs.is_empty() && pg.target_locs.len() == 1 {
         push_target_x(x, wire_y(pg.target_locs[0], config), nodes);
+        return;
+    }
+
+    if let Some(theta) = controlled_phase_angle(pg) {
+        let target = pg.target_locs[0];
+        let y = wire_y(target, config);
+        nodes.push(RenderNode::Circle {
+            x,
+            y,
+            r: CONTROL_RADIUS,
+            class: "phase-target",
+        });
+        let direction = if pg.control_locs.iter().any(|&loc| loc < target) {
+            -1.0
+        } else {
+            1.0
+        };
+        nodes.push(RenderNode::Text {
+            x: x + PHASE_LABEL_OFFSET,
+            y: y + direction * config.row_height * 0.5,
+            label: phase_angle_label(theta),
+            class: "phase-label",
+        });
         return;
     }
 
@@ -376,6 +400,12 @@ fn occupancy_for_locs(nbits: usize, locs: &[usize], header: bool) -> Occupancy {
 
 fn column_width_for_element(element: &CircuitElement, config: &LayoutConfig) -> f32 {
     match element {
+        CircuitElement::Gate(pg) if controlled_phase_angle(pg).is_some() => {
+            let angle = phase_angle_label(controlled_phase_angle(pg).unwrap());
+            config
+                .col_width
+                .max(2.0 * (PHASE_LABEL_OFFSET + text_width(&angle)) + COLUMN_GUTTER)
+        }
         CircuitElement::Gate(pg) if is_symbol_only_gate(pg) => config.col_width,
         CircuitElement::Gate(pg) => {
             let label = svg_gate_label(&pg.gate);
@@ -398,6 +428,15 @@ fn column_width_for_element(element: &CircuitElement, config: &LayoutConfig) -> 
 fn is_symbol_only_gate(pg: &PositionedGate) -> bool {
     matches!(pg.gate, Gate::SWAP)
         || (matches!(pg.gate, Gate::X) && !pg.control_locs.is_empty() && pg.target_locs.len() == 1)
+}
+
+fn controlled_phase_angle(pg: &PositionedGate) -> Option<f64> {
+    match pg.gate {
+        Gate::Phase(theta) if pg.control_locs.len() == 1 && pg.target_locs.len() == 1 => {
+            Some(theta)
+        }
+        _ => None,
+    }
 }
 
 fn connector_span(pg: &PositionedGate, config: &LayoutConfig) -> Option<(f32, f32)> {
@@ -432,7 +471,12 @@ fn connector_endpoint_padding(pg: &PositionedGate, loc: usize) -> f32 {
     };
 
     let target_padding = if pg.target_locs.contains(&loc) {
-        if matches!(pg.gate, Gate::X) && !pg.control_locs.is_empty() && pg.target_locs.len() == 1 {
+        if controlled_phase_angle(pg).is_some() {
+            CONTROL_RADIUS
+        } else if matches!(pg.gate, Gate::X)
+            && !pg.control_locs.is_empty()
+            && pg.target_locs.len() == 1
+        {
             TARGET_X_RADIUS
         } else if matches!(pg.gate, Gate::SWAP) {
             SWAP_ARM
@@ -501,13 +545,50 @@ fn gate_height(gate: &Gate) -> f32 {
 
 fn svg_gate_label(gate: &Gate) -> GateLabel {
     match gate {
-        Gate::Phase(theta) => compact_parameterized_gate_label("Phase", *theta, gate),
+        Gate::Phase(theta) => GateLabel::Parameterized {
+            name: "P",
+            parameter: phase_angle_label(*theta),
+            full_label: gate.to_string(),
+        },
         Gate::Rx(theta) => compact_parameterized_gate_label("Rx", *theta, gate),
         Gate::Ry(theta) => compact_parameterized_gate_label("Ry", *theta, gate),
         Gate::Rz(theta) => compact_parameterized_gate_label("Rz", *theta, gate),
         _ => GateLabel::Single {
             label: gate.to_string(),
         },
+    }
+}
+
+fn phase_angle_label(theta: f64) -> String {
+    if theta == 0.0 {
+        return "0".to_string();
+    }
+    // Recognize simple multiples of pi, including the small angles in QFTs.
+    // A tight tolerance avoids turning ordinary decimal parameters into fractions.
+    for denominator in [
+        1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64, 128, 256, 512, 1024,
+    ] {
+        let numerator = (theta / std::f64::consts::PI * f64::from(denominator)).round();
+        let exact = numerator * std::f64::consts::PI / f64::from(denominator);
+        if (1.0..=16.0).contains(&numerator.abs())
+            && (theta - exact).abs() <= 1e-12 * theta.abs().max(1.0)
+        {
+            let coefficient = match numerator as i32 {
+                1 => String::new(),
+                -1 => "−".to_string(),
+                n => n.to_string(),
+            };
+            return if denominator == 1 {
+                format!("{coefficient}π")
+            } else {
+                format!("{coefficient}π/{denominator}")
+            };
+        }
+    }
+    if theta.abs() < 0.01 {
+        format!("{theta:.2e}")
+    } else {
+        format!("{theta:.2}")
     }
 }
 

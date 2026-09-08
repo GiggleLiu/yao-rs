@@ -281,86 +281,95 @@ impl Gate {
     }
 
     /// Internal: compute the 2x2 or 4x4 matrix for named qubit gates.
-    fn qubit_matrix(&self) -> Array2<Complex64> {
+    /// Borrow standard-layout custom matrices for state-vector execution.
+    pub(crate) fn matrix_row_major(&self) -> std::borrow::Cow<'_, [Complex64]> {
+        use std::borrow::Cow;
+        if let Gate::Custom { matrix, .. } = self {
+            return match matrix.as_slice() {
+                Some(values) => Cow::Borrowed(values),
+                None => Cow::Owned(matrix.iter().copied().collect()),
+            };
+        }
+        // Named gates construct standard-layout arrays with zero offset.
+        Cow::Owned(self.matrix().into_raw_vec_and_offset().0)
+    }
+
+    /// Stack-backed coefficients for the one-qubit execution path.
+    pub(crate) fn single_qubit_coefficients(&self) -> Option<[Complex64; 4]> {
         let zero = Complex64::new(0.0, 0.0);
         let one = Complex64::new(1.0, 0.0);
-        let neg_one = Complex64::new(-1.0, 0.0);
         let i = Complex64::new(0.0, 1.0);
-        let neg_i = Complex64::new(0.0, -1.0);
-
-        match self {
-            Gate::X => Array2::from_shape_vec((2, 2), vec![zero, one, one, zero]).unwrap(),
-            Gate::Y => Array2::from_shape_vec((2, 2), vec![zero, neg_i, i, zero]).unwrap(),
-            Gate::Z => Array2::from_shape_vec((2, 2), vec![one, zero, zero, neg_one]).unwrap(),
+        Some(match self {
+            Gate::X => [zero, one, one, zero],
+            Gate::Y => [zero, -i, i, zero],
+            Gate::Z => [one, zero, zero, -one],
             Gate::H => {
                 let s = Complex64::new(FRAC_1_SQRT_2, 0.0);
-                let neg_s = Complex64::new(-FRAC_1_SQRT_2, 0.0);
-                Array2::from_shape_vec((2, 2), vec![s, s, s, neg_s]).unwrap()
+                [s, s, s, -s]
             }
-            Gate::S => Array2::from_shape_vec((2, 2), vec![one, zero, zero, i]).unwrap(),
-            Gate::T => {
-                let t_phase = Complex64::from_polar(1.0, FRAC_PI_4);
-                Array2::from_shape_vec((2, 2), vec![one, zero, zero, t_phase]).unwrap()
-            }
-            Gate::SWAP => {
-                // 4x4 matrix: |00>->|00>, |01>->|10>, |10>->|01>, |11>->|11>
-                // Row-major: rows are |00>, |01>, |10>, |11>
-                let mut m = Array2::zeros((4, 4));
-                m[[0, 0]] = one; // |00> -> |00>
-                m[[1, 2]] = one; // |01> -> |10>
-                m[[2, 1]] = one; // |10> -> |01>
-                m[[3, 3]] = one; // |11> -> |11>
-                m
-            }
-            Gate::Phase(theta) => {
-                let phase = Complex64::from_polar(1.0, *theta);
-                Array2::from_shape_vec((2, 2), vec![one, zero, zero, phase]).unwrap()
-            }
+            Gate::S => [one, zero, zero, i],
+            Gate::T => [one, zero, zero, Complex64::from_polar(1.0, FRAC_PI_4)],
+            Gate::Phase(theta) => [one, zero, zero, Complex64::from_polar(1.0, *theta)],
             Gate::Rx(theta) => {
-                let cos = Complex64::new((theta / 2.0).cos(), 0.0);
-                let neg_i_sin = Complex64::new(0.0, -(theta / 2.0).sin());
-                Array2::from_shape_vec((2, 2), vec![cos, neg_i_sin, neg_i_sin, cos]).unwrap()
+                let (sin, cos) = (theta / 2.0).sin_cos();
+                let c = Complex64::new(cos, 0.0);
+                let s = Complex64::new(0.0, -sin);
+                [c, s, s, c]
             }
             Gate::Ry(theta) => {
-                let cos = Complex64::new((theta / 2.0).cos(), 0.0);
-                let sin = Complex64::new((theta / 2.0).sin(), 0.0);
-                let neg_sin = Complex64::new(-(theta / 2.0).sin(), 0.0);
-                Array2::from_shape_vec((2, 2), vec![cos, neg_sin, sin, cos]).unwrap()
+                let (sin, cos) = (theta / 2.0).sin_cos();
+                let c = Complex64::new(cos, 0.0);
+                let s = Complex64::new(sin, 0.0);
+                [c, -s, s, c]
             }
-            Gate::Rz(theta) => {
-                let phase_neg = Complex64::from_polar(1.0, -theta / 2.0);
-                let phase_pos = Complex64::from_polar(1.0, theta / 2.0);
-                Array2::from_shape_vec((2, 2), vec![phase_neg, zero, zero, phase_pos]).unwrap()
-            }
+            Gate::Rz(theta) => [
+                Complex64::from_polar(1.0, -theta / 2.0),
+                zero,
+                zero,
+                Complex64::from_polar(1.0, theta / 2.0),
+            ],
             Gate::SqrtX => {
-                // (1+i)/2 * [[1, -i], [-i, 1]]
-                let f = Complex64::new(0.5, 0.5); // (1+i)/2
-                Array2::from_shape_vec((2, 2), vec![f * one, f * neg_i, f * neg_i, f * one])
-                    .unwrap()
+                let f = Complex64::new(0.5, 0.5);
+                [f, f * -i, f * -i, f]
             }
             Gate::SqrtY => {
-                // (1+i)/2 * [[1, -1], [1, 1]]
-                let f = Complex64::new(0.5, 0.5); // (1+i)/2
-                Array2::from_shape_vec((2, 2), vec![f * one, f * neg_one, f * one, f * one])
-                    .unwrap()
+                let f = Complex64::new(0.5, 0.5);
+                [f, -f, f, f]
             }
             Gate::SqrtW => {
-                // cos(π/4)*I - i*sin(π/4)*G where G = (X+Y)/√2
-                // G = [[0, (1-i)/√2], [(1+i)/√2, 0]]
-                // cos(π/4) = sin(π/4) = 1/√2
-                let cos_val = Complex64::new(FRAC_1_SQRT_2, 0.0);
-                let neg_i_sin = Complex64::new(0.0, -FRAC_1_SQRT_2); // -i * sin(π/4)
-                // G[0,1] = (1-i)/√2, G[1,0] = (1+i)/√2
-                let g01 = Complex64::new(FRAC_1_SQRT_2, -FRAC_1_SQRT_2);
-                let g10 = Complex64::new(FRAC_1_SQRT_2, FRAC_1_SQRT_2);
-                // M = cos_val * I - i*sin_val * G
-                // M[0,0] = cos_val, M[1,1] = cos_val
-                // M[0,1] = neg_i_sin * G[0,1], M[1,0] = neg_i_sin * G[1,0]
-                Array2::from_shape_vec(
-                    (2, 2),
-                    vec![cos_val, neg_i_sin * g01, neg_i_sin * g10, cos_val],
-                )
-                .unwrap()
+                let c = Complex64::new(FRAC_1_SQRT_2, 0.0);
+                let s = Complex64::new(0.0, -FRAC_1_SQRT_2);
+                [
+                    c,
+                    s * Complex64::new(FRAC_1_SQRT_2, -FRAC_1_SQRT_2),
+                    s * Complex64::new(FRAC_1_SQRT_2, FRAC_1_SQRT_2),
+                    c,
+                ]
+            }
+            Gate::Custom { matrix, .. } if matrix.dim() == (2, 2) => [
+                matrix[[0, 0]],
+                matrix[[0, 1]],
+                matrix[[1, 0]],
+                matrix[[1, 1]],
+            ],
+            _ => return None,
+        })
+    }
+
+    fn qubit_matrix(&self) -> Array2<Complex64> {
+        if let Some(values) = self.single_qubit_coefficients() {
+            return Array2::from_shape_vec((2, 2), values.to_vec()).unwrap();
+        }
+        let one = Complex64::new(1.0, 0.0);
+        let i = Complex64::new(0.0, 1.0);
+        match self {
+            Gate::SWAP => {
+                let mut m = Array2::zeros((4, 4));
+                m[[0, 0]] = one;
+                m[[1, 2]] = one;
+                m[[2, 1]] = one;
+                m[[3, 3]] = one;
+                m
             }
             Gate::ISWAP => {
                 // 4x4 matrix: diag(1, 0, 0, 1) with m[1,2]=i, m[2,1]=i
@@ -388,7 +397,7 @@ impl Gate {
                 m[[3, 3]] = e_neg_i_phi;
                 m
             }
-            Gate::Custom { .. } => unreachable!(),
+            _ => unreachable!("single-qubit and custom matrices are handled above"),
         }
     }
 }

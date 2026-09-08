@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help build build-release check fmt fmt-check clippy test check-all release clean doc doc-serve doc-open rustdoc example-qft run-plan module-graph cli bench bench-gates bench-qft bench-density bench-julia bench-compare
+.PHONY: help build build-release check fmt fmt-check clippy test check-all release clean doc doc-serve doc-open rustdoc example-qft run-plan cli bench bench-gates bench-qft bench-density bench-julia bench-compare benchmark benchmark-setup benchmark-check benchmark-qualify benchmark-test
 
 CARGO ?= cargo
 CARGO_TARGET_DIR ?= target
@@ -23,8 +23,12 @@ help:
 	@printf "  doc-serve     Serve mdBook at http://%s:%s\n" "$(DOC_HOST)" "$(DOC_PORT)"
 	@printf "  doc-open      Build and open mdBook in browser\n"
 	@printf "  rustdoc       Build Rust API docs\n"
-	@printf "  module-graph  Generate module graph JSON from rustdoc\n"
 	@printf "\nBenchmarks:\n"
+	@printf "  benchmark-setup Install the locked benchmark environment\n"
+	@printf "  benchmark     Run the curated CPU suite (BENCH_PROFILE=smoke|regression|full)\n"
+	@printf "  benchmark-check Compare BENCH_BASELINE and BENCH_CANDIDATE results\n"
+	@printf "  benchmark-qualify Compare BENCH_RESULT against measured competitors\n"
+	@printf "  benchmark-test Test dataset integrity and regression detection\n"
 	@printf "  bench         Run all Criterion benchmarks\n"
 	@printf "  bench-gates   Run single-gate benchmarks\n"
 	@printf "  bench-qft     Run QFT circuit benchmarks\n"
@@ -89,10 +93,6 @@ rustdoc:
 example-qft:
 	$(CARGO) run --example qft
 
-module-graph:  ## Generate module graph JSON from rustdoc
-	cargo +nightly rustdoc -- -Z unstable-options --output-format json
-	python3 scripts/gen_module_graph.py
-
 cli:
 	$(CARGO) install --path yao-cli
 
@@ -149,3 +149,29 @@ run-plan:
 	PROMPT="$${PROMPT}$${NL}$${NL}## Process$${NL}$${PROCESS}$${NL}$${NL}## Rules$${NL}- Tests should be strong enough to catch regressions.$${NL}- Do not modify tests to make them pass.$${NL}- Test failure must be reported."; \
 	echo "=== Prompt ===" && echo "$$PROMPT" && echo "===" ; \
 	RUNNER="$(AGENT_TYPE)" run_agent "$(OUTPUT)" "$$PROMPT"
+
+# Curated, reproducible performance runs; no timing thresholds on shared CI hosts.
+UV ?= uv
+JULIA ?= julia
+BENCH_PROFILE ?= regression
+BENCH_OUT ?= benchmarks/results/local-$(shell date +%Y%m%d-%H%M%S)
+BENCH_TOLERANCE ?= 0.05
+BENCH_ENV = benchmarks/regression/environment
+
+benchmark-setup:
+	$(UV) sync --frozen --project $(BENCH_ENV)
+	$(JULIA) --startup-file=no --project=$(BENCH_ENV)/julia -e 'using Pkg; Pkg.instantiate(); using Yao, BenchmarkTools'
+
+benchmark:
+	$(UV) run --frozen --project $(BENCH_ENV) python benchmarks/regression/run.py "$(BENCH_OUT)" --profile "$(BENCH_PROFILE)" --julia "$(JULIA)"
+
+benchmark-test:
+	$(UV) run --frozen --project $(BENCH_ENV) python -m unittest discover -s benchmarks/regression/tests
+
+benchmark-check:
+	@test -n "$(BENCH_BASELINE)" -a -n "$(BENCH_CANDIDATE)" || (echo "Set BENCH_BASELINE and BENCH_CANDIDATE to results.json files"; exit 2)
+	$(UV) run --frozen --project $(BENCH_ENV) python benchmarks/regression/compare.py "$(BENCH_BASELINE)" "$(BENCH_CANDIDATE)" --tolerance "$(BENCH_TOLERANCE)"
+
+benchmark-qualify:
+	@test -n "$(BENCH_RESULT)" || (echo "Set BENCH_RESULT to a results.json file"; exit 2)
+	$(UV) run --frozen --project $(BENCH_ENV) python benchmarks/regression/qualify.py "$(BENCH_RESULT)" --tolerance "$(BENCH_TOLERANCE)"

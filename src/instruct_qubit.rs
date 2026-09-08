@@ -81,12 +81,11 @@ fn for_each_single_control_base(
 /// X gate: swap amplitudes at |...0...> and |...1...>.
 pub fn instruct_x(state: &mut [Complex64], nbits: usize, loc: usize) {
     let bit = loc_to_bit(nbits, loc);
-    let mask = indicator(bit);
-    let dim = 1usize << nbits;
-
-    for basis in 0..dim {
-        if basis & mask == 0 {
-            state.swap(basis, basis ^ mask);
+    let step = 1usize << bit;
+    for block in state.chunks_exact_mut(step * 2) {
+        let (low, high) = block.split_at_mut(step);
+        for (low, high) in low.iter_mut().zip(high) {
+            std::mem::swap(low, high);
         }
     }
 }
@@ -147,13 +146,39 @@ pub fn instruct_1q(
     let bit = loc_to_bit(nbits, loc);
     let step1 = 1 << bit;
     let step2 = 1 << (bit + 1);
-    let total = state.len();
-    let mut j = 0;
-    while j < total {
-        for i in j..(j + step1) {
-            u1rows(state, i, i + step1, a, b, c, d);
+    if [a.im, b.im, c.im, d.im].iter().all(|&v| v == 0.0) {
+        // Real matrices act independently on real and imaginary components.
+        // Disjoint halves let LLVM vectorize both contiguous streams.
+        for block in state.chunks_exact_mut(step2) {
+            let (low, high) = block.split_at_mut(step1);
+            for (low, high) in low.iter_mut().zip(high) {
+                let w = *low;
+                let v = *high;
+                *low = w * a.re + v * b.re;
+                *high = w * c.re + v * d.re;
+            }
         }
-        j += step2;
+    } else if [a.im, d.im, b.re, c.re].iter().all(|&v| v == 0.0) {
+        // Rx and Y have real diagonal and imaginary off-diagonal coefficients.
+        for block in state.chunks_exact_mut(step2) {
+            let (low, high) = block.split_at_mut(step1);
+            for (low, high) in low.iter_mut().zip(high) {
+                let w = *low;
+                let v = *high;
+                *low = Complex64::new(a.re * w.re - b.im * v.im, a.re * w.im + b.im * v.re);
+                *high = Complex64::new(d.re * v.re - c.im * w.im, d.re * v.im + c.im * w.re);
+            }
+        }
+    } else {
+        for block in state.chunks_exact_mut(step2) {
+            let (low, high) = block.split_at_mut(step1);
+            for (low, high) in low.iter_mut().zip(high) {
+                let w = *low;
+                let v = *high;
+                *low = a * w + b * v;
+                *high = c * w + d * v;
+            }
+        }
     }
 }
 
@@ -172,21 +197,42 @@ pub fn instruct_1q_diag(state: &mut [Complex64], loc: usize, d0: Complex64, d1: 
     let bit = loc_to_bit(nbits, loc);
     let step1 = 1 << bit;
     let step2 = 1 << (bit + 1);
-    let total = state.len();
-    let mut j = 0;
-    while j < total {
-        for i in j..(j + step1) {
-            state[i] *= d0;
-            state[i + step1] *= d1;
+    if d0 == Complex64::new(1., 0.) {
+        for block in state.chunks_exact_mut(step2) {
+            for value in &mut block[step1..] {
+                *value *= d1;
+            }
         }
-        j += step2;
+        return;
     }
+    for block in state.chunks_exact_mut(step2) {
+        let (low, high) = block.split_at_mut(step1);
+        for value in low {
+            *value *= d0;
+        }
+        for value in high {
+            *value *= d1;
+        }
+    }
+}
+
+/// Recognize the block structure shared by exchange gates and custom matrices.
+fn single_excitation_matrix(gate: &[Complex64]) -> bool {
+    [1, 2, 3, 4, 7, 8, 11, 12, 13, 14]
+        .iter()
+        .all(|&i| gate[i] == Complex64::new(0.0, 0.0))
 }
 
 /// Apply d-dimensional unitary to amplitudes at given indices (stack-allocated for d<=4).
 ///
 /// Julia: `unrows!(state, inds, U)` from utils.jl:176-183
-fn unrows(state: &mut [Complex64], inds: &[usize], gate: &[Complex64]) {
+fn unrows(state: &mut [Complex64], inds: &[usize], gate: &[Complex64], single_excitation: bool) {
+    if single_excitation {
+        state[inds[0]] *= gate[0];
+        u1rows(state, inds[1], inds[2], gate[5], gate[6], gate[9], gate[10]);
+        state[inds[3]] *= gate[15];
+        return;
+    }
     let d = inds.len();
     debug_assert!(
         d <= 4,
@@ -209,19 +255,25 @@ fn unrows(state: &mut [Complex64], inds: &[usize], gate: &[Complex64]) {
 // 2-qubit instruct (no controls)
 // ========================================================================
 
+fn two_qubit_offsets(bits: [usize; 2]) -> [usize; 4] {
+    let low = 1usize << bits[0];
+    let high = 1usize << bits[1];
+    [0, low, high, low | high]
+}
+
 /// Permute 4x4 gate matrix when bit positions are not in ascending order.
 ///
 /// Julia: `sort_unitary(Val(2), U, locs)` from utils.jl:16-23
-fn sort_unitary_2q(gate: &[Complex64], bits: &[usize]) -> (Vec<Complex64>, [usize; 2]) {
+fn sort_unitary_2q(gate: &[Complex64], bits: &[usize]) -> ([Complex64; 16], [usize; 2]) {
     let mut sorted = [bits[0], bits[1]];
     if sorted[0] < sorted[1] {
-        return (gate.to_vec(), sorted);
+        return (std::array::from_fn(|i| gate[i]), sorted);
     }
     sorted.sort();
     // Swap qubit order: permute |ij⟩ → |ji⟩
     // perm = [0, 2, 1, 3] maps: 00→00, 01→10, 10→01, 11→11
     let perm = [0usize, 2, 1, 3];
-    let mut new_gate = vec![Complex64::new(0.0, 0.0); 16];
+    let mut new_gate = [Complex64::new(0.0, 0.0); 16];
     for i in 0..4 {
         for j in 0..4 {
             new_gate[perm[i] * 4 + perm[j]] = gate[i * 4 + j];
@@ -230,7 +282,7 @@ fn sort_unitary_2q(gate: &[Complex64], bits: &[usize]) -> (Vec<Complex64>, [usiz
     (new_gate, sorted)
 }
 
-/// Apply 2-qubit 4x4 gate using itercontrol-based iteration.
+/// Apply a 2-qubit 4x4 gate using bit-stride iteration.
 ///
 /// `locs` are in yao-rs convention (0 = MSB). Internally converted to bit positions.
 ///
@@ -241,27 +293,20 @@ pub fn instruct_2q(state: &mut [Complex64], nbits: usize, locs: &[usize], gate: 
 
     let bits = [loc_to_bit(nbits, locs[0]), loc_to_bit(nbits, locs[1])];
     let (gate, sorted_bits) = sort_unitary_2q(gate, &bits);
+    let single_excitation = single_excitation_matrix(&gate);
 
-    // locs_raw: lock non-target bits to 0, free target bits → 4 raw offsets
-    let non_target: Vec<usize> = (0..nbits)
-        .filter(|b| *b != sorted_bits[0] && *b != sorted_bits[1])
-        .collect();
-    let non_target_zeros = vec![0usize; non_target.len()];
-    let locs_raw: Vec<usize> = itercontrol(nbits, &non_target, &non_target_zeros).collect();
-    debug_assert_eq!(locs_raw.len(), 4);
+    let locs_raw = two_qubit_offsets(sorted_bits);
 
-    // Main iteration: lock target bits to 0, iterate free (non-target) bits
-    let ic = itercontrol(nbits, &sorted_bits, &[0, 0]);
-
-    for base in ic {
+    // Both target bits are zero in each block's base index.
+    for_each_single_control_base(1usize << nbits, sorted_bits[0], sorted_bits[1], 0, |base| {
         let inds = [
             locs_raw[0] + base,
             locs_raw[1] + base,
             locs_raw[2] + base,
             locs_raw[3] + base,
         ];
-        unrows(state, &inds, &gate);
-    }
+        unrows(state, &inds, &gate, single_excitation);
+    });
 }
 
 /// Apply 2-qubit diagonal gate diag(d0, d1, d2, d3).
@@ -285,20 +330,13 @@ pub fn instruct_2q_diag(
         *diag
     };
 
-    let non_target: Vec<usize> = (0..nbits)
-        .filter(|b| *b != sorted_bits[0] && *b != sorted_bits[1])
-        .collect();
-    let non_target_zeros = vec![0usize; non_target.len()];
-    let locs_raw: Vec<usize> = itercontrol(nbits, &non_target, &non_target_zeros).collect();
-    debug_assert_eq!(locs_raw.len(), 4);
+    let locs_raw = two_qubit_offsets(sorted_bits);
 
-    let ic = itercontrol(nbits, &sorted_bits, &[0, 0]);
-
-    for base in ic {
+    for_each_single_control_base(1usize << nbits, sorted_bits[0], sorted_bits[1], 0, |base| {
         for k in 0..4 {
             state[locs_raw[k] + base] *= diag[k];
         }
-    }
+    });
 }
 
 /// SWAP gate: exchange amplitudes when the target bits differ.
@@ -307,16 +345,10 @@ pub fn instruct_swap(state: &mut [Complex64], nbits: usize, locs: &[usize]) {
 
     let bit0 = loc_to_bit(nbits, locs[0]);
     let bit1 = loc_to_bit(nbits, locs[1]);
-    let mask0 = indicator(bit0);
-    let mask1 = indicator(bit1);
-    let swap_mask = mask0 | mask1;
-    let dim = 1usize << nbits;
-
-    for basis in 0..dim {
-        if basis & mask0 == 0 && basis & mask1 == mask1 {
-            state.swap(basis, basis ^ swap_mask);
-        }
-    }
+    let swap_mask = indicator(bit0) | indicator(bit1);
+    for_each_single_control_base(1usize << nbits, bit0, bit1, 1, |base| {
+        state.swap(base, base ^ swap_mask);
+    });
 }
 
 /// Generic n-qubit gate application with optional controls.
@@ -355,8 +387,11 @@ pub fn instruct_nq(
         .collect();
 
     let mut temp = vec![Complex64::new(0.0, 0.0); gate_dim];
+    let mut indices = vec![0usize; gate_dim];
     for base in itercontrol(nbits, &locked_positions, &locked_values) {
-        let indices: Vec<usize> = raw_offsets.iter().map(|&offset| base + offset).collect();
+        for (index, &offset) in indices.iter_mut().zip(&raw_offsets) {
+            *index = base + offset;
+        }
 
         for row in 0..gate_dim {
             temp[row] = Complex64::new(0.0, 0.0);
@@ -400,9 +435,18 @@ pub fn instruct_1q_controlled(
     if ctrl_locs.len() == 1 {
         let ctrl_bit = loc_to_bit(nbits, ctrl_locs[0]);
         let ctrl_val = ctrl_bits[0];
-        for_each_single_control_base(total, target_bit, ctrl_bit, ctrl_val, |base| {
-            u1rows(state, base, base + step, a, b, c, d);
-        });
+        if [a.im, b.im, c.im, d.im].iter().all(|&v| v == 0.0) {
+            for_each_single_control_base(total, target_bit, ctrl_bit, ctrl_val, |base| {
+                let w = state[base];
+                let v = state[base + step];
+                state[base] = w * a.re + v * b.re;
+                state[base + step] = w * c.re + v * d.re;
+            });
+        } else {
+            for_each_single_control_base(total, target_bit, ctrl_bit, ctrl_val, |base| {
+                u1rows(state, base, base + step, a, b, c, d);
+            });
+        }
         return;
     }
 
@@ -438,14 +482,9 @@ pub fn instruct_2q_controlled(
 
     let bits = [loc_to_bit(nbits, locs[0]), loc_to_bit(nbits, locs[1])];
     let (gate, sorted_bits) = sort_unitary_2q(gate, &bits);
+    let single_excitation = single_excitation_matrix(&gate);
 
-    // locs_raw: lock all non-target bits to 0, enumerate 4 target-bit offsets
-    let non_target: Vec<usize> = (0..nbits)
-        .filter(|b| *b != sorted_bits[0] && *b != sorted_bits[1])
-        .collect();
-    let non_target_zeros = vec![0usize; non_target.len()];
-    let locs_raw: Vec<usize> = itercontrol(nbits, &non_target, &non_target_zeros).collect();
-    debug_assert_eq!(locs_raw.len(), 4);
+    let locs_raw = two_qubit_offsets(sorted_bits);
 
     // Convert control locs to bit positions
     let ctrl_bit_positions: Vec<usize> = ctrl_locs.iter().map(|&l| loc_to_bit(nbits, l)).collect();
@@ -465,7 +504,7 @@ pub fn instruct_2q_controlled(
             locs_raw[2] + base,
             locs_raw[3] + base,
         ];
-        unrows(state, &inds, &gate);
+        unrows(state, &inds, &gate, single_excitation);
     }
 }
 
@@ -488,10 +527,16 @@ pub fn instruct_1q_diag_controlled(
     if ctrl_locs.len() == 1 {
         let ctrl_bit = loc_to_bit(nbits, ctrl_locs[0]);
         let ctrl_val = ctrl_bits[0];
-        for_each_single_control_base(total, target_bit, ctrl_bit, ctrl_val, |base| {
-            state[base] *= d0;
-            state[base + step] *= d1;
-        });
+        if d0 == Complex64::new(1., 0.) {
+            for_each_single_control_base(total, target_bit, ctrl_bit, ctrl_val, |base| {
+                state[base + step] *= d1;
+            });
+        } else {
+            for_each_single_control_base(total, target_bit, ctrl_bit, ctrl_val, |base| {
+                state[base] *= d0;
+                state[base + step] *= d1;
+            });
+        }
         return;
     }
 
@@ -504,9 +549,15 @@ pub fn instruct_1q_diag_controlled(
 
     let ic = itercontrol(nbits, &locked_locs, &locked_vals);
 
-    for base in ic {
-        state[base] *= d0;
-        state[base + step] *= d1;
+    if d0 == Complex64::new(1., 0.) {
+        for base in ic {
+            state[base + step] *= d1;
+        }
+    } else {
+        for base in ic {
+            state[base] *= d0;
+            state[base + step] *= d1;
+        }
     }
 }
 
@@ -532,11 +583,7 @@ pub fn instruct_2q_diag_controlled(
         *diag
     };
 
-    let non_target: Vec<usize> = (0..nbits)
-        .filter(|b| *b != sorted_bits[0] && *b != sorted_bits[1])
-        .collect();
-    let non_target_zeros = vec![0usize; non_target.len()];
-    let locs_raw: Vec<usize> = itercontrol(nbits, &non_target, &non_target_zeros).collect();
+    let locs_raw = two_qubit_offsets(sorted_bits);
 
     let ctrl_bit_positions: Vec<usize> = ctrl_locs.iter().map(|&l| loc_to_bit(nbits, l)).collect();
 

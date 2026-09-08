@@ -127,10 +127,10 @@ visible in the SVG above: one Hadamard, then three controls all rooted at qubit
 
 ## Running it
 
-**Quick run** (after `cargo install --path yao-cli`, so `yao` is on your PATH):
+**Quick run** (with the [CLI installed](../installation.md)):
 
 ```bash
-yao example bell | yao simulate - | yao probs -
+yao example bell | yao simulate - | yao probs - --json
 ```
 
 Expected output:
@@ -151,7 +151,7 @@ Expected output:
 For GHZ-4 the pipeline is the same with `--nqubits 4`:
 
 ```bash
-yao example ghz --nqubits 4 | yao simulate - | yao probs -
+yao example ghz --nqubits 4 | yao simulate - | yao probs - --json
 ```
 
 Expected output (16 entries; only indices 0 and 15 are non-zero):
@@ -167,19 +167,6 @@ Expected output (16 entries; only indices 0 and 15 are non-zero):
     0.0, 0.0, 0.0, 0.5000000000000001
   ]
 }
-```
-
-**Regenerating this page's artifacts** (SVG diagrams and probability plots), run from the repo root:
-
-```bash
-cargo build -p yao-cli --no-default-features
-target/debug/yao example bell --json --output docs/src/examples/generated/circuits/bell.json
-target/debug/yao visualize docs/src/examples/generated/circuits/bell.json --output docs/src/examples/generated/svg/bell.svg
-target/debug/yao simulate docs/src/examples/generated/circuits/bell.json | target/debug/yao probs - > docs/src/examples/generated/results/bell-probs.json
-target/debug/yao example ghz --nqubits 4 --json --output docs/src/examples/generated/circuits/ghz4.json
-target/debug/yao visualize docs/src/examples/generated/circuits/ghz4.json --output docs/src/examples/generated/svg/ghz4.svg
-target/debug/yao simulate docs/src/examples/generated/circuits/ghz4.json | target/debug/yao probs - > docs/src/examples/generated/results/ghz4-probs.json
-python3 scripts/plot_cli_results.py docs/src/examples/generated/results docs/src/examples/generated/plots
 ```
 
 ## Interpreting the result

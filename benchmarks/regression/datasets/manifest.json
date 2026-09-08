@@ -1,0 +1,655 @@
+{
+  "schema_version": 1,
+  "suite": "applications-v1",
+  "cases_sha256": "c675f2847f9516d383c3dc4a19b370ad8a4eeeb542319ca6b241328ead6c4cc9",
+  "qiskit": "2.5.2",
+  "records": [
+    {
+      "id": "qasmbench-adder_n10",
+      "provenance": {
+        "source": "https://raw.githubusercontent.com/pnnl/QASMBench/357b942396d5c2b7cbc1c229c585a6ef5ccaebac/small/adder_n10/adder_n10.qasm",
+        "sha256": "89af975627593648e7aca6ac6cb936d2c872093c1eedcaa1b2ab4fa14b602624",
+        "terminal_measurements_removed_before_parsing": 5
+      },
+      "normalization": {
+        "original_operations": 14,
+        "normalized_operations": 142,
+        "removed_terminal_measurements": 0,
+        "basis": [
+          "rx",
+          "ry",
+          "rz",
+          "p",
+          "h",
+          "x",
+          "y",
+          "z",
+          "s",
+          "t",
+          "cx",
+          "swap"
+        ],
+        "optimization_level": 0,
+        "seed_transpiler": 4137,
+        "qubit_mapping": "yao_site = n - 1 - qiskit_bit",
+        "global_phase": 0.0
+      },
+      "case_sha256": "0715bd0dc6dbbc3cb7a0457ec0087672a9cdc9a64f1761e1de846a87e6d86e54"
+    },
+    {
+      "id": "qasmbench-qaoa_n6",
+      "provenance": {
+        "source": "https://raw.githubusercontent.com/pnnl/QASMBench/357b942396d5c2b7cbc1c229c585a6ef5ccaebac/small/qaoa_n6/qaoa_n6.qasm",
+        "sha256": "fde5eff21c334ef02430bbfa8ea38f9287625cab3ffbd45d92d79590ee27dcc9",
+        "terminal_measurements_removed_before_parsing": 6
+      },
+      "normalization": {
+        "original_operations": 270,
+        "normalized_operations": 559,
+        "removed_terminal_measurements": 0,
+        "basis": [
+          "rx",
+          "ry",
+          "rz",
+          "p",
+          "h",
+          "x",
+          "y",
+          "z",
+          "s",
+          "t",
+          "cx",
+          "swap"
+        ],
+        "optimization_level": 0,
+        "seed_transpiler": 4137,
+        "qubit_mapping": "yao_site = n - 1 - qiskit_bit",
+        "global_phase": 5.968803068538654
+      },
+      "case_sha256": "0ec4a91afdd5d83f7bfc58b8537f881a43d3bf1ea0278eeb448b21620511c178"
+    },
+    {
+      "id": "qasmbench-qpe_n9",
+      "provenance": {
+        "source": "https://raw.githubusercontent.com/pnnl/QASMBench/357b942396d5c2b7cbc1c229c585a6ef5ccaebac/small/qpe_n9/qpe_n9.qasm",
+        "sha256": "b341d904913f8a41f22fee387a7939ec9b43873e5f2efeb739d57317ef2b4523",
+        "terminal_measurements_removed_before_parsing": 1
+      },
+      "normalization": {
+        "original_operations": 41,
+        "normalized_operations": 123,
+        "removed_terminal_measurements": 5,
+        "basis": [
+          "rx",
+          "ry",
+          "rz",
+          "p",
+          "h",
+          "x",
+          "y",
+          "z",
+          "s",
+          "t",
+          "cx",
+          "swap"
+        ],
+        "optimization_level": 0,
+        "seed_transpiler": 4137,
+        "qubit_mapping": "yao_site = n - 1 - qiskit_bit",
+        "global_phase": 0.0
+      },
+      "case_sha256": "f4eb0e5034e1644721425c8b5770c1d3d0a80da287467c0a5c45f88587ff3ac1"
+    },
+    {
+      "id": "qasmbench-ising_n10",
+      "provenance": {
+        "source": "https://raw.githubusercontent.com/pnnl/QASMBench/357b942396d5c2b7cbc1c229c585a6ef5ccaebac/small/ising_n10/ising_n10.qasm",
+        "sha256": "c10edc4a40eadf4d610aa012524e9eed4bdd1a02fc9d939cccae8ad4ed942f67",
+        "terminal_measurements_removed_before_parsing": 10
+      },
+      "normalization": {
+        "original_operations": 480,
+        "normalized_operations": 480,
+        "removed_terminal_measurements": 0,
+        "basis": [
+          "rx",
+          "ry",
+          "rz",
+          "p",
+          "h",
+          "x",
+          "y",
+          "z",
+          "s",
+          "t",
+          "cx",
+          "swap"
+        ],
+        "optimization_level": 0,
+        "seed_transpiler": 4137,
+        "qubit_mapping": "yao_site = n - 1 - qiskit_bit",
+        "global_phase": 0.0
+      },
+      "case_sha256": "7664e720bb8e7642a2cacc7c85e49366ef1e2bb3d61e4a519ce8b68343f5b9a1"
+    },
+    {
+      "id": "qasmbench-vqe_uccsd_n8",
+      "provenance": {
+        "source": "https://raw.githubusercontent.com/pnnl/QASMBench/357b942396d5c2b7cbc1c229c585a6ef5ccaebac/small/vqe_uccsd_n8/vqe_uccsd_n8.qasm",
+        "sha256": "5bf2dd10d4767825289ebe9e30933986fa2782063cf60066a44487d7f257b115",
+        "terminal_measurements_removed_before_parsing": 8
+      },
+      "normalization": {
+        "original_operations": 10808,
+        "normalized_operations": 10808,
+        "removed_terminal_measurements": 0,
+        "basis": [
+          "rx",
+          "ry",
+          "rz",
+          "p",
+          "h",
+          "x",
+          "y",
+          "z",
+          "s",
+          "t",
+          "cx",
+          "swap"
+        ],
+        "optimization_level": 0,
+        "seed_transpiler": 4137,
+        "qubit_mapping": "yao_site = n - 1 - qiskit_bit",
+        "global_phase": 0.0
+      },
+      "case_sha256": "6cf92d5b28e470950b2dcbd8dfafadbe16cd93157f76d63dbc79dd41af968de9"
+    },
+    {
+      "id": "qasmbench-qft_n18",
+      "provenance": {
+        "source": "https://raw.githubusercontent.com/pnnl/QASMBench/357b942396d5c2b7cbc1c229c585a6ef5ccaebac/medium/qft_n18/qft_n18.qasm",
+        "sha256": "5ed6ee804a7067160294d7db81859886788ae56e853286e7307e9c74d5c35ab3",
+        "terminal_measurements_removed_before_parsing": 18
+      },
+      "normalization": {
+        "original_operations": 784,
+        "normalized_operations": 784,
+        "removed_terminal_measurements": 0,
+        "basis": [
+          "rx",
+          "ry",
+          "rz",
+          "p",
+          "h",
+          "x",
+          "y",
+          "z",
+          "s",
+          "t",
+          "cx",
+          "swap"
+        ],
+        "optimization_level": 0,
+        "seed_transpiler": 4137,
+        "qubit_mapping": "yao_site = n - 1 - qiskit_bit",
+        "global_phase": 5.992112448005571e-06
+      },
+      "case_sha256": "d5eff42384d27717921e60876e10bd8200604b0af5e87f636bc9732aa7663c1b"
+    },
+    {
+      "id": "mqt-ghz-8",
+      "provenance": {
+        "source": "mqt.bench",
+        "version": "2.2.3",
+        "algorithm": "ghz",
+        "size": 8,
+        "generator_seed": 10,
+        "exported_qasm_sha256": "75eeec3f616e5ec4de16719fdfb2c254f2902bf7bb01369bfaaead2670044751"
+      },
+      "normalization": {
+        "original_operations": 17,
+        "normalized_operations": 8,
+        "removed_terminal_measurements": 8,
+        "basis": [
+          "rx",
+          "ry",
+          "rz",
+          "p",
+          "h",
+          "x",
+          "y",
+          "z",
+          "s",
+          "t",
+          "cx",
+          "swap"
+        ],
+        "optimization_level": 0,
+        "seed_transpiler": 4137,
+        "qubit_mapping": "yao_site = n - 1 - qiskit_bit",
+        "global_phase": 0.0
+      },
+      "case_sha256": "43910d3e2c3654500853d0f50841a38f187520858887b21607084ac6da8b0995"
+    },
+    {
+      "id": "mqt-ghz-12",
+      "provenance": {
+        "source": "mqt.bench",
+        "version": "2.2.3",
+        "algorithm": "ghz",
+        "size": 12,
+        "generator_seed": 10,
+        "exported_qasm_sha256": "1b5a76fd1adafe88e651b89e62d210566088309936751e93a68db213ee178195"
+      },
+      "normalization": {
+        "original_operations": 25,
+        "normalized_operations": 12,
+        "removed_terminal_measurements": 12,
+        "basis": [
+          "rx",
+          "ry",
+          "rz",
+          "p",
+          "h",
+          "x",
+          "y",
+          "z",
+          "s",
+          "t",
+          "cx",
+          "swap"
+        ],
+        "optimization_level": 0,
+        "seed_transpiler": 4137,
+        "qubit_mapping": "yao_site = n - 1 - qiskit_bit",
+        "global_phase": 0.0
+      },
+      "case_sha256": "f93d28057392ee7a0c0da99d28c24c38cb05c4f81972978b7f94da8b857c9043"
+    },
+    {
+      "id": "mqt-ghz-16",
+      "provenance": {
+        "source": "mqt.bench",
+        "version": "2.2.3",
+        "algorithm": "ghz",
+        "size": 16,
+        "generator_seed": 10,
+        "exported_qasm_sha256": "ec8364958c7ed3e2dcbb7348b14a47664e3af7a9ea4365ec5bdc69ae5552b1e0"
+      },
+      "normalization": {
+        "original_operations": 33,
+        "normalized_operations": 16,
+        "removed_terminal_measurements": 16,
+        "basis": [
+          "rx",
+          "ry",
+          "rz",
+          "p",
+          "h",
+          "x",
+          "y",
+          "z",
+          "s",
+          "t",
+          "cx",
+          "swap"
+        ],
+        "optimization_level": 0,
+        "seed_transpiler": 4137,
+        "qubit_mapping": "yao_site = n - 1 - qiskit_bit",
+        "global_phase": 0.0
+      },
+      "case_sha256": "117197492539f158757b7b8ffae9c26794f66eb1f72caa9cbee0d6509ea50b1f"
+    },
+    {
+      "id": "mqt-qft-8",
+      "provenance": {
+        "source": "mqt.bench",
+        "version": "2.2.3",
+        "algorithm": "qft",
+        "size": 8,
+        "generator_seed": 10,
+        "exported_qasm_sha256": "1da6492dbc790a28e9da833b8a18bd974a82e8d04ed70370e8d2633307b5fb28"
+      },
+      "normalization": {
+        "original_operations": 10,
+        "normalized_operations": 152,
+        "removed_terminal_measurements": 8,
+        "basis": [
+          "rx",
+          "ry",
+          "rz",
+          "p",
+          "h",
+          "x",
+          "y",
+          "z",
+          "s",
+          "t",
+          "cx",
+          "swap"
+        ],
+        "optimization_level": 0,
+        "seed_transpiler": 4137,
+        "qubit_mapping": "yao_site = n - 1 - qiskit_bit",
+        "global_phase": 0.0
+      },
+      "case_sha256": "8ad04ce181c8c0ed44a0d6a226e279d12ad429dcd1737b661ee52aa94f2b0dc9"
+    },
+    {
+      "id": "mqt-qft-12",
+      "provenance": {
+        "source": "mqt.bench",
+        "version": "2.2.3",
+        "algorithm": "qft",
+        "size": 12,
+        "generator_seed": 10,
+        "exported_qasm_sha256": "d1ebc5e8d3504bf68a14cd60b94e13759f9810b2c4efc962fa09408b805ae34f"
+      },
+      "normalization": {
+        "original_operations": 14,
+        "normalized_operations": 348,
+        "removed_terminal_measurements": 12,
+        "basis": [
+          "rx",
+          "ry",
+          "rz",
+          "p",
+          "h",
+          "x",
+          "y",
+          "z",
+          "s",
+          "t",
+          "cx",
+          "swap"
+        ],
+        "optimization_level": 0,
+        "seed_transpiler": 4137,
+        "qubit_mapping": "yao_site = n - 1 - qiskit_bit",
+        "global_phase": 0.0
+      },
+      "case_sha256": "b4bfd2f44e59814e4c0020d838245246873e0d89eb388c6383d3076b7bb38386"
+    },
+    {
+      "id": "mqt-qft-16",
+      "provenance": {
+        "source": "mqt.bench",
+        "version": "2.2.3",
+        "algorithm": "qft",
+        "size": 16,
+        "generator_seed": 10,
+        "exported_qasm_sha256": "55c05da07136c54b5405e35a4a7f6c8ddc37b51fdb45d873f8439a5023094071"
+      },
+      "normalization": {
+        "original_operations": 18,
+        "normalized_operations": 624,
+        "removed_terminal_measurements": 16,
+        "basis": [
+          "rx",
+          "ry",
+          "rz",
+          "p",
+          "h",
+          "x",
+          "y",
+          "z",
+          "s",
+          "t",
+          "cx",
+          "swap"
+        ],
+        "optimization_level": 0,
+        "seed_transpiler": 4137,
+        "qubit_mapping": "yao_site = n - 1 - qiskit_bit",
+        "global_phase": 0.0
+      },
+      "case_sha256": "f65ccc6efe1d3153b7892027b439340e9d45984304b2070a535770caa732f817"
+    },
+    {
+      "id": "mqt-grover-8",
+      "provenance": {
+        "source": "mqt.bench",
+        "version": "2.2.3",
+        "algorithm": "grover",
+        "size": 8,
+        "generator_seed": 10,
+        "exported_qasm_sha256": "b7249dab134033a86e995f59ae54e4e09d2dc03e5ccd6db864b76fec231c5bb4"
+      },
+      "normalization": {
+        "original_operations": 25,
+        "normalized_operations": 5904,
+        "removed_terminal_measurements": 8,
+        "basis": [
+          "rx",
+          "ry",
+          "rz",
+          "p",
+          "h",
+          "x",
+          "y",
+          "z",
+          "s",
+          "t",
+          "cx",
+          "swap"
+        ],
+        "optimization_level": 0,
+        "seed_transpiler": 4137,
+        "qubit_mapping": "yao_site = n - 1 - qiskit_bit",
+        "global_phase": 0.0
+      },
+      "case_sha256": "7d224456a0f294154faff6b0d1238c3b6f0f2603143e13ccc3440e6fa2ef8eb8"
+    },
+    {
+      "id": "mqt-qaoa-8",
+      "provenance": {
+        "source": "mqt.bench",
+        "version": "2.2.3",
+        "algorithm": "qaoa",
+        "size": 8,
+        "generator_seed": 10,
+        "exported_qasm_sha256": "7ac0629ad3bbf11178deca03bcf7790f4796353b203515b657c518060b1b6341"
+      },
+      "normalization": {
+        "original_operations": 52,
+        "normalized_operations": 108,
+        "removed_terminal_measurements": 0,
+        "basis": [
+          "rx",
+          "ry",
+          "rz",
+          "p",
+          "h",
+          "x",
+          "y",
+          "z",
+          "s",
+          "t",
+          "cx",
+          "swap"
+        ],
+        "optimization_level": 0,
+        "seed_transpiler": 4137,
+        "qubit_mapping": "yao_site = n - 1 - qiskit_bit",
+        "global_phase": 0.0
+      },
+      "case_sha256": "48088cc0044666c2dd6439727e955e7e81f557047d29c892cf8d382c20d51344"
+    },
+    {
+      "id": "mqt-qaoa-12",
+      "provenance": {
+        "source": "mqt.bench",
+        "version": "2.2.3",
+        "algorithm": "qaoa",
+        "size": 12,
+        "generator_seed": 10,
+        "exported_qasm_sha256": "4a53e54caf7170ee01f7932d64e0a5ced0797cad8502c8362c102af5ee63b793"
+      },
+      "normalization": {
+        "original_operations": 108,
+        "normalized_operations": 252,
+        "removed_terminal_measurements": 0,
+        "basis": [
+          "rx",
+          "ry",
+          "rz",
+          "p",
+          "h",
+          "x",
+          "y",
+          "z",
+          "s",
+          "t",
+          "cx",
+          "swap"
+        ],
+        "optimization_level": 0,
+        "seed_transpiler": 4137,
+        "qubit_mapping": "yao_site = n - 1 - qiskit_bit",
+        "global_phase": 0.0
+      },
+      "case_sha256": "6211b23684c52fbbb6f2613f934278735517732ba4d785a3c4c89c35e0b5e214"
+    },
+    {
+      "id": "mqt-qaoa-16",
+      "provenance": {
+        "source": "mqt.bench",
+        "version": "2.2.3",
+        "algorithm": "qaoa",
+        "size": 16,
+        "generator_seed": 10,
+        "exported_qasm_sha256": "115eeb63c7fd3e6d4c71903a26e2841f563f6d25fae3bfd668dd2470769b6b1f"
+      },
+      "normalization": {
+        "original_operations": 162,
+        "normalized_operations": 390,
+        "removed_terminal_measurements": 0,
+        "basis": [
+          "rx",
+          "ry",
+          "rz",
+          "p",
+          "h",
+          "x",
+          "y",
+          "z",
+          "s",
+          "t",
+          "cx",
+          "swap"
+        ],
+        "optimization_level": 0,
+        "seed_transpiler": 4137,
+        "qubit_mapping": "yao_site = n - 1 - qiskit_bit",
+        "global_phase": 0.0
+      },
+      "case_sha256": "56caeada11823cb0aa6cee460aedcab34e1886b10d383493db99b1a56862c299"
+    },
+    {
+      "id": "mqt-randomcircuit-8",
+      "provenance": {
+        "source": "mqt.bench",
+        "version": "2.2.3",
+        "algorithm": "randomcircuit",
+        "size": 8,
+        "generator_seed": 10,
+        "exported_qasm_sha256": "1560201b22282d69c840553b325b819eec230b323d7117d299009f92c1994e23"
+      },
+      "normalization": {
+        "original_operations": 55,
+        "normalized_operations": 597,
+        "removed_terminal_measurements": 8,
+        "basis": [
+          "rx",
+          "ry",
+          "rz",
+          "p",
+          "h",
+          "x",
+          "y",
+          "z",
+          "s",
+          "t",
+          "cx",
+          "swap"
+        ],
+        "optimization_level": 0,
+        "seed_transpiler": 4137,
+        "qubit_mapping": "yao_site = n - 1 - qiskit_bit",
+        "global_phase": 5.272107946037483
+      },
+      "case_sha256": "39fbdff6e94413f50eba64fc69d66d7580db55a33371b9c442a30e43c42603c4"
+    },
+    {
+      "id": "mqt-randomcircuit-12",
+      "provenance": {
+        "source": "mqt.bench",
+        "version": "2.2.3",
+        "algorithm": "randomcircuit",
+        "size": 12,
+        "generator_seed": 10,
+        "exported_qasm_sha256": "a76bf911a6038e9ad53df799cd4618f8f0593681245b4e6e1d2e7967b56ba84f"
+      },
+      "normalization": {
+        "original_operations": 122,
+        "normalized_operations": 1277,
+        "removed_terminal_measurements": 12,
+        "basis": [
+          "rx",
+          "ry",
+          "rz",
+          "p",
+          "h",
+          "x",
+          "y",
+          "z",
+          "s",
+          "t",
+          "cx",
+          "swap"
+        ],
+        "optimization_level": 0,
+        "seed_transpiler": 4137,
+        "qubit_mapping": "yao_site = n - 1 - qiskit_bit",
+        "global_phase": 1.524186731129702
+      },
+      "case_sha256": "cc421174d04e16294bf8415a2ceed59433785b3438648579c564406e4b415368"
+    },
+    {
+      "id": "mqt-randomcircuit-16",
+      "provenance": {
+        "source": "mqt.bench",
+        "version": "2.2.3",
+        "algorithm": "randomcircuit",
+        "size": 16,
+        "generator_seed": 10,
+        "exported_qasm_sha256": "a367761f3d977de81fc01c955719f0b200d275d251872e9f487a5e2b5e865cc1"
+      },
+      "normalization": {
+        "original_operations": 211,
+        "normalized_operations": 2534,
+        "removed_terminal_measurements": 16,
+        "basis": [
+          "rx",
+          "ry",
+          "rz",
+          "p",
+          "h",
+          "x",
+          "y",
+          "z",
+          "s",
+          "t",
+          "cx",
+          "swap"
+        ],
+        "optimization_level": 0,
+        "seed_transpiler": 4137,
+        "qubit_mapping": "yao_site = n - 1 - qiskit_bit",
+        "global_phase": 1.0423906675757193
+      },
+      "case_sha256": "68237b0c13e90f9877ace4328e2d3bc5afd9993c032a8ed6080f6761177563ff"
+    }
+  ]
+}

@@ -35,6 +35,25 @@ fn backend(c: &mut Criterion) {
                 group.bench_function("native", |b| {
                     b.iter(|| apply(black_box(&circuit), black_box(&state)))
                 });
+                if std::env::var("YAO_BENCH_FUSION").as_deref() == Ok("1") {
+                    let expected = apply(&circuit, &state);
+                    for width in [2, 4] {
+                        let fused = circuit.fused(width).unwrap();
+                        let got = apply(&fused, &state);
+                        assert!(
+                            got.state_vec()
+                                .iter()
+                                .zip(expected.state_vec())
+                                .all(|(a, b)| (a - b).norm() < 1e-10)
+                        );
+                        group.bench_function(format!("fused{width}_prepare"), |b| {
+                            b.iter(|| black_box(&circuit).fused(width).unwrap())
+                        });
+                        group.bench_function(format!("fused{width}_execute"), |b| {
+                            b.iter(|| apply(black_box(&fused), black_box(&state)))
+                        });
+                    }
+                }
             }
             "density" => {
                 let dm = DensityMatrix::from_reg(&state);
@@ -228,6 +247,9 @@ fn backend(c: &mut Criterion) {
             });
         }
         group.finish();
+    }
+    if std::env::var("YAO_BENCH_CORE_ONLY").as_deref() == Ok("1") {
+        return;
     }
     if std::env::var("YAO_BENCH_SUITE").as_deref() == Ok("tensor-memory") {
         matrix_slicing(c, &cpu);

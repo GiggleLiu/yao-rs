@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "name": "yao-cpu-v2",
+  "precision": "complex128",
+  "profiles": {
+    "smoke": {
+      "runs": 1,
+      "threads": [
+        1
+      ],
+      "max_qubits": 8,
+      "application_ids": [
+        "qasmbench-qaoa_n6",
+        "mqt-qft-8"
+      ]
+    },
+    "regression": {
+      "runs": 6,
+      "threads": [
+        1
+      ],
+      "max_qubits": 16,
+      "application_ids": "all",
+      "feature_max_qubits": {
+        "circuit-ad": 12,
+        "tensor-memory": 6,
+        "trajectories": 6,
+        "krylov": 12
+      }
+    },
+    "full": {
+      "runs": 7,
+      "threads": [
+        1,
+        4
+      ],
+      "max_qubits": 24,
+      "application_ids": "all"
+    }
+  },
+  "tracks": {
+    "circuits": {
+      "generator": "python"
+    },
+    "circuit-ad": {
+      "generator": "ad_cases"
+    },
+    "tensor-memory": {
+      "generator": "memory_cases"
+    },
+    "trajectories": {
+      "generator": "trajectory_cases"
+    },
+    "krylov": {
+      "generator": "krylov_cases"
+    }
+  },
+  "timing": {
+    "rust": "Criterion: 10 samples, 0.2 s warmup, 0.5 s target",
+    "julia": "BenchmarkTools: 0.2 s warmup, 30 calibrated batches targeting 10 ms each, up to 100000 evals/batch",
+    "qulacs": "30 warmed samples with calibrated inner iterations",
+    "fusion": "yao-rs 2q/4q and Qulacs 4q fusion; preparation outside warmed execution"
+  },
+  "default_regression_tolerance": 0.05,
+  "claim": "Named-baseline qualification only; every main feature must be independently covered before a SOTA claim."
+}
